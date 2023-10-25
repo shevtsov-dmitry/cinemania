@@ -1,15 +1,36 @@
 package com.filminfopage;
 
 import com.filminfopage.entity.FilmInfo;
+import com.filminfopage.repo.FilmInfoRepo;
+import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.Assert;
+import org.assertj.core.api.AssertProvider;
 import org.junit.gen5.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.Calendar;
 import java.util.Date;
 
-@SpringBootTest
+//@SpringBootTest
+@DataJpaTest
+@Rollback(value = false)
+@AutoConfigureTestDatabase
 class FilmInfoPageApplicationTests {
+
+
+    @Autowired
+    private FilmInfoRepo filmInfoRepo;
+
+    @Autowired
+    TestEntityManager testEntityManager;
+
     @Test
     void insertFullFilmInfoOnce() {
         FilmInfo film = new FilmInfo(
@@ -23,7 +44,12 @@ class FilmInfoPageApplicationTests {
                 5.4F
         );
 
-        Assertions.assertNotEquals(film.getId(), 1, "did not create film info");
+        FilmInfo savedFilm = filmInfoRepo.save(film);
+        Assertions.assertNotEquals(savedFilm.getId(), 1, "did not create film info");
+
     }
 
+
+
 }
+`
