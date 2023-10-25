@@ -13,7 +13,7 @@ public class FilmInfo {
     @Column(nullable = false, unique = true)
     private Long id;
     @NonNull
-    private String name;
+    private String filmName;
     @NonNull
     private Date releaseDate;
     @Column(length = 50)
@@ -37,7 +37,7 @@ public class FilmInfo {
     public FilmInfo(Long id, @NonNull String name, @NonNull Date releaseDate, @NonNull String country,
                     @NonNull String genre, int age, @NonNull String imageUrl, String watchTime, float rating) {
         this.id = id;
-        this.name = name;
+        this.filmName = name;
         this.releaseDate = releaseDate;
         this.country = country;
         this.genre = genre;
@@ -47,9 +47,9 @@ public class FilmInfo {
         this.rating = rating;
     }
 
-    public FilmInfo(@NonNull String name, @NonNull Date releaseDate, @NonNull String country,
+    public FilmInfo(@NonNull String filmName, @NonNull Date releaseDate, @NonNull String country,
                     @NonNull String genre, int age, @NonNull String imageUrl, String watchTime, float rating) {
-        this.name = name;
+        this.filmName = filmName;
         this.releaseDate = releaseDate;
         this.country = country;
         this.genre = genre;
@@ -59,9 +59,9 @@ public class FilmInfo {
         this.rating = rating;
     }
 
-    public FilmInfo(@NonNull String name, @NonNull Date releaseDate, @NonNull String country,
+    public FilmInfo(@NonNull String filmName, @NonNull Date releaseDate, @NonNull String country,
                     @NonNull String genre, int age, @NonNull String imageUrl) {
-        this.name = name;
+        this.filmName = filmName;
         this.releaseDate = releaseDate;
         this.country = country;
         this.genre = genre;
@@ -126,12 +126,12 @@ public class FilmInfo {
     }
 
     @NonNull
-    public String getName() {
-        return name;
+    public String getFilmName() {
+        return filmName;
     }
 
-    public void setName(@NonNull String name) {
-        this.name = name;
+    public void setFilmName(@NonNull String filmName) {
+        this.filmName = filmName;
     }
 
     public float getRating() {
