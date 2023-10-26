@@ -12,6 +12,7 @@ public class Genre {
     private Long id;
 
     @NonNull
+    @Column(unique = true)
     private String genre;
 
     public Genre(@NonNull String genre) {
