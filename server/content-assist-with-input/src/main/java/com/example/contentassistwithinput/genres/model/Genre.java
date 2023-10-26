@@ -1,4 +1,4 @@
-package com.example.contentassistwithinput.genres.entity;
+package com.example.contentassistwithinput.genres.model;
 
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;

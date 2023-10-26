@@ -1,17 +1,14 @@
 package com.filminfopage;
 
-import com.filminfopage.entity.FilmInfo;
+import com.filminfopage.model.FilmInfo;
 import com.filminfopage.repo.FilmInfoRepo;
-import org.junit.gen5.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.util.Assert;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Calendar;
 

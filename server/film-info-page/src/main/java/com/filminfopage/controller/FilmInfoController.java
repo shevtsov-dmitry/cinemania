@@ -1,8 +1,7 @@
 package com.filminfopage.controller;
 
-import com.filminfopage.entity.FilmInfo;
+import com.filminfopage.model.FilmInfo;
 import com.filminfopage.repo.FilmInfoRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

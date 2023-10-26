@@ -1,8 +1,7 @@
-package com.filminfopage.entity;
+package com.filminfopage.model;
 
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import java.util.Date;
 
