@@ -30,17 +30,23 @@ public class GenreController {
     public String addNewGenre(@RequestParam String genre) {
         Genre gnr = new Genre(genre);
         try {
-            repo.save(gnr);
-            return "add new genre successfully.";
+            if (gnr.getName().equals("") || gnr.getName().equals(" ")) {
+                return "incoming parameter data is empty.";
+            } else {
+                repo.save(gnr);
+                return "add new genre successfully.";
+            }
         } catch (Exception e) {
             return service.saveWithoutDuplicates(new ArrayList<>(List.of(gnr)));
         }
     }
 
     @PostMapping("/add-new-genres")
-    public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap){
+    public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap) {
         List<Genre> genres = jsonMap.get("genres");
+
         try {
+            genres.removeIf(genre -> genre.getName().equals("") || genre.getName().equals(" "));
             repo.saveAll(genres);
             return "new genres have been added successfully.";
         } catch (Exception e) { // DataIntegrityViolationException
@@ -49,7 +55,7 @@ public class GenreController {
     }
 
     @GetMapping("/get-genre")
-    public List<String> findGenre(@RequestParam String stringSequence){
+    public List<String> findGenre(@RequestParam String stringSequence) {
         return service.findMatchedGenres(stringSequence);
     }
 
