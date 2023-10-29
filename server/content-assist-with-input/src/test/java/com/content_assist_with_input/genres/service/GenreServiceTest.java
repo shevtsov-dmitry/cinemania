@@ -54,14 +54,14 @@ class GenreServiceTest {
         List<Genre> newGenres = List.of(new Genre("NEW"), new Genre("ELEMENTS"), new Genre("TESTING"));
         // save initial genres
         List<Genre> genres = genreNames.stream().map(Genre::new).toList();
-//        service.saveAll(genres);
+        service.saveWithoutDuplicates(genres);
         // fill list with new genre names
         List<String> genreNamesWithNewEls = new ArrayList<>();
         genreNamesWithNewEls.addAll(genreNames);
         genreNamesWithNewEls.addAll(newGenres.stream().map(Genre::getName).toList());
-        List<Genre> genresWithNewEls = genreNamesWithNewEls.stream().map(Genre::new).toList();
+        List<Genre> genresWithNewEls = new ArrayList<>(genreNamesWithNewEls.stream().map(Genre::new).toList());
         // save second time the same elements with added new elements
-//        repo.saveAll(genresWithNewEls);
+        service.saveWithoutDuplicates(genresWithNewEls);
         // expecting that new elements will be in database and old ones will not duplicate (violate data integration)
         for (Genre genre : newGenres) {
             Assertions.assertNotNull(repo.findByName(genre.getName()));
