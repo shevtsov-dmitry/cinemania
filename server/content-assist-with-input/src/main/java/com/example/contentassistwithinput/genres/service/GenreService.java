@@ -45,7 +45,7 @@ public class GenreService {
                     repo.save(genre);
                     builder.append(genre.toString()).append(", ");
                 }
-                builder.delete(builder.length() - 2, builder.length() - 1);
+                builder.delete(builder.length() - 3, builder.length() - 1);
                 builder.append(".");
                 return builder.toString();
             }
@@ -66,17 +66,10 @@ public class GenreService {
             for (String genre : genresWithoutDuplicates) {
                 builder.append(genre).append(", ");
             }
-            builder.delete(builder.length() - 2, builder.length() - 1);
+            builder.delete(builder.length() - 3, builder.length() - 1);
             builder.append(".");
             return builder.toString();
         }
     }
 
-//    public void save(Genre genre) {
-//        repo.save(genre);
-//    }
-//
-//    public void saveAll(List<Genre> genres) {
-//        repo.saveAll(genres);
-//    }
 }
