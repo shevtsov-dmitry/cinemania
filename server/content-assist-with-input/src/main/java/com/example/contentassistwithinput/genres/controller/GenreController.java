@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class GenreController {
             repo.save(gnr);
             return "add new genre successfully.";
         } catch (Exception e) {
-            return service.saveAgainButWithoutDuplicates(List.of(gnr));
+            return service.saveAgainButWithoutDuplicates(new ArrayList<>(List.of(gnr)));
         }
     }
 

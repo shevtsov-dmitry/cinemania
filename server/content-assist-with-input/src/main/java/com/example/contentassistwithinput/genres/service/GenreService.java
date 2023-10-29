@@ -27,13 +27,13 @@ public class GenreService {
         List<Genre> genres = repo.findAll();
         if (!genres.isEmpty()) { // in case if at least one genre already exists in database
             List<String> allGenresNames = genres.stream().map(Genre::getName).toList();
-            if(receivedGenres.size() > 2)
+//            if(receivedGenres.size() > 2)
                 receivedGenres.removeIf(genre -> allGenresNames.contains(genre.getName()));
-            else if(receivedGenres.size() == 1){
-                return "'%s' genre already exists in the database.".formatted(receivedGenres.get(0).getName());
-            }
+//            else if(receivedGenres.size() == 1){
+//                return "'%s' genre already exists in the database.".formatted(receivedGenres.get(0).getName());
+//            }
             if (receivedGenres.isEmpty()) {
-                return "Cannot save genres because all of them already exist in database.";
+                return "Cannot save because already exist in database.";
             } else {
                 // parse string answer
                 StringBuilder builder = new StringBuilder();
