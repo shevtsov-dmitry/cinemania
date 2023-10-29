@@ -5,9 +5,6 @@ import com.content_assist_with_input.genres.repo.GenreRepo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -32,17 +29,13 @@ class GenreServiceTest {
         this.repo = repo;
     }
 
-    Logger log = LoggerFactory.getLogger(this.getClass());
-
-    // ! BREAKING TESTS
-
+    // testing of saveWithoutDuplicates()
     @Test
     void addGenresWithDups() {
         List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные");
         List<Genre> genres = new ArrayList<>(genreNames.size());
         genreNames.forEach(name -> genres.add(new Genre(name)));
         String answerMessage = service.saveWithoutDuplicates(genres);
-        log.info("answerMessage: " + answerMessage);
         List<String> expectedResult = List.of("Сказки", "Короткометражные", "Образовательные");
         for (String name : expectedResult) {
             Assertions.assertNotNull(repo.findByName(name));
@@ -68,18 +61,18 @@ class GenreServiceTest {
         }
     }
 
-
-    @Test
     @RepeatedTest(2)
     void insertOneGenreMoreThanOnce() {
         Genre genre = new Genre("комедия");
-//        repo.save(genre);
+        service.saveWithoutDuplicates(new ArrayList<>(List.of(genre)));
+        String answer = service.saveWithoutDuplicates(new ArrayList<>(List.of(genre)));
+        Assertions.assertEquals(answer, "Cannot save because already exist in database.");
+        Assertions.assertNotNull(repo.findByName(genre.getName()));
+
     }
 
-    @Test
-    void addEmptyList(){
+    // testing of ...()
 
-    }
 
 
 }
