@@ -13,22 +13,22 @@ public class Genre {
 
     @NonNull
     @Column(unique = true)
-    private String genre;
+    private String name;
 
-    public Genre(@NonNull String genre) {
-        this.genre = genre;
+    public Genre(@NonNull String name) {
+        this.name = name;
     }
 
     public Genre() {
     }
 
     @NonNull
-    public String getGenre() {
-        return genre;
+    public String getName() {
+        return name;
     }
 
-    public void setGenre(@NonNull String genre) {
-        this.genre = genre;
+    public void setName(@NonNull String name) {
+        this.name = name;
     }
 
     public void setId(Long id) {

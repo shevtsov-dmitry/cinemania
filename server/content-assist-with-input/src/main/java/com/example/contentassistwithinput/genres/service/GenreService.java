@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class GenreService {
@@ -25,12 +24,13 @@ public class GenreService {
     }
 
     public String saveAgainButWithoutDuplicates(List<Genre> receivedGenres) {
-        List<String> allGenresNames = repo.findAll().stream().map(Genre::getGenre).toList();
-        if (!allGenresNames.isEmpty()) { // in case if at least one genre already exists in database
+        List<Genre> genres = repo.findAll();
+        if (!genres.isEmpty()) { // in case if at least one genre already exists in database
+            List<String> allGenresNames = genres.stream().map(Genre::getName).toList();
             if(receivedGenres.size() > 2)
-                receivedGenres.removeIf(genre -> allGenresNames.contains(genre.getGenre()));
+                receivedGenres.removeIf(genre -> allGenresNames.contains(genre.getName()));
             else if(receivedGenres.size() == 1){
-                return "'%s' genre already exists in the database.".formatted(receivedGenres.get(0).getGenre());
+                return "'%s' genre already exists in the database.".formatted(receivedGenres.get(0).getName());
             }
             if (receivedGenres.isEmpty()) {
                 return "Cannot save genres because all of them already exist in database.";
@@ -49,7 +49,7 @@ public class GenreService {
         } else { // else we add new genres from received list by removing duplicates.
             Map<String, Genre> stringContentGenreObject = new HashMap<>();
             for (Genre genre : receivedGenres) {
-                stringContentGenreObject.put(genre.getGenre(), genre);
+                stringContentGenreObject.put(genre.getName(), genre);
             }
             List<String> genresWithoutDuplicates = new ArrayList<>(stringContentGenreObject.size());
             for (Map.Entry<String, Genre> stringGenreEntry : stringContentGenreObject.entrySet()) {
