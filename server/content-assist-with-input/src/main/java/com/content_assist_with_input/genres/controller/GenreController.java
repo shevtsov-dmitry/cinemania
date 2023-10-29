@@ -33,7 +33,7 @@ public class GenreController {
             repo.save(gnr);
             return "add new genre successfully.";
         } catch (Exception e) {
-            return service.saveAgainButWithoutDuplicates(new ArrayList<>(List.of(gnr)));
+            return service.saveWithoutDuplicates(new ArrayList<>(List.of(gnr)));
         }
     }
 
@@ -44,7 +44,7 @@ public class GenreController {
             repo.saveAll(genres);
             return "new genres have been added successfully.";
         } catch (Exception e) { // DataIntegrityViolationException
-            return service.saveAgainButWithoutDuplicates(genres);
+            return service.saveWithoutDuplicates(genres);
         }
     }
 

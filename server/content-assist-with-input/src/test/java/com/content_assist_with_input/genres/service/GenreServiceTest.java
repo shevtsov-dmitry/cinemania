@@ -41,7 +41,7 @@ class GenreServiceTest {
         List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные");
         List<Genre> genres = new ArrayList<>(genreNames.size());
         genreNames.forEach(name -> genres.add(new Genre(name)));
-        String answerMessage = service.saveAgainButWithoutDuplicates(genres);
+        String answerMessage = service.saveWithoutDuplicates(genres);
         log.info("answerMessage: " + answerMessage);
         List<String> expectedResult = List.of("Сказки", "Короткометражные", "Образовательные");
         for (String name : expectedResult) {
@@ -50,9 +50,22 @@ class GenreServiceTest {
     }
     @Test
     void addGenresWithDupsThenAgainButWithNewElements() {
-        List<String> genres = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные");
-        List<String> genresWithNewEls = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные", "NEW", "ELEMENTS", "TESTING");
-
+        List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные");
+        List<Genre> newGenres = List.of(new Genre("NEW"), new Genre("ELEMENTS"), new Genre("TESTING"));
+        // save initial genres
+        List<Genre> genres = genreNames.stream().map(Genre::new).toList();
+//        service.saveAll(genres);
+        // fill list with new genre names
+        List<String> genreNamesWithNewEls = new ArrayList<>();
+        genreNamesWithNewEls.addAll(genreNames);
+        genreNamesWithNewEls.addAll(newGenres.stream().map(Genre::getName).toList());
+        List<Genre> genresWithNewEls = genreNamesWithNewEls.stream().map(Genre::new).toList();
+        // save second time the same elements with added new elements
+//        repo.saveAll(genresWithNewEls);
+        // expecting that new elements will be in database and old ones will not duplicate (violate data integration)
+        for (Genre genre : newGenres) {
+            Assertions.assertNotNull(repo.findByName(genre.getName()));
+        }
     }
 
 

@@ -23,7 +23,7 @@ public class GenreService {
         return matches;
     }
 
-    public String saveAgainButWithoutDuplicates(List<Genre> receivedGenres) {
+    public String saveWithoutDuplicates(List<Genre> receivedGenres) {
         List<Genre> genres = repo.findAll();
         if (!genres.isEmpty()) { // in case if at least one genre already exists in database
             List<String> allGenresNames = genres.stream().map(Genre::getName).toList();
