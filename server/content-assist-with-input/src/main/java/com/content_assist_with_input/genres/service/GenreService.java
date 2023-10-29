@@ -1,7 +1,7 @@
-package com.example.contentassistwithinput.genres.service;
+package com.content_assist_with_input.genres.service;
 
-import com.example.contentassistwithinput.genres.model.Genre;
-import com.example.contentassistwithinput.genres.repo.GenreRepo;
+import com.content_assist_with_input.genres.repo.GenreRepo;
+import com.content_assist_with_input.genres.model.Genre;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

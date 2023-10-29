@@ -1,16 +1,14 @@
-package com.example.contentassistwithinput.genres.controller;
+package com.content_assist_with_input.genres.controller;
 
-import com.example.contentassistwithinput.genres.model.Genre;
-import com.example.contentassistwithinput.genres.repo.GenreRepo;
-import com.example.contentassistwithinput.genres.service.GenreService;
+import com.content_assist_with_input.genres.model.Genre;
+import com.content_assist_with_input.genres.repo.GenreRepo;
+import com.content_assist_with_input.genres.service.GenreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
