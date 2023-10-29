@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GenreService {
@@ -32,9 +33,9 @@ public class GenreService {
     }
 
     public String saveAgainButWithoutDuplicates(List<Genre> receivedGenres) {
-        List<Genre> allGenres = repo.findAll();
-        if (!allGenres.isEmpty()) { // in case if at least one genre already exists in database
-            receivedGenres.removeIf(allGenres::contains);
+        List<String> allGenresNames = repo.findAll().stream().map(Genre::getGenre).toList();
+        if (!allGenresNames.isEmpty()) { // in case if at least one genre already exists in database
+            receivedGenres.removeIf(genre -> allGenresNames.contains(genre.getGenre()));
             if (receivedGenres.isEmpty()) {
                 return "Cannot save genres because all of them already exist in database.";
             } else {
