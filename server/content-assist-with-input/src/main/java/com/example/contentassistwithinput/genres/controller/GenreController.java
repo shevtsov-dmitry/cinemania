@@ -5,6 +5,8 @@ import com.example.contentassistwithinput.genres.repo.GenreRepo;
 import com.example.contentassistwithinput.genres.service.GenreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,10 +17,12 @@ import java.util.Map;
 public class GenreController {
 
     Logger logger = LoggerFactory.getLogger(GenreController.class);
-    private GenreRepo repo;
-    private final GenreService service = new GenreService(repo);
+    private final GenreService service;
+    private final GenreRepo repo;
 
-    public GenreController(GenreRepo repo) {
+    @Autowired
+    public GenreController(GenreService service, GenreRepo repo) {
+        this.service = service;
         this.repo = repo;
     }
 
@@ -35,13 +39,13 @@ public class GenreController {
 
     @PostMapping("/add-new-genres")
     public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap){
+        List<Genre> genres = jsonMap.get("genres");
         try {
-            List<Genre> genres = jsonMap.get("genres");
             repo.saveAll(genres);
             return "new genres have been added successfully.";
-        } catch (Exception e) {
-            logger.info(String.valueOf(e));
-            return "couldn't add new genres to database.";
+        } catch (Exception e) { // DataIntegrityViolationException
+            return service.saveAgainButWithoutDuplicates(genres);
+//            return successMessage;
         }
     }
 
