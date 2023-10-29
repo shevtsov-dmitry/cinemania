@@ -27,24 +27,14 @@ public class GenreService {
         List<Genre> genres = repo.findAll();
         if (!genres.isEmpty()) { // in case if at least one genre already exists in database
             List<String> allGenresNames = genres.stream().map(Genre::getName).toList();
-//            if(receivedGenres.size() > 2)
-                receivedGenres.removeIf(genre -> allGenresNames.contains(genre.getName()));
-//            else if(receivedGenres.size() == 1){
-//                return "'%s' genre already exists in the database.".formatted(receivedGenres.get(0).getName());
-//            }
+            receivedGenres.removeIf(genre -> allGenresNames.contains(genre.getName()));
             if (receivedGenres.isEmpty()) {
                 return "Cannot save because already exist in database.";
             } else {
+                repo.saveAll(receivedGenres);
+                List<String> receivedGenresName = receivedGenres.stream().map(Genre::getName).toList();
                 // parse string answer
-                StringBuilder builder = new StringBuilder();
-                builder.append("Successfully added new genres: ");
-                for (Genre genre : receivedGenres) {
-                    repo.save(genre);
-                    builder.append(genre.toString()).append(", ");
-                }
-                builder.delete(builder.length() - 3, builder.length() - 1);
-                builder.append(".");
-                return builder.toString();
+                return parseStringAnswer(receivedGenresName);
             }
         } else { // else we add new genres from received list by removing duplicates.
             Map<String, Genre> stringContentGenreObject = new HashMap<>();
@@ -58,15 +48,20 @@ public class GenreService {
                 repo.save(stringContentGenreObject.get(key));
             }
             // parse string answer
-            StringBuilder builder = new StringBuilder();
-            builder.append("Successfully added new genres: ");
-            for (String genre : genresWithoutDuplicates) {
-                builder.append(genre).append(", ");
-            }
-            builder.delete(builder.length() - 3, builder.length() - 1);
-            builder.append(".");
-            return builder.toString();
+            return parseStringAnswer(genresWithoutDuplicates);
         }
+    }
+
+    private static String parseStringAnswer(List<String> receivedGenresName) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Successfully added new genres: ");
+        for (String genre : receivedGenresName) {
+            builder.append(genre).append(", ");
+        }
+        builder.delete(builder.length() - 2, builder.length() - 1);
+        builder.deleteCharAt(builder.length() - 1);
+        builder.append(".");
+        return builder.toString();
     }
 
 }
