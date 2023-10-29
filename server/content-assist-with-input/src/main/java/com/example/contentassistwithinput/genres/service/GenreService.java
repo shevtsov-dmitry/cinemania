@@ -5,10 +5,7 @@ import com.example.contentassistwithinput.genres.repo.GenreRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,15 +24,14 @@ public class GenreService {
         return matches;
     }
 
-    public String saveAgainButWithoutDuplicates(String genreFromQuery) {
-        // TODO
-        return null;
-    }
-
     public String saveAgainButWithoutDuplicates(List<Genre> receivedGenres) {
         List<String> allGenresNames = repo.findAll().stream().map(Genre::getGenre).toList();
         if (!allGenresNames.isEmpty()) { // in case if at least one genre already exists in database
-            receivedGenres.removeIf(genre -> allGenresNames.contains(genre.getGenre()));
+            if(receivedGenres.size() > 2)
+                receivedGenres.removeIf(genre -> allGenresNames.contains(genre.getGenre()));
+            else if(receivedGenres.size() == 1){
+                return "'%s' genre already exists in the database.".formatted(receivedGenres.get(0).getGenre());
+            }
             if (receivedGenres.isEmpty()) {
                 return "Cannot save genres because all of them already exist in database.";
             } else {

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,13 +28,13 @@ public class GenreController {
     }
 
     @PostMapping("/add-new-genre")
-    public String addNewGenre(@RequestParam Genre genre) {
+    public String addNewGenre(@RequestParam String genre) {
+        Genre gnr = new Genre(genre);
         try {
-            repo.save(genre);
-            return "add new genre successfully";
+            repo.save(gnr);
+            return "add new genre successfully.";
         } catch (Exception e) {
-            logger.info(String.valueOf(e));
-            return "couldn't add new genre";
+            return service.saveAgainButWithoutDuplicates(List.of(gnr));
         }
     }
 
@@ -45,7 +46,6 @@ public class GenreController {
             return "new genres have been added successfully.";
         } catch (Exception e) { // DataIntegrityViolationException
             return service.saveAgainButWithoutDuplicates(genres);
-//            return successMessage;
         }
     }
 
