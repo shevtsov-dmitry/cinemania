@@ -2,7 +2,6 @@ package com.content_assist_with_input.genres.service;
 
 import com.content_assist_with_input.genres.model.Genre;
 import com.content_assist_with_input.genres.repo.GenreRepo;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,8 @@ import org.springframework.test.annotation.Rollback;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -38,7 +39,7 @@ class GenreServiceTest {
         String answerMessage = service.saveWithoutDuplicates(genres);
         List<String> expectedResult = List.of("Сказки", "Короткометражные", "Образовательные");
         for (String name : expectedResult) {
-            Assertions.assertNotNull(repo.findByName(name));
+            assertNotNull(repo.findByName(name));
         }
     }
     @Test
@@ -57,7 +58,7 @@ class GenreServiceTest {
         service.saveWithoutDuplicates(genresWithNewEls);
         // expecting that new elements will be in database and old ones will not duplicate (violate data integration)
         for (Genre genre : newGenres) {
-            Assertions.assertNotNull(repo.findByName(genre.getName()));
+            assertNotNull(repo.findByName(genre.getName()));
         }
     }
 
@@ -66,9 +67,8 @@ class GenreServiceTest {
         Genre genre = new Genre("комедия");
         service.saveWithoutDuplicates(new ArrayList<>(List.of(genre)));
         String answer = service.saveWithoutDuplicates(new ArrayList<>(List.of(genre)));
-        Assertions.assertEquals(answer, "Cannot save because already exist in database.");
-        Assertions.assertNotNull(repo.findByName(genre.getName()));
-
+        assertEquals(answer, "Cannot save because already exist in database.");
+        assertNotNull(repo.findByName(genre.getName()));
     }
 
     // testing of ...()
