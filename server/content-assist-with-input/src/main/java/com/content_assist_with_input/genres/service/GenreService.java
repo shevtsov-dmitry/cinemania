@@ -2,7 +2,15 @@ package com.content_assist_with_input.genres.service;
 
 import com.content_assist_with_input.genres.repo.GenreRepo;
 import com.content_assist_with_input.genres.model.Genre;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,15 +19,17 @@ import java.util.*;
 public class GenreService {
 
     private final GenreRepo repo;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Pageable foundGenreAmountRestriction = PageRequest.of(0,5);
 
     @Autowired
     public GenreService(GenreRepo repo) {
         this.repo = repo;
     }
 
-    public List<String> findMatchedGenres(String stringSequence) {
-        List<String> matches = new ArrayList<>();
-        // TODO
+    public List<String> findMatchedGenres(String sequence) {
+        List<String> matches = repo.getGenresNamesBySimilarStringSequence(sequence, foundGenreAmountRestriction);
+        log.info("genres: {}", matches);
         return matches;
     }
 
