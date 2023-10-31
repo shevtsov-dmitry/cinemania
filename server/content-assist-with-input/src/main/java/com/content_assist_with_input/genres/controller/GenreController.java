@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("/film-info-genre")
 public class GenreController {
 
-    Logger logger = LoggerFactory.getLogger(GenreController.class);
+    Logger log = LoggerFactory.getLogger(GenreController.class);
     private final GenreService service;
     private final GenreRepo repo;
 
@@ -54,9 +54,9 @@ public class GenreController {
         }
     }
 
-    @GetMapping("/get-genre")
-    public List<String> findGenre(@RequestParam String stringSequence) {
-        return service.findMatchedGenres(stringSequence);
+    @GetMapping("/get-genres")
+    public List<String> findGenre(@RequestParam String sequence) {
+        return service.findMatchedGenres(sequence);
     }
 
 
