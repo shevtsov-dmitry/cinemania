@@ -1,7 +1,7 @@
 @mixin flex-center
-    display: flex
-    justify-content: center
-    align-items: center
+  display: flex
+  justify-content: center
+  align-items: center
 
 //page colors
 $white: #edf2f4
@@ -10,33 +10,13 @@ $darkGrayBlack: #343a40
 $red: #ef233c
 $vividRed: #d90429
 
+
+// form
+
 form
   background-color: $white
   width: fit-content
   border-radius: 10px
-
-  input
-    border-radius: 12px
-    border-style: none
-    height: 30px
-    margin-right: 80px
-    // text
-    font-family: Calibri, sans-serif
-    font-size: 1em
-    opacity: 80%
-    color: $darkGrayBlack
-
-  ul
-    @include flex-center
-    flex-direction: column
-    gap: 1em
-
-  li
-    @include flex-center
-
-  p
-    padding: 0
-    margin: 0 6px 6px 0
 
   button
     margin-bottom: 3%
@@ -48,12 +28,39 @@ form
     font-size: 1.2em
     transition: scale 1s linear
 
+.form-ul
+  @include flex-center
+  padding: 0
+
+  flex-direction: column
+  gap: 0px
+
+.form-li
+  @include flex-center
+  margin: 0
+
+.form-pi
+  p
+    padding: 0
+    margin: 0 6px 6px 0
+
+.form-input
+  border-radius: 12px
+  border-style: none
+  height: 30px
+  margin-right: 80px
+  // text
+  font-family: Calibri, sans-serif
+  font-size: 1em
+  opacity: 80%
+  color: $darkGrayBlack
+
+
 .add-film-header
   color: #f2e8cf
   font-family: Arial, serif
   font-size: 200%
   margin: 0.5em
-
 
 .container
   width: 100vw
@@ -69,6 +76,7 @@ form
 
 .button-aligner
   @include flex-center
+
   &:active
     background-color: $red
     color: honeydew
@@ -76,18 +84,25 @@ form
 
 //typing suggestions
 .typing-suggestions-ul
-  background-color: $white
+  position: revert
+  z-index: 2
+  background-color: white
   list-style: none
   min-width: fit-content
   min-height: fit-content
   padding: 0
   border-radius: 5px
   border-style: solid
-  li
+  border-width: 1px
+
+  .typing-suggestions-li
     margin: 0
     padding: 0 5px
     border-bottom: $darkGrayBlack 1px inset
+
     &:nth-last-child(1)
       border: none
 
+.hidden-suggestion-form
+  display: none
 
