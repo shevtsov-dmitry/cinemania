@@ -13,6 +13,32 @@ form input {
   opacity: 80%;
   color: #343a40;
 }
+form ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1em;
+}
+form li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+form p {
+  padding: 0;
+  margin: 0 6px 6px 0;
+}
+form button {
+  margin-bottom: 3%;
+  padding: 0.5em;
+  border-radius: 30px;
+  border-style: none;
+  background-color: #d90429;
+  color: white;
+  font-size: 1.2em;
+  transition: scale 1s linear;
+}
 
 .add-film-header {
   color: #f2e8cf;
@@ -31,24 +57,6 @@ form input {
   flex-direction: column;
 }
 
-ul {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 1em;
-}
-
-li {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-li p {
-  padding: 0;
-  margin: 0 6px 6px 0;
-}
-
 .p-right-aligner {
   width: 100px;
   display: flex;
@@ -60,21 +68,28 @@ li p {
   justify-content: center;
   align-items: center;
 }
-
-button {
-  margin-bottom: 3%;
-  padding: 0.5em;
-  border-radius: 30px;
-  border-style: none;
-  background-color: #d90429;
-  color: white;
-  font-size: 1.2em;
-  transition: scale 1s linear;
-}
-button:active {
+.button-aligner:active {
   background-color: #ef233c;
   color: honeydew;
   transform: scale(1.05);
+}
+
+.typing-suggestions-ul {
+  background-color: #edf2f4;
+  list-style: none;
+  min-width: fit-content;
+  min-height: fit-content;
+  padding: 0;
+  border-radius: 5px;
+  border-style: solid;
+}
+.typing-suggestions-ul li {
+  margin: 0;
+  padding: 0 5px;
+  border-bottom: #343a40 1px inset;
+}
+.typing-suggestions-ul li:nth-last-child(1) {
+  border: none;
 }
 
 /*# sourceMappingURL=FileInfo.css.map */

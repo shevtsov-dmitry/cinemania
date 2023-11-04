@@ -3,10 +3,15 @@
     justify-content: center
     align-items: center
 
-
+//page colors
+$white: #edf2f4
+$darkBlue: #2b2d42
+$darkGrayBlack: #343a40
+$red: #ef233c
+$vividRed: #d90429
 
 form
-  background-color: #edf2f4
+  background-color: $white
   width: fit-content
   border-radius: 10px
 
@@ -19,7 +24,29 @@ form
     font-family: Calibri, sans-serif
     font-size: 1em
     opacity: 80%
-    color: #343a40
+    color: $darkGrayBlack
+
+  ul
+    @include flex-center
+    flex-direction: column
+    gap: 1em
+
+  li
+    @include flex-center
+
+  p
+    padding: 0
+    margin: 0 6px 6px 0
+
+  button
+    margin-bottom: 3%
+    padding: 0.5em
+    border-radius: 30px
+    border-style: none
+    background-color: $vividRed
+    color: white
+    font-size: 1.2em
+    transition: scale 1s linear
 
 .add-film-header
   color: #f2e8cf
@@ -32,21 +59,8 @@ form
   width: 100vw
   min-height: 100vh
   @include flex-center
-  background-color: #2b2d42
+  background-color: $darkBlue
   flex-direction: column
-
-ul
-  @include flex-center
-  flex-direction: column
-  gap: 1em
-
-li
-  @include flex-center
-
-  p
-    padding: 0
-    margin: 0 6px 6px 0
-
 
 .p-right-aligner
   width: 100px
@@ -55,18 +69,25 @@ li
 
 .button-aligner
   @include flex-center
-
-button
-  margin-bottom: 3%
-  padding: 0.5em
-  border-radius: 30px
-  border-style: none
-  background-color: #d90429
-  color: white
-  font-size: 1.2em
-  transition: scale 1s linear
-
   &:active
-    background-color: #ef233c
+    background-color: $red
     color: honeydew
     transform: scale(1.05)
+
+//typing suggestions
+.typing-suggestions-ul
+  background-color: $white
+  list-style: none
+  min-width: fit-content
+  min-height: fit-content
+  padding: 0
+  border-radius: 5px
+  border-style: solid
+  li
+    margin: 0
+    padding: 0 5px
+    border-bottom: $darkGrayBlack 1px inset
+    &:nth-last-child(1)
+      border: none
+
+
