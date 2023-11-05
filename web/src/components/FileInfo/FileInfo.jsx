@@ -2,6 +2,8 @@ import {useEffect, useRef, useState} from "react";
 
 function FileInfo() {
 
+    const serverUrl = "http://localhost:8080"
+
     // getters and setters
     const [filmName, setFilmName] = useState('')
     const [country, setCountry] = useState('')
@@ -11,6 +13,7 @@ function FileInfo() {
     const [imageUrl, setImageUrl] = useState('')
     const [watchTime, setWatchTime] = useState('')
     const [rating, setRating] = useState('')
+
     // position references
     const filmNameRef = useRef()
     const countryRef = useRef()
@@ -21,6 +24,8 @@ function FileInfo() {
     const watchTimeRef = useRef()
     const ratingRef = useRef()
     const typeSuggestionsRef = useRef()
+    // requests data
+    const [contentAssistListItems, setContentAssistListItems] = useState([])
 
     function fillForm(e) {
         e.preventDefault();
@@ -95,32 +100,78 @@ function FileInfo() {
 
         const elementRef = getElementRef(name)
         const position = elementRef.current.getBoundingClientRect()
-        showTypingSuggestions(position)
+        showTypingSuggestions(position, name, value)
     };
 
-    const showTypingSuggestions = (position) => {
-        const newPosition = {
-            top: position.top,
-            left: position.left
-        }
-        // typeSuggestionsRef.current.style.display = "none"
+    const showTypingSuggestions = (position, inputName, inputValue) => {
+        // change style
         const element = typeSuggestionsRef.current
-        console.log(position.top)
         element.style.top = `${position.top + 15}px`
         element.style.left = `${position.left + 5}px`
+
+
+        if (inputName === "genre") {
+            // fetch
+            let url = `${serverUrl}/film-info-genre/get-genres?sequence=`
+            url = url.concat(inputValue)
+            console.log(url)
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // console.log(data[dataKey])
+                    const listItems = Object.keys(data).map((k) => (
+                        <li key={k}>
+                            {data[k]}
+                        </li>
+                    ))
+                    setContentAssistListItems(listItems)
+                })
+                .catch(e => {
+                })
+        }
+
+
     }
+
+    // FIXME: dynamic website change size with CTRL + mouse wheel causes position loosing
+    // useEffect(() => {
+    //     const handleMouseWheel = (event) => {
+    //         if (event.ctrlKey) {
+    //             // Determine the direction of the scroll (up or down)
+    //             const delta = event.deltaY || event.detail || event.wheelDelta;
+    //
+    //             // Adjust the website size based on the scroll direction
+    //             if (delta > 0) {
+    //                 // Scroll down (make website smaller)
+    //                 // Adjust your website's size as needed
+    //                 showTypingSuggestions()
+    //             } else {
+    //                 showTypingSuggestions()
+    //                 // Scroll up (make website larger)
+    //                 // Adjust your website's size as needed
+    //             }
+    //         }
+    //     };
+    //
+    //     // Add the event listener when the component mounts
+    //     window.addEventListener("mousewheel", handleMouseWheel);
+    //
+    //     // Remove the event listener when the component unmounts
+    //     return () => {
+    //         window.removeEventListener("mousewheel", handleMouseWheel);
+    //     };
+    // }, []);
+
 
     const typingSuggestions = () => {
         return (
             <ul className="typing-suggestions-ul" ref={typeSuggestionsRef}>
-                <li className="typing-suggestions-li">one</li>
-                <li className="typing-suggestions-li">two</li>
-                <li className="typing-suggestions-li">one</li>
-                <li className="typing-suggestions-li">two</li>
-                <li className="typing-suggestions-li">three</li>
+                {contentAssistListItems}
             </ul>
+
         )
     }
+
 
     function form() {
         return <form onSubmit={fillForm}>
