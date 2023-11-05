@@ -123,8 +123,11 @@ function FileInfo() {
                         <li key={k}>
                             {data[k]}
                         </li>
+                        // <button type="submit" key={k}>
+                        //     {data[k]}
+                        // </button>
                     ))
-                    setContentAssistListItems(listItems)
+                    setContentAssistListItems(listItems);
                 })
                 .catch(e => {
                 })
@@ -172,6 +175,13 @@ function FileInfo() {
         )
     }
 
+    const hideTypeSugOnAction = (event) => {
+        if (event.key === "Tab"){
+            event.preventDefault()
+
+        }
+
+    }
 
     function form() {
         return <form onSubmit={fillForm}>
@@ -185,7 +195,9 @@ function FileInfo() {
                            type="text"
                            name="filmName"
                            value={filmName}
-                           onChange={handleInputChange}/>
+                           onChange={handleInputChange}
+                           onKeyDown={hideTypeSugOnAction}
+                    />
                 </li>
                 <li className="form-li">
                     <div className="p-right-aligner">
