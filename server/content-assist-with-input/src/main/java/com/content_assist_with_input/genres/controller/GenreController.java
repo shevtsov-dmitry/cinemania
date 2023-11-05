@@ -54,6 +54,7 @@ public class GenreController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/get-genres")
     public List<String> findGenre(@RequestParam String sequence) {
         return service.findMatchedGenres(sequence);
