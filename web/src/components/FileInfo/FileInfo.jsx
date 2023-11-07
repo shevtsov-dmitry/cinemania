@@ -4,6 +4,7 @@ import {useEffect, useRef, useState} from "react";
 function FileInfo(props) {
     const serverUrl = "http://localhost:8080"
 
+
     // getters and setters
     const [filmName, setFilmName] = useState('')
     const [country, setCountry] = useState('')
@@ -23,7 +24,8 @@ function FileInfo(props) {
     const imageUrlRef = useRef()
     const watchTimeRef = useRef()
     const ratingRef = useRef()
-
+    const inputFieldReferencesList = [filmNameRef, countryRef, releaseDateRef, genreRef,
+        minimalAgeRef, imageUrlRef, watchTimeRef, ratingRef]
     // independent elements
     const formRef = useRef();
 
@@ -36,6 +38,8 @@ function FileInfo(props) {
     const popupImageUrlRef = useRef()
     const popupWatchTimeRef = useRef()
     const popupRatingRef = useRef()
+    const popupsReferencesList = [popupFilmNameRef, popupCountryRef, popupReleaseDateRef,
+        popupGenreRef, popupMinimalAgeRef, popupImageUrlRef, popupWatchTimeRef, popupRatingRef]
 
     // requests data
     const [contentAssistListItems, setContentAssistListItems] = useState([])
@@ -59,9 +63,10 @@ function FileInfo(props) {
     }
 
     const handleInputChange = (input) => {
-        const {name, value} = input.target;
-        setValues();
+        const {name, value} = input.target
+        setValues()
         setInputName(name)
+        showTypingSuggestions(name, value)
 
         function setValues() {
             switch (name) {
@@ -114,99 +119,72 @@ function FileInfo(props) {
         }
 
 
-        const elementRef = getElementRef(name)
-        const position = elementRef.current.getBoundingClientRect()
-        showTypingSuggestions(position, name, value)
     };
 
-    const showTypingSuggestions = (position, inputName, inputValue) => {
-        // change style
-        // const element = typeSuggestionsRef.current
-        // element.style.top = `${position.top + 15}px`
-        // element.style.left = `${position.left + 5}px`
+    const showTypingSuggestions = (inputName, inputValue) => {
 
-
-        // if (inputName === "genre") {
-        // fetch
-        let url = `${serverUrl}/film-info-genre/get-genres?sequence=`
-        url = url.concat(inputValue)
-        console.log(url)
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const listItems = Object.keys(data).map((k) => (
-                    // <li key={k}>
-                    //     {data[k]}
-                    // </li>
-                    <button className="content-assist-popup-btn" type="submit" key={k}>
-                        {data[k]}
-                    </button>
-                ))
-                setContentAssistListItems(listItems);
-            })
-            .catch(e => {
-            })
+        if(inputName === "genre"){
+            let url = `${serverUrl}/film-info-genre/get-genres?sequence=`
+            url = url.concat(inputValue)
+            console.log(url)
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const listItems = Object.keys(data).map((k) => (// <li key={k}>
+                        <button className="content-assist-popup-btn" type="submit" key={k}>
+                            {data[k]}
+                        </button>))
+                    setContentAssistListItems(listItems);
+                })
+                .catch(e => {
+                })
+        }
+        // else if (inputName === "country"){
+        //
         // }
 
-
     }
-
-    // FIXME: dynamic website change size with CTRL + mouse wheel causes position loosing
-    // useEffect(() => {
-    //     const handleMouseWheel = (event) => {
-    //         if (event.ctrlKey) {
-    //             // Determine the direction of the scroll (up or down)
-    //             const delta = event.deltaY || event.detail || event.wheelDelta;
-    //
-    //             // Adjust the website size based on the scroll direction
-    //             if (delta > 0) {
-    //                 // Scroll down (make website smaller)
-    //                 // Adjust your website's size as needed
-    //                 showTypingSuggestions()
-    //             } else {
-    //                 showTypingSuggestions()
-    //                 // Scroll up (make website larger)
-    //                 // Adjust your website's size as needed
-    //             }
-    //         }
-    //     };
-    //
-    //     // Add the event listener when the component mounts
-    //     window.addEventListener("mousewheel", handleMouseWheel);
-    //
-    //     // Remove the event listener when the component unmounts
-    //     return () => {
-    //         window.removeEventListener("mousewheel", handleMouseWheel);
-    //     };
-    // }, []);
-
-
     useEffect(() => {
-        const form = formRef.current.firstChild;
-        const map = {
-            "filmName": 0,
-            "country": 1,
-            "releaseDate": 2,
-            "genre": 3,
-            "minimalAge": 4,
-            "imageUrl": 5,
-            "watchTime": 6,
-            "rating": 7
-        }
-        const popupsReferencesList = [popupFilmNameRef, popupCountryRef, popupReleaseDateRef,
-            popupGenreRef, popupMinimalAgeRef, popupImageUrlRef, popupWatchTimeRef, popupRatingRef]
         if (inputName !== null) {
-            const selectedPopup = popupsReferencesList[map[inputName]]
-            selectedPopup.current.style.display = "flex"
-        }
 
+            const fieldNameArrayIndex = {
+                "filmName": 0,
+                "country": 1,
+                "releaseDate": 2,
+                "genre": 3,
+                "minimalAge": 4,
+                "imageUrl": 5,
+                "watchTime": 6,
+                "rating": 7
+            }
+
+            const selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
+            selectedPopup.current.style.display = "flex"
+
+            const children = selectedPopup.current.children
+            for (let genreNameBtn of children) {
+                genreNameBtn.addEventListener("focus", () => {
+                    genreNameBtn.style.backgroundColor = "#e07a5f"
+                    genreNameBtn.style.color = "white"
+                })
+                genreNameBtn.addEventListener('blur', () => {
+                    genreNameBtn.style.backgroundColor = ''; // Reset the background color when focus is removed
+
+                    genreNameBtn.style.color = "black"
+                    for (let child of inputFieldReferencesList) {
+                        child.current.addEventListener("focus", () => {
+                            selectedPopup.current.style.display = "none"
+                        })
+                    }
+
+                });
+            }
+        }
 
     }, [contentAssistListItems]);
 
-
     const typingSuggestions = (refName) => {
-        return (
-            <ul className="typing-suggestions-ul" ref={getPopupRef(refName)}>
+        return (<ul className="typing-suggestions-ul" ref={getPopupRef(refName)}>
                 {contentAssistListItems}
             </ul>
 
@@ -360,12 +338,10 @@ function FileInfo(props) {
         </form>;
     }
 
-    return (
-        <div className="container">
-            <div className="add-film-header">add film</div>
-            {form()}
-        </div>
-    )
+    return (<div className="container">
+        <div className="add-film-header">add film</div>
+        {form()}
+    </div>)
 }
 
 

@@ -12,14 +12,14 @@ form {
   align-items: center;
   padding: 0;
   flex-direction: column;
-  gap: 0px;
+  gap: 0.5em;
 }
 
 .form-li {
   margin: 0;
   display: grid;
   grid-template-columns: 1fr 2.5fr;
-  grid-gap: 5%;
+  grid-gap: 2.5%;
   grid-template-rows: 40px;
   align-items: center;
 }
@@ -53,7 +53,7 @@ form {
 }
 
 .paragraph-aligner {
-  padding: 0;
+  padding: 0 0 10px 0;
   margin: 0;
   width: 100px;
   display: flex;
@@ -113,6 +113,29 @@ form {
 }
 .relative-structure-to-hold-type-suggestions:nth-child(3) {
   grid-column-start: 2;
+}
+
+.typing-suggestions-ul {
+  border-style: none;
+}
+
+.content-assist-popup-btn {
+  text-align: left;
+  background-color: #ffffff;
+  border-style: none;
+}
+.content-assist-popup-btn:first-child {
+  border-radius: 3px 3px 0 0;
+}
+.content-assist-popup-btn:last-child {
+  border-radius: 0 0 3px 3px;
+}
+.content-assist-popup-btn:focus {
+  outline: none;
+}
+.content-assist-popup-btn:hover {
+  background-color: #e07a5f;
+  color: white;
 }
 
 /*# sourceMappingURL=FileInfo.css.map */

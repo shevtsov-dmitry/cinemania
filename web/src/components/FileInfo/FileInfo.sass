@@ -25,16 +25,15 @@ form
 .form-ul
   @include flex-center
   padding: 0
-
   flex-direction: column
-  gap: 0px
+  gap: 0.5em
 
 .form-li
   margin: 0
   display: grid
   //grid-template-columns: 28% 68%
   grid-template-columns: 1fr 2.5fr
-  grid-gap: 5%
+  grid-gap: 2.5%
   grid-template-rows: 40px
   align-items: center
 
@@ -67,7 +66,7 @@ form
   flex-direction: column
 
 .paragraph-aligner
-  padding: 0
+  padding: 0 0 10px 0
   margin: 0
   width: 100px
   display: flex
@@ -94,7 +93,6 @@ form
   border-style: solid
   border-width: 1px
   flex-direction: column
-
 
 
 .hidden-suggestion-form
@@ -125,3 +123,20 @@ form
   position: relative
   &:nth-child(3)
     grid-column-start: 2
+
+.typing-suggestions-ul
+  border-style: none
+
+.content-assist-popup-btn
+  text-align: left
+  background-color: #ffffff
+  border-style: none
+  &:first-child
+    border-radius: 3px 3px 0 0
+  &:last-child
+    border-radius: 0 0 3px 3px
+  &:focus
+    outline: none
+  &:hover
+    background-color: #e07a5f
+    color: white
