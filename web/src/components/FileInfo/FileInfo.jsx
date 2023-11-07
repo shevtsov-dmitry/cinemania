@@ -15,6 +15,20 @@ function FileInfo(props) {
     const [watchTime, setWatchTime] = useState('')
     const [rating, setRating] = useState('')
 
+    // independent elements
+    const formRef = useRef();
+
+    const fieldNameArrayIndex = {
+        "filmName": 0,
+        "country": 1,
+        "releaseDate": 2,
+        "genre": 3,
+        "minimalAge": 4,
+        "imageUrl": 5,
+        "watchTime": 6,
+        "rating": 7
+    }
+
     // position references
     const filmNameRef = useRef()
     const countryRef = useRef()
@@ -26,8 +40,6 @@ function FileInfo(props) {
     const ratingRef = useRef()
     const inputFieldReferencesList = [filmNameRef, countryRef, releaseDateRef, genreRef,
         minimalAgeRef, imageUrlRef, watchTimeRef, ratingRef]
-    // independent elements
-    const formRef = useRef();
 
     // text suggestion references
     const popupFilmNameRef = useRef()
@@ -100,27 +112,6 @@ function FileInfo(props) {
             }
         }
 
-        function getElementRef(name) {
-            switch (name) {
-                case 'filmName':
-                    return filmNameRef
-                case 'country':
-                    return countryRef
-                case 'releaseDate':
-                    return releaseDateRef
-                case 'genre':
-                    return genreRef
-                case 'minimalAge':
-                    return minimalAgeRef
-                case 'imageUrl':
-                    return imageUrlRef
-                case 'watchTime':
-                    return watchTimeRef
-                case 'rating':
-                    return ratingRef
-            }
-        }
-
 
     };
 
@@ -149,26 +140,11 @@ function FileInfo(props) {
 
 
         if (inputName !== null) {
-            let selectedPopup = -1
-            selectedPopup = defineSelectedPopupByInputName();
+            let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
             selectedPopup.current.style.display = "flex"
             highlightPopupElementTextColorWhileTyping(selectedPopup);
             changeButtonColorsOnSwitchingWithTab(selectedPopup);
             hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
-        }
-
-        function defineSelectedPopupByInputName() {
-            const fieldNameArrayIndex = {
-                "filmName": 0,
-                "country": 1,
-                "releaseDate": 2,
-                "genre": 3,
-                "minimalAge": 4,
-                "imageUrl": 5,
-                "watchTime": 6,
-                "rating": 7
-            }
-            return popupsReferencesList[fieldNameArrayIndex[inputName]]
         }
 
         function highlightPopupElementTextColorWhileTyping(selectedPopup) {
@@ -182,11 +158,25 @@ function FileInfo(props) {
             }
         }
 
+        // FIXME decompose method
         function changeButtonColorsOnSwitchingWithTab(selectedPopup) {
             for (let genreNameBtn of selectedPopup.current.children) {
-                genreNameBtn.addEventListener("focus", () => {
-                    genreNameBtn.style.backgroundColor = "#e07a5f"
+                genreNameBtn.addEventListener("focus", (e) => {
+                    genreNameBtn.style.backgroundColor = "#2b2d42"
                     genreNameBtn.style.color = "white"
+
+                        genreNameBtn.addEventListener("click", ()=> {
+                            autoCompleteTextFromSuggestion(genreNameBtn.textContent)
+                            selectedPopup.current.style.display = "none"
+                        })
+
+                    function autoCompleteTextFromSuggestion(textToAppend) {
+                        let selectedInput = inputFieldReferencesList[fieldNameArrayIndex[inputName]]
+                        if (selectedInput !== null && selectedInput !== undefined) {
+                            selectedInput.current.value = textToAppend;
+                        }
+                    }
+
                 })
                 genreNameBtn.addEventListener('blur', () => {
                     genreNameBtn.style.backgroundColor = ''; // Reset the background color when focus is removed
@@ -194,6 +184,7 @@ function FileInfo(props) {
                 });
             }
         }
+
 
         function hideTypeSuggestionsPopupWhenNotFocused(selectedPopup) {
             for (let child of inputFieldReferencesList) {
@@ -204,8 +195,10 @@ function FileInfo(props) {
         }
     }
 
+
     useEffect(() => {
         changeTypingSuggestionsPopupStyle();
+
 
     }, [contentAssistListItems]);
 
