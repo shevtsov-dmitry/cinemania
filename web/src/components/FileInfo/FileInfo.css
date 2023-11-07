@@ -2,16 +2,8 @@ form {
   background-color: #edf2f4;
   width: fit-content;
   border-radius: 10px;
-}
-form button {
-  margin-bottom: 3%;
-  padding: 0.5em;
-  border-radius: 30px;
-  border-style: none;
-  background-color: #d90429;
-  color: white;
-  font-size: 1.2em;
-  transition: scale 1s linear;
+  padding: 0;
+  margin: 0;
 }
 
 .form-ul {
@@ -24,22 +16,19 @@ form button {
 }
 
 .form-li {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin: 0;
-}
-
-.form-pi p {
-  padding: 0;
-  margin: 0 6px 6px 0;
+  display: grid;
+  grid-template-columns: 1fr 2.5fr;
+  grid-gap: 5%;
+  grid-template-rows: 40px;
+  align-items: center;
 }
 
 .form-input {
   border-radius: 12px;
   border-style: none;
   height: 30px;
-  margin-right: 80px;
+  width: 90%;
   font-family: Calibri, sans-serif;
   font-size: 1em;
   opacity: 80%;
@@ -63,7 +52,9 @@ form button {
   flex-direction: column;
 }
 
-.p-right-aligner {
+.paragraph-aligner {
+  padding: 0;
+  margin: 0;
   width: 100px;
   display: flex;
   justify-content: right;
@@ -74,14 +65,10 @@ form button {
   justify-content: center;
   align-items: center;
 }
-.button-aligner:active {
-  background-color: #ef233c;
-  color: honeydew;
-  transform: scale(1.05);
-}
 
 .typing-suggestions-ul {
-  position: revert;
+  display: none;
+  position: absolute;
   z-index: 2;
   background-color: white;
   list-style: none;
@@ -91,18 +78,41 @@ form button {
   border-radius: 5px;
   border-style: solid;
   border-width: 1px;
-}
-.typing-suggestions-ul .typing-suggestions-li {
-  margin: 0;
-  padding: 0 5px;
-  border-bottom: #343a40 1px inset;
-}
-.typing-suggestions-ul .typing-suggestions-li:nth-last-child(1) {
-  border: none;
+  flex-direction: column;
 }
 
 .hidden-suggestion-form {
   display: none;
+}
+.hidden-suggestion-form .content-assist-popup-btn {
+  margin: 0;
+  padding: 0 5px;
+  border-bottom: #343a40 1px inset;
+}
+.hidden-suggestion-form .content-assist-popup-btn:nth-last-child(1) {
+  border: none;
+}
+
+.submit-button {
+  margin-bottom: 3%;
+  padding: 0.5em;
+  border-radius: 30px;
+  border-style: none;
+  background-color: #d90429;
+  color: white;
+  font-size: 1.2em;
+  transition: scale 1s linear;
+}
+.submit-button:active {
+  background-color: green;
+  transform: scale(1.05);
+}
+
+.relative-structure-to-hold-type-suggestions {
+  position: relative;
+}
+.relative-structure-to-hold-type-suggestions:nth-child(3) {
+  grid-column-start: 2;
 }
 
 /*# sourceMappingURL=FileInfo.css.map */

@@ -17,16 +17,10 @@ form
   background-color: $white
   width: fit-content
   border-radius: 10px
+  padding: 0
+  margin: 0
 
-  button
-    margin-bottom: 3%
-    padding: 0.5em
-    border-radius: 30px
-    border-style: none
-    background-color: $vividRed
-    color: white
-    font-size: 1.2em
-    transition: scale 1s linear
+
 
 .form-ul
   @include flex-center
@@ -36,19 +30,22 @@ form
   gap: 0px
 
 .form-li
-  @include flex-center
   margin: 0
+  display: grid
+  //grid-template-columns: 28% 68%
+  grid-template-columns: 1fr 2.5fr
+  grid-gap: 5%
+  grid-template-rows: 40px
+  align-items: center
 
-.form-pi
-  p
-    padding: 0
-    margin: 0 6px 6px 0
+
+
 
 .form-input
   border-radius: 12px
   border-style: none
   height: 30px
-  margin-right: 80px
+  width: 90%
   // text
   font-family: Calibri, sans-serif
   font-size: 1em
@@ -69,22 +66,24 @@ form
   background-color: $darkBlue
   flex-direction: column
 
-.p-right-aligner
+.paragraph-aligner
+  padding: 0
+  margin: 0
   width: 100px
   display: flex
   justify-content: right
 
+
+
 .button-aligner
   @include flex-center
 
-  &:active
-    background-color: $red
-    color: honeydew
-    transform: scale(1.05)
+
 
 //typing suggestions
 .typing-suggestions-ul
-  position: revert
+  display: none
+  position: absolute
   z-index: 2
   background-color: white
   list-style: none
@@ -94,8 +93,14 @@ form
   border-radius: 5px
   border-style: solid
   border-width: 1px
+  flex-direction: column
 
-  .typing-suggestions-li
+
+
+.hidden-suggestion-form
+  display: none
+
+  .content-assist-popup-btn
     margin: 0
     padding: 0 5px
     border-bottom: $darkGrayBlack 1px inset
@@ -103,6 +108,20 @@ form
     &:nth-last-child(1)
       border: none
 
-.hidden-suggestion-form
-  display: none
+.submit-button
+  margin-bottom: 3%
+  padding: 0.5em
+  border-radius: 30px
+  border-style: none
+  background-color: $vividRed
+  color: white
+  font-size: 1.2em
+  transition: scale 1s linear
+  &:active
+    background-color: green
+    transform: scale(1.05)
 
+.relative-structure-to-hold-type-suggestions
+  position: relative
+  &:nth-child(3)
+    grid-column-start: 2

@@ -195,9 +195,9 @@ function FileInfo(props) {
         }
         const popupsReferencesList = [popupFilmNameRef, popupCountryRef, popupReleaseDateRef,
             popupGenreRef, popupMinimalAgeRef, popupImageUrlRef, popupWatchTimeRef, popupRatingRef]
-        if(inputName !== null){
+        if (inputName !== null) {
             const selectedPopup = popupsReferencesList[map[inputName]]
-                selectedPopup.current.style.display = "flex"
+            selectedPopup.current.style.display = "flex"
         }
 
 
@@ -238,7 +238,7 @@ function FileInfo(props) {
         return <form onSubmit={fillForm} ref={formRef}>
             <ul className="form-ul">
                 <li className="form-li">
-                    <div className="p-right-aligner">
+                    <div className="paragraph-aligner">
                         <p>film name</p>
                     </div>
                     <input ref={filmNameRef}
@@ -247,11 +247,12 @@ function FileInfo(props) {
                            name="filmName"
                            value={filmName}
                            onChange={handleInputChange}/>
-                    {typingSuggestions("filmName")}
-
+                    <div className="relative-structure-to-hold-type-suggestions">
+                        {typingSuggestions("filmName")}
+                    </div>
                 </li>
                 <li className="form-li">
-                    <div className="p-right-aligner">
+                    <div className="paragraph-aligner">
                         <p>country</p>
                     </div>
                     <input ref={countryRef}
@@ -260,11 +261,12 @@ function FileInfo(props) {
                            name="country"
                            value={country}
                            onChange={handleInputChange}/>
-                    {typingSuggestions("country")}
-
+                    <div className="relative-structure-to-hold-type-suggestions">
+                        {typingSuggestions("country")}
+                    </div>
                 </li>
                 <li className="form-li">
-                    <div className="p-right-aligner">
+                    <div className="paragraph-aligner">
                         <p>release date</p>
                     </div>
                     <input ref={releaseDateRef}
@@ -273,11 +275,13 @@ function FileInfo(props) {
                            name="releaseDate"
                            value={releaseDate}
                            onChange={handleInputChange}/>
-                    {typingSuggestions("releaseDate")}
+                    <div className="relative-structure-to-hold-type-suggestions">
+                        {typingSuggestions("releaseDate")}
+                    </div>
 
                 </li>
                 <li className="form-li">
-                    <div className="p-right-aligner">
+                    <div className="paragraph-aligner">
                         <p>genre</p>
                     </div>
                     <input ref={genreRef}
@@ -286,11 +290,13 @@ function FileInfo(props) {
                            name="genre"
                            value={genre}
                            onChange={handleInputChange}/>
-                    {typingSuggestions("genre")}
+                    <div className="relative-structure-to-hold-type-suggestions">
+                        {typingSuggestions("genre")}
+                    </div>
 
                 </li>
                 <li className="form-li">
-                    <div className="p-right-aligner">
+                    <div className="paragraph-aligner">
                         <p>minimal age</p>
                     </div>
                     <input ref={minimalAgeRef}
@@ -299,11 +305,13 @@ function FileInfo(props) {
                            name="minimalAge"
                            value={minimalAge}
                            onChange={handleInputChange}/>
-                    {typingSuggestions("minimalAge")}
+                    <div className="relative-structure-to-hold-type-suggestions">
+                        {typingSuggestions("minimalAge")}
+                    </div>
 
                 </li>
                 <li className="form-li">
-                    <div className="p-right-aligner">
+                    <div className="paragraph-aligner">
                         <p>poster</p>
                     </div>
                     <input ref={imageUrlRef}
@@ -312,10 +320,12 @@ function FileInfo(props) {
                            name="imageUrl"
                            value={imageUrl}
                            onChange={handleInputChange}/>
-                    {typingSuggestions("imageUrl")}
+                    <div className="relative-structure-to-hold-type-suggestions">
+                        {typingSuggestions("imageUrl")}
+                    </div>
                 </li>
                 <li className="form-li">
-                    <div className="p-right-aligner">
+                    <div className="paragraph-aligner">
                         <p>watch time</p>
                     </div>
                     <input ref={watchTimeRef}
@@ -324,10 +334,12 @@ function FileInfo(props) {
                            name="watchTime"
                            value={watchTime}
                            onChange={handleInputChange}/>
-                    {typingSuggestions("watchTime")}
+                    <div className="relative-structure-to-hold-type-suggestions">
+                        {typingSuggestions("watchTime")}
+                    </div>
                 </li>
                 <li className="form-li">
-                    <div className="p-right-aligner">
+                    <div className="paragraph-aligner">
                         <p>rating</p>
                     </div>
                     <input ref={ratingRef}
@@ -336,7 +348,9 @@ function FileInfo(props) {
                            name="rating"
                            value={rating}
                            onChange={handleInputChange}/>
-                    {typingSuggestions("rating")}
+                    <div className="relative-structure-to-hold-type-suggestions">
+                        {typingSuggestions("rating")}
+                    </div>
 
                 </li>
             </ul>
