@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 
-function FileInfo() {
 
+function FileInfo(props) {
     const serverUrl = "http://localhost:8080"
 
     // getters and setters
@@ -23,9 +23,23 @@ function FileInfo() {
     const imageUrlRef = useRef()
     const watchTimeRef = useRef()
     const ratingRef = useRef()
-    const typeSuggestionsRef = useRef()
+
+    // independent elements
+    const formRef = useRef();
+
+    // text suggestion references
+    const popupFilmNameRef = useRef()
+    const popupCountryRef = useRef()
+    const popupReleaseDateRef = useRef()
+    const popupGenreRef = useRef()
+    const popupMinimalAgeRef = useRef()
+    const popupImageUrlRef = useRef()
+    const popupWatchTimeRef = useRef()
+    const popupRatingRef = useRef()
+
     // requests data
     const [contentAssistListItems, setContentAssistListItems] = useState([])
+    const [inputName, setInputName] = useState(null)
 
     function fillForm(e) {
         e.preventDefault();
@@ -47,6 +61,7 @@ function FileInfo() {
     const handleInputChange = (input) => {
         const {name, value} = input.target;
         setValues();
+        setInputName(name)
 
         function setValues() {
             switch (name) {
@@ -98,6 +113,7 @@ function FileInfo() {
             }
         }
 
+
         const elementRef = getElementRef(name)
         const position = elementRef.current.getBoundingClientRect()
         showTypingSuggestions(position, name, value)
@@ -105,33 +121,32 @@ function FileInfo() {
 
     const showTypingSuggestions = (position, inputName, inputValue) => {
         // change style
-        const element = typeSuggestionsRef.current
-        element.style.top = `${position.top + 15}px`
-        element.style.left = `${position.left + 5}px`
+        // const element = typeSuggestionsRef.current
+        // element.style.top = `${position.top + 15}px`
+        // element.style.left = `${position.left + 5}px`
 
 
-        if (inputName === "genre") {
-            // fetch
-            let url = `${serverUrl}/film-info-genre/get-genres?sequence=`
-            url = url.concat(inputValue)
-            console.log(url)
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    // console.log(data[dataKey])
-                    const listItems = Object.keys(data).map((k) => (
-                        <li key={k}>
-                            {data[k]}
-                        </li>
-                        // <button type="submit" key={k}>
-                        //     {data[k]}
-                        // </button>
-                    ))
-                    setContentAssistListItems(listItems);
-                })
-                .catch(e => {
-                })
-        }
+        // if (inputName === "genre") {
+        // fetch
+        let url = `${serverUrl}/film-info-genre/get-genres?sequence=`
+        url = url.concat(inputValue)
+        console.log(url)
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const listItems = Object.keys(data).map((k) => (
+                    // <li key={k}>
+                    //     {data[k]}
+                    // </li>
+                    <button className="content-assist-popup-btn" type="submit" key={k}>
+                        {data[k]}
+                    </button>
+                ))
+                setContentAssistListItems(listItems);
+            })
+            .catch(e => {
+            })
+        // }
 
 
     }
@@ -166,25 +181,61 @@ function FileInfo() {
     // }, []);
 
 
-    const typingSuggestions = () => {
+    useEffect(() => {
+        const form = formRef.current.firstChild;
+        const map = {
+            "filmName": 0,
+            "country": 1,
+            "releaseDate": 2,
+            "genre": 3,
+            "minimalAge": 4,
+            "imageUrl": 5,
+            "watchTime": 6,
+            "rating": 7
+        }
+        const popupsReferencesList = [popupFilmNameRef, popupCountryRef, popupReleaseDateRef,
+            popupGenreRef, popupMinimalAgeRef, popupImageUrlRef, popupWatchTimeRef, popupRatingRef]
+        if(inputName !== null){
+            const selectedPopup = popupsReferencesList[map[inputName]]
+                selectedPopup.current.style.display = "flex"
+        }
+
+
+    }, [contentAssistListItems]);
+
+
+    const typingSuggestions = (refName) => {
         return (
-            <ul className="typing-suggestions-ul" ref={typeSuggestionsRef}>
+            <ul className="typing-suggestions-ul" ref={getPopupRef(refName)}>
                 {contentAssistListItems}
             </ul>
 
         )
-    }
 
-    const hideTypeSugOnAction = (event) => {
-        if (event.key === "Tab"){
-            event.preventDefault()
-
+        function getPopupRef(refName) {
+            switch (refName) {
+                case "filmName" :
+                    return popupFilmNameRef;
+                case "country" :
+                    return popupCountryRef;
+                case "releaseDate" :
+                    return popupReleaseDateRef;
+                case "genre" :
+                    return popupGenreRef;
+                case "minimalAge" :
+                    return popupMinimalAgeRef;
+                case "imageUrl" :
+                    return popupImageUrlRef;
+                case "watchTime" :
+                    return popupWatchTimeRef;
+                case "rating" :
+                    return popupRatingRef;
+            }
         }
-
     }
 
     function form() {
-        return <form onSubmit={fillForm}>
+        return <form onSubmit={fillForm} ref={formRef}>
             <ul className="form-ul">
                 <li className="form-li">
                     <div className="p-right-aligner">
@@ -195,9 +246,9 @@ function FileInfo() {
                            type="text"
                            name="filmName"
                            value={filmName}
-                           onChange={handleInputChange}
-                           onKeyDown={hideTypeSugOnAction}
-                    />
+                           onChange={handleInputChange}/>
+                    {typingSuggestions("filmName")}
+
                 </li>
                 <li className="form-li">
                     <div className="p-right-aligner">
@@ -209,6 +260,8 @@ function FileInfo() {
                            name="country"
                            value={country}
                            onChange={handleInputChange}/>
+                    {typingSuggestions("country")}
+
                 </li>
                 <li className="form-li">
                     <div className="p-right-aligner">
@@ -220,6 +273,8 @@ function FileInfo() {
                            name="releaseDate"
                            value={releaseDate}
                            onChange={handleInputChange}/>
+                    {typingSuggestions("releaseDate")}
+
                 </li>
                 <li className="form-li">
                     <div className="p-right-aligner">
@@ -230,8 +285,9 @@ function FileInfo() {
                            type="text"
                            name="genre"
                            value={genre}
-                           onChange={handleInputChange}
-                    />
+                           onChange={handleInputChange}/>
+                    {typingSuggestions("genre")}
+
                 </li>
                 <li className="form-li">
                     <div className="p-right-aligner">
@@ -243,6 +299,8 @@ function FileInfo() {
                            name="minimalAge"
                            value={minimalAge}
                            onChange={handleInputChange}/>
+                    {typingSuggestions("minimalAge")}
+
                 </li>
                 <li className="form-li">
                     <div className="p-right-aligner">
@@ -254,6 +312,7 @@ function FileInfo() {
                            name="imageUrl"
                            value={imageUrl}
                            onChange={handleInputChange}/>
+                    {typingSuggestions("imageUrl")}
                 </li>
                 <li className="form-li">
                     <div className="p-right-aligner">
@@ -265,6 +324,7 @@ function FileInfo() {
                            name="watchTime"
                            value={watchTime}
                            onChange={handleInputChange}/>
+                    {typingSuggestions("watchTime")}
                 </li>
                 <li className="form-li">
                     <div className="p-right-aligner">
@@ -276,10 +336,12 @@ function FileInfo() {
                            name="rating"
                            value={rating}
                            onChange={handleInputChange}/>
+                    {typingSuggestions("rating")}
+
                 </li>
             </ul>
             <div className="button-aligner">
-                <button id="add-film-button">submit</button>
+                <button className="submit-button" id="add-film-button">submit</button>
             </div>
         </form>;
     }
@@ -288,9 +350,9 @@ function FileInfo() {
         <div className="container">
             <div className="add-film-header">add film</div>
             {form()}
-            {typingSuggestions()}
         </div>
     )
 }
+
 
 export default FileInfo
