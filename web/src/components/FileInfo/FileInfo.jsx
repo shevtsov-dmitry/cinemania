@@ -139,14 +139,19 @@ function FileInfo(props) {
                 .catch(e => {
                 })
         }
-        // else if (inputName === "country"){
-        //
-        // }
 
     }
-    useEffect(() => {
-        if (inputName !== null) {
 
+    function changeTypingSuggestionsPopupStyle() {
+        if (inputName !== null) {
+            let selectedPopup = -1
+            selectedPopup = defineSelectedPopupByInputName();
+            selectedPopup.current.style.display = "flex"
+            changeButtonColorsOnSwitchingWithTab(selectedPopup);
+            hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
+        }
+
+        function defineSelectedPopupByInputName() {
             const fieldNameArrayIndex = {
                 "filmName": 0,
                 "country": 1,
@@ -157,29 +162,33 @@ function FileInfo(props) {
                 "watchTime": 6,
                 "rating": 7
             }
+            return popupsReferencesList[fieldNameArrayIndex[inputName]]
+        }
 
-            const selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
-            selectedPopup.current.style.display = "flex"
-
-            const children = selectedPopup.current.children
-            for (let genreNameBtn of children) {
+        function changeButtonColorsOnSwitchingWithTab(selectedPopup) {
+            for (let genreNameBtn of selectedPopup.current.children) {
                 genreNameBtn.addEventListener("focus", () => {
                     genreNameBtn.style.backgroundColor = "#e07a5f"
                     genreNameBtn.style.color = "white"
                 })
                 genreNameBtn.addEventListener('blur', () => {
                     genreNameBtn.style.backgroundColor = ''; // Reset the background color when focus is removed
-
                     genreNameBtn.style.color = "black"
-                    for (let child of inputFieldReferencesList) {
-                        child.current.addEventListener("focus", () => {
-                            selectedPopup.current.style.display = "none"
-                        })
-                    }
-
                 });
             }
         }
+
+        function hideTypeSuggestionsPopupWhenNotFocused(selectedPopup) {
+            for (let child of inputFieldReferencesList) {
+                child.current.addEventListener("focus", () => {
+                    selectedPopup.current.style.display = "none"
+                })
+            }
+        }
+    }
+
+    useEffect(() => {
+        changeTypingSuggestionsPopupStyle();
 
     }, [contentAssistListItems]);
 
