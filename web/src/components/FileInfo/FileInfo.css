@@ -29,10 +29,16 @@ form {
   border-style: none;
   height: 30px;
   width: 90%;
-  font-family: Calibri, sans-serif;
+}
+.form-input[type=text] {
   font-size: 1em;
   opacity: 80%;
   color: #343a40;
+  font-family: "Segoe UI", "Roboto", sans-serif;
+  padding: 0px 0px 5px 10px;
+  margin: 5px 0;
+  box-sizing: border-box;
+  align-items: center;
 }
 
 .add-film-header {
@@ -53,7 +59,7 @@ form {
 }
 
 .paragraph-aligner {
-  padding: 0 0 10px 0;
+  padding: 0 0 7px 0;
   margin: 0;
   width: 100px;
   display: flex;

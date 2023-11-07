@@ -45,11 +45,16 @@ form
   border-style: none
   height: 30px
   width: 90%
-  // text
-  font-family: Calibri, sans-serif
-  font-size: 1em
-  opacity: 80%
-  color: $darkGrayBlack
+  &[type="text"]
+    font-size: 1em
+    opacity: 80%
+    color: $darkGrayBlack
+    font-family: 'Segoe UI', 'Roboto', sans-serif
+    padding: 0px 0px 5px 10px
+    margin: 5px 0
+    box-sizing: border-box
+    align-items: center
+
 
 
 .add-film-header
@@ -66,7 +71,7 @@ form
   flex-direction: column
 
 .paragraph-aligner
-  padding: 0 0 10px 0
+  padding: 0 0 7px 0
   margin: 0
   width: 100px
   display: flex
