@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from "react";
 function FileInfo(props) {
     const serverUrl = "http://localhost:8080"
 
-
+    const suggestionsTextHighlightColor = "#f72585"
     // getters and setters
     const [filmName, setFilmName] = useState('')
     const [country, setCountry] = useState('')
@@ -44,6 +44,8 @@ function FileInfo(props) {
     // requests data
     const [contentAssistListItems, setContentAssistListItems] = useState([])
     const [inputName, setInputName] = useState(null)
+    const [inputValue, setInputValue] = useState(null)
+
 
     function fillForm(e) {
         e.preventDefault();
@@ -59,16 +61,17 @@ function FileInfo(props) {
             rating: rating
         }
 
-        console.log(filledForm)
     }
 
     const handleInputChange = (input) => {
         const {name, value} = input.target
-        setValues()
         setInputName(name)
+        setInputValue(value)
+
+        setGlobalNameValuesForReferences()
         showTypingSuggestions(name, value)
 
-        function setValues() {
+        function setGlobalNameValuesForReferences() {
             switch (name) {
                 case 'filmName':
                     setFilmName(value);
@@ -121,11 +124,11 @@ function FileInfo(props) {
 
     };
 
-    const showTypingSuggestions = (inputName, inputValue) => {
+    const showTypingSuggestions = (name, value) => {
 
-        if(inputName === "genre"){
+        if (name === "genre") {
             let url = `${serverUrl}/film-info-genre/get-genres?sequence=`
-            url = url.concat(inputValue)
+            url = url.concat(value)
             console.log(url)
             fetch(url)
                 .then(response => response.json())
@@ -143,10 +146,13 @@ function FileInfo(props) {
     }
 
     function changeTypingSuggestionsPopupStyle() {
+
+
         if (inputName !== null) {
             let selectedPopup = -1
             selectedPopup = defineSelectedPopupByInputName();
             selectedPopup.current.style.display = "flex"
+            highlightPopupElementTextColorWhileTyping(selectedPopup);
             changeButtonColorsOnSwitchingWithTab(selectedPopup);
             hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
         }
@@ -163,6 +169,17 @@ function FileInfo(props) {
                 "rating": 7
             }
             return popupsReferencesList[fieldNameArrayIndex[inputName]]
+        }
+
+        function highlightPopupElementTextColorWhileTyping(selectedPopup) {
+            let length = inputValue.length
+            const suggestedVariants = selectedPopup.current.children
+            for (let suggestedVariant of suggestedVariants) {
+                suggestedVariant.innerHTML =
+                    `<span style="color: ${suggestionsTextHighlightColor};">`
+                    + `${suggestedVariant.textContent.substring(0, length)}</span>`
+                    + `${suggestedVariant.textContent.substring(length, suggestedVariant.textContent.length)}`;
+            }
         }
 
         function changeButtonColorsOnSwitchingWithTab(selectedPopup) {
