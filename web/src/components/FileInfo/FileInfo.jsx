@@ -143,7 +143,7 @@ function FileInfo(props) {
             let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
             selectedPopup.current.style.display = "flex"
             highlightPopupElementTextColorWhileTyping(selectedPopup);
-            changeButtonColorsOnSwitchingWithTab(selectedPopup);
+            autoCompleteTextFromSuggestion(selectedPopup);
             hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
         }
 
@@ -158,19 +158,20 @@ function FileInfo(props) {
             }
         }
 
-        // FIXME decompose method
-        function changeButtonColorsOnSwitchingWithTab(selectedPopup) {
+        // In this function contains style adjust operation due to improved optimization
+        // FIXME could be fixed in the futures with two threads
+        function autoCompleteTextFromSuggestion(selectedPopup) {
             for (let genreNameBtn of selectedPopup.current.children) {
                 genreNameBtn.addEventListener("focus", (e) => {
                     genreNameBtn.style.backgroundColor = "#2b2d42"
                     genreNameBtn.style.color = "white"
 
                         genreNameBtn.addEventListener("click", ()=> {
-                            autoCompleteTextFromSuggestion(genreNameBtn.textContent)
+                            insertSuggestedTextInInput(genreNameBtn.textContent)
                             selectedPopup.current.style.display = "none"
                         })
 
-                    function autoCompleteTextFromSuggestion(textToAppend) {
+                    function insertSuggestedTextInInput(textToAppend) {
                         let selectedInput = inputFieldReferencesList[fieldNameArrayIndex[inputName]]
                         if (selectedInput !== null && selectedInput !== undefined) {
                             selectedInput.current.value = textToAppend;
