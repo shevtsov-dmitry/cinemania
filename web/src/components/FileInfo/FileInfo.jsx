@@ -137,13 +137,11 @@ function FileInfo(props) {
     }
 
     function changeTypingSuggestionsPopupStyle() {
-
-
         if (inputName !== null) {
             let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
             selectedPopup.current.style.display = "flex"
             highlightPopupElementTextColorWhileTyping(selectedPopup);
-            autoCompleteTextFromSuggestion(selectedPopup);
+            autoCompleteTextFromSuggestionAndChangeSelectEleementsColors(selectedPopup);
             hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
         }
 
@@ -158,9 +156,8 @@ function FileInfo(props) {
             }
         }
 
-        // In this function contains style adjust operation due to improved optimization
-        // FIXME could be fixed in the futures with two threads
-        function autoCompleteTextFromSuggestion(selectedPopup) {
+        // * this method also changes DOM colors when suggested variants are selected for optimization purposes
+        function autoCompleteTextFromSuggestionAndChangeSelectEleementsColors(selectedPopup) {
             for (let genreNameBtn of selectedPopup.current.children) {
                 genreNameBtn.addEventListener("focus", (e) => {
                     genreNameBtn.style.backgroundColor = "#2b2d42"
