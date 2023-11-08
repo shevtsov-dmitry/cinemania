@@ -4,6 +4,8 @@ import com.content_assist_with_input.genres.model.Genre;
 import com.content_assist_with_input.genres.repo.GenreRepo;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,6 +25,7 @@ class GenreServiceTest {
 
     private final GenreService service;
     private final GenreRepo repo;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     GenreServiceTest(GenreService service, GenreRepo repo) {
@@ -33,12 +36,13 @@ class GenreServiceTest {
     // testing of saveWithoutDuplicates()
     @Test
     void addGenresWithDups() {
-        List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные");
+        List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные", "NEW");
         List<Genre> genres = new ArrayList<>(genreNames.size());
         genreNames.forEach(name -> genres.add(new Genre(name)));
         String answerMessage = service.saveWithoutDuplicates(genres);
-        List<String> expectedResult = List.of("Сказки", "Короткометражные", "Образовательные");
+        List<String> expectedResult = List.of("Сказки", "Короткометражные", "Образовательные", "NEW");
         for (String name : expectedResult) {
+            log.info(repo.findByName(name).toString());
             assertNotNull(repo.findByName(name));
         }
     }
