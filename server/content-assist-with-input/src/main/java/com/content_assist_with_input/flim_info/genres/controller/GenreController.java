@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/film-info-genre")
+@RequestMapping("/film-info/genre")
 public class GenreController {
 
     Logger log = LoggerFactory.getLogger(GenreController.class);
@@ -26,22 +26,22 @@ public class GenreController {
         this.repo = repo;
     }
 
-    @PostMapping("/add-new-genre")
-    public String addNewGenre(@RequestParam String genre) {
-        Genre gnr = new Genre(genre);
+    @PostMapping("/add/genre")
+    public String addNewGenre(@RequestParam String genreName) {
+        Genre genre = new Genre(genreName);
         try {
-            if (gnr.getName().equals("") || gnr.getName().equals(" ")) {
+            if (genre.getName().equals("") || genre.getName().equals(" ")) {
                 return "incoming parameter data is empty.";
             } else {
-                repo.save(gnr);
+                repo.save(genre);
                 return "add new genre successfully.";
             }
         } catch (Exception e) {
-            return service.saveWithoutDuplicates(new ArrayList<>(List.of(gnr)));
+            return service.saveWithoutDuplicates(new ArrayList<>(List.of(genre)));
         }
     }
 
-    @PostMapping("/add-new-genres")
+    @PostMapping("/add/genres")
     public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap) {
         List<Genre> genres = jsonMap.get("genres");
 
@@ -55,7 +55,7 @@ public class GenreController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/get-genres")
+    @GetMapping("/get/genres/by-sequence")
     public List<String> findGenre(@RequestParam String sequence) {
         return service.findMatchedGenres(sequence);
     }
