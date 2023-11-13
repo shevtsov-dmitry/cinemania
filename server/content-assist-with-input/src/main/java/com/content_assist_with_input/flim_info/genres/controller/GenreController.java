@@ -44,7 +44,6 @@ public class GenreController {
     @PostMapping("/add/many")
     public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap) {
         List<Genre> genres = jsonMap.get("genres");
-
         try {
             genres.removeIf(genre -> genre.getName().equals("") || genre.getName().equals(" "));
             repo.saveAll(genres);

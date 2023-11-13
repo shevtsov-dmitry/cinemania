@@ -34,7 +34,7 @@ class GenreServiceTest {
         this.repo = repo;
     }
 
-    // testing of saveWithoutDuplicates()
+    // testing saveWithoutDuplicates()
     @Test
     void addGenresWithDups() {
         List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные", "NEW");
@@ -52,17 +52,13 @@ class GenreServiceTest {
     void addGenresWithDupsThenAgainButWithNewElements() {
         List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные");
         List<Genre> newGenres = List.of(new Genre("NEW"), new Genre("ELEMENTS"), new Genre("TESTING"));
-        // save initial genres
         List<Genre> genres = genreNames.stream().map(Genre::new).toList();
         service.saveWithoutDuplicates(genres);
-        // fill list with new genre names
         List<String> genreNamesWithNewEls = new ArrayList<>();
         genreNamesWithNewEls.addAll(genreNames);
         genreNamesWithNewEls.addAll(newGenres.stream().map(Genre::getName).toList());
         List<Genre> genresWithNewEls = new ArrayList<>(genreNamesWithNewEls.stream().map(Genre::new).toList());
-        // save second time the same elements with added new elements
         service.saveWithoutDuplicates(genresWithNewEls);
-        // expecting that new elements will be in database and old ones will not duplicate (violate data integration)
         for (Genre genre : newGenres) {
             assertNotNull(repo.findByName(genre.getName()));
         }
@@ -77,7 +73,6 @@ class GenreServiceTest {
         assertNotNull(repo.findByName(genre.getName()));
     }
 
-    // testing of findMatchedGenres(String sequence)
     @Test
     void FindGenreNamesByPreparedSequences() {
         List<Genre> genres = List.of(new Genre("Драма"), new Genre("Драматургия"), new Genre("Другое"), new Genre("Дружба"));
@@ -114,12 +109,8 @@ class GenreServiceTest {
                 new Genre("Догма"), new Genre("Дэнс")
         );
         repo.saveAll(genres);
-
         List<String> genresExpected = List.of("Драма", "Драматургия", "Другое", "Дружба", "Дорама");
         List<String> genresActual = service.findMatchedGenres("Д");
-
-
-
         assertLinesMatch(genresExpected, genresActual);
     }
 

@@ -24,7 +24,6 @@ public class BaseContentAssistService<T extends Nameable> {
             } else {
                 repo.saveAll(receivedEntities);
                 List<String> receivedEntitiesName = receivedEntities.stream().map(T::getName).toList();
-                // parse string answer
                 return parseStringAnswer(receivedEntitiesName);
             }
         } else {
@@ -37,7 +36,6 @@ public class BaseContentAssistService<T extends Nameable> {
                 entityNamesWithoutDuplicates.add(name);
                 repo.save(nameToEntity.get(name));
             }
-            // parse string answer
             return parseStringAnswer(entityNamesWithoutDuplicates);
         }
     }
