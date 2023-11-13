@@ -1,5 +1,6 @@
 package com.content_assist_with_input.flim_info.country.model;
 
+import com.content_assist_with_input.flim_info.common.Nameable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,7 +9,7 @@ import jakarta.persistence.Id;
 import java.util.Objects;
 
 @Entity
-public class Country {
+public class Country implements Nameable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
