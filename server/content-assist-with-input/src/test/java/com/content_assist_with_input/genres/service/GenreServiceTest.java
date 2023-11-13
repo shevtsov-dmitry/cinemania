@@ -1,7 +1,8 @@
 package com.content_assist_with_input.genres.service;
 
-import com.content_assist_with_input.genres.model.Genre;
-import com.content_assist_with_input.genres.repo.GenreRepo;
+import com.content_assist_with_input.flim_info.genres.model.Genre;
+import com.content_assist_with_input.flim_info.genres.repo.GenreRepo;
+import com.content_assist_with_input.flim_info.genres.service.GenreService;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package com.content_assist_with_input.genres.model;
+package com.content_assist_with_input.flim_info.genres.model;
 
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;

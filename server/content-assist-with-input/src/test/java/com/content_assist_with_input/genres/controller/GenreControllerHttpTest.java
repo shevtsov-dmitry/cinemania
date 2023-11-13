@@ -1,7 +1,6 @@
 package com.content_assist_with_input.genres.controller;
 
-import com.content_assist_with_input.genres.repo.GenreRepo;
-import org.junit.jupiter.api.RepeatedTest;
+import com.content_assist_with_input.flim_info.genres.repo.GenreRepo;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
