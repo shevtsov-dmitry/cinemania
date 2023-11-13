@@ -14,14 +14,15 @@ import java.util.List;
 public class CountryService extends BaseContentAssistService<Country> {
 
     private final CountryRepo repo;
-    private final Pageable foundCountryAmountRestriction = PageRequest.of(0,5);
+    private final Pageable foundCountryAmountRestriction = PageRequest.of(0, 5);
 
     public CountryService(CrudRepository<Country, Long> repo, CountryRepo repo1) {
         super(repo);
         this.repo = repo1;
     }
-    public List<String> findMatchedGenres(String sequence) {
-        return repo.getGenresNamesBySimilarStringSequence(sequence, foundCountryAmountRestriction);
+
+    public List<String> findMatchedCountries(String sequence) {
+        return repo.getCountryNamesBySimilarStringSequence(sequence, foundCountryAmountRestriction);
     }
 
     @Override

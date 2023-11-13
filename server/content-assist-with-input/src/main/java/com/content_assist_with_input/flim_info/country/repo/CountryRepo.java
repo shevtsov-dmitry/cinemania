@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface CountryRepo extends JpaRepository<Country, Long> {
     @Query("FROM Country c WHERE c.name LIKE ?1%")
-    List<String> getGenresNamesBySimilarStringSequence(String sequence, Pageable pageable);
+    List<String> getCountryNamesBySimilarStringSequence(String sequence, Pageable pageable);
 }
