@@ -1,10 +1,11 @@
 package com.content_assist_with_input.flim_info.genres.model;
 
+import com.content_assist_with_input.flim_info.common.Nameable;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
 @Entity
-public class Genre {
+public class Genre implements Nameable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
