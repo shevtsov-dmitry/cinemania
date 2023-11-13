@@ -118,8 +118,27 @@ function FileInfo(props) {
     const showTypingSuggestions = (name, value) => {
 
         if (name === "genre") {
-            let url = `${serverUrl}/film-info-genre/get-genres?sequence=`
+            let url = `${serverUrl}/film-info/genre/get/many/by-sequence?sequence=`
             url = url.concat(value)
+            console.log(url)
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const listItems = Object.keys(data).map((k) => (// <li key={k}>
+                        <button className="content-assist-popup-btn" type="submit" key={k}>
+                            {data[k]}
+                        </button>))
+                    setContentAssistListItems(listItems);
+                })
+                .catch(e => {
+                })
+        } else if (name === "country") {
+            let url = `${serverUrl}/film-info/country/get/many/by-sequence?sequence=`
+            let countryName = ""
+            if(value.length > 0){
+                countryName = value[0].toUpperCase() + value.substring(1,value.length)
+            }
+            url = url.concat(countryName)
             console.log(url)
             fetch(url)
                 .then(response => response.json())
