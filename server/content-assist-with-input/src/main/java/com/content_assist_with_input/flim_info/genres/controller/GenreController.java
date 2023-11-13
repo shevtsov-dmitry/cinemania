@@ -52,8 +52,6 @@ public class GenreController {
             return service.saveWithoutDuplicates(genres);
         }
     }
-
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/get/many/by-sequence")
     public List<String> findGenre(@RequestParam String sequence) {
         return service.findMatchedGenres(sequence);
