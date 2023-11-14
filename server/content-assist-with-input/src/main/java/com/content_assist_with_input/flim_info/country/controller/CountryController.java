@@ -30,10 +30,9 @@ public class CountryController {
         try {
             if (country.getName().equals("") || country.getName().equals(" ")) {
                 return "incoming parameter data is empty.";
-            } else {
-                repo.save(country);
-                return "new country was added successfully.";
             }
+            repo.save(country);
+            return "new country was added successfully.";
         } catch (Exception e) {
             return service.saveWithoutDuplicates(new ArrayList<>(List.of(country)));
         }
