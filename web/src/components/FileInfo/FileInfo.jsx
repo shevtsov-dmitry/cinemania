@@ -1,9 +1,10 @@
 import {useEffect, useRef, useState} from "react";
 
 
-function FileInfo(props) {
-    const serverUrl = "http://localhost:8080"
+function FileInfo() {
 
+    // *** ASSIGNMENT
+    const serverUrl = "http://localhost:8080"
     const suggestionsTextHighlightColor = "#f72585"
     // getters and setters
     const [filmName, setFilmName] = useState('')
@@ -59,68 +60,16 @@ function FileInfo(props) {
     const [inputValue, setInputValue] = useState(null)
 
 
-    function fillForm(e) {
-        e.preventDefault();
+    // *** INITIALIZATION
+    useEffect(() => {
 
-        const filledForm = {
-            filmName: filmName,
-            country: country,
-            releaseDate: releaseDate,
-            genre: genre,
-            minimalAge: minimalAge,
-            imageUrl: imageUrl,
-            watchTime: watchTime,
-            rating: rating
-        }
-
-    }
-
-    const handleInputChange = (input) => {
-        const {name, value} = input.target
-        setInputName(name)
-        setInputValue(value)
-
-        setGlobalNameValuesForReferences()
-        showTypingSuggestions(name, value)
-
-        function setGlobalNameValuesForReferences() {
-            switch (name) {
-                case 'filmName':
-                    setFilmName(value);
-                    break;
-                case 'country':
-                    setCountry(value);
-                    break;
-                case 'releaseDate':
-                    setReleaseDate(value);
-                    break;
-                case 'genre':
-                    setGenre(value);
-                    break;
-                case 'minimalAge':
-                    setMinimalAge(value);
-                    break;
-                case 'imageUrl':
-                    setImageUrl(value);
-                    break;
-                case 'watchTime':
-                    setWatchTime(value);
-                    break;
-                case 'rating':
-                    setRating(value);
-                    break;
-            }
-        }
-
-
-    };
+    }, [])
 
     const showTypingSuggestions = (name, value) => {
-
         if (name === "genre") {
             let url = `${serverUrl}/film-info/genre/get/many/by-sequence?sequence=`
             url = url.concat(value)
-            console.log(url)
+            // console.log(url)
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
@@ -135,11 +84,11 @@ function FileInfo(props) {
         } else if (name === "country") {
             let url = `${serverUrl}/film-info/country/get/many/by-sequence?sequence=`
             let countryName = ""
-            if(value.length > 0){
-                countryName = value[0].toUpperCase() + value.substring(1,value.length)
+            if (value.length > 0) {
+                countryName = value[0].toUpperCase() + value.substring(1, value.length)
             }
             url = url.concat(countryName)
-            console.log(url)
+            // console.log(url)
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
@@ -160,7 +109,7 @@ function FileInfo(props) {
             let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
             selectedPopup.current.style.display = "flex"
             highlightPopupElementTextColorWhileTyping(selectedPopup);
-            autoCompleteTextFromSuggestionAndChangeSelectEleementsColors(selectedPopup);
+            changeSelectElementsColors(selectedPopup);
             hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
         }
 
@@ -176,17 +125,18 @@ function FileInfo(props) {
         }
 
         // * this method also changes DOM colors when suggested variants are selected for optimization purposes
-        function autoCompleteTextFromSuggestionAndChangeSelectEleementsColors(selectedPopup) {
+        function changeSelectElementsColors(selectedPopup) {
             for (let genreNameBtn of selectedPopup.current.children) {
                 genreNameBtn.addEventListener("focus", (e) => {
                     genreNameBtn.style.backgroundColor = "#2b2d42"
                     genreNameBtn.style.color = "white"
 
-                        genreNameBtn.addEventListener("click", ()=> {
-                            insertSuggestedTextInInput(genreNameBtn.textContent)
-                            selectedPopup.current.style.display = "none"
-                        })
+                    genreNameBtn.addEventListener("click", () => {
+                        insertSuggestedTextInInput(genreNameBtn.textContent)
+                        selectedPopup.current.style.display = "none"
+                    })
 
+                        // TODO fix all of this with USE EFFECT !!!!
                     function insertSuggestedTextInInput(textToAppend) {
                         let selectedInput = inputFieldReferencesList[fieldNameArrayIndex[inputName]]
                         if (selectedInput !== null && selectedInput !== undefined) {
@@ -214,7 +164,8 @@ function FileInfo(props) {
 
 
     useEffect(() => {
-        changeTypingSuggestionsPopupStyle();
+        // changeTypingSuggestionsPopupStyle();
+        let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
 
 
     }, [contentAssistListItems]);
@@ -225,26 +176,79 @@ function FileInfo(props) {
             </ul>
 
         )
+    }
 
-        function getPopupRef(refName) {
-            switch (refName) {
-                case "filmName" :
-                    return popupFilmNameRef;
-                case "country" :
-                    return popupCountryRef;
-                case "releaseDate" :
-                    return popupReleaseDateRef;
-                case "genre" :
-                    return popupGenreRef;
-                case "minimalAge" :
-                    return popupMinimalAgeRef;
-                case "imageUrl" :
-                    return popupImageUrlRef;
-                case "watchTime" :
-                    return popupWatchTimeRef;
-                case "rating" :
-                    return popupRatingRef;
-            }
+    function fillForm(e) {
+        e.preventDefault();
+        const filledForm = {
+            filmName: filmName,
+            country: country,
+            releaseDate: releaseDate,
+            genre: genre,
+            minimalAge: minimalAge,
+            imageUrl: imageUrl,
+            watchTime: watchTime,
+            rating: rating
+        }
+    }
+
+    const handleInputChange = (input) => {
+        const {name, value} = input.target
+        setInputName(name)
+        setInputValue(value)
+        setGlobalNameValuesForReferences(name, value)
+        showTypingSuggestions(name, value)
+    };
+
+
+    function getPopupRef(refName) {
+        switch (refName) {
+            case "filmName" :
+                return popupFilmNameRef;
+            case "country" :
+                return popupCountryRef;
+            case "releaseDate" :
+                return popupReleaseDateRef;
+            case "genre" :
+                return popupGenreRef;
+            case "minimalAge" :
+                return popupMinimalAgeRef;
+            case "imageUrl" :
+                return popupImageUrlRef;
+            case "watchTime" :
+                return popupWatchTimeRef;
+            case "rating" :
+                return popupRatingRef;
+        }
+    }
+
+
+    function setGlobalNameValuesForReferences(name, value) {
+        switch (name) {
+            case 'filmName':
+                setFilmName(value);
+                break;
+            case 'country':
+                setCountry(value);
+                break;
+            case 'releaseDate':
+                setReleaseDate(value);
+                break;
+            case 'genre':
+                setGenre(value);
+                break;
+            case 'minimalAge':
+                setMinimalAge(value);
+                break;
+            case 'imageUrl':
+                setImageUrl(value);
+                break;
+            case 'watchTime':
+                setWatchTime(value);
+                break;
+            case 'rating':
+                setRating(value);
+                break;
         }
     }
 
