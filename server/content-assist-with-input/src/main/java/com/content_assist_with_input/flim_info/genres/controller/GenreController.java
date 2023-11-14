@@ -23,7 +23,7 @@ public class GenreController {
         this.repo = repo;
     }
 
-    @PostMapping("/add/genre")
+    @PostMapping("/add/one")
     public String addNewGenre(@RequestParam String genreName) {
         Genre genre = new Genre(genreName);
         try {
@@ -37,7 +37,7 @@ public class GenreController {
         }
     }
 
-    @PostMapping("/add/genres")
+    @PostMapping("/add/many")
     public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap) {
         List<Genre> genres = jsonMap.get("genres");
 
@@ -51,7 +51,7 @@ public class GenreController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/get/genres/by-sequence")
+    @GetMapping("/get/many/by-sequence")
     public List<String> findGenre(@RequestParam String sequence) {
         return service.findMatchedGenres(sequence);
     }
