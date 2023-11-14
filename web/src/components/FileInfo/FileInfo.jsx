@@ -82,38 +82,36 @@ function FileInfo(props) {
 
         setGlobalNameValuesForReferences()
         showTypingSuggestions(name, value)
-
-        function setGlobalNameValuesForReferences() {
-            switch (name) {
-                case 'filmName':
-                    setFilmName(value);
-                    break;
-                case 'country':
-                    setCountry(value);
-                    break;
-                case 'releaseDate':
-                    setReleaseDate(value);
-                    break;
-                case 'genre':
-                    setGenre(value);
-                    break;
-                case 'minimalAge':
-                    setMinimalAge(value);
-                    break;
-                case 'imageUrl':
-                    setImageUrl(value);
-                    break;
-                case 'watchTime':
-                    setWatchTime(value);
-                    break;
-                case 'rating':
-                    setRating(value);
-                    break;
-            }
-        }
-
-
     };
+
+    function setGlobalNameValuesForReferences() {
+        switch (name) {
+            case 'filmName':
+                setFilmName(value);
+                break;
+            case 'country':
+                setCountry(value);
+                break;
+            case 'releaseDate':
+                setReleaseDate(value);
+                break;
+            case 'genre':
+                setGenre(value);
+                break;
+            case 'minimalAge':
+                setMinimalAge(value);
+                break;
+            case 'imageUrl':
+                setImageUrl(value);
+                break;
+            case 'watchTime':
+                setWatchTime(value);
+                break;
+            case 'rating':
+                setRating(value);
+                break;
+        }
+    }
 
     const showTypingSuggestions = (name, value) => {
 
@@ -121,38 +119,35 @@ function FileInfo(props) {
             let url = `${serverUrl}/film-info/genre/get/many/by-sequence?sequence=`
             url = url.concat(value)
             console.log(url)
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const listItems = Object.keys(data).map((k) => (// <li key={k}>
-                        <button className="content-assist-popup-btn" type="submit" key={k}>
-                            {data[k]}
-                        </button>))
-                    setContentAssistListItems(listItems);
-                })
-                .catch(e => {
-                })
+            retrieveOccurrences(url);
         } else if (name === "country") {
             let url = `${serverUrl}/film-info/country/get/many/by-sequence?sequence=`
             let countryName = ""
-            if(value.length > 0){
-                countryName = value[0].toUpperCase() + value.substring(1,value.length)
+            if (value.length > 0) {
+                countryName = value[0].toUpperCase() + value.substring(1, value.length)
             }
             url = url.concat(countryName)
             console.log(url)
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const listItems = Object.keys(data).map((k) => (// <li key={k}>
-                        <button className="content-assist-popup-btn" type="submit" key={k}>
-                            {data[k]}
-                        </button>))
-                    setContentAssistListItems(listItems);
-                })
-                .catch(e => {
-                })
+            retrieveOccurrences(url)
         }
+    }
 
+    function retrieveOccurrences(url) {
+        fetch(url)
+            .then(response => response.json())
+            .then(occurrences => {
+                addPopupContentAssist(occurrences);
+            })
+            .catch(e => {
+            })
+    }
+
+    function addPopupContentAssist(data) {
+        const listItems = Object.keys(data).map((k) => (
+            <button className="content-assist-popup-btn" type="submit" key={k}>
+                {data[k]}
+            </button>))
+        setContentAssistListItems(listItems);
     }
 
     function changeTypingSuggestionsPopupStyle() {
@@ -160,7 +155,7 @@ function FileInfo(props) {
             let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
             selectedPopup.current.style.display = "flex"
             highlightPopupElementTextColorWhileTyping(selectedPopup);
-            autoCompleteTextFromSuggestionAndChangeSelectEleementsColors(selectedPopup);
+            autoCompleteTextFromSuggestionAndChangeSelectElementsColors(selectedPopup);
             hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
         }
 
@@ -176,20 +171,24 @@ function FileInfo(props) {
         }
 
         // * this method also changes DOM colors when suggested variants are selected for optimization purposes
-        function autoCompleteTextFromSuggestionAndChangeSelectEleementsColors(selectedPopup) {
+        function autoCompleteTextFromSuggestionAndChangeSelectElementsColors(selectedPopup) {
             for (let genreNameBtn of selectedPopup.current.children) {
                 genreNameBtn.addEventListener("focus", (e) => {
                     genreNameBtn.style.backgroundColor = "#2b2d42"
                     genreNameBtn.style.color = "white"
 
-                        genreNameBtn.addEventListener("click", ()=> {
-                            insertSuggestedTextInInput(genreNameBtn.textContent)
-                            selectedPopup.current.style.display = "none"
-                        })
+                    genreNameBtn.addEventListener("click", () => {
+                        insertSuggestedTextInInput(genreNameBtn.textContent)
+                        selectedPopup.current.style.display = "none"
+                    })
 
                     function insertSuggestedTextInInput(textToAppend) {
                         let selectedInput = inputFieldReferencesList[fieldNameArrayIndex[inputName]]
                         if (selectedInput !== null && selectedInput !== undefined) {
+                            // ! *******************
+                            // ! *******************
+                            // ! *******************
+                            console.log(selectedInput);
                             selectedInput.current.value = textToAppend;
                         }
                     }
@@ -215,8 +214,6 @@ function FileInfo(props) {
 
     useEffect(() => {
         changeTypingSuggestionsPopupStyle();
-
-
     }, [contentAssistListItems]);
 
     const typingSuggestions = (refName) => {
