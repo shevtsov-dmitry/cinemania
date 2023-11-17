@@ -2,24 +2,38 @@ package com.filminfopage.controller;
 
 import com.filminfopage.model.FilmInfo;
 import com.filminfopage.repo.FilmInfoRepo;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/add-new-film-info")
+@RequestMapping("/film-info")
 public class FilmInfoController {
 
+    private final FilmInfoRepo repo;
 
-    private final FilmInfoRepo filmInfoRepo;
-
-    public FilmInfoController(FilmInfoRepo filmInfoRepo) {
-        this.filmInfoRepo = filmInfoRepo;
+    @Autowired
+    public FilmInfoController(FilmInfoRepo repo) {
+        this.repo = repo;
     }
 
-    @GetMapping
-    public boolean saveData(@RequestBody FilmInfo filmInfo){
+    @PostMapping("/add")
+    public boolean saveData(@RequestBody FilmInfo filmInfo) {
+        FilmInfo saved = repo.save(filmInfo);
+        return saved == null;
+    }
 
-        FilmInfo saved = filmInfoRepo.save(filmInfo);
+    @GetMapping("/get/latest-saved")
+    public FilmInfo getLatestSaved() {
+        List<FilmInfo> singleton = repo.getLastSaved();
+        if (singleton == null) {
+            return new FilmInfo();
+        }
+        return singleton.get(0);
+    }
 
-        return true;
+    @GetMapping("/get/all")
+    public List<FilmInfo> getAllFilmsInfo() {
+        return repo.findAll();
     }
 }
