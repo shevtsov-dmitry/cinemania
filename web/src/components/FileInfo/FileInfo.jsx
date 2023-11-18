@@ -41,6 +41,7 @@ function FileInfo() {
     const ratingRef = useRef()
     const inputFieldReferencesList = [filmNameRef, countryRef, releaseDateRef, genreRef,
         minimalAgeRef, imageUrlRef, watchTimeRef, ratingRef]
+    const [focusedReference, setFocusedReference] = useState(null)
 
     // text suggestion references
     const popupFilmNameRef = useRef()
@@ -60,27 +61,39 @@ function FileInfo() {
     const [inputValue, setInputValue] = useState(null)
 
 
-    // *** INITIALIZATION
+    function setFocusedEventListenerForEachInputElement() {
+        for (let inputField of inputFieldReferencesList) {
+            inputField.current.addEventListener('focus', () => {
+                setFocusedReference(inputField)
+            })
+        }
+    }
+
+// *** INITIALIZATION
     useEffect(() => {
+        setFocusedEventListenerForEachInputElement();
 
     }, [])
+
+    function fillContentAssistListItemWithFetchedData(url) {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const listItems = Object.keys(data).map((k) => (// <li key={k}>
+                    <button className="content-assist-popup-btn" type="submit" key={k}>
+                        {data[k]}
+                    </button>))
+                setContentAssistListItems(listItems);
+            })
+            .catch(e => {
+            })
+    }
 
     const showTypingSuggestions = (name, value) => {
         if (name === "genre") {
             let url = `${serverUrl}/film-info/genre/get/many/by-sequence?sequence=`
             url = url.concat(value)
-            // console.log(url)
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const listItems = Object.keys(data).map((k) => (// <li key={k}>
-                        <button className="content-assist-popup-btn" type="submit" key={k}>
-                            {data[k]}
-                        </button>))
-                    setContentAssistListItems(listItems);
-                })
-                .catch(e => {
-                })
+            fillContentAssistListItemWithFetchedData(url);
         } else if (name === "country") {
             let url = `${serverUrl}/film-info/country/get/many/by-sequence?sequence=`
             let countryName = ""
@@ -88,18 +101,7 @@ function FileInfo() {
                 countryName = value[0].toUpperCase() + value.substring(1, value.length)
             }
             url = url.concat(countryName)
-            // console.log(url)
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const listItems = Object.keys(data).map((k) => (// <li key={k}>
-                        <button className="content-assist-popup-btn" type="submit" key={k}>
-                            {data[k]}
-                        </button>))
-                    setContentAssistListItems(listItems);
-                })
-                .catch(e => {
-                })
+            fillContentAssistListItemWithFetchedData(url)
         }
 
     }
@@ -136,7 +138,7 @@ function FileInfo() {
                         selectedPopup.current.style.display = "none"
                     })
 
-                        // TODO fix all of this with USE EFFECT !!!!
+                    // TODO fix all of this with USE EFFECT !!!!
                     function insertSuggestedTextInInput(textToAppend) {
                         let selectedInput = inputFieldReferencesList[fieldNameArrayIndex[inputName]]
                         if (selectedInput !== null && selectedInput !== undefined) {
@@ -165,8 +167,8 @@ function FileInfo() {
 
     useEffect(() => {
         // changeTypingSuggestionsPopupStyle();
-        let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
-
+        // let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
+        // selectedPopup.current.style.display = "flex"
 
     }, [contentAssistListItems]);
 
