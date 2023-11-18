@@ -101,9 +101,9 @@ function FileInfo() {
     }
 
 
-    function highlightPopupElementTextColorWhileTyping(selectedPopup) {
+    function highlightPopupElementTextColorWhileTyping() {
         let length = inputValue.length
-        const suggestedVariants = selectedPopup.current.children
+        const suggestedVariants = focusedPopup.current.children
         for (let suggestedVariant of suggestedVariants) {
             suggestedVariant.innerHTML =
                 `<span style="color: ${suggestionsTextHighlightColor};">`
@@ -112,38 +112,10 @@ function FileInfo() {
         }
     }
 
-    // * this method also changes DOM colors when suggested variants are selected for optimization purposes
-    function changeSelectElementsColors(selectedPopup) {
-        for (let genreNameBtn of selectedPopup.current.children) {
-            genreNameBtn.addEventListener("focus", (e) => {
-                genreNameBtn.style.backgroundColor = "#2b2d42"
-                genreNameBtn.style.color = "white"
-
-                genreNameBtn.addEventListener("click", () => {
-                    insertSuggestedTextInInput(genreNameBtn.textContent)
-                    selectedPopup.current.style.display = "none"
-                })
-
-                // TODO fix all of this with USE EFFECT !!!!
-                function insertSuggestedTextInInput(textToAppend) {
-                    if (focusedPopup !== null) {
-                        focusedPopup.current.value = textToAppend;
-                    }
-                }
-
-            })
-            genreNameBtn.addEventListener('blur', () => {
-                genreNameBtn.style.backgroundColor = ''; // Reset the background color when focus is removed
-                genreNameBtn.style.color = "black"
-            });
-        }
-    }
-
-
-    function hideTypeSuggestionsPopupWhenNotFocused(selectedPopup) {
+    function hideTypeSuggestionsPopupWhenNotFocused() {
         for (let child of inputFieldReferencesList) {
             child.current.addEventListener("focus", () => {
-                selectedPopup.current.style.display = "none"
+                focusedPopup.current.style.display = "none"
             })
         }
     }
@@ -157,17 +129,39 @@ function FileInfo() {
         boundSuggestionsPopupToFocusedTextInput();
     }, [focusedReference]);
 
-    // popups change
+    function displayOrHideSuggestionsBlock(suggestion) {
+        suggestion.addEventListener("focus", (e) => {
+            suggestion.style.backgroundColor = "#2b2d42"
+            suggestion.style.color = "white"
+        })
+        suggestion.addEventListener('blur', () => {
+            suggestion.style.backgroundColor = ''; // Reset the background color when focus is removed
+            suggestion.style.color = "black"
+        });
+    }
+
+    function autoCompleteSuggestionOnClick(suggestion) {
+        suggestion.addEventListener("click", () => {
+            focusedPopup.current.style.display = "none"
+            focusedReference.current.value = suggestion.textContent
+
+        })
+    }
+
+// popups change
     useEffect(() => {
-        if (focusedPopup == null && retrievedSuggestions == null) {
+        if (focusedPopup == null || retrievedSuggestions == null) {
             return;
         }
-        // selectedPopup.current.style.display = "flex"
-        // highlightPopupElementTextColorWhileTyping(selectedPopup);
-        // changeSelectElementsColors(selectedPopup);
-        // hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
-        console.log(retrievedSuggestions)
+        focusedPopup.current.style.display = "flex"
+        for (let suggestion of focusedPopup.current.children) {
+            displayOrHideSuggestionsBlock(suggestion);
+            autoCompleteSuggestionOnClick(suggestion);
+        }
+        highlightPopupElementTextColorWhileTyping();
+        hideTypeSuggestionsPopupWhenNotFocused();
     }, [retrievedSuggestions]);
+
 
     const typingSuggestions = (refName) => {
         return (
@@ -198,8 +192,9 @@ function FileInfo() {
         setGlobalNameValuesForReferences(name, value);
         const promisedData = retrieveMatches(inputName, inputValue);
         fillContentAssistList(promisedData);
-    }
 
+
+    }
 
     function getPopupRef(refName) {
         switch (refName) {
@@ -221,7 +216,6 @@ function FileInfo() {
                 return popupRatingRef;
         }
     }
-
 
     function setGlobalNameValuesForReferences(name, value) {
         switch (name) {
