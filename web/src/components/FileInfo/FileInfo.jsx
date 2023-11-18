@@ -19,17 +19,6 @@ function FileInfo() {
     // independent elements
     const formRef = useRef();
 
-    const fieldNameArrayIndex = {
-        "filmName": 0,
-        "country": 1,
-        "releaseDate": 2,
-        "genre": 3,
-        "minimalAge": 4,
-        "imageUrl": 5,
-        "watchTime": 6,
-        "rating": 7
-    }
-
     // position references
     const filmNameRef = useRef()
     const countryRef = useRef()
@@ -54,9 +43,9 @@ function FileInfo() {
     const popupRatingRef = useRef()
     const popupsReferencesList = [popupFilmNameRef, popupCountryRef, popupReleaseDateRef,
         popupGenreRef, popupMinimalAgeRef, popupImageUrlRef, popupWatchTimeRef, popupRatingRef]
-
+    const [focusedPopup, setFocusedPopup] = useState(null)
     // requests data
-    const [contentAssistListItems, setContentAssistListItems] = useState([])
+    const [retrievedSuggestions, setRetrievedSuggestions] = useState([])
     const [inputName, setInputName] = useState(null)
     const [inputValue, setInputValue] = useState(null)
 
@@ -69,31 +58,36 @@ function FileInfo() {
         }
     }
 
-// *** INITIALIZATION
-    useEffect(() => {
-        setFocusedEventListenerForEachInputElement();
-
-    }, [])
-
-    function fillContentAssistListItemWithFetchedData(url) {
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const listItems = Object.keys(data).map((k) => (// <li key={k}>
-                    <button className="content-assist-popup-btn" type="submit" key={k}>
-                        {data[k]}
-                    </button>))
-                setContentAssistListItems(listItems);
-            })
-            .catch(e => {
-            })
+    function boundSuggestionsPopupToFocusedTextInput() {
+        if (focusedReference == null) {
+            return;
+        }
+        const index = inputFieldReferencesList.indexOf(focusedReference);
+        const popup = popupsReferencesList[index]
+        setFocusedPopup(popup)
     }
 
-    const showTypingSuggestions = (name, value) => {
+    function fillContentAssistList(promise) {
+        promise
+            .then(response => response.json())
+            .then(data => {
+                const listItems = Object.keys(data).map((k) => (
+                    <button className="content-assist-popup-btn" type="submit" key={k}>
+                        {data[k]}
+                    </button>
+                ));
+                setRetrievedSuggestions(listItems);
+            })
+            .catch(e => {
+                console.error("Error fetching or parsing data:", e);
+            });
+    }
+
+    function retrieveMatches(name, value) {
         if (name === "genre") {
             let url = `${serverUrl}/film-info/genre/get/many/by-sequence?sequence=`
             url = url.concat(value)
-            fillContentAssistListItemWithFetchedData(url);
+            return fetch(url);
         } else if (name === "country") {
             let url = `${serverUrl}/film-info/country/get/many/by-sequence?sequence=`
             let countryName = ""
@@ -101,82 +95,85 @@ function FileInfo() {
                 countryName = value[0].toUpperCase() + value.substring(1, value.length)
             }
             url = url.concat(countryName)
-            fillContentAssistListItemWithFetchedData(url)
+            return fetch(url);
         }
-
+        return Promise.resolve(null);
     }
 
-    function changeTypingSuggestionsPopupStyle() {
-        if (inputName !== null) {
-            let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
-            selectedPopup.current.style.display = "flex"
-            highlightPopupElementTextColorWhileTyping(selectedPopup);
-            changeSelectElementsColors(selectedPopup);
-            hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
+
+    function highlightPopupElementTextColorWhileTyping(selectedPopup) {
+        let length = inputValue.length
+        const suggestedVariants = selectedPopup.current.children
+        for (let suggestedVariant of suggestedVariants) {
+            suggestedVariant.innerHTML =
+                `<span style="color: ${suggestionsTextHighlightColor};">`
+                + `${suggestedVariant.textContent.substring(0, length)}</span>`
+                + `${suggestedVariant.textContent.substring(length, suggestedVariant.textContent.length)}`;
         }
+    }
 
-        function highlightPopupElementTextColorWhileTyping(selectedPopup) {
-            let length = inputValue.length
-            const suggestedVariants = selectedPopup.current.children
-            for (let suggestedVariant of suggestedVariants) {
-                suggestedVariant.innerHTML =
-                    `<span style="color: ${suggestionsTextHighlightColor};">`
-                    + `${suggestedVariant.textContent.substring(0, length)}</span>`
-                    + `${suggestedVariant.textContent.substring(length, suggestedVariant.textContent.length)}`;
-            }
-        }
+    // * this method also changes DOM colors when suggested variants are selected for optimization purposes
+    function changeSelectElementsColors(selectedPopup) {
+        for (let genreNameBtn of selectedPopup.current.children) {
+            genreNameBtn.addEventListener("focus", (e) => {
+                genreNameBtn.style.backgroundColor = "#2b2d42"
+                genreNameBtn.style.color = "white"
 
-        // * this method also changes DOM colors when suggested variants are selected for optimization purposes
-        function changeSelectElementsColors(selectedPopup) {
-            for (let genreNameBtn of selectedPopup.current.children) {
-                genreNameBtn.addEventListener("focus", (e) => {
-                    genreNameBtn.style.backgroundColor = "#2b2d42"
-                    genreNameBtn.style.color = "white"
-
-                    genreNameBtn.addEventListener("click", () => {
-                        insertSuggestedTextInInput(genreNameBtn.textContent)
-                        selectedPopup.current.style.display = "none"
-                    })
-
-                    // TODO fix all of this with USE EFFECT !!!!
-                    function insertSuggestedTextInInput(textToAppend) {
-                        let selectedInput = inputFieldReferencesList[fieldNameArrayIndex[inputName]]
-                        if (selectedInput !== null && selectedInput !== undefined) {
-                            selectedInput.current.value = textToAppend;
-                        }
-                    }
-
-                })
-                genreNameBtn.addEventListener('blur', () => {
-                    genreNameBtn.style.backgroundColor = ''; // Reset the background color when focus is removed
-                    genreNameBtn.style.color = "black"
-                });
-            }
-        }
-
-
-        function hideTypeSuggestionsPopupWhenNotFocused(selectedPopup) {
-            for (let child of inputFieldReferencesList) {
-                child.current.addEventListener("focus", () => {
+                genreNameBtn.addEventListener("click", () => {
+                    insertSuggestedTextInInput(genreNameBtn.textContent)
                     selectedPopup.current.style.display = "none"
                 })
-            }
+
+                // TODO fix all of this with USE EFFECT !!!!
+                function insertSuggestedTextInInput(textToAppend) {
+                    if (focusedPopup !== null) {
+                        focusedPopup.current.value = textToAppend;
+                    }
+                }
+
+            })
+            genreNameBtn.addEventListener('blur', () => {
+                genreNameBtn.style.backgroundColor = ''; // Reset the background color when focus is removed
+                genreNameBtn.style.color = "black"
+            });
         }
     }
 
 
-    useEffect(() => {
-        // changeTypingSuggestionsPopupStyle();
-        // let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
-        // selectedPopup.current.style.display = "flex"
+    function hideTypeSuggestionsPopupWhenNotFocused(selectedPopup) {
+        for (let child of inputFieldReferencesList) {
+            child.current.addEventListener("focus", () => {
+                selectedPopup.current.style.display = "none"
+            })
+        }
+    }
 
-    }, [contentAssistListItems]);
+    // initialization
+    useEffect(() => {
+        setFocusedEventListenerForEachInputElement();
+    }, [])
+
+    useEffect(() => {
+        boundSuggestionsPopupToFocusedTextInput();
+    }, [focusedReference]);
+
+    // popups change
+    useEffect(() => {
+        if (focusedPopup == null && retrievedSuggestions == null) {
+            return;
+        }
+        // selectedPopup.current.style.display = "flex"
+        // highlightPopupElementTextColorWhileTyping(selectedPopup);
+        // changeSelectElementsColors(selectedPopup);
+        // hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
+        console.log(retrievedSuggestions)
+    }, [retrievedSuggestions]);
 
     const typingSuggestions = (refName) => {
-        return (<ul className="typing-suggestions-ul" ref={getPopupRef(refName)}>
-                {contentAssistListItems}
+        return (
+            <ul className="typing-suggestions-ul" ref={getPopupRef(refName)}>
+                {retrievedSuggestions}
             </ul>
-
         )
     }
 
@@ -194,13 +191,14 @@ function FileInfo() {
         }
     }
 
-    const handleInputChange = (input) => {
-        const {name, value} = input.target
-        setInputName(name)
-        setInputValue(value)
-        setGlobalNameValuesForReferences(name, value)
-        showTypingSuggestions(name, value)
-    };
+    function handleInputChange(input) {
+        const {name, value} = input.target;
+        setInputName(name);
+        setInputValue(value);
+        setGlobalNameValuesForReferences(name, value);
+        const promisedData = retrieveMatches(inputName, inputValue);
+        fillContentAssistList(promisedData);
+    }
 
 
     function getPopupRef(refName) {
@@ -380,10 +378,12 @@ function FileInfo() {
         </form>;
     }
 
-    return (<div className="container">
-        <div className="add-film-header">add film</div>
-        {form()}
-    </div>)
+    return (
+        <div className="container">
+            <div className="add-film-header">add film</div>
+            {form()}
+        </div>
+    )
 }
 
 
