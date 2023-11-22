@@ -1,0 +1,10 @@
+spring:
+  data:
+    mongodb:
+#      username: admin
+#      password: 123
+      host: localhost
+      port: 27017
+#      database: video_storage
+      gridfs:
+        database: video_storage_gridfs
