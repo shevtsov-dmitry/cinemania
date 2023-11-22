@@ -119,16 +119,6 @@ function FileInfo() {
             })
         }
     }
-
-    // initialization
-    useEffect(() => {
-        setFocusedEventListenerForEachInputElement();
-    }, [])
-
-    useEffect(() => {
-        boundSuggestionsPopupToFocusedTextInput();
-    }, [focusedReference]);
-
     function displayOrHideSuggestionsBlock(suggestion) {
         suggestion.addEventListener("focus", (e) => {
             suggestion.style.backgroundColor = "#2b2d42"
@@ -138,15 +128,25 @@ function FileInfo() {
             suggestion.style.backgroundColor = ''; // Reset the background color when focus is removed
             suggestion.style.color = "black"
         });
+        suggestion.addEventListener('click', ()=>{
+            focusedPopup.current.style.display = "none"
+        })
     }
 
     function autoCompleteSuggestionOnClick(suggestion) {
         suggestion.addEventListener("click", () => {
-            focusedPopup.current.style.display = "none"
             focusedReference.current.value = suggestion.textContent
-
         })
     }
+
+    // initialization
+    useEffect(() => {
+        setFocusedEventListenerForEachInputElement();
+    }, [])
+
+    useEffect(() => {
+        boundSuggestionsPopupToFocusedTextInput();
+    }, [focusedReference]);
 
 // popups change
     useEffect(() => {
