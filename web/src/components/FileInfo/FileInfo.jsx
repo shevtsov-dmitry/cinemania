@@ -1,9 +1,10 @@
 import {useEffect, useRef, useState} from "react";
 
 
-function FileInfo(props) {
-    const serverUrl = "http://localhost:8080"
+function FileInfo() {
 
+    // *** ASSIGNMENT
+    const serverUrl = "http://localhost:8080"
     const suggestionsTextHighlightColor = "#f72585"
     // getters and setters
     const [filmName, setFilmName] = useState('')
@@ -18,17 +19,6 @@ function FileInfo(props) {
     // independent elements
     const formRef = useRef();
 
-    const fieldNameArrayIndex = {
-        "filmName": 0,
-        "country": 1,
-        "releaseDate": 2,
-        "genre": 3,
-        "minimalAge": 4,
-        "imageUrl": 5,
-        "watchTime": 6,
-        "rating": 7
-    }
-
     // position references
     const filmNameRef = useRef()
     const countryRef = useRef()
@@ -40,6 +30,7 @@ function FileInfo(props) {
     const ratingRef = useRef()
     const inputFieldReferencesList = [filmNameRef, countryRef, releaseDateRef, genreRef,
         minimalAgeRef, imageUrlRef, watchTimeRef, ratingRef]
+    const [focusedReference, setFocusedReference] = useState(null)
 
     // text suggestion references
     const popupFilmNameRef = useRef()
@@ -52,16 +43,136 @@ function FileInfo(props) {
     const popupRatingRef = useRef()
     const popupsReferencesList = [popupFilmNameRef, popupCountryRef, popupReleaseDateRef,
         popupGenreRef, popupMinimalAgeRef, popupImageUrlRef, popupWatchTimeRef, popupRatingRef]
-
+    const [focusedPopup, setFocusedPopup] = useState(null)
     // requests data
-    const [contentAssistListItems, setContentAssistListItems] = useState([])
+    const [retrievedSuggestions, setRetrievedSuggestions] = useState([])
     const [inputName, setInputName] = useState(null)
     const [inputValue, setInputValue] = useState(null)
 
 
+    function setFocusedEventListenerForEachInputElement() {
+        for (let inputField of inputFieldReferencesList) {
+            inputField.current.addEventListener('focus', () => {
+                setFocusedReference(inputField)
+            })
+        }
+    }
+
+    function boundSuggestionsPopupToFocusedTextInput() {
+        if (focusedReference == null) {
+            return;
+        }
+        const index = inputFieldReferencesList.indexOf(focusedReference);
+        const popup = popupsReferencesList[index]
+        setFocusedPopup(popup)
+    }
+
+    function fillContentAssistList(promise) {
+        promise
+            .then(response => response.json())
+            .then(data => {
+                const listItems = Object.keys(data).map((k) => (
+                    <button className="content-assist-popup-btn" type="submit" key={k}>
+                        {data[k]}
+                    </button>
+                ));
+                setRetrievedSuggestions(listItems);
+            })
+            .catch(e => {
+                console.error("Error fetching or parsing data:", e);
+            });
+    }
+
+    function retrieveMatches(name, value) {
+        if (name === "genre") {
+            let url = `${serverUrl}/film-info/genre/get/many/by-sequence?sequence=`
+            url = url.concat(value)
+            return fetch(url);
+        } else if (name === "country") {
+            let url = `${serverUrl}/film-info/country/get/many/by-sequence?sequence=`
+            let countryName = ""
+            if (value.length > 0) {
+                countryName = value[0].toUpperCase() + value.substring(1, value.length)
+            }
+            url = url.concat(countryName)
+            return fetch(url);
+        }
+        return Promise.resolve(null);
+    }
+
+
+    function highlightPopupElementTextColorWhileTyping() {
+        let length = inputValue.length
+        const suggestedVariants = focusedPopup.current.children
+        for (let suggestedVariant of suggestedVariants) {
+            suggestedVariant.innerHTML =
+                `<span style="color: ${suggestionsTextHighlightColor};">`
+                + `${suggestedVariant.textContent.substring(0, length)}</span>`
+                + `${suggestedVariant.textContent.substring(length, suggestedVariant.textContent.length)}`;
+        }
+    }
+
+    function hideTypeSuggestionsPopupWhenNotFocused() {
+        for (let child of inputFieldReferencesList) {
+            child.current.addEventListener("focus", () => {
+                focusedPopup.current.style.display = "none"
+            })
+        }
+    }
+    function displayOrHideSuggestionsBlock(suggestion) {
+        suggestion.addEventListener("focus", (e) => {
+            suggestion.style.backgroundColor = "#2b2d42"
+            suggestion.style.color = "white"
+        })
+        suggestion.addEventListener('blur', () => {
+            suggestion.style.backgroundColor = ''; // Reset the background color when focus is removed
+            suggestion.style.color = "black"
+        });
+        suggestion.addEventListener('click', ()=>{
+            focusedPopup.current.style.display = "none"
+        })
+    }
+
+    function autoCompleteSuggestionOnClick(suggestion) {
+        suggestion.addEventListener("click", () => {
+            focusedReference.current.value = suggestion.textContent
+        })
+    }
+
+    // initialization
+    useEffect(() => {
+        setFocusedEventListenerForEachInputElement();
+    }, [])
+
+    useEffect(() => {
+        boundSuggestionsPopupToFocusedTextInput();
+    }, [focusedReference]);
+
+// popups change
+    useEffect(() => {
+        if (focusedPopup == null || retrievedSuggestions == null) {
+            return;
+        }
+        focusedPopup.current.style.display = "flex"
+        for (let suggestion of focusedPopup.current.children) {
+            displayOrHideSuggestionsBlock(suggestion);
+            autoCompleteSuggestionOnClick(suggestion);
+        }
+        highlightPopupElementTextColorWhileTyping();
+        hideTypeSuggestionsPopupWhenNotFocused();
+    }, [retrievedSuggestions]);
+
+
+    const typingSuggestions = (refName) => {
+        return (
+            <ul className="typing-suggestions-ul" ref={getPopupRef(refName)}>
+                {retrievedSuggestions}
+            </ul>
+        )
+    }
+
     function fillForm(e) {
         e.preventDefault();
-
         const filledForm = {
             filmName: filmName,
             country: country,
@@ -72,19 +183,41 @@ function FileInfo(props) {
             watchTime: watchTime,
             rating: rating
         }
+    }
+
+    function handleInputChange(input) {
+        const {name, value} = input.target;
+        setInputName(name);
+        setInputValue(value);
+        setGlobalNameValuesForReferences(name, value);
+        const promisedData = retrieveMatches(inputName, inputValue);
+        fillContentAssistList(promisedData);
+
 
     }
 
-    const handleInputChange = (input) => {
-        const {name, value} = input.target
-        setInputName(name)
-        setInputValue(value)
+    function getPopupRef(refName) {
+        switch (refName) {
+            case "filmName" :
+                return popupFilmNameRef;
+            case "country" :
+                return popupCountryRef;
+            case "releaseDate" :
+                return popupReleaseDateRef;
+            case "genre" :
+                return popupGenreRef;
+            case "minimalAge" :
+                return popupMinimalAgeRef;
+            case "imageUrl" :
+                return popupImageUrlRef;
+            case "watchTime" :
+                return popupWatchTimeRef;
+            case "rating" :
+                return popupRatingRef;
+        }
+    }
 
-        setGlobalNameValuesForReferences()
-        showTypingSuggestions(name, value)
-    };
-
-    function setGlobalNameValuesForReferences() {
+    function setGlobalNameValuesForReferences(name, value) {
         switch (name) {
             case 'filmName':
                 setFilmName(value);
@@ -110,138 +243,6 @@ function FileInfo(props) {
             case 'rating':
                 setRating(value);
                 break;
-        }
-    }
-
-    const showTypingSuggestions = (name, value) => {
-
-        if (name === "genre") {
-            let url = `${serverUrl}/film-info/genre/get/many/by-sequence?sequence=`
-            url = url.concat(value)
-            console.log(url)
-            retrieveOccurrences(url);
-        } else if (name === "country") {
-            let url = `${serverUrl}/film-info/country/get/many/by-sequence?sequence=`
-            let countryName = ""
-            if (value.length > 0) {
-                countryName = value[0].toUpperCase() + value.substring(1, value.length)
-            }
-            url = url.concat(countryName)
-            console.log(url)
-            retrieveOccurrences(url)
-        }
-    }
-
-    function retrieveOccurrences(url) {
-        fetch(url)
-            .then(response => response.json())
-            .then(occurrences => {
-                addPopupContentAssist(occurrences);
-            })
-            .catch(e => {
-            })
-    }
-
-    function addPopupContentAssist(data) {
-        const listItems = Object.keys(data).map((k) => (
-            <button className="content-assist-popup-btn" type="submit" key={k}>
-                {data[k]}
-            </button>))
-        setContentAssistListItems(listItems);
-    }
-
-    function changeTypingSuggestionsPopupStyle() {
-        if (inputName !== null) {
-            let selectedPopup = popupsReferencesList[fieldNameArrayIndex[inputName]]
-            selectedPopup.current.style.display = "flex"
-            highlightPopupElementTextColorWhileTyping(selectedPopup);
-            autoCompleteTextFromSuggestionAndChangeSelectElementsColors(selectedPopup);
-            hideTypeSuggestionsPopupWhenNotFocused(selectedPopup);
-        }
-
-        function highlightPopupElementTextColorWhileTyping(selectedPopup) {
-            let length = inputValue.length
-            const suggestedVariants = selectedPopup.current.children
-            for (let suggestedVariant of suggestedVariants) {
-                suggestedVariant.innerHTML =
-                    `<span style="color: ${suggestionsTextHighlightColor};">`
-                    + `${suggestedVariant.textContent.substring(0, length)}</span>`
-                    + `${suggestedVariant.textContent.substring(length, suggestedVariant.textContent.length)}`;
-            }
-        }
-
-        // * this method also changes DOM colors when suggested variants are selected for optimization purposes
-        function autoCompleteTextFromSuggestionAndChangeSelectElementsColors(selectedPopup) {
-            for (let genreNameBtn of selectedPopup.current.children) {
-                genreNameBtn.addEventListener("focus", (e) => {
-                    genreNameBtn.style.backgroundColor = "#2b2d42"
-                    genreNameBtn.style.color = "white"
-
-                    genreNameBtn.addEventListener("click", () => {
-                        insertSuggestedTextInInput(genreNameBtn.textContent)
-                        selectedPopup.current.style.display = "none"
-                    })
-
-                    function insertSuggestedTextInInput(textToAppend) {
-                        let selectedInput = inputFieldReferencesList[fieldNameArrayIndex[inputName]]
-                        if (selectedInput !== null && selectedInput !== undefined) {
-                            // ! *******************
-                            // ! *******************
-                            // ! *******************
-                            console.log(selectedInput);
-                            selectedInput.current.value = textToAppend;
-                        }
-                    }
-
-                })
-                genreNameBtn.addEventListener('blur', () => {
-                    genreNameBtn.style.backgroundColor = ''; // Reset the background color when focus is removed
-                    genreNameBtn.style.color = "black"
-                });
-            }
-        }
-
-
-        function hideTypeSuggestionsPopupWhenNotFocused(selectedPopup) {
-            for (let child of inputFieldReferencesList) {
-                child.current.addEventListener("focus", () => {
-                    selectedPopup.current.style.display = "none"
-                })
-            }
-        }
-    }
-
-
-    useEffect(() => {
-        changeTypingSuggestionsPopupStyle();
-    }, [contentAssistListItems]);
-
-    const typingSuggestions = (refName) => {
-        return (<ul className="typing-suggestions-ul" ref={getPopupRef(refName)}>
-                {contentAssistListItems}
-            </ul>
-
-        )
-
-        function getPopupRef(refName) {
-            switch (refName) {
-                case "filmName" :
-                    return popupFilmNameRef;
-                case "country" :
-                    return popupCountryRef;
-                case "releaseDate" :
-                    return popupReleaseDateRef;
-                case "genre" :
-                    return popupGenreRef;
-                case "minimalAge" :
-                    return popupMinimalAgeRef;
-                case "imageUrl" :
-                    return popupImageUrlRef;
-                case "watchTime" :
-                    return popupWatchTimeRef;
-                case "rating" :
-                    return popupRatingRef;
-            }
         }
     }
 
@@ -371,10 +372,12 @@ function FileInfo(props) {
         </form>;
     }
 
-    return (<div className="container">
-        <div className="add-film-header">add film</div>
-        {form()}
-    </div>)
+    return (
+        <div className="container">
+            <div className="add-film-header">add film</div>
+            {form()}
+        </div>
+    )
 }
 
 

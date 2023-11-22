@@ -3,8 +3,6 @@ package com.content_assist_with_input.flim_info.genres.controller;
 import com.content_assist_with_input.flim_info.genres.model.Genre;
 import com.content_assist_with_input.flim_info.genres.repo.GenreRepo;
 import com.content_assist_with_input.flim_info.genres.service.GenreService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +14,6 @@ import java.util.Map;
 @RequestMapping("/film-info/genre")
 public class GenreController {
 
-    Logger log = LoggerFactory.getLogger(GenreController.class);
     private final GenreService service;
     private final GenreRepo repo;
 
@@ -26,22 +23,21 @@ public class GenreController {
         this.repo = repo;
     }
 
-    @PostMapping("/add/genre")
+    @PostMapping("/add/one")
     public String addNewGenre(@RequestParam String genreName) {
         Genre genre = new Genre(genreName);
         try {
             if (genre.getName().equals("") || genre.getName().equals(" ")) {
                 return "incoming parameter data is empty.";
-            } else {
-                repo.save(genre);
-                return "add new genre successfully.";
             }
+            repo.save(genre);
+            return "add new genre successfully.";
         } catch (Exception e) {
             return service.saveWithoutDuplicates(new ArrayList<>(List.of(genre)));
         }
     }
 
-    @PostMapping("/add/genres")
+    @PostMapping("/add/many")
     public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap) {
         List<Genre> genres = jsonMap.get("genres");
 
@@ -55,7 +51,7 @@ public class GenreController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/get/genres/by-sequence")
+    @GetMapping("/get/many/by-sequence")
     public List<String> findGenre(@RequestParam String sequence) {
         return service.findMatchedGenres(sequence);
     }
