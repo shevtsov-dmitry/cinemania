@@ -1,10 +1,19 @@
 spring:
   data:
     mongodb:
-#      username: admin
-#      password: 123
+      #      username: admin
+      #      password: 123
       host: localhost
       port: 27017
-#      database: video_storage
+      #      database: video_storage
       gridfs:
         database: video_storage_gridfs
+      username:
+  #uplod size limit
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10GB
+      max-request-size: 10GB
+#spring.servlet.multipart.max-file-size=150MB
+#spring.servlet.multipart.max-request-size=150MB
