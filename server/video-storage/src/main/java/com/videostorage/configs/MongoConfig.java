@@ -15,8 +15,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration{
     private final MappingMongoConverter mongoConverter;
 
     @Autowired
-    public MongoConfig(@Lazy MappingMongoConverter mongoConverter) {
-        this.mongoConverter = mongoConverter;
+    public MongoConfig(@Lazy MappingMongoConverter mongoConverter) {this.mongoConverter = mongoConverter;
     }
 
     @Bean
