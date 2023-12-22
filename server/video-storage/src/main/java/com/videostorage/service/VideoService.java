@@ -4,20 +4,22 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 import com.videostorage.model.Video;
 import com.videostorage.repo.VideoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
-import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Service
 public class VideoService {
@@ -27,32 +29,36 @@ public class VideoService {
     private GridFsTemplate gridFsTemplate;
     @Autowired
     private GridFsOperations operations;
+    @Autowired
+    private ResourceLoader resourceLoader;
 
-    public String saveVideo(String filename, MultipartFile videoFile) throws IOException {
+    public String saveVideo(String title, MultipartFile file) throws IOException {
         Video video = new Video();
-        video.setTitle(filename);
-        video.setContentType(videoFile.getContentType());
+        video.setTitle(title);
+        video.setContentType(file.getContentType());
         repo.save(video);
-        gridFsTemplate.store(videoFile.getInputStream(), filename, videoFile.getContentType()).toString();
+        gridFsTemplate.store(file.getInputStream(), title, file.getContentType());
         return "new video saved: %s".formatted(video);
     }
 
-    public Video getVideo(String title) throws IllegalStateException, IOException {
+    public Mono<Resource> getVideo(String title) throws IllegalStateException, IOException {
         GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(title)));
-        Video video = new Video();
-        video.setTitle(file.getFilename());
-        video.setContentType(file.getMetadata().toJson());
-        video.setStream(operations.getResource(file).getInputStream());
-        return video;
+        if(file == null) {
+            return Mono.error(new FileNotFoundException());
+        }
+        var outputStream = new ByteArrayOutputStream();
+        operations.getResource(file).getInputStream().transferTo(outputStream);
+        byte[]  binaryContent = outputStream.toByteArray();
+        var resource = new ByteArrayResource(binaryContent);
+        return Mono.just(resource);
     }
+
 
     public String deleteVideo(@PathVariable String title) {
         if (!repo.existsByTitle(title)) {
             return "impossible to delete video.";
         }
         Query queryDeleteVideo = Query.query(Criteria.where("filename").is(title));
-//            gridFsTemplate.delete(queryDeleteVideo);
         return STR."video \{title} has been deleted successfully.";
-//        }
     }
 }
