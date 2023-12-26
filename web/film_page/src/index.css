@@ -3,7 +3,7 @@
 @tailwind utilities;
 @layer components {
   .topic {
-    @apply mr-2 hover:bg-red-50 hover:cursor-pointer select-none;
+    @apply hover:bg-red-50 hover:cursor-pointer select-none;
   }
 }
 
