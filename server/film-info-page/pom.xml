@@ -54,7 +54,10 @@
 			<artifactId>junit5-engine</artifactId>
 			<version>5.0.0-ALPHA</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
 
 
 	</dependencies>
