@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const STYLE = {
     IMAGE_WIDTH: 23,
@@ -12,18 +12,75 @@ export function Header() {
     const searchImageRef = useRef()
     const burgerImageRef = useRef()
     const closeImageRef = useRef()
+    const [burgerActive, setBurgerActive] = useState(false)
 
-    useEffect(() => {
+    function showAndHideBurgerMenu() {
         burgerImageRef.current.addEventListener('click', () => {
             burgerImageRef.current.style.display = 'none'
             closeImageRef.current.style.display = 'block'
+            setBurgerActive(true)
         })
-
         closeImageRef.current.addEventListener('click', () => {
             burgerImageRef.current.style.display = 'block'
             closeImageRef.current.style.display = 'none'
+            setBurgerActive(false)
         })
+    }
+
+    useEffect(() => {
+        showAndHideBurgerMenu()
     }, [])
+
+    const showOpenedBurgerPanel = () => {
+        if (!burgerActive) {
+            return null
+        } else {
+            return (
+                <main
+                    id="burger-popup"
+                    className="w-lvw h-lvh fixed z-20 bg-neutral-800 transition-all"
+                >
+                    <div className="text-[1.25em] text-white uppercase ml-5 mt-2 leading-9">
+                        <ul className="">{generalTopicsLiContent()}</ul>
+                        <div>{newsAndCollectionContent()}</div>
+                    </div>
+                </main>
+            )
+        }
+    }
+
+    function generalTopicsLiContent() {
+        if (burgerActive) {
+            return (
+                <>
+                    {/*▼ᐁ*/}
+                    <li className="topic">Фильмы ▼</li>
+                    <li className="topic">Сериалы ▼</li>
+                    <li className="topic">Мультфильмы ▼</li>
+                    <li className="topic">Аниме ▼</li>
+                </>
+            )
+        } else {
+
+            return (
+                <>
+                    <li className="topic">Фильмы</li>
+                    <li className="topic">Сериалы</li>
+                    <li className="topic">Мультфильмы</li>
+                    <li className="topic">Аниме</li>
+                </>
+            )
+        }
+    }
+
+    function newsAndCollectionContent() {
+        return (
+            <>
+                <p id="new-shows">Новинки</p>
+                <p id="collections">Подборки</p>
+            </>
+        )
+    }
 
     return (
         <>
@@ -32,7 +89,7 @@ export function Header() {
                 className="text-amber-whiteflex ml-[3.5%] mr-[3.5%] flex items-center justify-between text-white"
             >
                 <img
-                    className="mt-2 w-[6%]"
+                    className="mt-2 w-16"
                     id="company-logo"
                     src="icons/company_logo.png"
                     alt="company logo"
@@ -42,20 +99,14 @@ export function Header() {
                     id="general-topics"
                     className="flex gap-5 max-[1024px]:hidden"
                 >
-                    <li className="topic">Фильмы</li>
-                    <li className="topic">Сериалы</li>
-                    <li className="topic">Мультфильмы</li>
-                    <li className="topic">Аниме</li>
+                    {generalTopicsLiContent()}
                 </ul>
                 <div
                     ref={newShowsAndCollectionsRef}
                     id="new-shows-and-collections"
                     className="flex gap-5 max-[1024px]:hidden"
                 >
-                    <p id="new-shows" className="">
-                        Новинки
-                    </p>
-                    <p id="collections">Подборки</p>
+                    {newsAndCollectionContent()}
                 </div>
                 <div className="flex w-fit items-center justify-end gap-5">
                     <div
@@ -85,7 +136,7 @@ export function Header() {
                             src={'icons/login.png'}
                             alt="login"
                         />
-                        <p className="select-none text-white max-[1024px]:hidden cursor-pointer">
+                        <p className="cursor-pointer select-none text-white max-[1024px]:hidden">
                             Войти
                         </p>
                     </div>
@@ -104,6 +155,7 @@ export function Header() {
                     {/*<p>досмотреть</p>*/}
                 </div>
             </header>
+            {showOpenedBurgerPanel()}
         </>
     )
 }
