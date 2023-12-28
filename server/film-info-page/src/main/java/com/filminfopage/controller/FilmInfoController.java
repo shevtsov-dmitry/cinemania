@@ -2,7 +2,9 @@ package com.filminfopage.controller;
 
 import com.filminfopage.model.FilmInfo;
 import com.filminfopage.repo.FilmInfoRepo;
+
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,4 +38,6 @@ public class FilmInfoController {
     public List<FilmInfo> getAllFilmsInfo() {
         return repo.findAll();
     }
+
+
 }
