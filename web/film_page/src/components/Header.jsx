@@ -36,15 +36,20 @@ export function Header() {
             return null
         } else {
             return (
-                <main
-                    id="burger-popup"
-                    className="w-lvw h-lvh fixed z-20 bg-neutral-800 transition-all"
-                >
-                    <div className="text-[1.25em] text-white uppercase ml-5 mt-2 leading-9">
-                        <ul className="">{generalTopicsLiContent()}</ul>
-                        <div>{newsAndCollectionContent()}</div>
-                    </div>
-                </main>
+                <>
+                    <main
+                        id="burger-popup"
+                        className="w-lvw h-lvh fixed z-20 bg-neutral-800 transition-all"
+                    >
+                        <div className="ml-5 mt-2 text-[1.25em] uppercase leading-9 text-white">
+                            <ul className="">{generalTopicsLiContent()}</ul>
+                            <div>{newsAndCollectionContent()}</div>
+                        </div>
+                    </main>
+                    <footer className="text-white z-20 fixed bottom-2 left-3 opacity-75 text-sm">
+                        © 2024 ООО «Bē commerce»
+                    </footer>
+                </>
             )
         }
     }
@@ -61,7 +66,6 @@ export function Header() {
                 </>
             )
         } else {
-
             return (
                 <>
                     <li className="topic">Фильмы</li>
