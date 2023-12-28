@@ -12,4 +12,8 @@ public class Poster {
     private String id;
     private String title;
     private Binary image;
+
+    public Poster(String title) {
+        this.title = title;
+    }
 }
