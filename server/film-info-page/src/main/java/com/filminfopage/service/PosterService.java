@@ -7,7 +7,6 @@ import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -52,5 +51,17 @@ public class PosterService {
         }
         byte[] imageBytes = poster.getImage().getData();
         return ResponseEntity.ok().body(imageBytes);
+    }
+
+    public ResponseEntity<String> deleteById(String id) {
+        return repo.deletePosterById(id) > 0 ?
+                ResponseEntity.ok().body(STR."video file with id \{id} successfully deleted.") :
+                ResponseEntity.notFound().build();
+    }
+
+    public ResponseEntity<String> deleteByTitle(String title) {
+        return repo.deletePosterByTitle(title) > 0 ?
+                ResponseEntity.ok().body(STR."video file with title \{title} successfully deleted.") :
+                ResponseEntity.notFound().build();
     }
 }
