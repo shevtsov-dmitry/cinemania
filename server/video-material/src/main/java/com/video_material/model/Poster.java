@@ -1,4 +1,4 @@
-package com.filminfopage.model;
+package com.video_material.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,11 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Poster {
     private String id;
     @NonNull
-    private String title;
-    @NonNull
     private Binary image;
 
-    public Poster(String title) {
-        this.title = title;
-    }
+
 }

@@ -1,7 +1,12 @@
-package com.filminfopage;
+package com.video_material;
 
+<<<<<<<< HEAD:server/video-material/src/test/java/com/filminfopage/VideoMaterialPageApplicationTests.java
 import com.filminfopage.model.VideoMaterial;
 import com.filminfopage.repo.VideoMaterialRepo;
+========
+import com.video_material.model.VideoMaterial;
+import com.video_material.repo.VideoMaterialRepo;
+>>>>>>>> 3872cd4 (refactor: change component name):server/video-material/src/test/java/com/video_material/VideoMaterialPageApplicationTests.java
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

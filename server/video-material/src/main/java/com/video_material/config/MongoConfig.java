@@ -1,4 +1,4 @@
-package com.filminfopage.config;
+package com.video_material.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

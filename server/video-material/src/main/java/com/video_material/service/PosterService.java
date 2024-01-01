@@ -1,7 +1,7 @@
-package com.filminfopage.service;
+package com.video_material.service;
 
-import com.filminfopage.model.Poster;
-import com.filminfopage.repo.PosterRepo;
+import com.video_material.model.Poster;
+import com.video_material.repo.PosterRepo;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,27 +22,19 @@ public class PosterService {
         this.repo = repo;
     }
 
-    public ResponseEntity<String> save(String title, MultipartFile file) throws IOException {
-        if (title.isBlank()) {
-            return ResponseEntity.badRequest().body("Title is not specified.");
-        }
+    public ResponseEntity<String> save(MultipartFile file) throws IOException {
         int hash = Objects.requireNonNull(file.getOriginalFilename()).hashCode();
         if (hash == 0) {
             return ResponseEntity.badRequest().body("File is not attached.");
         }
-        Poster poster = new Poster(title);
+        Poster poster = new Poster();
         poster.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
         poster = repo.insert(poster);
-        return ResponseEntity.ok().body("saved in database with id: " + poster.getId());
+        return ResponseEntity.ok().body(STR."saved in database with id: \{poster.getId()}");
     }
 
     public ResponseEntity<byte[]> getById(String id) {
         return composeAnswer(repo.getPosterById(id));
-    }
-
-    public ResponseEntity<byte[]> getByTitle(String title) {
-        Poster poster = repo.getPosterByTitle(title);
-        return composeAnswer(poster);
     }
 
     private static ResponseEntity<byte[]> composeAnswer(Poster poster) {
@@ -59,9 +51,4 @@ public class PosterService {
                 ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<String> deleteByTitle(String title) {
-        return repo.deletePosterByTitle(title) > 0 ?
-                ResponseEntity.ok().body(STR."video file with title \{title} successfully deleted.") :
-                ResponseEntity.notFound().build();
-    }
 }
