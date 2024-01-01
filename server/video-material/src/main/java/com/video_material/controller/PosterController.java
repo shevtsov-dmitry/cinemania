@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/video-material/posters")
+@RequestMapping("/video-materials/posters")
 public class PosterController {
 
     private final PosterService service;
