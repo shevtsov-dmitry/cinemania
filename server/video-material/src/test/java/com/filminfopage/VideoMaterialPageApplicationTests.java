@@ -1,7 +1,7 @@
 package com.filminfopage;
 
-import com.filminfopage.model.FilmInfo;
-import com.filminfopage.repo.FilmInfoRepo;
+import com.filminfopage.model.VideoMaterial;
+import com.filminfopage.repo.VideoMaterialRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,17 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @DataJpaTest
 @Rollback(value = true)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class FilmInfoPageApplicationTests {
+class VideoMaterialPageApplicationTests {
 
     @Autowired
-    private FilmInfoRepo filmInfoRepo;
+    private VideoMaterialRepo videoMaterialRepo;
 
     @Autowired
     TestEntityManager testEntityManager;
 
     @Test
     void insertFullFilmInfoOnce() {
-        FilmInfo film = new FilmInfo(
+        VideoMaterial film = new VideoMaterial(
                 "film",
                 new Date(2012, Calendar.JUNE, 20),
                 "USA",
@@ -41,7 +41,7 @@ class FilmInfoPageApplicationTests {
 
 //        FilmInfo savedFilm = filmInfoRepo.save(film);
         // Save the film using the test entity manager
-        FilmInfo savedFilm = testEntityManager.persist(film);
+        VideoMaterial savedFilm = testEntityManager.persist(film);
 
         // Get the ID of the saved film
         Long filmId = savedFilm.getId();
