@@ -6,12 +6,12 @@ import com.video_material.repo.VideoMaterialRepo;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/video-materials")
 public class VideoMaterialController {
-
     private final VideoMaterialRepo repo;
 
     @Autowired
@@ -19,24 +19,9 @@ public class VideoMaterialController {
         this.repo = repo;
     }
 
-    @PostMapping("/add")
-    public boolean saveData(@RequestBody VideoMaterial videoMaterial) {
-        VideoMaterial saved = repo.save(videoMaterial);
-        return saved == null;
-    }
+    @PostMapping("/save")
+    public ResponseEntity<String> save(@RequestBody ) {
 
-    @GetMapping("/get/latest-saved")
-    public VideoMaterial getLatestSaved() {
-        List<VideoMaterial> singleton = repo.getLastSaved();
-        if (singleton == null) {
-            return new VideoMaterial();
-        }
-        return singleton.get(0);
-    }
-
-    @GetMapping("/get/all")
-    public List<VideoMaterial> getAllFilmsInfo() {
-        return repo.findAll();
     }
 
 

@@ -8,6 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface VideoMaterialRepo extends JpaRepository<VideoMaterial, Long> {
-    @Query("SELECT t FROM VideoMaterial t ORDER BY t.id DESC")
-    List<VideoMaterial> getLastSaved();
 }
