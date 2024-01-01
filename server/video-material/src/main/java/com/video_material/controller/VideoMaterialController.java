@@ -20,8 +20,9 @@ public class VideoMaterialController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody ) {
+    public ResponseEntity<String> save(@RequestBody VideoMaterial videoMaterial) {
 
+        return ResponseEntity.ok().body("success");
     }
 
 
