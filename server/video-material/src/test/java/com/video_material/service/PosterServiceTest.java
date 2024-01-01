@@ -2,7 +2,10 @@ package com.video_material.service;
 
 import org.aspectj.lang.annotation.After;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PosterServiceTest {
 
     @Autowired
@@ -55,6 +59,7 @@ class PosterServiceTest {
     }
 
     @Test
+    @Order(1)
     void uploadJPEGImage() throws Exception {
         String url = STR."\{endpointURL}/upload";
         mockMvc.perform(multipart(url)
@@ -66,6 +71,7 @@ class PosterServiceTest {
     }
 
     @Test
+    @Order(2)
     void uploadPNGImage() throws Exception {
         String url = STR."\{endpointURL}/upload";
         mockMvc.perform(multipart(url)
@@ -93,22 +99,22 @@ class PosterServiceTest {
     }
 
     @Test
-    @After(value = "uploadJPEGImage")
+    @Order(3)
     void getById() throws Exception {
         String url = STR."\{endpointURL}/get/byId/\{idJPEG}";
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("image/jpeg"));
 
-        url = STR."\{endpointURL}/get/byId/\{namePNG}";
+        // * in case if PNG file was uploaded client gets JPEG file anyway
+        url = STR."\{endpointURL}/get/byId/\{idPNG}";
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("image/jpeg"));
-        // * in case if PNG file was uploaded we get JPEG file anyway
     }
 
     @Test
-    @After(value = "getById")
+    @Order(4)
     void cleanDatabaseAfterJPEGFileUpload() throws Exception {
         String url = STR."\{endpointURL}/delete/byId/\{idJPEG}";
         mockMvc.perform(delete(url))
@@ -118,7 +124,7 @@ class PosterServiceTest {
     }
 
     @Test
-    @After(value = "getById")
+    @Order(5)
     void cleanDatabaseAfterPNGFileUpload() throws Exception {
         String url = STR."\{endpointURL}/delete/byId/\{idPNG}";
         mockMvc.perform(delete(url))
