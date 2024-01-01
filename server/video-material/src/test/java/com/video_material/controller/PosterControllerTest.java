@@ -1,6 +1,5 @@
-package com.video_material.service;
+package com.video_material.controller;
 
-import org.aspectj.lang.annotation.After;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -27,11 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class PosterServiceTest {
+class PosterControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-    final String endpointURL = "http://localhost:8080/video-material/posters";
+    final String endpointURL = "http://localhost:8080/video-materials/posters";
     final String POSTERS_PATH = "src/test/java/com/video_material/assets/";
 
 
@@ -55,7 +54,7 @@ class PosterServiceTest {
     byte[] contentPNG = Files.readAllBytes(pathPNG);
     MockMultipartFile filePNG = new MockMultipartFile("file", filenamePNG, contentType, contentPNG);
 
-    PosterServiceTest() throws IOException {
+    PosterControllerTest() throws IOException {
     }
 
     @Test
