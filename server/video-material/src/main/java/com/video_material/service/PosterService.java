@@ -5,6 +5,8 @@ import com.video_material.repo.PosterRepo;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +41,7 @@ public class PosterService {
 
     private static ResponseEntity<byte[]> composeAnswer(Poster poster) {
         if(poster == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body("Poster not found".getBytes());
         }
         byte[] imageBytes = poster.getImage().getData();
         return ResponseEntity.ok().body(imageBytes);
