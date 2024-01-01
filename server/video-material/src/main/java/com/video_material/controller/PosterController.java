@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/video-materials/posters")
@@ -21,7 +22,7 @@ public class PosterController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> saveImagePoster(@RequestParam MultipartFile file) throws IOException {
+    public ResponseEntity<Map<String, String>> saveImagePoster(@RequestParam MultipartFile file) throws IOException {
         return service.save(file);
     }
 

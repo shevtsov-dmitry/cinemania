@@ -1,5 +1,8 @@
 package com.video_material.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -15,6 +18,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +41,6 @@ class PosterControllerTest {
 
 
     String contentType = "multipart/form-data";
-    String saveInDBRegex = "saved in database with id: [a-f0-9]+";
 
     // JPEG
     static String idJPEG;
@@ -64,8 +69,7 @@ class PosterControllerTest {
         mockMvc.perform(multipart(url)
                         .file(fileJPEG))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(content().string(Matchers.matchesPattern(saveInDBRegex)))
+                .andExpect(content().contentType("application/json"))
                 .andDo(result -> setId(result.getResponse().getContentAsString(), FORMATS.JPEG));
     }
 
@@ -76,8 +80,7 @@ class PosterControllerTest {
         mockMvc.perform(multipart(url)
                         .file(filePNG))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(content().string(Matchers.matchesPattern(saveInDBRegex)))
+                .andExpect(content().contentType("application/json"))
                 .andDo(result -> setId(result.getResponse().getContentAsString(), FORMATS.PNG));
     }
 
@@ -86,14 +89,13 @@ class PosterControllerTest {
         JPEG
     }
 
-    void setId(String response, FORMATS format) {
-        String regex = "id: (\\w+)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(response);
-        assertTrue(matcher.find(), STR."ID not found in response: \{response}");
+    void setId(String response, FORMATS format) throws JsonProcessingException {
+        Gson gson = new Gson();
+        Map<String, String> map = gson.fromJson(response, Map.class);
+        final String id = map.get("id");
         switch (format) {
-            case PNG -> idPNG = matcher.group(1);
-            case JPEG -> idJPEG = matcher.group(1);
+            case PNG -> idPNG = id;
+            case JPEG -> idJPEG = id;
         }
     }
 
