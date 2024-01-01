@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Entity
-public class FilmInfo {
+public class VideoMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, unique = true)
@@ -32,8 +32,8 @@ public class FilmInfo {
     private float rating;
 
 
-    public FilmInfo(Long id, @NonNull String name, @NonNull Date releaseDate, @NonNull String country,
-                    @NonNull String genre, int age, @NonNull String imageUrl, String watchTime, float rating) {
+    public VideoMaterial(Long id, @NonNull String name, @NonNull Date releaseDate, @NonNull String country,
+                         @NonNull String genre, int age, @NonNull String imageUrl, String watchTime, float rating) {
         this.id = id;
         this.filmName = name;
         this.releaseDate = releaseDate;
@@ -45,8 +45,8 @@ public class FilmInfo {
         this.rating = rating;
     }
 
-    public FilmInfo(@NonNull String filmName, @NonNull Date releaseDate, @NonNull String country,
-                    @NonNull String genre, int age, @NonNull String imageUrl, String watchTime, float rating) {
+    public VideoMaterial(@NonNull String filmName, @NonNull Date releaseDate, @NonNull String country,
+                         @NonNull String genre, int age, @NonNull String imageUrl, String watchTime, float rating) {
         this.filmName = filmName;
         this.releaseDate = releaseDate;
         this.country = country;
@@ -57,8 +57,8 @@ public class FilmInfo {
         this.rating = rating;
     }
 
-    public FilmInfo(@NonNull String filmName, @NonNull Date releaseDate, @NonNull String country,
-                    @NonNull String genre, int age, @NonNull String imageUrl) {
+    public VideoMaterial(@NonNull String filmName, @NonNull Date releaseDate, @NonNull String country,
+                         @NonNull String genre, int age, @NonNull String imageUrl) {
         this.filmName = filmName;
         this.releaseDate = releaseDate;
         this.country = country;

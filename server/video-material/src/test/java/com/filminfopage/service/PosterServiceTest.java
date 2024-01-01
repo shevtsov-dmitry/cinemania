@@ -19,8 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,15 +30,25 @@ class PosterServiceTest {
 
     @Autowired
     MockMvc mockMvc;
-    final String endpointURL = "http://localhost:8080/film-info/poster";
+    final String endpointURL = "http://localhost:8080/film-info/posters";
     final String POSTERS_PATH = "src/test/java/com/filminfopage/assets/";
-    String name = "sin-city-poster";
-    String filename = STR."\{name}.jpg";
-    Path path = Paths.get(POSTERS_PATH + filename);
+
+
     String contentType = "multipart/form-data";
-    byte[] content = Files.readAllBytes(path);
-    MockMultipartFile file = new MockMultipartFile("file", filename, contentType, content);
-    static String id;
+    // JPEG
+    static String idJPEG;
+    String nameJPEG = "sin-city-poster";
+    String filenameJPEG = STR."\{nameJPEG}.jpg";
+    Path pathJPEG = Paths.get(POSTERS_PATH + filenameJPEG);
+    byte[] contentJPEG = Files.readAllBytes(pathJPEG);
+    MockMultipartFile fileJPEG = new MockMultipartFile("file", filenameJPEG, contentType, contentJPEG);
+    
+    // PNG
+    String namePNG = "png-image";
+    String filenamePNG = STR."\{namePNG}.png";
+    Path pathPNG = Paths.get(POSTERS_PATH + filenamePNG);
+    byte[] contentPNG = Files.readAllBytes(pathPNG);
+    MockMultipartFile filePNG = new MockMultipartFile("file", filenamePNG, contentType, contentPNG);
 
     PosterServiceTest() throws IOException {
     }
@@ -49,8 +58,8 @@ class PosterServiceTest {
         String regex = "saved in database with id: [a-f0-9]+";
         String url = STR."\{endpointURL}/upload";
         mockMvc.perform(multipart(url)
-                        .file(file)
-                        .param("title", name))
+                        .file(fileJPEG)
+                        .param("title", nameJPEG))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(content().string(Matchers.matchesPattern(regex)))
@@ -62,26 +71,56 @@ class PosterServiceTest {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(response);
         assertTrue(matcher.find(), STR."ID not found in response: \{response}");
-        id = matcher.group(1);
+        idJPEG = matcher.group(1);
+    }
+
+    @Test
+    void uploadPNGImage() throws Exception {
+        String url = STR."\{endpointURL}/upload";
+        mockMvc.perform(multipart(url)
+                        .file(filePNG)
+                        .param("title", namePNG))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"));
     }
 
     @Test
     @After(value = "uploadJPEGImage")
     void getById() throws Exception {
-        assertNotNull(id, "Id is null.");
-        String url = STR."\{endpointURL}/get/byId/\{id}";
+        assertNotNull(idJPEG, "Id is null.");
+        String url = STR."\{endpointURL}/get/byId/\{idJPEG}";
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("image/jpeg"));
     }
 
     @Test
-    @After(value = "uploadJPEGImage")
+    @After(value = "uploadPNGImage")
     void getByTitle() throws Exception {
-        String url = STR."\{endpointURL}/get/byTitle/\{name}";
+        String url = STR."\{endpointURL}/get/byTitle/\{namePNG}";
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("image/jpeg"));
     }
 
+    @Test
+    @After(value = "getById")
+    void cleanDatabaseAfterJPEGFileUpload() throws Exception {
+        String url = STR."\{endpointURL}/delete/byId/\{idJPEG}";
+        mockMvc.perform(delete(url))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string(STR."video file with id \{idJPEG} successfully deleted."));
+    }
+
+    @Test
+    @After(value = "getByTitle")
+    void cleanDatabaseAfterPNGFileUpload() throws Exception {
+        String url = STR."\{endpointURL}/delete/byTitle/\{namePNG}";
+        mockMvc.perform(delete(url))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string(STR."video file with title \{namePNG} successfully deleted."));
+
+    }
 }
