@@ -3,6 +3,7 @@ package com.video_material.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.video_material.CONSTANTS;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -36,9 +37,7 @@ class PosterControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-    final String endpointURL = "http://localhost:8080/video-materials/posters";
-    final String POSTERS_PATH = "src/test/java/com/video_material/assets/";
-
+    final String endpointURL = STR."\{CONSTANTS.HOST_AND_PORT}/video-materials/posters";
 
     String contentType = "multipart/form-data";
 
@@ -46,7 +45,7 @@ class PosterControllerTest {
     static String idJPEG;
     String nameJPEG = "sin-city-poster";
     String filenameJPEG = STR."\{nameJPEG}.jpg";
-    Path pathJPEG = Paths.get(POSTERS_PATH + filenameJPEG);
+    Path pathJPEG = Paths.get(CONSTANTS.POSTERS_PATH + filenameJPEG);
     byte[] contentJPEG = Files.readAllBytes(pathJPEG);
     MockMultipartFile fileJPEG = new MockMultipartFile("file", filenameJPEG, contentType, contentJPEG);
 
@@ -55,7 +54,7 @@ class PosterControllerTest {
     static String idPNG;
     String namePNG = "png-image";
     String filenamePNG = STR."\{namePNG}.png";
-    Path pathPNG = Paths.get(POSTERS_PATH + filenamePNG);
+    Path pathPNG = Paths.get(CONSTANTS.POSTERS_PATH + filenamePNG);
     byte[] contentPNG = Files.readAllBytes(pathPNG);
     MockMultipartFile filePNG = new MockMultipartFile("file", filenamePNG, contentType, contentPNG);
 
