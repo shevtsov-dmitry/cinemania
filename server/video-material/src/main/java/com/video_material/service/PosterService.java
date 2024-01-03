@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -24,15 +26,22 @@ public class PosterService {
         this.repo = repo;
     }
 
-    public ResponseEntity<String> save(MultipartFile file) throws IOException {
+    public ResponseEntity<Map<String, String>> save(MultipartFile file) throws IOException {
         int hash = Objects.requireNonNull(file.getOriginalFilename()).hashCode();
         if (hash == 0) {
-            return ResponseEntity.badRequest().body("File is not attached.");
+            return ResponseEntity.badRequest().body(Map.of("message", "File is not attached."));
         }
         Poster poster = new Poster();
         poster.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
         poster = repo.insert(poster);
-        return ResponseEntity.ok().body(STR."saved in database with id: \{poster.getId()}");
+        return composeSuccessfulSaveAnswer(poster);
+    }
+
+    private static ResponseEntity<Map<String, String>> composeSuccessfulSaveAnswer(Poster poster) {
+        Map<String, String> map = new HashMap<>();
+        map.put("message", STR."saved in database with id: \{poster.getId()}");
+        map.put("id", poster.getId());
+        return ResponseEntity.ok().body(map);
     }
 
     public ResponseEntity<byte[]> getById(String id) {

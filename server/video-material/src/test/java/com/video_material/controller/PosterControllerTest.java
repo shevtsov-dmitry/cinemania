@@ -1,5 +1,9 @@
 package com.video_material.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.video_material.CONSTANTS;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -15,6 +19,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,18 +37,15 @@ class PosterControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-    final String endpointURL = "http://localhost:8080/video-materials/posters";
-    final String POSTERS_PATH = "src/test/java/com/video_material/assets/";
-
+    final String endpointURL = STR."\{CONSTANTS.HOST_AND_PORT}/video-materials/posters";
 
     String contentType = "multipart/form-data";
-    String saveInDBRegex = "saved in database with id: [a-f0-9]+";
 
     // JPEG
     static String idJPEG;
     String nameJPEG = "sin-city-poster";
     String filenameJPEG = STR."\{nameJPEG}.jpg";
-    Path pathJPEG = Paths.get(POSTERS_PATH + filenameJPEG);
+    Path pathJPEG = Paths.get(CONSTANTS.POSTERS_PATH + filenameJPEG);
     byte[] contentJPEG = Files.readAllBytes(pathJPEG);
     MockMultipartFile fileJPEG = new MockMultipartFile("file", filenameJPEG, contentType, contentJPEG);
 
@@ -50,7 +54,7 @@ class PosterControllerTest {
     static String idPNG;
     String namePNG = "png-image";
     String filenamePNG = STR."\{namePNG}.png";
-    Path pathPNG = Paths.get(POSTERS_PATH + filenamePNG);
+    Path pathPNG = Paths.get(CONSTANTS.POSTERS_PATH + filenamePNG);
     byte[] contentPNG = Files.readAllBytes(pathPNG);
     MockMultipartFile filePNG = new MockMultipartFile("file", filenamePNG, contentType, contentPNG);
 
@@ -64,8 +68,7 @@ class PosterControllerTest {
         mockMvc.perform(multipart(url)
                         .file(fileJPEG))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(content().string(Matchers.matchesPattern(saveInDBRegex)))
+                .andExpect(content().contentType("application/json"))
                 .andDo(result -> setId(result.getResponse().getContentAsString(), FORMATS.JPEG));
     }
 
@@ -76,8 +79,7 @@ class PosterControllerTest {
         mockMvc.perform(multipart(url)
                         .file(filePNG))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(content().string(Matchers.matchesPattern(saveInDBRegex)))
+                .andExpect(content().contentType("application/json"))
                 .andDo(result -> setId(result.getResponse().getContentAsString(), FORMATS.PNG));
     }
 
@@ -86,14 +88,13 @@ class PosterControllerTest {
         JPEG
     }
 
-    void setId(String response, FORMATS format) {
-        String regex = "id: (\\w+)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(response);
-        assertTrue(matcher.find(), STR."ID not found in response: \{response}");
+    void setId(String response, FORMATS format) throws JsonProcessingException {
+        Gson gson = new Gson();
+        Map<String, String> map = gson.fromJson(response, Map.class);
+        final String id = map.get("id");
         switch (format) {
-            case PNG -> idPNG = matcher.group(1);
-            case JPEG -> idJPEG = matcher.group(1);
+            case PNG -> idPNG = id;
+            case JPEG -> idJPEG = id;
         }
     }
 
