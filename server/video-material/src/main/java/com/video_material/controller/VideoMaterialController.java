@@ -26,5 +26,10 @@ public class VideoMaterialController {
         return service.save(videoMaterial);
     }
 
+    @DeleteMapping("/delete/byId/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        return service.deleteById(id);
+    }
+
 
 }

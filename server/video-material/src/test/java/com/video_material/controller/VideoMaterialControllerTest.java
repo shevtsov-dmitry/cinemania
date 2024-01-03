@@ -3,9 +3,7 @@ package com.video_material.controller;
 import com.google.gson.Gson;
 import com.video_material.CONSTANTS;
 import com.video_material.model.VideoMaterial;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +15,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.Date;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -27,8 +27,10 @@ class VideoMaterialControllerTest {
     @Autowired
     MockMvc mockMvc;
     final String ENDPOINT_URL = STR."\{CONSTANTS.HOST_AND_PORT}/video-materials";
+    static String id;
 
     @Test
+    @Order(1)
     void saveAllVideoMaterialInformation() throws Exception {
    /*     {
             "filmName": "Lovely life",
@@ -51,9 +53,28 @@ class VideoMaterialControllerTest {
                         .content(JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(res -> Long.parseLong(res.getResponse().getContentAsString()));
+                .andExpect(res -> Long.parseLong(res.getResponse().getContentAsString()))
+                .andDo(result -> id = result.getResponse().getContentAsString());
     }
 
+    @Test
+    @Order(2)
+    void deleteById() throws Exception {
+        String url = STR."\{ENDPOINT_URL}/delete/byId/\{id}";
+        mockMvc.perform(delete(url))
+                .andExpect(status().isOk())
+                .andExpect(content().string(id));
+    }
+
+    @Test
+    @Order(3)
+    void deleteById_whenId_notFound() throws Exception {
+        String url = STR."\{ENDPOINT_URL}/delete/byId/\{id}";
+        String answer = STR."Deletion failed. Entity with id \{id} not found.";
+        mockMvc.perform(delete(url))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(answer));
+    }
 
     String generateRandomHash() throws NoSuchAlgorithmException {
         SecureRandom secureRandom = new SecureRandom();

@@ -1,13 +1,11 @@
 package com.video_material.service;
 
-import com.google.gson.Gson;
 import com.video_material.model.VideoMaterial;
 import com.video_material.repo.VideoMaterialRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public class VideoMaterialService {
@@ -21,5 +19,13 @@ public class VideoMaterialService {
     public ResponseEntity<String> save(VideoMaterial videoMaterial) {
         videoMaterial = repo.save(videoMaterial);
         return ResponseEntity.ok(videoMaterial.getId().toString());
+    }
+
+    public ResponseEntity<String> deleteById(Long id) {
+        if (!repo.existsById(id)) {
+            return ResponseEntity.badRequest().body(STR."Deletion failed. Entity with id \{id} not found.");
+        }
+        repo.deleteById(id);
+        return ResponseEntity.ok(id.toString());
     }
 }
