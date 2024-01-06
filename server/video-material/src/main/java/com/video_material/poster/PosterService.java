@@ -1,12 +1,8 @@
-package com.video_material.service;
+package com.video_material.poster;
 
-import com.video_material.model.Poster;
-import com.video_material.repo.PosterRepo;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,9 +1,8 @@
-package com.video_material.service;
+package com.video_material.video.service;
 
-import com.video_material.model.VideoMaterial;
-import com.video_material.repo.VideoMaterialRepo;
+import com.video_material.video.model.VideoMaterial;
+import com.video_material.video.repo.VideoMaterialRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
