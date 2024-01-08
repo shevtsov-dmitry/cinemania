@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-const STYLE = {
-    IMAGE_WIDTH: 23,
-    LOGO_IMAGE_WIDTH: 50,
-}
-
 export function Header() {
     const generalTopicsRef = useRef()
     const newShowsAndCollectionsRef = useRef()
@@ -120,7 +115,7 @@ export function Header() {
                         <img
                             ref={searchImageRef}
                             id="search-image"
-                            className={`w-[${STYLE.IMAGE_WIDTH}px]`}
+                            className={`w-[23px]`}
                             src={'icons/search.png'}
                             alt=""
                         />
@@ -136,7 +131,7 @@ export function Header() {
                         <img
                             ref={loginImageRef}
                             id="login-icon"
-                            className={`w-[${STYLE.IMAGE_WIDTH}px] hover:cursor-pointer`}
+                            className={`w-[23px] hover:cursor-pointer`}
                             src={'icons/login.png'}
                             alt="login"
                         />
@@ -146,13 +141,13 @@ export function Header() {
                     </div>
                     <img
                         ref={burgerImageRef}
-                        className={`w-[${STYLE.IMAGE_WIDTH}px] hidden scale-125 hover:cursor-pointer max-[1024px]:block`}
+                        className={`w-[23px] hidden scale-125 hover:cursor-pointer max-[1024px]:block`}
                         src={'icons/burger.png'}
                         alt=""
                     />
                     <img
                         ref={closeImageRef}
-                        className={`w-[${STYLE.IMAGE_WIDTH}px] hidden scale-75 hover:cursor-pointer min-[1024px]:hidden`}
+                        className={`w-[23px] hidden scale-75 hover:cursor-pointer min-[1024px]:hidden`}
                         src={'icons/close.png'}
                         alt=""
                     />
