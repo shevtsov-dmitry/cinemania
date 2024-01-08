@@ -4,6 +4,11 @@
 
 @layer components {
   .topic {
-      @apply hover:bg-red-50 hover:cursor-pointer select-none
+    @apply hover:bg-red-50 hover:cursor-pointer select-none
+  }
+
+  .preview-poster-el {
+    //@apply w-[250px] h-[250px] bg-orange-700 rounded
+    @apply w-60 h-56 bg-orange-700 rounded
   }
 }

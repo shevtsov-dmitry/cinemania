@@ -1,5 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer components {
+  .topic {
+    @apply hover:bg-red-50 hover:cursor-pointer select-none;
+  }
+  .preview-poster-el {
+    @apply w-60 h-56 bg-orange-700 rounded;
+  }
+}
 
 /*# sourceMappingURL=index.css.map */
