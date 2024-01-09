@@ -17,17 +17,12 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-  .centered-arrow-block {
-    @apply absolute top-1/2 -translate-x-1/2 -translate-y-1/2;
-  }
-  .centered-arrow-block-right {
-    @apply right-[0%];
-  }
-  .centered-arrow-block-left {
-    @apply ml-[1%];
+  .centered-arrow {
+    @apply absolute top-1/2 -translate-x-1/2 -translate-y-1/2 z-20;
   }
   .arrow {
-    @apply w-10 m-0 box-border bg-white/30 backdrop-blur-sm rounded-lg px-1 py-2 hover:cursor-pointer;
+    @apply w-10 m-0 box-border bg-white/30 backdrop-blur-sm rounded-lg px-1 py-2
+    hover:scale-125 hover:cursor-pointer transition-all hover:bg-gray-300/30;
   }
 }
 
