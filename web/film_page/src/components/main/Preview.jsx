@@ -1,7 +1,7 @@
 function fillBlockWithPosters() {
     const content = []
     for (let i = 0; i < 15; i++) {
-        content.push(<li className={'preview-poster-el'}></li>)
+        content.push(<li className={'preview-poster-el hover:scale-105 transition-all'}></li>)
     }
     return content
 }
@@ -10,7 +10,7 @@ export function Preview() {
     return (
         <>
             <h3 className={'p-2 text-2xl font-bold text-white'}>Новинки</h3>
-            <div className="no-scrollbar relative overflow-x-scroll bg-blue-500 p-2">
+            <div className="no-scrollbar relative overflow-x-scroll p-2">
                 <ul id={'previews-sequence-block'} className="flex w-fit gap-4">
                     {fillBlockWithPosters()}
                 </ul>
