@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import {SideScrollArrow} from "../common/util/SideScrollArrow/SideScrollArrow";
 
 export function Preview() {
     const scrollableBlockRef = useRef()
@@ -8,18 +9,11 @@ export function Preview() {
     const [isBlockHovered, setIsBlockHovered] = useState(false)
 
     const ARROW_SCROLL_DISTANCE = 800
+    const Arrow = new SideScrollArrow(scrollableBlockRef)
 
-    function scrollLeft() {
-        if (scrollableBlockRef.current) {
-            scrollableBlockRef.current.scrollLeft -= ARROW_SCROLL_DISTANCE
-        }
-    }
+    const scrollLeft = () => Arrow.scrollLeft(ARROW_SCROLL_DISTANCE)
+    const scrollRight = () => Arrow.scrollRight(ARROW_SCROLL_DISTANCE)
 
-    function scrollRight() {
-        if (scrollableBlockRef.current) {
-            scrollableBlockRef.current.scrollLeft += ARROW_SCROLL_DISTANCE
-        }
-    }
 
     function hideArrowsLeaningScreen() {
         const block = scrollableBlockRef.current
