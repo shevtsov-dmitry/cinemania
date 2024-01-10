@@ -68,13 +68,13 @@ export function Preview() {
                 </div>
                 <div
                     ref={arrowsHolder}
-                    className={`arrows-holder w-dvw absolute -mt-[20.5rem] h-[20rem]`}
+                    className={`arrows-holder w-dvw absolute -mt-[20.5rem] h-[20rem] `}
                 >
                     <div className="centered-arrow left-8" onClick={scrollLeft}>
                         <img
                             ref={leftArrowRef}
                             src={'icons/left-arrow.png'}
-                            className={'arrow'}
+                            className={'arrow max-md:w-0 max-md:bg-transparent'}
                             alt={'scroll left'}
                         />
                     </div>
@@ -85,7 +85,7 @@ export function Preview() {
                         <img
                             ref={rightArrowRef}
                             src={'icons/right-arrow.png'}
-                            className={'arrow'}
+                            className={'arrow max-md:w-0 max-md:bg-transparent'}
                             alt={'scroll right'}
                         />
                     </div>
