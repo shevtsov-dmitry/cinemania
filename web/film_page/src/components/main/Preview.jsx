@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import {SideScrollArrow} from "../common/util/SideScrollArrow/SideScrollArrow";
+import { SideScrollArrow } from '../common/util/SideScrollArrow/SideScrollArrow'
 
 export function Preview() {
     const scrollableBlockRef = useRef()
@@ -13,29 +13,10 @@ export function Preview() {
 
     const scrollLeft = () => Arrow.scrollLeft(ARROW_SCROLL_DISTANCE)
     const scrollRight = () => Arrow.scrollRight(ARROW_SCROLL_DISTANCE)
-
-
-    function hideArrowsLeaningScreen() {
-        const block = scrollableBlockRef.current
-
-        if (block) {
-            const isScrollAtMin = block.scrollLeft === 0
-            const isScrollAtMax =
-                block.scrollLeft >= block.scrollWidth - block.clientWidth
-
-            if (isScrollAtMin) {
-                leftArrowRef.current.style.visibility = 'hidden'
-            } else {
-                leftArrowRef.current.style.visibility = 'visible'
-            }
-
-            if (isScrollAtMax) {
-                rightArrowRef.current.style.visibility = 'hidden'
-            } else {
-                rightArrowRef.current.style.visibility = 'visible'
-            }
-        }
-    }
+    const hideArrowsLeaningScreen = () =>
+        Arrow.hideArrowsLeaningScreen(leftArrowRef, rightArrowRef)
+    const hideShowArrowsOnHover = () =>
+        Arrow.hideShowArrowsOnHover(isBlockHovered, arrowsHolder)
 
     useEffect(() => {
         // init
@@ -54,7 +35,6 @@ export function Preview() {
         }
 
         return () => {
-            // Remove the scroll event listener on component unmount
             if (blockElement) {
                 blockElement.removeEventListener(
                     'scroll',
@@ -63,11 +43,6 @@ export function Preview() {
             }
         }
     }, [])
-
-    function hideShowArrowsOnHover() {
-        let style = arrowsHolder.current.style
-        isBlockHovered ? (style.display = 'block') : (style.display = 'none')
-    }
 
     return (
         <>
