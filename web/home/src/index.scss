@@ -1,16 +1,10 @@
+@import "components/main/preview.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  .topic {
-    @apply select-none hover:cursor-pointer hover:bg-red-50;
-  }
-
-  .preview-poster-el {
-    @apply h-80 w-60 rounded-3xl bg-indigo-900;
-  }
-
+@layer utilities {
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -21,17 +15,10 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+}
 
-  //.arrow-block {
-  //  @apply bg-black bg-[rgba(0,0,0,1)]
-  //}
-  .centered-arrow {
-    @apply absolute top-1/2 -translate-x-1/2 -translate-y-1/2 z-20;
-  }
-
-  .arrow {
-    @apply w-10 m-0 box-border bg-white/30 backdrop-blur-sm rounded-lg px-1 py-2
-    hover:scale-125 hover:cursor-pointer transition-all hover:bg-gray-300/30;
-    //bg-[rgba(0,0,0,0.5)]
+@layer components {
+  .topic {
+    @apply select-none hover:cursor-pointer hover:bg-red-50;
   }
 }
