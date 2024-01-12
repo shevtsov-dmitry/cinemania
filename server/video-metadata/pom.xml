@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com</groupId>
-	<artifactId>video-material</artifactId>
+	<artifactId>video-metadata</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>video-material</name>
-	<description>video-material</description>
+	<name>video-metadata</name>
+	<description>video-metadata</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
