@@ -1,25 +1,37 @@
 package ru.video_material.video.service;
 
-import ru.video_material.video.model.VideoMaterial;
-import ru.video_material.video.repo.VideoMaterialRepo;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
+import ru.video_material.video.model.Video;
+import ru.video_material.video.model.VideoMetadata;
+import ru.video_material.video.repo.VideoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
+import static java.lang.StringTemplate.STR;
+
 @Service
-public class VideoMaterialService {
+public class VideoService {
 
     private final VideoRepo repo;
     private final GridFsTemplate gridFsTemplate;
-    private final GridFsOperations operations;
+
     @Autowired
-    public VideoMaterialService(VideoMaterialRepo repo) {
+    public VideoService(VideoRepo repo, GridFsTemplate gridFsTemplate) {
         this.repo = repo;
+        this.gridFsTemplate = gridFsTemplate;
     }
 
-    public ResponseEntity<String> save(VideoMaterial videoMaterial) {
-        videoMaterial = repo.save(videoMaterial);
-        return ResponseEntity.ok(videoMaterial.getId().toString());
+
+    public ResponseEntity<String> save(VideoMetadata videoMetadata) {
+        videoMetadata = repo.save(videoMetadata);
+        return ResponseEntity.ok(videoMetadata.getId().toString());
     }
 
     public ResponseEntity<String> deleteById(Long id) {

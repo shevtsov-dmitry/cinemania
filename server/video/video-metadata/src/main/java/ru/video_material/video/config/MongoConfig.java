@@ -8,14 +8,16 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
+import static ru.video_material.config.ApplicationConstants.*;
+
 @Configuration
-public class MongoConfig extends AbstractMongoClientConfiguration {
+//@EnableMongoRepositories
+public class MongoConfig extends AbstractMongoClientConfiguration{
 
     private final MappingMongoConverter mongoConverter;
 
     @Autowired
-    public MongoConfig(@Lazy MappingMongoConverter mongoConverter) {
-        this.mongoConverter = mongoConverter;
+    public MongoConfig(@Lazy MappingMongoConverter mongoConverter) {this.mongoConverter = mongoConverter;
     }
 
     @Bean
@@ -25,6 +27,6 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Override
     protected String getDatabaseName() {
-        return "posters";
+        return "video_storage_gridfs";
     }
 }

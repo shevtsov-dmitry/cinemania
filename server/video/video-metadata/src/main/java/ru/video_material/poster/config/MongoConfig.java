@@ -1,4 +1,4 @@
-package ru.video_material.configs;
+package ru.video_material.poster.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,16 +8,14 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
-import static ru.video_material.ApplicationConstants.*;
-
 @Configuration
-//@EnableMongoRepositories
-public class MongoConfig extends AbstractMongoClientConfiguration{
+public class MongoConfig extends AbstractMongoClientConfiguration {
 
     private final MappingMongoConverter mongoConverter;
 
     @Autowired
-    public MongoConfig(@Lazy MappingMongoConverter mongoConverter) {this.mongoConverter = mongoConverter;
+    public MongoConfig(@Lazy MappingMongoConverter mongoConverter) {
+        this.mongoConverter = mongoConverter;
     }
 
     @Bean
@@ -27,6 +25,6 @@ public class MongoConfig extends AbstractMongoClientConfiguration{
 
     @Override
     protected String getDatabaseName() {
-        return MONGODB_NAME;
+        return "posters";
     }
 }

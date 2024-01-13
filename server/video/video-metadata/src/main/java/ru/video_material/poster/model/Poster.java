@@ -13,6 +13,4 @@ public class Poster {
     private String id;
     @NonNull
     private Binary image;
-
-
 }

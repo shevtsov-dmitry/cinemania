@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 
-import static ru.video_material.ApplicationConstants.CHUNK_SIZE;
+import static ru.video_material.config.ApplicationConstants.CHUNK_SIZE;
 
 @Service
 public class VideoService {

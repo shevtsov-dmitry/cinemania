@@ -12,5 +12,4 @@ public class Video {
     private String title;
     private String contentType;
     private InputStream stream;
-    private Long metadataId;
 }

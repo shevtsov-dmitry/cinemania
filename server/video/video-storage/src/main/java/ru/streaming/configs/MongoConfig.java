@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
-import static ru.video_material.ApplicationConstants.*;
+import static ru.video_material.config.ApplicationConstants.*;
 
 @Configuration
 //@EnableMongoRepositories

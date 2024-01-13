@@ -2,7 +2,7 @@ package ru.video_material.controller;
 
 import com.google.gson.Gson;
 import ru.video_material.CONSTANTS;
-import ru.video_material.video.model.VideoMaterial;
+import ru.video_material.video.model.VideoMetadata;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class VideoMaterialControllerTest {
+class VideoMetadataControllerTest {
     @Autowired
     MockMvc mockMvc;
     final String ENDPOINT_URL = STR."\{CONSTANTS.HOST_AND_PORT}/video-materials";
@@ -41,7 +41,7 @@ class VideoMaterialControllerTest {
                 "watchTime": "10:34",
                 "rating": 7.53
         }*/
-        var videoMaterial = new VideoMaterial("Never catch me", "2022-01-23", "USA", "comedy", 12);
+        var videoMaterial = new VideoMetadata("Never catch me", "2022-01-23", "USA", "comedy", 12);
         videoMaterial.setVideoId(generateRandomHash());
         videoMaterial.setPosterId(generateRandomHash());
         videoMaterial.setRating(7.53F);

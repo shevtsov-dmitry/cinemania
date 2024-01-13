@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 @Data
 @NoArgsConstructor
 @Entity
-public class VideoMaterial {
+public class VideoMetadata {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, unique = true)
@@ -33,10 +33,10 @@ public class VideoMaterial {
     @NonNull
     private String posterId;
     @NonNull
-    String videoId;
+    private String videoId;
     private float rating;
 
-    public VideoMaterial(@NonNull String title, @NonNull String releaseDate, @NonNull String country,
+    public VideoMetadata(@NonNull String title, @NonNull String releaseDate, @NonNull String country,
                          @NonNull String genre, @NonNull Integer age) {
         this.title = title;
         this.releaseDate = releaseDate;
@@ -45,7 +45,7 @@ public class VideoMaterial {
         this.age = age;
     }
 
-    public VideoMaterial(@NonNull String title, @NonNull String releaseDate,
+    public VideoMetadata(@NonNull String title, @NonNull String releaseDate,
                          @NonNull String country, @NonNull String genre, @NonNull Integer age,
                          @NonNull String posterId, @NonNull String videoId) {
         this.title = title;
@@ -57,7 +57,7 @@ public class VideoMaterial {
         this.videoId = videoId;
     }
 
-    public VideoMaterial(@NonNull String title, @NonNull String releaseDate,
+    public VideoMetadata(@NonNull String title, @NonNull String releaseDate,
                          @NonNull String country, @NonNull String genre, @NonNull Integer age,
                          @NonNull String posterId, @NonNull String videoId, Float rating) {
         this.title = title;
