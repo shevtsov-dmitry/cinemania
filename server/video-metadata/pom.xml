@@ -8,7 +8,7 @@
 		<version>3.1.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com</groupId>
+	<groupId>ru.cinemania</groupId>
 	<artifactId>video-metadata</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>video-metadata</name>
@@ -77,10 +77,13 @@
                 <configuration>
                     <source>21</source>
                     <target>21</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
+					<fork>true</fork>
+					<compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
-        </plugins>
+
+
+		</plugins>
 	</build>
 
 </project>

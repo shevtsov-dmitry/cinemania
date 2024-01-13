@@ -8,7 +8,7 @@
         <version>3.1.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com</groupId>
+    <groupId>ru.cinemania</groupId>
     <artifactId>form-filler-assistant</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>form-filler-assistant</name>
@@ -48,15 +48,19 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version>
         </dependency>
-
-
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <fork>true</fork>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
             </plugin>
         </plugins>
     </build>

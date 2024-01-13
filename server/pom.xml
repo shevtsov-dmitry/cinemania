@@ -2,27 +2,22 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>ru.streaming</groupId>
-  <artifactId>My-streaming-platform</artifactId>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>my-streaming-platform</artifactId>
   <version>1.0</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
-  <name>My streaming platform</name>
+  <name>my streaming platform</name>
   <url>http://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+    <jdk.compiler.parameters>-Xenable-preview</jdk.compiler.parameters>
   </properties>
   <modules>
     <module>video-storage</module>
     <module>video-metadata</module>
+    <module>form-filler-assistant</module>
   </modules>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 </project>
