@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com</groupId>
-    <artifactId>content-assist-with-input</artifactId>
+    <artifactId>form-filler-assistant</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>content-assist-with-input</name>
-    <description>content-assist-with-input</description>
+    <name>form-filler-assistant</name>
+    <description>form-filler-assistant</description>
     <properties>
         <java.version>21</java.version>
     </properties>

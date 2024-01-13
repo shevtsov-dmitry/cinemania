@@ -2,18 +2,21 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.example</groupId>
-  <artifactId>Cinemania</artifactId>
+  <groupId>ru.streaming</groupId>
+  <artifactId>My-streaming-platform</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
 
-  <name>Cinemania</name>
+  <name>My streaming platform</name>
   <url>http://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
+  <modules>
+    <module>video-storage</module>
+    <module>video-metadata</module>
+  </modules>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
