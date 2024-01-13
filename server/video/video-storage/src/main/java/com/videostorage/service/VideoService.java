@@ -35,24 +35,6 @@ public class VideoService {
         this.operations = operations;
     }
 
-    public String saveVideo(String title, MultipartFile file) throws IOException {
-        Video video = new Video();
-        video.setTitle(title);
-        video.setContentType(file.getContentType());
-        repo.save(video);
-        gridFsTemplate.store(file.getInputStream(), title, file.getContentType());
-        return "new video saved: %s".formatted(video);
-    }
-
-    public String deleteVideo(@PathVariable String title) {
-        if (!repo.existsByTitle(title)) {
-            return "impossible to delete video.";
-        }
-        Query.query(Criteria.where("filename").is(title));
-        return STR."video \{title} has been deleted successfully.";
-    }
-
-
     public ResponseEntity<byte[]> prepareContent(final String title, final String range) {
         try {
             // TODO: fix the retrieval of the whole video file from gridfs. Instead need to retrieve small chunks of video.

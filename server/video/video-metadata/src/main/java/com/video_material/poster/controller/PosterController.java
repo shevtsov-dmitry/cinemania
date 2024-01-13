@@ -1,4 +1,4 @@
-package com.video_material.poster;
+package com.videostorage.controller.poster;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

@@ -1,5 +1,7 @@
-package com.video_material.poster;
+package com.video_material.poster.service;
 
+import com.video_material.poster.model.Poster;
+import com.video_material.poster.repo.PosterRepo;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -23,27 +23,8 @@ public class VideoController {
     @Autowired
     private final VideoService service;
 
-    Logger log = LoggerFactory.getLogger(this.getClass());
-
     public VideoController(VideoService service) {
         this.service = service;
-    }
-
-    @PostMapping("/upload/one")
-    public ResponseEntity<String> saveVideo(@RequestBody MultipartFile file, @RequestParam String title) {
-        try {
-            log.info("title: {}", title);
-            String successMessage = service.saveVideo(title, file);
-            return ResponseEntity.status(200).body(successMessage);
-        } catch (IOException exception) {
-            exception.printStackTrace();
-            return ResponseEntity.status(500).body("Error uploading video");
-        }
-    }
-
-    @GetMapping(value = "/delete/one/byTitle/{name}")
-    public String deleteVideo(@PathVariable String name) {
-        return service.deleteVideo(name);
     }
 
     // TODO: add support for streaming to mobile devices

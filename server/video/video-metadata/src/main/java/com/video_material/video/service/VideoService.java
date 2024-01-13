@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class VideoMaterialService {
-    private final VideoMaterialRepo repo;
 
+    private final VideoRepo repo;
+    private final GridFsTemplate gridFsTemplate;
+    private final GridFsOperations operations;
     @Autowired
     public VideoMaterialService(VideoMaterialRepo repo) {
         this.repo = repo;
@@ -27,4 +29,22 @@ public class VideoMaterialService {
         repo.deleteById(id);
         return ResponseEntity.ok(id.toString());
     }
+
+    public String saveVideo(String title, MultipartFile file) throws IOException {
+        Video video = new Video();
+        video.setTitle(title);
+        video.setContentType(file.getContentType());
+        repo.save(video);
+        gridFsTemplate.store(file.getInputStream(), title, file.getContentType());
+        return "new video saved: %s".formatted(video);
+    }
+
+    public String deleteVideo(@PathVariable String title) {
+        if (!repo.existsByTitle(title)) {
+            return "impossible to delete video.";
+        }
+        Query.query(Criteria.where("filename").is(title));
+        return STR."video \{title} has been deleted successfully.";
+    }
+
 }
