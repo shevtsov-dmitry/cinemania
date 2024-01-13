@@ -18,6 +18,5 @@
   <modules>
     <module>video-storage</module>
     <module>video-metadata</module>
-    <module>form-filler-assistant</module>
   </modules>
 </project>
