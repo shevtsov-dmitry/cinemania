@@ -56,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>ru.cinemania</groupId>
-            <artifactId>video-metadata</artifactId>
+            <artifactId>video-material</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

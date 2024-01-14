@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ru.cinemania</groupId>
-	<artifactId>video-metadata</artifactId>
+	<artifactId>video-material</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>video-metadata</name>
 	<description>video-metadata</description>
