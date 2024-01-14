@@ -1,4 +1,4 @@
-package ru.streaming.configs;
+package ru.streaming.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
-import static ru.video_material.config.ApplicationConstants.*;
+import static ru.streaming.constants.ApplicationConstants.*;
 
 @Configuration
 //@EnableMongoRepositories

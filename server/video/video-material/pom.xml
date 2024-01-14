@@ -11,8 +11,8 @@
 	<groupId>ru.cinemania</groupId>
 	<artifactId>video-material</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>video-metadata</name>
-	<description>video-metadata</description>
+	<name>video-material</name>
+	<description>video-material</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -76,24 +76,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<!--	<build>-->
-<!--		<plugins>-->
-<!--			<plugin>-->
-<!--				<groupId>org.springframework.boot</groupId>-->
-<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--			</plugin>-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <source>21</source>-->
-<!--                    <target>21</target>-->
-<!--					<fork>true</fork>-->
-<!--					<compilerArgs>&#45;&#45;enable-preview</compilerArgs>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-<!--		</plugins>-->
-<!--	</build>-->
-
 </project>
