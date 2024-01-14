@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.cinemania</groupId>
-    <artifactId>video-storage</artifactId>
-    <name>video-storage</name>
-    <description>video-storage</description>
+    <artifactId>streaming</artifactId>
+    <name>streaming</name>
+    <description>streaming</description>
     <properties>
         <java.version>21</java.version>
     </properties>
