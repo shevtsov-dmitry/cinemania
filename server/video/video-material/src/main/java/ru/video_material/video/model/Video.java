@@ -9,7 +9,7 @@ import java.io.InputStream;
 @NoArgsConstructor
 @Document
 public class Video {
-    private String title;
-    private String contentType;
+    private String id;
     private InputStream stream;
+    private String contentType;
 }

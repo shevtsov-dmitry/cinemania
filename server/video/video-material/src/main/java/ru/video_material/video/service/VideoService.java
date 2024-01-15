@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 import ru.video_material.video.model.Video;
 import ru.video_material.video.model.VideoMetadata;
-import ru.video_material.video.repo.VideoMetadataPostgresRepo;
-import ru.video_material.video.repo.VideoMongoRepo;
+import ru.video_material.video.repo.VideoMetadataRepo;
+import ru.video_material.video.repo.BinaryVideoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,42 +20,44 @@ import static java.lang.StringTemplate.STR;
 @Service
 public class VideoService {
 
-    private final VideoMongoRepo mongoRepo;
-    private final VideoMetadataPostgresRepo postgresRepo;
+    private final BinaryVideoRepo videoRepo;
+    private final VideoMetadataRepo metadataRepo;
     private final GridFsTemplate gridFsTemplate;
 
     @Autowired
-    public VideoService(VideoMongoRepo mongoRepo, VideoMetadataPostgresRepo postgresRepo, GridFsTemplate gridFsTemplate) {
-        this.mongoRepo = mongoRepo;
-        this.postgresRepo = postgresRepo;
+    public VideoService(BinaryVideoRepo videoRepo, VideoMetadataRepo metadataRepo, GridFsTemplate gridFsTemplate) {
+        this.videoRepo = videoRepo;
+        this.metadataRepo = metadataRepo;
         this.gridFsTemplate = gridFsTemplate;
     }
 
 
-    public ResponseEntity<String> save(VideoMetadata videoMetadata) {
-        videoMetadata = postgresRepo.save(videoMetadata);
+    public ResponseEntity<String> saveVideoMetadata(VideoMetadata videoMetadata) {
+        videoMetadata = metadataRepo.save(videoMetadata);
         return ResponseEntity.ok(videoMetadata.getId().toString());
     }
 
+    public ResponseEntity<String> saveVideo(String title, MultipartFile file){
+        try {
+            Video video = new Video();
+            videoRepo.save(video);
+            gridFsTemplate.store(file.getInputStream(), title, file.getContentType());
+            return ResponseEntity.ok(video.getId());
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Couldn't save the video");
+        }
+    }
+
     public ResponseEntity<String> deleteById(Long id) {
-        if (!mongoRepo.existsById(id)) {
+        if (!videoRepo.existsById(id)) {
             return ResponseEntity.badRequest().body(STR."Deletion failed. Entity with id \{id} not found.");
         }
-        mongoRepo.deleteById(id);
+        videoRepo.deleteById(id);
         return ResponseEntity.ok(id.toString());
     }
 
-    public String saveVideo(String title, MultipartFile file) throws IOException {
-        Video video = new Video();
-        video.setTitle(title);
-        video.setContentType(file.getContentType());
-        mongoRepo.save(video);
-        gridFsTemplate.store(file.getInputStream(), title, file.getContentType());
-        return "new video saved: %s".formatted(video);
-    }
-
     public String deleteVideo(@PathVariable String title) {
-        if (!mongoRepo.existsByTitle(title)) {
+        if (!videoRepo.existsByTitle(title)) {
             return "impossible to delete video.";
         }
         Query.query(Criteria.where("filename").is(title));

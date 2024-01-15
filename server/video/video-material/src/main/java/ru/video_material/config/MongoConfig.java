@@ -1,4 +1,4 @@
-package ru.video_material.poster.config;
+package ru.video_material.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -7,8 +7,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
+@EnableMongoRepositories
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
     private final MappingMongoConverter mongoConverter;
@@ -25,6 +27,6 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Override
     protected String getDatabaseName() {
-        return "posters";
+        return "video_storage_gridfs";
     }
 }

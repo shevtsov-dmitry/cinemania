@@ -1,10 +1,26 @@
+#  mongodb://localhost:27017/your-database-name
+#spring:
+#  data:
+#    mongodb:
+#      #      username: admin
+#      #      password: 123
+#      host: localhost
+#      port: 27017
+#      database: video_storage_gridfs
+#      gridfs:
+#        database: video_storage_gridfs
+
+  #uplod size limit
 spring:
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10GB
+      max-request-size: 10GB
   datasource:
-    url: jdbc:postgresql://localhost:5432/streaming
-    username: postgres
-    password: 123123
-  jpa:
-    database: postgresql
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+    url: jdbc:mongodb://localhost:27017/video_storage_gridfs
+
+#spring.servlet.multipart.max-file-size=150MB
+#spring.servlet.multipart.max-request-size=150MB

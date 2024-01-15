@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/video-materials/posters")
+@RequestMapping("/videos/posters")
 public class PosterController {
 
     private final PosterService service;
@@ -22,7 +22,7 @@ public class PosterController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, String>> saveImagePoster(@RequestParam MultipartFile file) throws IOException {
+    public ResponseEntity<String> saveImagePoster(@RequestParam MultipartFile file) throws IOException {
         return service.save(file);
     }
 
