@@ -1,14 +1,12 @@
-package ru.video_material.video.controller;
+package ru.video_material.controller;
 
 import org.springframework.web.multipart.MultipartFile;
-import ru.video_material.video.model.VideoMetadata;
+import ru.video_material.model.VideoMetadata;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.video_material.video.service.VideoService;
-
-import java.io.IOException;
+import ru.video_material.service.VideoService;
 
 @RestController
 @RequestMapping("/videos")
@@ -33,7 +31,7 @@ public class VideoController {
 
     @DeleteMapping("/delete/byId/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
-        return service.deleteById(id);
+        return service.deleteById(String.valueOf(id));
     }
 
     @GetMapping(value = "/delete/one/byTitle/{name}")

@@ -1,4 +1,4 @@
-package ru.video_material.poster.service;
+package ru.video_material.service;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.video_material.poster.model.Poster;
-import ru.video_material.poster.repo.PosterRepo;
+import ru.video_material.model.Poster;
+import ru.video_material.repo.PosterRepo;
 
 import java.io.IOException;
 import java.util.Objects;

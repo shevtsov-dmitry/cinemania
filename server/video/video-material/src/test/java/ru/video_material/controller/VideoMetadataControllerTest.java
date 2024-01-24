@@ -2,7 +2,7 @@ package ru.video_material.controller;
 
 import com.google.gson.Gson;
 import ru.video_material.CONSTANTS;
-import ru.video_material.video.model.VideoMetadata;
+import ru.video_material.model.VideoMetadata;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

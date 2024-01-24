@@ -1,4 +1,4 @@
-package ru.video_material.video.model;
+package ru.video_material.model;
 
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;

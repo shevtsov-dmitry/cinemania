@@ -1,4 +1,4 @@
-package ru.video_material.poster.model;
+package ru.video_material.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

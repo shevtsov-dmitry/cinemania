@@ -1,10 +1,10 @@
-package ru.video_material.video.repo;
+package ru.video_material.repo;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import ru.video_material.video.model.Video;
+import ru.video_material.model.VideoMetadata;
 
 @Repository
-public interface BinaryVideoRepo extends MongoRepository<Video, Long> {
+public interface VideoMetadataRepo extends MongoRepository<VideoMetadata, Long> {
     boolean existsByTitle(String title);
 }

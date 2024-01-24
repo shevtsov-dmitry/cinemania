@@ -1,4 +1,4 @@
-package ru.video_material.video.model;
+package ru.video_material.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 public class VideoMetadata {
     @NonNull
-    private Long id;
+    private String id;
     @NonNull private String title;
     @NonNull
     private String releaseDate;
