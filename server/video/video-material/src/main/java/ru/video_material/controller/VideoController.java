@@ -19,7 +19,7 @@ public class VideoController {
         this.service = service;
     }
 
-    @PostMapping("/save")
+    @PostMapping("/save-metadata")
     public ResponseEntity<String> save(@RequestBody VideoMetadata videoMetadata) {
         return service.saveVideoMetadata(videoMetadata);
     }
@@ -30,8 +30,8 @@ public class VideoController {
     }
 
     @DeleteMapping("/delete/byId/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
-        return service.deleteById(String.valueOf(id));
+    public ResponseEntity<String> delete(@PathVariable String id) {
+        return service.deleteById(id);
     }
 
     @GetMapping(value = "/delete/one/byTitle/{name}")

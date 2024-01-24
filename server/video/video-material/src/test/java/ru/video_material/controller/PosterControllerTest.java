@@ -2,6 +2,8 @@ package ru.video_material.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.video_material.CONSTANTS;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -23,15 +25,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.video_material.CONSTANTS.*;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PosterControllerTest {
-
     @Autowired
     MockMvc mockMvc;
-    final String endpointURL = STR."\{CONSTANTS.HOST_AND_PORT}/video-materials/posters";
+    @LocalServerPort
+    private int PORT;
+    final String ENDPOINT_URL = UriComponentsBuilder.fromHttpUrl(HOST).port(PORT).path("videos/posters").toUriString();
 
     String contentType = "multipart/form-data";
 
@@ -39,7 +43,7 @@ class PosterControllerTest {
     static String idJPEG;
     String nameJPEG = "sin-city-poster";
     String filenameJPEG = STR."\{nameJPEG}.jpg";
-    Path pathJPEG = Paths.get(CONSTANTS.POSTERS_PATH + filenameJPEG);
+    Path pathJPEG = Paths.get(ASSETS_PATH + filenameJPEG);
     byte[] contentJPEG = Files.readAllBytes(pathJPEG);
     MockMultipartFile fileJPEG = new MockMultipartFile("file", filenameJPEG, contentType, contentJPEG);
 
@@ -48,7 +52,7 @@ class PosterControllerTest {
     static String idPNG;
     String namePNG = "png-image";
     String filenamePNG = STR."\{namePNG}.png";
-    Path pathPNG = Paths.get(CONSTANTS.POSTERS_PATH + filenamePNG);
+    Path pathPNG = Paths.get(ASSETS_PATH + filenamePNG);
     byte[] contentPNG = Files.readAllBytes(pathPNG);
     MockMultipartFile filePNG = new MockMultipartFile("file", filenamePNG, contentType, contentPNG);
 
@@ -58,7 +62,8 @@ class PosterControllerTest {
     @Test
     @Order(1)
     void uploadJPEGImage() throws Exception {
-        String url = STR."\{endpointURL}/upload";
+//        String url = STR."\{ENDPOINT_URL}/upload";
+        String url = "http://localhost:8080/videos/posters/upload";
         mockMvc.perform(multipart(url)
                         .file(fileJPEG))
                 .andExpect(status().isOk())
@@ -69,7 +74,7 @@ class PosterControllerTest {
     @Test
     @Order(2)
     void uploadPNGImage() throws Exception {
-        String url = STR."\{endpointURL}/upload";
+        String url = STR."\{ENDPOINT_URL}/upload";
         mockMvc.perform(multipart(url)
                         .file(filePNG))
                 .andExpect(status().isOk())
@@ -95,13 +100,13 @@ class PosterControllerTest {
     @Test
     @Order(3)
     void getById() throws Exception {
-        String url = STR."\{endpointURL}/get/byId/\{idJPEG}";
+        String url = STR."\{ENDPOINT_URL}/get/byId/\{idJPEG}";
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("image/jpeg"));
 
         // * in case if PNG file was uploaded client gets JPEG file anyway
-        url = STR."\{endpointURL}/get/byId/\{idPNG}";
+        url = STR."\{ENDPOINT_URL}/get/byId/\{idPNG}";
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("image/jpeg"));
@@ -110,7 +115,7 @@ class PosterControllerTest {
     @Test
     @Order(4)
     void cleanDatabaseAfterJPEGFileUpload() throws Exception {
-        String url = STR."\{endpointURL}/delete/byId/\{idJPEG}";
+        String url = STR."\{ENDPOINT_URL}/delete/byId/\{idJPEG}";
         mockMvc.perform(delete(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
@@ -120,7 +125,7 @@ class PosterControllerTest {
     @Test
     @Order(5)
     void cleanDatabaseAfterPNGFileUpload() throws Exception {
-        String url = STR."\{endpointURL}/delete/byId/\{idPNG}";
+        String url = STR."\{ENDPOINT_URL}/delete/byId/\{idPNG}";
         mockMvc.perform(delete(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
