@@ -1,14 +1,12 @@
 package ru.video_material.controller;
 
-import com.google.gson.Gson;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import ru.video_material.model.VideoMetadata;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.video_material.PATH;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,53 +20,66 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.video_material.CONSTANTS.*;
+import static ru.video_material.PATH.*;
 
-@WebMvcTest(VideoController.class)
+//@WebMvcTest(VideoController.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class VideoControllerTest {
+
     @Autowired
     MockMvc mockMvc;
-    final String PARENT_PATH = "/videos";
-    static String metadataId;
+    final String ENDPOINT_URL = HOST_AND_PORT + "/videos";
+    static String videoId;
+
 
     @Test
     @Order(1)
-    void saveAllVideoMaterialInformation() throws Exception {
-        var videoMaterial = new VideoMetadata("Never catch me", "2022-01-23", "USA", "comedy", 12);
-        videoMaterial.setVideoId(generateRandomHash());
-        videoMaterial.setPosterId(generateRandomHash());
-        videoMaterial.setRating(7.53F);
-        String url = PARENT_PATH + "/save-metadata";
-        Gson gson = new Gson();
-        String JSON = gson.toJson(videoMaterial);
-        mockMvc.perform(post(url)
-                        .content(JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string(not(emptyString())))
-                .andDo(result -> metadataId = result.getResponse().getContentAsString());
-    }
+    void uploadVideo_thenCheckIfWasUploaded() throws Exception {
+        MockMultipartFile preparedFile = prepareVideoFileToUpload();
+        String url = ENDPOINT_URL + "/upload";
 
-    @Test
-    @Order(2)
-    void deleteById() throws Exception {
-        String url = STR."\{PARENT_PATH}/delete/byId/\{metadataId}";
-        mockMvc.perform(delete(url))
+        mockMvc.perform(multipart(url)
+                        .file(preparedFile)
+                        .contentType("video/mp4")
+                        .param("title", generateRandomHash().substring(0, 5)))
                 .andExpect(status().isOk())
-                .andExpect(content().string(metadataId));
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string(not(emptyString())))
+                .andDo(result -> videoId = result.getResponse().getContentAsString());
     }
 
     @Test
     @Order(3)
-    void deleteById_whenId_notFound() throws Exception {
-        String url = STR."\{PARENT_PATH}/delete/byId/\{metadataId}";
-        String answer = STR."Deletion failed. Entity with id \{metadataId} not found.";
+    void deleteSavedVideo() throws Exception {
+        assertNotNull(videoId);
+        String url = ENDPOINT_URL + "/delete/byId/" + videoId;
+
+        mockMvc.perform(delete(url))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(4)
+    void tryToDeleteNonExistentVideo() throws Exception {
+        String randomId = generateRandomHash();
+        String url = ENDPOINT_URL + "/delete/byId/"  + randomId;
+
         mockMvc.perform(delete(url))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(answer));
+                .andExpect(content().string(equalTo(STR."Deletion failed. The video with id \{randomId} doesn't exist in GridFS.")));
     }
+
+    private static MockMultipartFile prepareVideoFileToUpload() throws IOException {
+        String contentType = "multipart/form-data";
+        String name = "video";
+        String filename = STR."\{name}.mp4";
+        Path path = Paths.get(ASSETS_PATH + filename);
+        byte[] content = Files.readAllBytes(path);
+        return new MockMultipartFile("file", filename, contentType, content);
+    }
+
 
     String generateRandomHash() throws NoSuchAlgorithmException {
         SecureRandom secureRandom = new SecureRandom();
@@ -88,48 +99,5 @@ class VideoControllerTest {
             hexString.append(hex);
         }
         return hexString.toString();
-    }
-
-    String videoId = null;
-    @Test
-    @Order(4)
-    void uploadVideo_thenCheckIfWasUploaded() throws Exception {
-        MockMultipartFile preparedFile = prepareVideoFileToUpload();
-        String url = PARENT_PATH + "/upload/one";
-        mockMvc.perform(multipart(url)
-                        .file(preparedFile))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("plain/text"))
-                .andExpect(content().string(not(emptyString())))
-                .andDo(result -> videoId = result.getResponse().getContentAsString());
-    }
-
-    @Test
-    @Order(5)
-    void deleteSavedVideo() throws Exception {
-        assertNotNull(videoId);
-        String url = PARENT_PATH + "/delete/byId/" + videoId;
-        mockMvc.perform(delete(url))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @Order(6)
-    void tryToDeleteNonExistentVideo() throws Exception {
-        String randomId = generateRandomHash();
-        String url = PARENT_PATH + "/delete/byId/"  + randomId;
-        mockMvc.perform(delete(url))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("plain/text"))
-                .andExpect(content().string(equalTo(STR."Deletion failed. Entity with id \{randomId} not found.")));
-    }
-
-    private static MockMultipartFile prepareVideoFileToUpload() throws IOException {
-        String contentType = "multipart/form-data";
-        String name = "video";
-        String filename = STR."\{name}.mp4";
-        Path path = Paths.get(ASSETS_PATH + filename);
-        byte[] content = Files.readAllBytes(path);
-        return new MockMultipartFile("file", filename, contentType, content);
     }
 }

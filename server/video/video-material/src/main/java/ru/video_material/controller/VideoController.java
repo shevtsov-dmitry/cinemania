@@ -12,6 +12,7 @@ import ru.video_material.service.VideoService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @RestController
 @RequestMapping("/videos")
@@ -53,14 +54,23 @@ public class VideoController {
     @DeleteMapping("/delete/byId/{id}")
     public ResponseEntity<String> delete(@PathVariable String id) {
         try {
-            String videoId = service.deleteVideoMetadataById(id);
-            service.deleteVideoById(videoId);
+            service.deleteVideoById(id);
             return ResponseEntity.ok(id);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
 
-//    @GetMapping("/get/byId")
+    @GetMapping("/get/byTitle/{title}")
+    public ResponseEntity<List<VideoMetadata>> getMetadataByTitle(@PathVariable String title) {
+        return service.getMetadataByTitle(title);
+    }
+
+    @GetMapping("/get/byId/{id}")
+    public ResponseEntity<VideoMetadata> getMetadataById(@PathVariable String id){
+        return service.getMetadataById(id);
+    }
+
+
 
 }

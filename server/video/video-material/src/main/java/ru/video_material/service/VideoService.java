@@ -1,6 +1,8 @@
 package ru.video_material.service;
 
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import ru.video_material.model.Video;
 import ru.video_material.model.VideoMetadata;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.StringTemplate.STR;
@@ -42,7 +45,7 @@ public class VideoService {
         }
         Video video = new Video();
         videoRepo.save(video);
-        gridFsTemplate.store(file.getInputStream(), Objects.requireNonNull(file.getContentType()));
+        gridFsTemplate.store(file.getInputStream(),"file" ,Objects.requireNonNull(file.getContentType()));
         return video.getId();
     }
 
@@ -60,6 +63,23 @@ public class VideoService {
             throw new IllegalArgumentException(STR."Deletion failed. The video with id \{id} doesn't exist in GridFS.");
         }
         videoRepo.deleteById(id);
+//        if(videoRepo.existsById(id))
+//            throw new IllegalArgumentException(id);
     }
 
+    public ResponseEntity<List<VideoMetadata>> getMetadataByTitle(String title) {
+        List<VideoMetadata> occurrences = metadataRepo.getByTitle(title);
+        if(occurrences == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(occurrences);
+    }
+
+    public ResponseEntity<VideoMetadata> getMetadataById(String id) {
+        VideoMetadata metadata = metadataRepo.getById(id);
+        if(metadata == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(metadata);
+    }
 }

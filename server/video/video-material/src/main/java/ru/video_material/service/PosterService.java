@@ -41,7 +41,6 @@ public class PosterService {
         return poster.getImage().getData();
     }
 
-
     public boolean deleteById(String id) {
         return repo.deletePosterById(id) > 0;
     }

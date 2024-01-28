@@ -1,11 +1,8 @@
 package ru.video_material.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.gson.Gson;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.video_material.CONSTANTS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,19 +13,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.video_material.CONSTANTS.*;
+import static ru.video_material.PATH.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class PosterControllerTest {
+public class PosterControllerTest {
     @Autowired
     MockMvc mockMvc;
     @LocalServerPort
@@ -43,7 +39,7 @@ class PosterControllerTest {
     String filenameJPEG = STR."\{nameJPEG}.jpg";
     Path pathJPEG = Paths.get(ASSETS_PATH + filenameJPEG);
     byte[] contentJPEG = Files.readAllBytes(pathJPEG);
-    MockMultipartFile fileJPEG = new MockMultipartFile("file", filenameJPEG, contentType, contentJPEG);
+    public MockMultipartFile fileJPEG = new MockMultipartFile("file", filenameJPEG, contentType, contentJPEG);
 
 
     // PNG
@@ -54,15 +50,15 @@ class PosterControllerTest {
     byte[] contentPNG = Files.readAllBytes(pathPNG);
     MockMultipartFile filePNG = new MockMultipartFile("file", filenamePNG, contentType, contentPNG);
 
-    PosterControllerTest() throws IOException {
+    public PosterControllerTest() throws IOException {
     }
 
     @Test
     @Order(1)
-    void uploadJPEGImage() throws Exception {
+    public void uploadJPEGImage(MockMultipartFile fileJPEG) throws Exception {
         String url = STR."\{ENDPOINT_URL}/upload";
         mockMvc.perform(multipart(url)
-                        .file(fileJPEG))
+                        .file(this.fileJPEG))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andDo(result -> idJPEG = result.getResponse().getContentAsString());
