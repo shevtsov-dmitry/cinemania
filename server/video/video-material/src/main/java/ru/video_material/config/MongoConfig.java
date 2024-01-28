@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
-@EnableMongoRepositories
+//@EnableMongoRepositories
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
     private final MappingMongoConverter mongoConverter;
