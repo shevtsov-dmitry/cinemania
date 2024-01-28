@@ -1,12 +1,17 @@
 package ru.video_material.controller;
 
-import org.springframework.web.multipart.MultipartFile;
-import ru.video_material.model.VideoMetadata;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.video_material.model.VideoMetadata;
 import ru.video_material.service.VideoService;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/videos")
@@ -20,22 +25,42 @@ public class VideoController {
     }
 
     @PostMapping("/save-metadata")
-    public ResponseEntity<String> save(@RequestBody VideoMetadata videoMetadata) {
-        return service.saveVideoMetadata(videoMetadata);
+    public ResponseEntity<String> saveMetadata(@RequestBody VideoMetadata videoMetadata) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
+        try {
+            final String id = service.saveMetadata(videoMetadata);
+            return new ResponseEntity<>(id, httpHeaders, HttpStatus.OK);
+        } catch (NullPointerException nullPointerException) {
+            return new ResponseEntity<>(nullPointerException.getMessage(), httpHeaders, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @PostMapping("/upload/one")
-    public ResponseEntity<String> saveVideo(@RequestBody MultipartFile file, @RequestParam String title) {
-        return service.saveVideo(title, file);
+    @PostMapping("/upload")
+    public ResponseEntity<String> saveVideo(@RequestBody MultipartFile file) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
+        try {
+            final String videoId = service.saveVideo(file);
+            return new ResponseEntity<>(videoId, httpHeaders, HttpStatus.OK);
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>(e.getMessage(), httpHeaders, HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Couldn't read video file.", httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/delete/byId/{id}")
     public ResponseEntity<String> delete(@PathVariable String id) {
-        return service.deleteById(id);
+        try {
+            String videoId = service.deleteVideoMetadataById(id);
+            service.deleteVideoById(videoId);
+            return ResponseEntity.ok(id);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
-    @GetMapping(value = "/delete/one/byTitle/{name}")
-    public String deleteVideo(@PathVariable String name) {
-        return service.deleteVideo(name);
-    }
+//    @GetMapping("/get/byId")
+
 }

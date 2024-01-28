@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.video_material.model.VideoMetadata;
 
 @Repository
-public interface VideoMetadataRepo extends MongoRepository<VideoMetadata, Long> {
-    boolean existsByTitle(String title);
+public interface MetadataRepo extends MongoRepository<VideoMetadata, Long> {
+    VideoMetadata getById(String id);
 }
