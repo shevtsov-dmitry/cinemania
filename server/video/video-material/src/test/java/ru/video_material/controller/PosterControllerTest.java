@@ -2,13 +2,10 @@ package ru.video_material.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
+import org.junit.jupiter.api.*;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.video_material.CONSTANTS;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -62,13 +60,12 @@ class PosterControllerTest {
     @Test
     @Order(1)
     void uploadJPEGImage() throws Exception {
-//        String url = STR."\{ENDPOINT_URL}/upload";
-        String url = "http://localhost:8080/videos/posters/upload";
+        String url = STR."\{ENDPOINT_URL}/upload";
         mockMvc.perform(multipart(url)
                         .file(fileJPEG))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andDo(result -> setId(result.getResponse().getContentAsString(), FORMATS.JPEG));
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andDo(result -> idJPEG = result.getResponse().getContentAsString());
     }
 
     @Test
@@ -78,28 +75,16 @@ class PosterControllerTest {
         mockMvc.perform(multipart(url)
                         .file(filePNG))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andDo(result -> setId(result.getResponse().getContentAsString(), FORMATS.PNG));
-    }
-
-    enum FORMATS {
-        PNG,
-        JPEG
-    }
-
-    void setId(String response, FORMATS format) throws JsonProcessingException {
-        Gson gson = new Gson();
-        Map<String, String> map = gson.fromJson(response, Map.class);
-        final String id = map.get("id");
-        switch (format) {
-            case PNG -> idPNG = id;
-            case JPEG -> idJPEG = id;
-        }
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andDo(result -> idPNG = result.getResponse().getContentAsString());
     }
 
     @Test
     @Order(3)
     void getById() throws Exception {
+        assertNotNull(idJPEG);
+        assertNotNull(idPNG);
+
         String url = STR."\{ENDPOINT_URL}/get/byId/\{idJPEG}";
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
@@ -115,6 +100,7 @@ class PosterControllerTest {
     @Test
     @Order(4)
     void cleanDatabaseAfterJPEGFileUpload() throws Exception {
+        assertNotNull(idJPEG);
         String url = STR."\{ENDPOINT_URL}/delete/byId/\{idJPEG}";
         mockMvc.perform(delete(url))
                 .andExpect(status().isOk())
@@ -125,6 +111,7 @@ class PosterControllerTest {
     @Test
     @Order(5)
     void cleanDatabaseAfterPNGFileUpload() throws Exception {
+        assertNotNull(idPNG);
         String url = STR."\{ENDPOINT_URL}/delete/byId/\{idPNG}";
         mockMvc.perform(delete(url))
                 .andExpect(status().isOk())
