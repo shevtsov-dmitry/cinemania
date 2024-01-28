@@ -33,22 +33,17 @@ public class PosterService {
         return poster.getId();
     }
 
-    public ResponseEntity<byte[]> getById(String id) {
-        return composeAnswer(repo.getPosterById(id));
-    }
-
-    private static ResponseEntity<byte[]> composeAnswer(Poster poster) {
+    public byte[] getById(final String id) {
+        Poster poster = repo.getPosterById(id);
         if (poster == null) {
-            return ResponseEntity.badRequest().body("Poster not found".getBytes());
+            throw new NullPointerException();
         }
-        byte[] imageBytes = poster.getImage().getData();
-        return ResponseEntity.ok().body(imageBytes);
+        return poster.getImage().getData();
     }
 
-    public ResponseEntity<String> deleteById(String id) {
-        return repo.deletePosterById(id) > 0 ?
-                ResponseEntity.ok().body(STR."video file with id \{id} successfully deleted.") :
-                ResponseEntity.notFound().build();
+
+    public boolean deleteById(String id) {
+        return repo.deletePosterById(id) > 0;
     }
 
 }

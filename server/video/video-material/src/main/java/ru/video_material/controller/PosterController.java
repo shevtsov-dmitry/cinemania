@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.video_material.service.PosterService;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 @RestController
@@ -40,17 +39,26 @@ public class PosterController {
                     "Couldn't save video. Video content is empty.", httpHeaders, HttpStatus.BAD_REQUEST
             );
         }
-
     }
 
     @GetMapping(value = "/get/byId/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getPosterById(@PathVariable String id) {
-        return service.getById(id);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(new MediaType("image", "jpeg"));
+        try {
+            return new ResponseEntity<>(service.getById(id), httpHeaders, HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>("Poster Not Found.".getBytes(), httpHeaders, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/delete/byId/{id}")
     public ResponseEntity<String> deletePosterById(@PathVariable String id) {
-        return service.deleteById(id);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
+        return service.deleteById(id) ?
+                new ResponseEntity<>(STR."video file with id \{id} successfully deleted.", httpHeaders, HttpStatus.OK) :
+                ResponseEntity.notFound().build();
     }
 
 }
