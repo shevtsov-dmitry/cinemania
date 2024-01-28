@@ -22,15 +22,15 @@ public class PosterService {
         this.repo = repo;
     }
 
-    public ResponseEntity<String> save(MultipartFile file) throws IOException {
+    public String save(MultipartFile file) throws IOException, NullPointerException, IllegalArgumentException {
+        Poster poster = new Poster();
         int hash = Objects.requireNonNull(file.getOriginalFilename()).hashCode();
         if (hash == 0) {
-            return ResponseEntity.badRequest().body("Couldn't save the video");
+            throw new IllegalArgumentException();
         }
-        Poster poster = new Poster();
         poster.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
         poster = repo.insert(poster);
-        return ResponseEntity.ok(poster.getId());
+        return poster.getId();
     }
 
     public ResponseEntity<byte[]> getById(String id) {
@@ -38,7 +38,7 @@ public class PosterService {
     }
 
     private static ResponseEntity<byte[]> composeAnswer(Poster poster) {
-        if(poster == null) {
+        if (poster == null) {
             return ResponseEntity.badRequest().body("Poster not found".getBytes());
         }
         byte[] imageBytes = poster.getImage().getData();
