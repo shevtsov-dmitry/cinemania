@@ -6,7 +6,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.video_material.PATH;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,13 +19,13 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.video_material.PATH.*;
+import static ru.video_material.COMMON.*;
 
 //@WebMvcTest(VideoController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class VideoControllerTest {
+public class VideoControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -71,7 +70,7 @@ class VideoControllerTest {
                 .andExpect(content().string(equalTo(STR."Deletion failed. The video with id \{randomId} doesn't exist in GridFS.")));
     }
 
-    private static MockMultipartFile prepareVideoFileToUpload() throws IOException {
+    public static MockMultipartFile prepareVideoFileToUpload() throws IOException {
         String contentType = "multipart/form-data";
         String name = "video";
         String filename = STR."\{name}.mp4";
@@ -81,23 +80,4 @@ class VideoControllerTest {
     }
 
 
-    String generateRandomHash() throws NoSuchAlgorithmException {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] randomBytes = new byte[10];
-        secureRandom.nextBytes(randomBytes);
-
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        md.update(randomBytes);
-        byte[] hashBytes = md.digest();
-
-        StringBuilder hexString = new StringBuilder();
-        for (byte hashByte : hashBytes) {
-            String hex = Integer.toHexString(0xff & hashByte);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
-    }
 }

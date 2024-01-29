@@ -1,21 +1,26 @@
 package ru.video_material;
 
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import com.google.gson.Gson;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 import ru.video_material.controller.PosterControllerTest;
+import ru.video_material.controller.VideoControllerTest;
 import ru.video_material.model.Poster;
 import ru.video_material.model.Video;
 import ru.video_material.model.VideoMetadata;
 
+import java.sql.SQLOutput;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.ok;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,39 +32,42 @@ class ServiceTest {
     @Autowired
     MockMvc mockMvc;
 
-    String videoId;
-    String posterId;
+    static String videoId;
+    static String posterId;
+    static String metadataId;
 
     @Test
     @Order(1)
     void uploadVideo() throws Exception {
-        final Video video = new Video();
+        MockMultipartFile preparedVideo = VideoControllerTest.prepareVideoFileToUpload();
         final String url = "/videos/upload";
 
-        mockMvc.perform(post(url))
+        mockMvc.perform(multipart(url)
+                        .file(preparedVideo))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("plain/text"));
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andDo(result -> videoId = result.getResponse().getContentAsString());
     }
 
     @Test
     @Order(2)
     void uploadPoster() throws Exception {
-        final Poster poster = new Poster();
-        final String url = "poster/upload";
-
+        final String url = "/videos/posters/upload";
         var posterTest = new PosterControllerTest();
+
         mockMvc.perform(multipart(url)
-                .file(posterTest.fileJPEG))
+                        .file(posterTest.fileJPEG))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andDo(result -> posterId = result.getResponse().getContentAsString());
-
-
     }
 
     @Test
     @Order(3)
-    void saveMetadata(){
+    void saveMetadata() throws Exception {
+        assertNotNull(videoId);
+        assertNotNull(posterId);
+
         var videoMetadata = new VideoMetadata(
                 "Star wars",
                 "2022-10-30",
@@ -70,18 +78,58 @@ class ServiceTest {
                 videoId,
                 7.67F
         );
-        final String url = "videos/save-metadata";
+        Gson gson = new Gson();
+        String json = gson.toJson(videoMetadata);
+        final String url = "/videos/save/metadata";
+
+        mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andDo(result -> metadataId = result.getResponse().getContentAsString());
     }
 
     @Test
     @Order(4)
-    void deleteVideo_AfterSuccessfullyUploaded(){
+    void deleteVideo_AfterSuccessfullyUploaded() throws Exception {
+        String url = "/videos/delete/byId/" + videoId;
 
+        mockMvc.perform(delete(url))
+                .andExpect(status().isOk());
     }
 
     @Test
     @Order(4)
-    void deletePoster_AfterSuccessfullyUploaded(){
+    void deletePoster_AfterSuccessfullyUploaded() throws Exception {
+        String url = "/videos/posters/delete/byId/" + posterId;
+
+        mockMvc.perform(delete(url))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(5)
+    void deleteMetadata_AfterSuccessfullyUploaded() throws Exception {
+        String url = "/videos/delete/metadata/byId/" + metadataId;
+
+        mockMvc.perform(delete(url))
+                .andExpect(status().isOk());
+    }
+
+    // !
+
+    @Test
+    void havingEmptyMetadataBody_tryToSaveIt() throws Exception {
+        String url = "/videos/save/metadata";
+
+        mockMvc.perform(post(url))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Required request body is missing or invalid."));
+    }
+
+    @Test
+    void deleteVideoWithNonExistentId() throws Exception {
 
     }
 

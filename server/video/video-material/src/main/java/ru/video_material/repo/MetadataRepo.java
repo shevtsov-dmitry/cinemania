@@ -7,7 +7,7 @@ import ru.video_material.model.VideoMetadata;
 import java.util.List;
 
 @Repository
-public interface MetadataRepo extends MongoRepository<VideoMetadata, Long> {
+public interface MetadataRepo extends MongoRepository<VideoMetadata, String> {
     VideoMetadata getById(String id);
     List<VideoMetadata> getByTitle(String title);
 }

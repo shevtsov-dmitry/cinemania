@@ -2,6 +2,7 @@ package ru.video_material.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -14,27 +15,19 @@ import java.util.regex.Pattern;
 @Document
 @NoArgsConstructor
 public class VideoMetadata {
-    @NonNull
     private String id;
-    @NonNull private String title;
-    @NonNull
+    private String title;
     private String releaseDate;
-    @NonNull
     private String country;
-    @NonNull
     private String contentType;
-    @NonNull
     private String genre;
-    @NonNull
     private Integer age;
-    @NonNull
     private String posterId;
-    @NonNull
     private String videoId;
     private float rating;
 
-    public VideoMetadata(@NonNull String title, @NonNull String releaseDate, @NonNull String country,
-                         @NonNull String genre, @NonNull Integer age) {
+    public VideoMetadata(String title, String releaseDate, String country,
+                         String genre, Integer age) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.country = country;
@@ -42,9 +35,9 @@ public class VideoMetadata {
         this.age = age;
     }
 
-    public VideoMetadata(@NonNull String title, @NonNull String releaseDate,
-                         @NonNull String country, @NonNull String genre, @NonNull Integer age,
-                         @NonNull String posterId, @NonNull String videoId) {
+    public VideoMetadata(String title, String releaseDate,
+                         String country, String genre, Integer age,
+                         String posterId, String videoId) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.country = country;
@@ -54,9 +47,9 @@ public class VideoMetadata {
         this.videoId = videoId;
     }
 
-    public VideoMetadata(@NonNull String title, @NonNull String releaseDate,
-                         @NonNull String country, @NonNull String genre, @NonNull Integer age,
-                         @NonNull String posterId, @NonNull String videoId, Float rating) {
+    public VideoMetadata(String title, String releaseDate,
+                         String country, String genre, Integer age,
+                         String posterId, String videoId, Float rating) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.country = country;
