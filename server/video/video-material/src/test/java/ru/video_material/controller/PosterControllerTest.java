@@ -55,7 +55,7 @@ public class PosterControllerTest {
 
     @Test
     @Order(1)
-    public void uploadJPEGImage(MockMultipartFile fileJPEG) throws Exception {
+    public void uploadJPEGImage() throws Exception {
         String url = STR."\{ENDPOINT_URL}/upload";
         mockMvc.perform(multipart(url)
                         .file(this.fileJPEG))
