@@ -1,8 +1,8 @@
-package com.content_assist_with_input.flim_info.country.service;
+package ru.content_assist_with_input.filling_assistant.country.service;
 
-import com.content_assist_with_input.flim_info.common.BaseContentAssistService;
-import com.content_assist_with_input.flim_info.country.model.Country;
-import com.content_assist_with_input.flim_info.country.repo.CountryRepo;
+import ru.content_assist_with_input.filling_assistant.common.BaseContentAssistService;
+import ru.content_assist_with_input.filling_assistant.country.model.Country;
+import ru.content_assist_with_input.filling_assistant.country.repo.CountryRepo;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;

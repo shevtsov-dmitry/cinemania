@@ -1,6 +1,6 @@
-package com.content_assist_with_input.flim_info.genres.repo;
+package ru.content_assist_with_input.filling_assistant.genres.repo;
 
-import com.content_assist_with_input.flim_info.genres.model.Genre;
+import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

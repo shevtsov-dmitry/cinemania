@@ -1,6 +1,6 @@
-package com.content_assist_with_input.flim_info.genres.model;
+package ru.content_assist_with_input.filling_assistant.genres.model;
 
-import com.content_assist_with_input.flim_info.common.Nameable;
+import ru.content_assist_with_input.filling_assistant.common.Nameable;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 

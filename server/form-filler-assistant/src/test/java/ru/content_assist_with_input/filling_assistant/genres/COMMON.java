@@ -1,4 +1,4 @@
-package ru.content_assist_with_input.genres;
+package ru.content_assist_with_input.filling_assistant.genres;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

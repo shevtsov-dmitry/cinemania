@@ -1,6 +1,6 @@
-package com.content_assist_with_input.flim_info.country.repo;
+package ru.content_assist_with_input.filling_assistant.country.repo;
 
-import com.content_assist_with_input.flim_info.country.model.Country;
+import ru.content_assist_with_input.filling_assistant.country.model.Country;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

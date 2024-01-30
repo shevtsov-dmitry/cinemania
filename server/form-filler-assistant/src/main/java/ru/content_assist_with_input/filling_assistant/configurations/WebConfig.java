@@ -1,4 +1,4 @@
-package com.content_assist_with_input.configurations;
+package ru.content_assist_with_input.filling_assistant.configurations;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;

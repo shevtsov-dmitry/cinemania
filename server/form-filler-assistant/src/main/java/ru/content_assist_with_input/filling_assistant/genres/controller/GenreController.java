@@ -1,6 +1,5 @@
 package ru.content_assist_with_input.filling_assistant.genres.controller;
 
-import jakarta.transaction.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
@@ -9,7 +8,6 @@ import ru.content_assist_with_input.filling_assistant.genres.service.GenreServic
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
