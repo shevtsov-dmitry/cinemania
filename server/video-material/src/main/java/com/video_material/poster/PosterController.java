@@ -1,6 +1,5 @@
-package com.video_material.controller;
+package com.video_material.poster;
 
-import com.video_material.service.PosterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/videos")
@@ -29,7 +30,7 @@ public class VideoController {
     }
 
     @PostMapping("/upload/one")
-    public ResponseEntity<String> saveVideo(@RequestParam("title") String title, @RequestParam MultipartFile file) {
+    public ResponseEntity<String> saveVideo(@RequestBody MultipartFile file, @RequestParam String title) {
         try {
             log.info("title: {}", title);
             String successMessage = service.saveVideo(title, file);

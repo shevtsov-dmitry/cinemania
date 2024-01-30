@@ -2,10 +2,7 @@ package com.content_assist_with_input.flim_info.common;
 
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BaseContentAssistService<T extends Nameable> {
     private final CrudRepository<T, Long> repo;
@@ -20,7 +17,7 @@ public class BaseContentAssistService<T extends Nameable> {
             List<String> entitiesNames = entities.stream().map(T::getName).toList();
             receivedEntities.removeIf(entity -> entitiesNames.contains(entity.getName()));
             if (receivedEntities.isEmpty()) {
-                return "Cannot save because already exist in database.";
+                return "Cannot save because already exists in database.";
             } else {
                 repo.saveAll(receivedEntities);
                 List<String> receivedEntitiesName = receivedEntities.stream().map(T::getName).toList();
@@ -41,14 +38,8 @@ public class BaseContentAssistService<T extends Nameable> {
     }
 
     private static String parseStringAnswer(List<String> receivedEntities) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Successfully added new elements: ");
-        for (String entity : receivedEntities) {
-            builder.append(entity).append(", ");
-        }
-        builder.delete(builder.length() - 2, builder.length() - 1);
-        builder.deleteCharAt(builder.length() - 1);
-        builder.append(".");
-        return builder.toString();
+        StringJoiner sj = new StringJoiner(", ", "", ".");
+        receivedEntities.forEach(sj::add);
+        return "Successfully added new elements: ".concat(sj.toString());
     }
 }

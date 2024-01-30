@@ -1,6 +1,6 @@
-package com.content_assist_with_input.genres.controller;
+package ru.content_assist_with_input.genres.controller;
 
-import com.content_assist_with_input.flim_info.genres.repo.GenreRepo;
+import ru.content_assist_with_input.filling_assistant.genres.repo.GenreRepo;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +20,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Rollback(value = true)
 class GenreControllerHttpTest {
-    // * EXPECTED TESTS
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private GenreRepo repo;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private static final String requestMappingUrl = "http://localhost:8080/film-info-genre";
+    private static final String requestMappingUrl = "";
 
     @Test
     void addOneGenre() throws Exception {
@@ -54,7 +54,8 @@ class GenreControllerHttpTest {
             value = randomStringValue();
         final String url = "%s/%s?%s=%s".formatted(requestMappingUrl,urlMapping,param,value);
         log.info("url: {}", url);
-        mockMvc.perform(request(HttpMethod.POST,url))
+
+        mockMvc.perform(post(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(content().string("add new genre successfully."));

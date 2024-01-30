@@ -2,7 +2,7 @@ package com.video_material.controller;
 
 import com.google.gson.Gson;
 import com.video_material.CONSTANTS;
-import com.video_material.model.VideoMaterial;
+import com.video_material.video.model.VideoMaterial;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.sql.Date;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

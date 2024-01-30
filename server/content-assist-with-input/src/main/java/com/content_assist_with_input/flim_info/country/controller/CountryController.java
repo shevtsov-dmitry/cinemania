@@ -1,8 +1,8 @@
-package com.content_assist_with_input.flim_info.country.controller;
+package ru.content_assist_with_input.filling_assistant.country.controller;
 
-import com.content_assist_with_input.flim_info.country.model.Country;
-import com.content_assist_with_input.flim_info.country.repo.CountryRepo;
-import com.content_assist_with_input.flim_info.country.service.CountryService;
+import ru.content_assist_with_input.filling_assistant.country.model.Country;
+import ru.content_assist_with_input.filling_assistant.country.repo.CountryRepo;
+import ru.content_assist_with_input.filling_assistant.country.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/film-info/country")
+@RequestMapping("/fillingAssistants/countries")
 public class CountryController {
     private final CountryService service;
     private final CountryRepo repo;

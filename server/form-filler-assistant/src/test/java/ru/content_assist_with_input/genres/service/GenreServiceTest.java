@@ -1,8 +1,8 @@
-package com.content_assist_with_input.genres.service;
+package ru.content_assist_with_input.genres.service;
 
-import com.content_assist_with_input.flim_info.genres.model.Genre;
-import com.content_assist_with_input.flim_info.genres.repo.GenreRepo;
-import com.content_assist_with_input.flim_info.genres.service.GenreService;
+import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
+import ru.content_assist_with_input.filling_assistant.genres.repo.GenreRepo;
+import ru.content_assist_with_input.filling_assistant.genres.service.GenreService;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -34,7 +34,6 @@ class GenreServiceTest {
         this.repo = repo;
     }
 
-    // testing saveWithoutDuplicates()
     @Test
     void addGenresWithDups() {
         List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные", "NEW");

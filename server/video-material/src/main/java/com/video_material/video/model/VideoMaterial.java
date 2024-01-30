@@ -1,4 +1,4 @@
-package com.video_material.model;
+package com.video_material.video.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
