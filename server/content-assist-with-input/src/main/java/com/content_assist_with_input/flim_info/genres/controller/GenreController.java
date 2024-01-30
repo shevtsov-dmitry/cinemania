@@ -1,17 +1,21 @@
-package com.content_assist_with_input.flim_info.genres.controller;
+package ru.content_assist_with_input.filling_assistant.genres.controller;
 
-import com.content_assist_with_input.flim_info.genres.model.Genre;
-import com.content_assist_with_input.flim_info.genres.repo.GenreRepo;
-import com.content_assist_with_input.flim_info.genres.service.GenreService;
+import jakarta.transaction.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
+import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
+import ru.content_assist_with_input.filling_assistant.genres.repo.GenreRepo;
+import ru.content_assist_with_input.filling_assistant.genres.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/film-info/genre")
+@RequestMapping("/fillingAssistants/genres")
 public class GenreController {
 
     private final GenreService service;
@@ -24,37 +28,42 @@ public class GenreController {
     }
 
     @PostMapping("/add/one")
-    public String addNewGenre(@RequestParam String genreName) {
-        Genre genre = new Genre(genreName);
+    public ResponseEntity<String> addNewGenre(@RequestParam String name) throws DataIntegrityViolationException {
+        Genre genre = new Genre(name);
+        if (genre.getName().isBlank()) {
+            return ResponseEntity.badRequest().body("incoming parameter data is empty.");
+        }
         try {
-            if (genre.getName().equals("") || genre.getName().equals(" ")) {
-                return "incoming parameter data is empty.";
-            }
-            repo.save(genre);
-            return "add new genre successfully.";
+            Genre savedGenre = repo.save(genre);
+            return ResponseEntity.ok(savedGenre.getId().toString());
         } catch (Exception e) {
-            return service.saveWithoutDuplicates(new ArrayList<>(List.of(genre)));
+            final List<Genre> extensibleMonoList = new ArrayList<>(List.of(genre));
+            String message = service.saveWithoutDuplicates(extensibleMonoList);
+            return ResponseEntity.ok(message);
         }
     }
 
     @PostMapping("/add/many")
-    public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap) {
+    public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap) throws DataIntegrityViolationException {
         List<Genre> genres = jsonMap.get("genres");
-
         try {
             genres.removeIf(genre -> genre.getName().equals("") || genre.getName().equals(" "));
             repo.saveAll(genres);
             return "new genres have been added successfully.";
-        } catch (Exception e) { // DataIntegrityViolationException
+        } catch (Exception e) {
             return service.saveWithoutDuplicates(genres);
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/get/many/by-sequence")
-    public List<String> findGenre(@RequestParam String sequence) {
-        return service.findMatchedGenres(sequence);
+    @GetMapping("/get/bySequence")
+    public ResponseEntity<List<String>> findGenres(@RequestParam String sequence) {
+        List<String> matchedGenres = service.findMatchedGenres(sequence);
+        return ResponseEntity.ok(matchedGenres);
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteRequestedGenres(@RequestBody List<String> genreNames) {
+        return service.deleteGenres(genreNames);
+    }
 
 }

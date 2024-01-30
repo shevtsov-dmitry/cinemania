@@ -14,4 +14,6 @@ public interface GenreRepo extends JpaRepository<Genre, Long> {
 
     @Query("FROM Genre g WHERE g.name LIKE ?1%")
     List<String> getGenresNamesBySimilarStringSequence(String sequence, Pageable pageable);
+
+    int deleteByName(String name);
 }
