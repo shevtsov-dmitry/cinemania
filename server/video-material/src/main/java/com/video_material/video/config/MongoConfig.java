@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:server/video/video-material/src/main/java/ru/video_material/config/MongoConfig.java
 package ru.video_material.config;
+========
+package com.video_material.video.config;
+>>>>>>>> add-film-form-fix:server/video-material/src/main/java/com/video_material/video/config/MongoConfig.java
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

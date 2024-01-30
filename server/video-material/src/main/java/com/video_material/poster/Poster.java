@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:server/video/video-material/src/main/java/ru/video_material/model/Poster.java
 package ru.video_material.model;
+========
+package com.video_material.poster;
+>>>>>>>> add-film-form-fix:server/video-material/src/main/java/com/video_material/poster/Poster.java
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
