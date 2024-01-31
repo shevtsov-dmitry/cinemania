@@ -1,21 +1,22 @@
 package ru.content_assist_with_input.filling_assistant.genres.controller;
 
 import com.google.gson.Gson;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.content_assist_with_input.filling_assistant.genres.COMMON;
+import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.blankString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,9 +32,14 @@ class GenreControllerTest {
     static final String GENERATED_GENRE_NAME;
     static final Gson gson = new Gson();
 
+    static final List<String> FIVE_RANDOM_GENRE_NAMES = new ArrayList<>(5);
+
     static {
         try {
             GENERATED_GENRE_NAME = COMMON.generateRandomHash().substring(0, 8);
+            for (int i = 0; i < 5; i++) {
+                FIVE_RANDOM_GENRE_NAMES.add(COMMON.generateRandomHash().substring(0, 10));
+            }
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -76,41 +82,86 @@ class GenreControllerTest {
                 .andExpect(content().string("All requested genres has been deleted successfully."));
     }
 
-//    @Test
-//    void addOneGenreMoreThanOnce() throws Exception {
-//        final String urlMapping = "add-new-genre";
-//        final String param = "genre";
-//        String value = "喜剧";
-//        if(repo.findByName("戏剧") != null)
-//            value = randomStringValue();
-//        final String url = "%s/%s?%s=%s".formatted(ENDPOINT_URL,urlMapping,param,value);
-//        log.info("url: {}", url);
-//
-//        mockMvc.perform(post(url))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType("text/plain;charset=UTF-8"))
-//                .andExpect(content().string("add new genre successfully."));
-//
-//        mockMvc.perform(request(HttpMethod.POST,url))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType("text/plain;charset=UTF-8"))
-//                .andExpect(content().string("Cannot save because already exist in database."));
-//
-//    }
+    @Test
+    @Order(4)
+    void addMultipleGenres() throws Exception {
+        String url = ENDPOINT_URL + "/add/many";
+        String json = gson.toJson(FIVE_RANDOM_GENRE_NAMES);
 
-    // ! TESTS FROM SERVICE
+        mockMvc.perform(post(url)
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("new genres have been added successfully."));
+    }
 
-//    @Test
-//    void addGenresWithDups() {
-//        List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные", "NEW");
-//        List<Genre> genres = new ArrayList<>(genreNames.size());
-//        genreNames.forEach(name -> genres.add(new Genre(name)));
-//        String answerMessage = service.saveWithoutDuplicates(genres);
-//        List<String> expectedResult = List.of("Сказки", "Короткометражные", "Образовательные", "NEW");
-//        for (String name : expectedResult) {
-//            assertNotNull(repo.findByName(name));
-//        }
-//    }
+    @Test
+    @Order(5)
+    void deleteAddedGenres() throws Exception {
+        String url = ENDPOINT_URL + "/delete";
+        String json = gson.toJson(FIVE_RANDOM_GENRE_NAMES);
+
+        mockMvc.perform(delete(url)
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("All requested genres has been deleted successfully."));
+    }
+
+    @Test
+    void addOneGenreMoreThanOnce_thenDelete() throws Exception {
+        String url = ENDPOINT_URL + "/add/one";
+
+        mockMvc.perform(post(url)
+                        .param("name", GENERATED_GENRE_NAME))
+                .andExpect(status().isOk())
+                .andExpect(res -> Long.parseLong(res.getResponse().getContentAsString()));
+
+        mockMvc.perform(post(url)
+                        .param("name", GENERATED_GENRE_NAME))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Cannot save because already exists in database."));
+
+        url = ENDPOINT_URL + "/delete";
+        List<String> singleton = List.of(GENERATED_GENRE_NAME);
+        String json = gson.toJson(singleton);
+
+        mockMvc.perform(delete(url)
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("All requested genres has been deleted successfully."));
+    }
+
+    @Test
+    void addGenresWithDups_thenCleanup() throws Exception {
+        List<String> genreNames = new ArrayList<>(FIVE_RANDOM_GENRE_NAMES);
+        for (int i = 0; i < 3; i++) {
+            genreNames.add(genreNames.getFirst());
+        }
+        String json = gson.toJson(genreNames);
+
+        String url = ENDPOINT_URL + "/add/many";
+        mockMvc.perform(post(url)
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(res -> {
+                    List<String> expectedList = List.copyOf(FIVE_RANDOM_GENRE_NAMES);
+                    List<String> actualList = gson.fromJson(res.getResponse().getContentAsString(), List.class);
+                    assertEquals(expectedList.size(), actualList.size());
+                    for (String expected : expectedList) {
+                        assertTrue(actualList.contains(expected));
+                    }
+                });
+
+        url = ENDPOINT_URL + "/delete";
+        mockMvc.perform(delete(url)
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string("All requested genres has been deleted successfully."));
+    }
 //
 //    @Test
 //    void addGenresWithDupsThenAgainButWithNewElements() {

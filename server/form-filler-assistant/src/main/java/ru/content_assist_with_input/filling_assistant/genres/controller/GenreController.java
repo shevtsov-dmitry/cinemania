@@ -30,10 +30,11 @@ public class GenreController {
 
     @PostMapping("/add/one")
     public ResponseEntity<String> addNewGenre(@RequestParam String name) throws DataIntegrityViolationException {
-        Genre genre = new Genre(name);
-        if (genre.getName().isBlank()) {
+        if (name.isBlank()) {
             return ResponseEntity.badRequest().body("incoming parameter data is empty.");
         }
+        Genre genre = new Genre(name);
+
         try {
             Genre savedGenre = repo.save(genre);
             return ResponseEntity.ok(savedGenre.getId().toString());

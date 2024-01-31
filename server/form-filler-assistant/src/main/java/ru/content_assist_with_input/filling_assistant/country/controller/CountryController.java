@@ -22,8 +22,6 @@ public class CountryController {
         this.repo = repo;
     }
 
-
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/add/one")
     public String addNewCountry(@RequestParam String countryName) {
         Country country = new Country(countryName);
