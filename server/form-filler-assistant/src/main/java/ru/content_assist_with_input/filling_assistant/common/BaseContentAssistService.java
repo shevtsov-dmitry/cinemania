@@ -11,35 +11,39 @@ public class BaseContentAssistService<T extends Nameable> {
         this.repo = repo;
     }
 
-    public String saveWithoutDuplicates(List<T> receivedEntities) {
-        List<T> entities = (List<T>) repo.findAll();
-        if (!entities.isEmpty()) {
-            List<String> entitiesNames = entities.stream().map(T::getName).toList();
-            receivedEntities.removeIf(entity -> entitiesNames.contains(entity.getName()));
-            if (receivedEntities.isEmpty()) {
-                return "Cannot save because already exists in database.";
-            } else {
-                repo.saveAll(receivedEntities);
-                List<String> receivedEntitiesName = receivedEntities.stream().map(T::getName).toList();
-                return parseStringAnswer(receivedEntitiesName);
-            }
+    public List<String> saveWithoutDuplicates(List<T> receivedEntities) throws IllegalArgumentException {
+        List<T> allGenres = (List<T>) repo.findAll();
+        if (!allGenres.isEmpty()) {
+            return removeDupsAndSaveDeliveredGenres(receivedEntities, allGenres);
         } else {
-            Map<String, T> nameToEntity = new HashMap<>(receivedEntities.size());
-            for (T entity : receivedEntities) {
-                nameToEntity.put(entity.getName(), entity);
-            }
-            List<String> entityNamesWithoutDuplicates = new ArrayList<>(nameToEntity.size());
-            for (String name : nameToEntity.keySet()) {
-                entityNamesWithoutDuplicates.add(name);
-                repo.save(nameToEntity.get(name));
-            }
-            return parseStringAnswer(entityNamesWithoutDuplicates);
+            return removeDupsAndSaveAll(receivedEntities);
         }
     }
 
-    private static String parseStringAnswer(List<String> receivedEntities) {
-        StringJoiner sj = new StringJoiner(", ", "", ".");
-        receivedEntities.forEach(sj::add);
-        return "Successfully added new elements: ".concat(sj.toString());
+    private List<String> removeDupsAndSaveDeliveredGenres(List<T> receivedEntities, List<T> allGenres) throws IllegalArgumentException {
+        List<String> entitiesNames = allGenres.stream().map(T::getName).toList();
+        receivedEntities.removeIf(entity -> entitiesNames.contains(entity.getName()));
+        if (receivedEntities.isEmpty()) {
+            throw new IllegalArgumentException("Cannot save any, because all requested genres already exist in database.");
+        }
+        repo.saveAll(receivedEntities);
+        return receivedEntities.stream().map(T::getName).toList();
     }
+
+    private List<String> removeDupsAndSaveAll(List<T> receivedEntities){
+        Set<String> noDups = new HashSet<>();
+        for (T entity : receivedEntities) {
+            if (!noDups.contains(entity.getName())) {
+                repo.save(entity);
+            }
+            noDups.add(entity.getName());
+        }
+        return noDups.stream().toList();
+    }
+
+//    private static String parseStringAnswer(List<String> receivedEntities) {
+//        StringJoiner sj = new StringJoiner(", ", "", ".");
+//        receivedEntities.forEach(sj::add);
+//        return "Successfully added new elements: ".concat(sj.toString());
+//    }
 }

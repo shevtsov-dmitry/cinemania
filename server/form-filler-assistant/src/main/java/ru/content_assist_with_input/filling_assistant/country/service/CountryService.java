@@ -26,7 +26,7 @@ public class CountryService extends BaseContentAssistService<Country> {
     }
 
     @Override
-    public String saveWithoutDuplicates(List<Country> receivedEntities) {
+    public List<String> saveWithoutDuplicates(List<Country> receivedEntities) {
         return super.saveWithoutDuplicates(receivedEntities);
     }
 }

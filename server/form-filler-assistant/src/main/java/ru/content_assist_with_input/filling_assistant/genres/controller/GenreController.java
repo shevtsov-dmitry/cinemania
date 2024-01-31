@@ -1,6 +1,8 @@
 package ru.content_assist_with_input.filling_assistant.genres.controller;
 
+import com.google.gson.Gson;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
 import ru.content_assist_with_input.filling_assistant.genres.repo.GenreRepo;
@@ -18,6 +20,7 @@ public class GenreController {
 
     private final GenreService service;
     private final GenreRepo repo;
+    private final Gson gson = new Gson();
 
     @Autowired
     public GenreController(GenreService service, GenreRepo repo) {
@@ -36,20 +39,19 @@ public class GenreController {
             return ResponseEntity.ok(savedGenre.getId().toString());
         } catch (Exception e) {
             final List<Genre> extensibleMonoList = new ArrayList<>(List.of(genre));
-            String message = service.saveWithoutDuplicates(extensibleMonoList);
-            return ResponseEntity.ok(message);
+            String json = gson.toJson(service.saveWithoutDuplicates(extensibleMonoList));
+            return ResponseEntity.badRequest().body(json);
         }
     }
 
     @PostMapping("/add/many")
-    public String addNewGenres(@RequestBody Map<String, List<Genre>> jsonMap) throws DataIntegrityViolationException {
-        List<Genre> genres = jsonMap.get("genres");
+    public ResponseEntity<String> saveNewGenres(@RequestBody List<String> genreNames) {
+        genreNames.removeIf(String::isBlank);
+        List<Genre> genres = genreNames.stream().map(Genre::new).toList();
         try {
-            genres.removeIf(genre -> genre.getName().equals("") || genre.getName().equals(" "));
-            repo.saveAll(genres);
-            return "new genres have been added successfully.";
-        } catch (Exception e) {
-            return service.saveWithoutDuplicates(genres);
+            return ResponseEntity.ok(gson.toJson(service.saveNewGenres(genres)));
+        } catch (UnsupportedOperationException e) {
+            return ResponseEntity.ok(gson.toJson(service.saveWithoutDuplicates(genres)));
         }
     }
 
