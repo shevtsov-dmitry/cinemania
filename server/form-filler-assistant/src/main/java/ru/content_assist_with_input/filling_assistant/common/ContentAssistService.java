@@ -4,10 +4,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.*;
 
-public class BaseContentAssistService<T extends Nameable> {
+public class ContentAssistService<T extends Nameable> {
     private final CrudRepository<T, Long> repo;
 
-    public BaseContentAssistService(CrudRepository<T, Long> repo) {
+    public ContentAssistService(CrudRepository<T, Long> repo) {
         this.repo = repo;
     }
 

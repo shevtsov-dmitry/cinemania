@@ -1,6 +1,6 @@
 package ru.content_assist_with_input.filling_assistant.country.service;
 
-import ru.content_assist_with_input.filling_assistant.common.BaseContentAssistService;
+import ru.content_assist_with_input.filling_assistant.common.ContentAssistService;
 import ru.content_assist_with_input.filling_assistant.country.model.Country;
 import ru.content_assist_with_input.filling_assistant.country.repo.CountryRepo;
 import org.springframework.data.domain.PageRequest;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CountryService extends BaseContentAssistService<Country> {
+public class CountryService extends ContentAssistService<Country> {
 
     private final CountryRepo repo;
     private final Pageable foundCountryAmountRestriction = PageRequest.of(0, 5);

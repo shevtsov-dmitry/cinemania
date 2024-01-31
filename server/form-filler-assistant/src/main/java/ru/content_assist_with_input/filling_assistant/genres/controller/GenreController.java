@@ -1,31 +1,25 @@
 package ru.content_assist_with_input.filling_assistant.genres.controller;
 
-import com.google.gson.Gson;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
-import ru.content_assist_with_input.filling_assistant.genres.repo.GenreRepo;
-import ru.content_assist_with_input.filling_assistant.genres.service.GenreService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
+import ru.content_assist_with_input.filling_assistant.genres.service.GenreService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/fillingAssistants/genres")
 public class GenreController {
 
     private final GenreService service;
-    private final GenreRepo repo;
-    private final Gson gson = new Gson();
 
     @Autowired
-    public GenreController(GenreService service, GenreRepo repo) {
+    public GenreController(GenreService service) {
         this.service = service;
-        this.repo = repo;
     }
 
     @PostMapping("/add/one")
@@ -58,8 +52,7 @@ public class GenreController {
 
     @GetMapping("/get/bySequence")
     public ResponseEntity<List<String>> findGenres(@RequestParam String sequence) {
-        List<String> matchedGenres = service.findMatchedGenres(sequence);
-        return ResponseEntity.ok(matchedGenres);
+        return ResponseEntity.ok(service.findMatchedGenres(sequence));
     }
 
     @DeleteMapping("/delete")
