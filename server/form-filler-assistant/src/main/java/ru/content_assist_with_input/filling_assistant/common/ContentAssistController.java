@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,11 +50,26 @@ public class ContentAssistController<T extends AbstractEntity> {
     }
 
     public ResponseEntity<String> addMany(List<String> entityNamesList) {
-        return ResponseEntity.ok("");
+        entityNamesList.removeIf(String::isBlank);
+        List<T> entities = new ArrayList<>(entityNamesList.size());
+        for (String name : entityNamesList) {
+            try {
+                T entity = aClass.getDeclaredConstructor().newInstance();
+                entity.setName(name);
+                entities.add(entity);
+            } catch (Exception e) {
+                return ResponseEntity.internalServerError().body("Couldn't create new instance on server side.");
+            }
+        }
+        try {
+            return ResponseEntity.ok(gson.toJson(service.saveNewEntities(entities)));
+        } catch (UnsupportedOperationException e) {
+            return ResponseEntity.ok(gson.toJson(service.saveWithoutDuplicates(entities)));
+        }
     }
 
     public ResponseEntity<String> getBySequence(String sequence) {
-        return ResponseEntity.ok("");
+
     }
 
     public ResponseEntity<String> delete(List<String> entityNamesList) {

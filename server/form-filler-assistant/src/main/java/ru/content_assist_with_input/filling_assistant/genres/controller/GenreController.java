@@ -30,13 +30,7 @@ public class GenreController {
 
     @PostMapping("/add/many")
     public ResponseEntity<String> saveNewGenres(@RequestBody List<String> genreNames) {
-        genreNames.removeIf(String::isBlank);
-        List<Genre> genres = genreNames.stream().map(Genre::new).toList();
-        try {
-            return ResponseEntity.ok(gson.toJson(service.saveNewGenres(genres)));
-        } catch (UnsupportedOperationException e) {
-            return ResponseEntity.ok(gson.toJson(service.saveWithoutDuplicates(genres)));
-        }
+        return commonController.addMany(genreNames);
     }
 
     @GetMapping("/get/bySequence")

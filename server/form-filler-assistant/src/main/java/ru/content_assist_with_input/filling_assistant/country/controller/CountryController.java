@@ -1,55 +1,37 @@
 package ru.content_assist_with_input.filling_assistant.country.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import ru.content_assist_with_input.filling_assistant.common.ContentAssistController;
 import ru.content_assist_with_input.filling_assistant.country.model.Country;
 import ru.content_assist_with_input.filling_assistant.country.repo.CountryRepo;
 import ru.content_assist_with_input.filling_assistant.country.service.CountryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/fillingAssistants/countries")
 public class CountryController {
     private final CountryService service;
-    private final CountryRepo repo;
+    private final ContentAssistController<Country> commonController = new ContentAssistController<>(Country.class);
 
     @Autowired
-    public CountryController(CountryService service, CountryRepo repo) {
+    public CountryController(CountryService service) {
         this.service = service;
-        this.repo = repo;
     }
 
     @PostMapping("/add/one")
-    public String addNewCountry(@RequestParam String countryName) {
-        Country country = new Country(countryName);
-        try {
-            if (country.getName().equals("") || country.getName().equals(" ")) {
-                return "incoming parameter data is empty.";
-            }
-            repo.save(country);
-            return "new country was added successfully.";
-        } catch (Exception e) {
-            return service.saveWithoutDuplicates(new ArrayList<>(List.of(country))).toString();
-        }
+    public ResponseEntity<String> addNewCountry(@RequestParam String countryName) {
+        return commonController.addOne(countryName);
     }
 
     @PostMapping("/add/many")
-    public String addNewCountries(@RequestBody Map<String, List<Country>> jsonMap) {
-        List<Country> countries = jsonMap.get("countries");
-        try {
-            countries.removeIf(genre -> genre.getName().equals("") || genre.getName().equals(" "));
-            repo.saveAll(countries);
-            return "new countries have been added successfully.";
-        } catch (Exception e) { // DataIntegrityViolationException
-            return service.saveWithoutDuplicates(countries).toString();
-        }
+    public ResponseEntity<String> addNewCountries(@RequestBody List<String> countryNames) {
+        return commonController.addMany(countryNames);
     }
 
-    @GetMapping("/get/many/by-sequence")
+    @GetMapping("/get/bySequence")
     public List<String> findCountries(@RequestParam String sequence) {
         return service.findMatchedCountries(sequence);
     }

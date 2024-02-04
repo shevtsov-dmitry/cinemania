@@ -42,11 +42,8 @@ public class GenreService extends ContentAssistService<Genre> {
         notAddedGenres.forEach(notAddedGenresSJ::add);
 
         return notAddedGenres.isEmpty() ?
-                ResponseEntity.ok("All requested genres has been deleted successfully.") :
-                ResponseEntity.badRequest().body(STR."\{notAddedGenres.size()} genres were not deleted from the database. \{notAddedGenresSJ.toString()}");
+                ResponseEntity.ok("All requested entities has been deleted successfully.") :
+                ResponseEntity.badRequest().body(STR."\{notAddedGenres.size()} entities were not deleted from the database. \{notAddedGenresSJ.toString()}");
     }
 
-    public List<String> saveNewGenres(List<Genre> genres) throws UnsupportedOperationException, DataIntegrityViolationException {
-        return repo.saveAll(genres).stream().map(Genre::getName).toList();
-    }
 }

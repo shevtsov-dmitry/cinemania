@@ -1,8 +1,10 @@
 package ru.content_assist_with_input.filling_assistant.common;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
 
 import java.util.*;
 
@@ -46,5 +48,12 @@ public class ContentAssistService<T extends AbstractEntity> {
 
     public T save(T entity) {
         return repo.save(entity);
+    }
+
+    public List<String> saveNewEntities(List<T> entities) throws UnsupportedOperationException, DataIntegrityViolationException {
+        List<String> saved = new ArrayList<>();
+        repo.saveAll(entities)
+                .forEach(el -> saved.add(el.getName()));
+        return saved;
     }
 }

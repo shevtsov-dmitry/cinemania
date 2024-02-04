@@ -12,6 +12,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/film-info/**")
-                .allowedOrigins("http://localhost:3000");
+                .allowedOrigins("http://localhost:3000", "http://localhost:5173");
     }
 };

@@ -5,5 +5,4 @@ public abstract class AbstractEntity {
     public abstract Long getId();
 
     public abstract void setName(String name);
-    public abstract void setId();
 }
