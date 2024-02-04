@@ -1,5 +1,6 @@
 package ru.content_assist_with_input.filling_assistant.country.model;
 
+import ru.content_assist_with_input.filling_assistant.common.AbstractEntity;
 import ru.content_assist_with_input.filling_assistant.common.Nameable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +10,7 @@ import jakarta.persistence.Id;
 import java.util.Objects;
 
 @Entity
-public class Country implements Nameable {
+public class Country extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +30,11 @@ public class Country implements Nameable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public void setId() {
+
     }
 
     public void setId(Long id) {

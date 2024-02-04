@@ -1,11 +1,12 @@
 package ru.content_assist_with_input.filling_assistant.genres.model;
 
+import ru.content_assist_with_input.filling_assistant.common.AbstractEntity;
 import ru.content_assist_with_input.filling_assistant.common.Nameable;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
 @Entity
-public class Genre implements Nameable {
+public class Genre extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +31,11 @@ public class Genre implements Nameable {
 
     public void setName(@NonNull String name) {
         this.name = name;
+    }
+
+    @Override
+    public void setId() {
+
     }
 
     public void setId(Long id) {

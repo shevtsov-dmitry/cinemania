@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.content_assist_with_input.filling_assistant.common.ContentAssistController;
 import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
 import ru.content_assist_with_input.filling_assistant.genres.service.GenreService;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class GenreController {
 
     private final GenreService service;
+    private final ContentAssistController<Genre> assistController = new ContentAssistController<>(Genre.class);
 
     @Autowired
     public GenreController(GenreService service) {
