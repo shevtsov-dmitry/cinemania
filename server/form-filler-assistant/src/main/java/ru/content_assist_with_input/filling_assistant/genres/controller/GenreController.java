@@ -17,28 +17,15 @@ import java.util.List;
 public class GenreController {
 
     private final GenreService service;
-    private final ContentAssistController<Genre> assistController = new ContentAssistController<>(Genre.class);
-
+    private final ContentAssistController<Genre> commonController = new ContentAssistController<>(Genre.class);
     @Autowired
     public GenreController(GenreService service) {
         this.service = service;
     }
 
     @PostMapping("/add/one")
-    public ResponseEntity<String> addNewGenre(@RequestParam String name) throws DataIntegrityViolationException {
-        if (name.isBlank()) {
-            return ResponseEntity.badRequest().body("incoming parameter data is empty.");
-        }
-        Genre genre = new Genre(name);
-
-        try {
-            Genre savedGenre = repo.save(genre);
-            return ResponseEntity.ok(savedGenre.getId().toString());
-        } catch (Exception e) {
-            final List<Genre> extensibleMonoList = new ArrayList<>(List.of(genre));
-            String json = gson.toJson(service.saveWithoutDuplicates(extensibleMonoList));
-            return ResponseEntity.badRequest().body(json);
-        }
+    public ResponseEntity<String> addNewGenre(@RequestParam String name) {
+        return commonController.addOne(name);
     }
 
     @PostMapping("/add/many")

@@ -1,10 +1,13 @@
 package ru.content_assist_with_input.filling_assistant.common;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-public class ContentAssistService<T extends Nameable> {
+@Component
+public class ContentAssistService<T extends AbstractEntity> {
     private final CrudRepository<T, Long> repo;
 
     public ContentAssistService(CrudRepository<T, Long> repo) {
@@ -30,7 +33,7 @@ public class ContentAssistService<T extends Nameable> {
         return receivedEntities.stream().map(T::getName).toList();
     }
 
-    private List<String> removeDupsAndSaveAll(List<T> receivedEntities){
+    private List<String> removeDupsAndSaveAll(List<T> receivedEntities) {
         Set<String> noDups = new HashSet<>();
         for (T entity : receivedEntities) {
             if (!noDups.contains(entity.getName())) {
@@ -41,9 +44,7 @@ public class ContentAssistService<T extends Nameable> {
         return noDups.stream().toList();
     }
 
-//    private static String parseStringAnswer(List<String> receivedEntities) {
-//        StringJoiner sj = new StringJoiner(", ", "", ".");
-//        receivedEntities.forEach(sj::add);
-//        return "Successfully added new elements: ".concat(sj.toString());
-//    }
+    public T save(T entity) {
+        return repo.save(entity);
+    }
 }

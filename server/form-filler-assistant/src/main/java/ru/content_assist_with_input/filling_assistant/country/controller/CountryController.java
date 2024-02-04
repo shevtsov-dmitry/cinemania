@@ -1,5 +1,6 @@
 package ru.content_assist_with_input.filling_assistant.country.controller;
 
+import ru.content_assist_with_input.filling_assistant.common.ContentAssistController;
 import ru.content_assist_with_input.filling_assistant.country.model.Country;
 import ru.content_assist_with_input.filling_assistant.country.repo.CountryRepo;
 import ru.content_assist_with_input.filling_assistant.country.service.CountryService;
@@ -32,7 +33,7 @@ public class CountryController {
             repo.save(country);
             return "new country was added successfully.";
         } catch (Exception e) {
-            return service.saveWithoutDuplicates(new ArrayList<>(List.of(country)));
+            return service.saveWithoutDuplicates(new ArrayList<>(List.of(country))).toString();
         }
     }
 
@@ -44,7 +45,7 @@ public class CountryController {
             repo.saveAll(countries);
             return "new countries have been added successfully.";
         } catch (Exception e) { // DataIntegrityViolationException
-            return service.saveWithoutDuplicates(countries);
+            return service.saveWithoutDuplicates(countries).toString();
         }
     }
 
