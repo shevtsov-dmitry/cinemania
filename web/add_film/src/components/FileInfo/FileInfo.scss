@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-$white: #edf2f4;
-$darkBlue: #2b2d42;
-$darkGrayBlack: #343a40;
-$red: #ef233c;
-$vividRed: #d90429;
+.input {
+  @apply border-2 border-zinc-200 rounded bg-white w-full;
+}
