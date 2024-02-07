@@ -171,19 +171,7 @@ function FileInfo() {
         )
     }
 
-    function fillForm(e) {
-        e.preventDefault();
-        const filledForm = {
-            filmName: filmName,
-            country: country,
-            releaseDate: releaseDate,
-            genre: genre,
-            minimalAge: minimalAge,
-            imageUrl: imageUrl,
-            watchTime: watchTime,
-            rating: rating
-        }
-    }
+
 
     function handleInputChange(input) {
         const {name, value} = input.target;
@@ -246,9 +234,25 @@ function FileInfo() {
         }
     }
 
+    function fillForm(formRef) {
+        formRef.preventDefault();
+        const form = new FormData(formRef)
+        const json = {
+            filmName: form.get("filmName"),
+            country: form.get("country"),
+            releaseDate: form.get("releaseDate"),
+            genre: form.get("genre"),
+            minimalAge: form.get("minimalAge"),
+            imageUrl: form.get("imageUrl"),
+            watchTime: form.get("watchTime"),
+            rating: form.get("rating")
+        }
+        console.log(json)
+    }
+
     function form() {
         return <form onSubmit={fillForm} ref={formRef}>
-            <ul className="form-ul">
+            <ul className="m-10">
                 <li className="form-li">
                     <div className="paragraph-aligner">
                         <p>film name</p>
@@ -286,6 +290,7 @@ function FileInfo() {
                            type="text"
                            name="releaseDate"
                            value={releaseDate}
+                           placeholder={"dd.mm.YYYY"}
                            onChange={handleInputChange}/>
                     <div className="relative-structure-to-hold-type-suggestions">
                         {typingSuggestions("releaseDate")}
@@ -309,11 +314,11 @@ function FileInfo() {
                 </li>
                 <li className="form-li">
                     <div className="paragraph-aligner">
-                        <p>minimal age</p>
+                        <p>age</p>
                     </div>
                     <input ref={minimalAgeRef}
                            className="form-input"
-                           type="text"
+                           type="radio"
                            name="minimalAge"
                            value={minimalAge}
                            onChange={handleInputChange}/>
@@ -328,7 +333,6 @@ function FileInfo() {
                     </div>
                     <input ref={imageUrlRef}
                            className="form-input"
-                           type="text"
                            name="imageUrl"
                            value={imageUrl}
                            onChange={handleInputChange}/>
