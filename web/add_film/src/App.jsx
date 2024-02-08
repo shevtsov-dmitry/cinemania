@@ -1,13 +1,13 @@
-import FileInfo from "./components/FileInfo/FileInfo";
+import FormAddFilm from "../../home/src/components/FormAddFilm/FormAddFilm";
 
-import './components/FileInfo/FileInfo.css'
+import '../../home/src/components/FormAddFilm/FormAddFilm.css'
 import './index.css'
 
 function App() {
     return (
         <>
             <main className={"wrapper"}>
-                <FileInfo></FileInfo>
+                <FormAddFilm></FormAddFilm>
 
 
             </main>

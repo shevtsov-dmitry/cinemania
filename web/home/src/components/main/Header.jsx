@@ -151,7 +151,7 @@ export function Header() {
                         src={'icons/close.png'}
                         alt=""
                     />
-                    {/*<p>досмотреть</p>*/}
+                    <p>Добавить новый фильм</p>
                 </div>
             </header>
             {showOpenedBurgerPanel()}

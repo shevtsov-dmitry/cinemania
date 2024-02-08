@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-function FileInfo() {
+function FormAddFilm() {
     // *** ASSIGNMENT
     const serverUrl = 'http://localhost:8080'
     const suggestionsTextHighlightColor = '#f72585'
@@ -458,4 +458,4 @@ function FileInfo() {
     )
 }
 
-export default FileInfo
+export default FormAddFilm
