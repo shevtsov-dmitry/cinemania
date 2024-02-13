@@ -1,17 +1,17 @@
 export class SideScrollArrow {
-    scrollBlock;
+    scrollBlock
     constructor(scrollBlock) {
         this.scrollBlock = scrollBlock
     }
-    scrollLeft(distance){
+    scrollLeft(distance) {
         this.scrollBlock.current.scrollLeft -= distance
     }
 
-    scrollRight(distance){
+    scrollRight(distance) {
         this.scrollBlock.current.scrollLeft += distance
     }
 
-     hideArrowsLeaningScreen(leftArrowRef, rightArrowRef) {
+    hideArrowsLeaningScreen(leftArrowRef, rightArrowRef) {
         const block = this.scrollBlock.current
 
         if (block) {

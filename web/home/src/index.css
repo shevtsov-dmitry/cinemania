@@ -1,23 +1,23 @@
-@import "components/main/preview.css";
-@import "components/FormAddFilm/FormAddFilm.css";
+@import 'components/main/preview.css';
+@import 'components/FormAddFilm/FormAddFilm.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @layer utilities {
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  /* Hide scrollbar for IE, Edge and Firefox */
-  .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
 }
 @layer components {
-  .topic {
-    @apply select-none hover:cursor-pointer hover:bg-red-50;
-  }
+    .topic {
+        @apply select-none hover:cursor-pointer hover:bg-red-50;
+    }
 }
 
 /*# sourceMappingURL=index.css.map */

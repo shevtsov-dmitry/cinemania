@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import FormAddFilm from '../FormAddFilm/FormAddFilm'
+import { Link, Route, Routes } from 'react-router-dom'
 
 export function Header() {
     const generalTopicsRef = useRef()
@@ -41,7 +43,7 @@ export function Header() {
                             <div>{newsAndCollectionContent()}</div>
                         </div>
                     </main>
-                    <footer className="text-white z-20 fixed bottom-2 left-3 opacity-75 text-sm">
+                    <footer className="fixed bottom-2 left-3 z-20 text-sm text-white opacity-75">
                         © 2024 ООО «Bē commerce»
                     </footer>
                 </>
@@ -141,20 +143,42 @@ export function Header() {
                     </div>
                     <img
                         ref={burgerImageRef}
-                        className={`w-[23px] hidden scale-125 hover:cursor-pointer max-[1024px]:block`}
+                        className={`hidden w-[23px] scale-125 hover:cursor-pointer max-[1024px]:block`}
                         src={'icons/burger.png'}
                         alt=""
                     />
                     <img
                         ref={closeImageRef}
-                        className={`w-[23px] hidden scale-75 hover:cursor-pointer min-[1024px]:hidden`}
+                        className={`hidden w-[23px] scale-75 hover:cursor-pointer min-[1024px]:hidden`}
                         src={'icons/close.png'}
                         alt=""
                     />
-                    <p>Добавить новый фильм</p>
+                    <Link to="/add-new-film">
+                        <p className="hover:cursor-pointer">
+                            Добавить новый фильм
+                        </p>
+                    </Link>
                 </div>
             </header>
             {showOpenedBurgerPanel()}
+
+            <Routes>
+                <Route
+                    path="/add-new-film"
+                    element={
+                        <div className="w-dvw h-dvh fixed left-0 top-0 z-50 flex items-center justify-center">
+                            <div
+                                id="blurred-bg-when-add-film-form-oppened"
+                                className="absolute h-full w-full bg-gray-800 opacity-85 backdrop-blur-md dark:backdrop-blur-lg"
+                            ></div>
+                            <div className="z-50">
+                                <FormAddFilm />
+                            </div>
+
+                        </div>
+                    }
+                />
+            </Routes>
         </>
     )
 }

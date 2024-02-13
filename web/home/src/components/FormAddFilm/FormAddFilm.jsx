@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 function FormAddFilm() {
     // *** ASSIGNMENT
@@ -129,7 +130,10 @@ function FormAddFilm() {
             suggestedVariant.innerHTML =
                 `<span style="color: ${suggestionsTextHighlightColor};">` +
                 `${suggestedVariant.textContent.substring(0, length)}</span>` +
-                `${suggestedVariant.textContent.substring(length, suggestedVariant.textContent.length)}`
+                `${suggestedVariant.textContent.substring(
+                    length,
+                    suggestedVariant.textContent.length
+                )}`
         }
     }
 
@@ -219,6 +223,8 @@ function FormAddFilm() {
                 return popupWatchTimeRef
             case 'rating':
                 return popupRatingRef
+            default:
+                return ''
         }
     }
 
@@ -248,6 +254,8 @@ function FormAddFilm() {
             case 'rating':
                 setRating(value)
                 break
+            default:
+                return ''
         }
     }
 
@@ -277,6 +285,10 @@ function FormAddFilm() {
                 }
             >
                 <ul className="w-fit">
+                    <Link to={"/"}>
+                        <div id="close-form-sign" className='relative text-right p-0 mt-[-10px] font-bold hover: cursor-pointer text-2xl select-none'>X</div>
+                    </Link>
+                    <li className='text-center text-3xl font-bold mt-[-15px]'>add film</li>
                     <li className="form-li">
                         <p>film name</p>
                         <input
@@ -376,7 +388,7 @@ function FormAddFilm() {
                             ref={watchTimeRef}
                             className="input"
                             type="text"
-                            placeholder={"hh:mm"}
+                            placeholder={'hh:mm'}
                             name="watchTime"
                             value={watchTime}
                             onChange={handleInputChange}
@@ -409,7 +421,7 @@ function FormAddFilm() {
                         submit
                     </button>
                 </div>
-            </form>
+            </form >
         )
     }
 
@@ -451,10 +463,9 @@ function FormAddFilm() {
     }
 
     return (
-        <div className="container h-dvh w-dvw ">
-            <h1>add film</h1>
-            {form()}
-        </div>
+        <>
+            <div className="column flex flex-col justify-center">{form()}</div>
+        </>
     )
 }
 

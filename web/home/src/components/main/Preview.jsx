@@ -50,11 +50,9 @@ export function Preview() {
             <div
                 id="previews-sequence-block"
                 onMouseEnter={() => {
-                    console.log('SO... SO... ')
                     setIsBlockHovered(true)
                 }}
                 onMouseLeave={() => {
-                    console.log('LEFT')
                     setIsBlockHovered(false)
                 }}
             >
