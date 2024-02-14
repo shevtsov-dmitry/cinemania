@@ -285,10 +285,21 @@ function FormAddFilm() {
                 }
             >
                 <ul className="w-fit">
-                    <Link to={"/"}>
-                        <div id="close-form-sign" className='relative text-right p-0 mt-[-10px] font-bold hover: cursor-pointer text-2xl select-none'>X</div>
-                    </Link>
-                    <li className='text-center text-3xl font-bold mt-[-15px]'>add film</li>
+                    <div
+                        id="close-form-sign"
+                        className="relative mt-[-10px] flex justify-between p-0"
+                    >
+                        <div className="w-[95%]"></div>
+
+                        <Link to={'/'}>
+                            <p className="w-[5%] select-none text-2xl font-bold hover:cursor-pointer ">
+                                X
+                            </p>
+                        </Link>
+                    </div>
+                    <li className="mt-[-15px] text-center text-3xl font-bold">
+                        add film
+                    </li>
                     <li className="form-li">
                         <p>film name</p>
                         <input
@@ -421,7 +432,7 @@ function FormAddFilm() {
                         submit
                     </button>
                 </div>
-            </form >
+            </form>
         )
     }
 

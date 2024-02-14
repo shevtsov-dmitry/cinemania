@@ -169,12 +169,11 @@ export function Header() {
                         <div className="w-dvw h-dvh fixed left-0 top-0 z-50 flex items-center justify-center">
                             <div
                                 id="blurred-bg-when-add-film-form-oppened"
-                                className="absolute h-full w-full bg-gray-800 opacity-85 backdrop-blur-md dark:backdrop-blur-lg"
+                                className="opacity-85 absolute h-full w-full bg-gray-800 backdrop-blur-md dark:backdrop-blur-lg"
                             ></div>
                             <div className="z-50">
                                 <FormAddFilm />
                             </div>
-
                         </div>
                     }
                 />
