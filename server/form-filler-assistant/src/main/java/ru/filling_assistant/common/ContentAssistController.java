@@ -1,23 +1,21 @@
 package ru.filling_assistant.common;
 
 import com.google.gson.Gson;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class ContentAssistController<T extends AbstractNameableEntity> {
     private final Class<T> aClass;
-
-    private CrudRepository<T, Long> repo;
-//    @Qualifier("contentAssistService")
-
-    private ContentAssistService<T> service = new ContentAssistService<>(repo);
+    private final ContentAssistService<T> service;
     private final Gson gson = new Gson();
 
-    public ContentAssistController(Class<T> aClass) {
+    public ContentAssistController(Class<T> aClass, ContentAssistService<T> service) {
         this.aClass = aClass;
+        this.service = service;
     }
 
     public ResponseEntity<String> addOne(String name) {

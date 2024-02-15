@@ -1,15 +1,16 @@
 package ru.filling_assistant.common;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ContentAssistService<T extends AbstractNameableEntity> {
-    private CrudRepository<T, Long> repo;
+    private final CrudRepository<T, Long> repo;
 
     public ContentAssistService(CrudRepository<T, Long> repo) {
         this.repo = repo;

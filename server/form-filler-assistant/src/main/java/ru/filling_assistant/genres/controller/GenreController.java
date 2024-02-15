@@ -17,10 +17,11 @@ import java.util.List;
 public class GenreController {
 
     private final GenreService service;
-    private final ContentAssistController<Genre> commonController = new ContentAssistController<>(Genre.class);
+    private final ContentAssistController<Genre> commonController;
     @Autowired
-    public GenreController(GenreService service) {
+    public GenreController(Class<Genre> genreClass, GenreService service) {
         this.service = service;
+        commonController = new ContentAssistController<>(genreClass, service);
     }
 
     @PostMapping("/add/one")

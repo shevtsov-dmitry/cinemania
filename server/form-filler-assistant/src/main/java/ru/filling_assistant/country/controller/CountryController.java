@@ -5,20 +5,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.filling_assistant.common.ContentAssistController;
 import ru.filling_assistant.country.model.Country;
-import ru.filling_assistant.country.repo.CountryRepo;
 import ru.filling_assistant.country.service.CountryService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/fillingAssistants/countries")
-public class CountryController {
+public class CountryController{
     private final CountryService service;
-    private final ContentAssistController<Country> commonController = new ContentAssistController<>(Country.class);
+    private final ContentAssistController<Country> commonController;
 
     @Autowired
-    public CountryController(CountryService service) {
+    public CountryController(Class<Country> countryClass, CountryService service) {
         this.service = service;
+        commonController = new ContentAssistController<>(countryClass, service);
     }
 
     @PostMapping("/add/one")

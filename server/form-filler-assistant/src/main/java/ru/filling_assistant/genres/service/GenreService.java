@@ -19,7 +19,6 @@ public class GenreService extends ContentAssistService<Genre> {
     private final GenreRepo repo;
     private final Pageable foundGenreAmountRestriction = PageRequest.of(0, 5);
 
-    @Autowired
     public GenreService(GenreRepo repo) {
         super(repo);
         this.repo = repo;
