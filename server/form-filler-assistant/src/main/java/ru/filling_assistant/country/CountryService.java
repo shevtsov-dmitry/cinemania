@@ -1,11 +1,11 @@
-package ru.filling_assistant.country.service;
+package ru.filling_assistant.country;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.filling_assistant.common.ContentAssistService;
-import ru.filling_assistant.country.model.Country;
-import ru.filling_assistant.country.repo.CountryRepo;
+import ru.filling_assistant.country.Country;
+import ru.filling_assistant.country.CountryRepo;
 
 import java.util.List;
 

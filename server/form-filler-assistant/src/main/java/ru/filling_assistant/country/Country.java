@@ -1,4 +1,4 @@
-package ru.filling_assistant.country.model;
+package ru.filling_assistant.country;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

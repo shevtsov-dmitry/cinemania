@@ -1,4 +1,4 @@
-package ru.filling_assistant.genres.model;
+package ru.filling_assistant.genres;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

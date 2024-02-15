@@ -1,15 +1,10 @@
-package ru.filling_assistant.genres.controller;
+package ru.filling_assistant.genres;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.filling_assistant.common.ContentAssistController;
-import ru.filling_assistant.genres.model.Genre;
-import ru.filling_assistant.genres.service.GenreService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

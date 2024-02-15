@@ -1,17 +1,15 @@
-package ru.filling_assistant.country.controller;
+package ru.filling_assistant.country;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.filling_assistant.common.ContentAssistController;
-import ru.filling_assistant.country.model.Country;
-import ru.filling_assistant.country.service.CountryService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/fillingAssistants/countries")
-public class CountryController{
+public class CountryController {
     private final CountryService service;
     private final ContentAssistController<Country> commonController;
 
