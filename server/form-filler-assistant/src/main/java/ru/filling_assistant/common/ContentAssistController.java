@@ -1,25 +1,19 @@
-package ru.content_assist_with_input.filling_assistant.common;
+package ru.filling_assistant.common;
 
 import com.google.gson.Gson;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class ContentAssistController<T extends AbstractEntity> {
+public class ContentAssistController<T extends AbstractNameableEntity> {
     private final Class<T> aClass;
 
-    @Qualifier("contentAssistService")
-    @Autowired
-    private ContentAssistService<T> service;
+    private CrudRepository<T, Long> repo;
+//    @Qualifier("contentAssistService")
+
+    private ContentAssistService<T> service = new ContentAssistService<>(repo);
     private final Gson gson = new Gson();
 
     public ContentAssistController(Class<T> aClass) {
@@ -69,7 +63,7 @@ public class ContentAssistController<T extends AbstractEntity> {
     }
 
     public ResponseEntity<String> getBySequence(String sequence) {
-
+        return ResponseEntity.ok("");
     }
 
     public ResponseEntity<String> delete(List<String> entityNamesList) {

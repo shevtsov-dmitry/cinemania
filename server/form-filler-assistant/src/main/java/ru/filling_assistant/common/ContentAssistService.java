@@ -1,16 +1,15 @@
-package ru.content_assist_with_input.filling_assistant.common;
+package ru.filling_assistant.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
 
 import java.util.*;
 
-@Component
-public class ContentAssistService<T extends AbstractEntity> {
-    private final CrudRepository<T, Long> repo;
+public class ContentAssistService<T extends AbstractNameableEntity> {
+    private CrudRepository<T, Long> repo;
 
     public ContentAssistService(CrudRepository<T, Long> repo) {
         this.repo = repo;
