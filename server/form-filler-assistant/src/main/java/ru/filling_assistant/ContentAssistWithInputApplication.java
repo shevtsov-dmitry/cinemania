@@ -1,4 +1,4 @@
-package ru.content_assist_with_input.filling_assistant;
+package ru.filling_assistant;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

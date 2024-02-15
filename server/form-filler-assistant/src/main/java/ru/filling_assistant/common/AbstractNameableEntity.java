@@ -1,6 +1,6 @@
-package ru.content_assist_with_input.filling_assistant.common;
+package ru.filling_assistant.common;
 
-public abstract class AbstractEntity {
+public abstract class AbstractNameableEntity {
     public  abstract String getName();
     public abstract Long getId();
 

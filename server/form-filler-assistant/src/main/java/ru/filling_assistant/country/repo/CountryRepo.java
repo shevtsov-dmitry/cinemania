@@ -1,8 +1,8 @@
-package ru.content_assist_with_input.filling_assistant.country.repo;
+package ru.filling_assistant.country.repo;
 
 import org.apache.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.content_assist_with_input.filling_assistant.country.model.Country;
+import ru.filling_assistant.country.model.Country;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

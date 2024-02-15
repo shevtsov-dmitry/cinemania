@@ -1,4 +1,4 @@
-package ru.content_assist_with_input.filling_assistant.genres.controller;
+package ru.filling_assistant.genres.controller;
 
 import com.google.gson.Gson;
 import org.junit.jupiter.api.*;
@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.content_assist_with_input.filling_assistant.genres.COMMON;
-import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
+import ru.filling_assistant.genres.COMMON;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.blankString;

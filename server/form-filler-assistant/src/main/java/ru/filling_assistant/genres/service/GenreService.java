@@ -1,15 +1,14 @@
-package ru.content_assist_with_input.filling_assistant.genres.service;
+package ru.filling_assistant.genres.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.content_assist_with_input.filling_assistant.common.ContentAssistService;
-import ru.content_assist_with_input.filling_assistant.genres.model.Genre;
-import ru.content_assist_with_input.filling_assistant.genres.repo.GenreRepo;
+import ru.filling_assistant.common.ContentAssistService;
+import ru.filling_assistant.genres.model.Genre;
+import ru.filling_assistant.genres.repo.GenreRepo;
 
 import java.util.List;
 import java.util.StringJoiner;

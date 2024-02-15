@@ -1,4 +1,4 @@
-package ru.content_assist_with_input.filling_assistant.country.model;
+package ru.filling_assistant.country.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,13 +7,13 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import ru.content_assist_with_input.filling_assistant.common.AbstractEntity;
+import ru.filling_assistant.common.AbstractNameableEntity;
 
 @Entity
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Country extends AbstractEntity {
+public class Country extends AbstractNameableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

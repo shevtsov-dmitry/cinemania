@@ -1,4 +1,4 @@
-package ru.content_assist_with_input.filling_assistant.genres.model;
+package ru.filling_assistant.genres.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,13 +7,13 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import ru.content_assist_with_input.filling_assistant.common.AbstractEntity;
+import ru.filling_assistant.common.AbstractNameableEntity;
 
 @Data
 @Entity
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Genre extends AbstractEntity {
+public class Genre extends AbstractNameableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
