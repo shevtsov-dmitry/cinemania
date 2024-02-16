@@ -7,13 +7,12 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import ru.filling_assistant.common.AbstractNameableEntity;
+import ru.filling_assistant.common.Nameable;
 
 @Data
 @Entity
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Genre extends AbstractNameableEntity {
+public class Genre implements Nameable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

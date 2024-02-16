@@ -4,8 +4,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.filling_assistant.common.ContentAssistService;
-import ru.filling_assistant.country.Country;
-import ru.filling_assistant.country.CountryRepo;
 
 import java.util.List;
 
@@ -20,12 +18,17 @@ public class CountryService extends ContentAssistService<Country> {
         this.repo = repo;
     }
 
+    @Override
+    public Country save(Country entity) {
+        return super.save(entity);
+    }
+
     public List<String> findMatchedCountries(String sequence) {
         return repo.getCountryNamesBySimilarStringSequence(sequence, foundCountryAmountRestriction);
     }
 
     @Override
-    public List<String> saveWithoutDuplicates(List<Country> receivedEntities) {
+    public List<Country> saveWithoutDuplicates(List<Country> receivedEntities) {
         return super.saveWithoutDuplicates(receivedEntities);
     }
 }

@@ -7,13 +7,12 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import ru.filling_assistant.common.AbstractNameableEntity;
+import ru.filling_assistant.common.Nameable;
 
 @Entity
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Country extends AbstractNameableEntity {
+public class Country implements Nameable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +20,6 @@ public class Country extends AbstractNameableEntity {
     private String name;
 
     public Country(String name) {
-        this.id = null;
         this.name = name;
     }
 

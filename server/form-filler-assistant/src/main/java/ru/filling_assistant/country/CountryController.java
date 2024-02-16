@@ -5,28 +5,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.filling_assistant.common.ContentAssistController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/fillingAssistants/countries")
-public class CountryController {
+public class CountryController extends ContentAssistController<Country> {
     private final CountryService service;
-    private final ContentAssistController<Country> commonController;
 
     @Autowired
-    public CountryController(Class<Country> countryClass, CountryService service) {
+    public CountryController(CountryService service) {
+        super(service);
         this.service = service;
-        commonController = new ContentAssistController<>(countryClass, service);
     }
 
     @PostMapping("/add/one")
     public ResponseEntity<String> addNewCountry(@RequestParam String countryName) {
-        return commonController.addOne(countryName);
+        return super.tryToSaveOneEntity(new Country(countryName));
     }
 
     @PostMapping("/add/many")
-    public ResponseEntity<String> addNewCountries(@RequestBody List<String> countryNames) {
-        return commonController.addMany(countryNames);
+    public ResponseEntity<List<String>> addNewCountries(@RequestBody List<String> countryNames) {
+        List<Country> countries = new ArrayList<>(countryNames.size());
+        countryNames.forEach(name -> countries.add(new Country(name)));
+        return super.tryToSaveListOfEntities(countries);
     }
 
     @GetMapping("/get/bySequence")

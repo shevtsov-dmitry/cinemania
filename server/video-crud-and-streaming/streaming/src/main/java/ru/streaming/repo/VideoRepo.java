@@ -1,7 +1,7 @@
 package ru.streaming.repo;
 
-import ru.video_material.video.model.Video;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import ru.streaming.model.Video;
 
 public interface VideoRepo extends MongoRepository<Video, String> {
 

@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class ContentAssistController<T extends Nameable> {
 
@@ -23,17 +24,21 @@ public abstract class ContentAssistController<T extends Nameable> {
             T saved = service.save(country);
             return ResponseEntity.ok(saved.toString());
         } catch (Exception e) {
-            final List<T> oneContryList = new ArrayList<>(List.of(country));
-            return ResponseEntity.ok(service.saveWithoutDuplicates(oneContryList).getFirst().toString());
+            final List<T> singletonEntityList = new ArrayList<>(List.of(country));
+            return ResponseEntity.ok(service.saveWithoutDuplicates(singletonEntityList).getFirst().getId().toString());
         }
     }
 
-    public ResponseEntity<List<T>> tryToSaveListOfEntities(List<T> entities) {
-        entities.removeIf(country -> country.getName().isBlank());
+    public ResponseEntity<List<String>> tryToSaveListOfEntities(List<T> entities) {
+        entities.removeIf(element -> element.getName().isBlank());
         try {
-            return ResponseEntity.ok(service.saveNewEntities(entities));
+            return ResponseEntity.ok(service.saveNewEntities(entities).stream()
+                    .map(entity -> entity.getId().toString())
+                    .collect(Collectors.toList()));
         } catch (UnsupportedOperationException e) {
-            return ResponseEntity.ok(service.saveWithoutDuplicates(entities));
+            return ResponseEntity.ok(service.saveWithoutDuplicates(entities).stream()
+                    .map(entity -> entity.getId().toString())
+                    .collect(Collectors.toList()));
         }
     }
 }

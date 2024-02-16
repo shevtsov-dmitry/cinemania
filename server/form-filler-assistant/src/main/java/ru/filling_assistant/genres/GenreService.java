@@ -28,7 +28,7 @@ public class GenreService extends ContentAssistService<Genre> {
     }
 
     @Override
-    public List<String> saveWithoutDuplicates(List<Genre> receivedEntities) {
+    public List<Genre> saveWithoutDuplicates(List<Genre> receivedEntities) {
         return super.saveWithoutDuplicates(receivedEntities);
     }
 
