@@ -1,9 +1,8 @@
 package ru.filling_assistant.common;
 
-import jakarta.persistence.Column;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Component;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,21 +16,30 @@ public abstract class ContentAssistService<T extends Nameable> {
     }
 
     public List<T> saveWithoutDuplicates(List<T> receivedEntities) throws IllegalArgumentException {
-        List<T> allGenres = repo.findAll();
-        if (!allGenres.isEmpty()) {
-            return removeDupsAndSaveDeliveredGenres(receivedEntities, allGenres);
+        List<T> allEntitiesInDB = repo.findAll();
+        if (!allEntitiesInDB.isEmpty()) {
+            return removeDupsAndSaveDeliveredGenres(receivedEntities, allEntitiesInDB);
         } else {
             return removeDupsAndSaveAll(receivedEntities);
         }
     }
 
     private List<T> removeDupsAndSaveDeliveredGenres(List<T> receivedEntities, List<T> allGenres) throws IllegalArgumentException {
-        List<String> entitiesNames = allGenres.stream().map(T::getName).toList();
-        receivedEntities.removeIf(entity -> entitiesNames.contains(entity.getName()));
+        List<String> allEntityNamesInDB = new ArrayList<>(allGenres.stream().map(T::getName).toList());
+        receivedEntities.removeIf(receivedEntity -> allEntityNamesInDB.contains(receivedEntity.getName()));
         if (receivedEntities.isEmpty()) {
-            throw new IllegalArgumentException("Cannot save any, because all requested genres already exist in database.");
+            throw new IllegalArgumentException("Cannot save any, because all requested entities already exist in database.");
         }
-        return repo.saveAll(receivedEntities);
+
+        List<T> filteredEntities = new ArrayList<>(receivedEntities.size());
+        Set<String> set = new HashSet<>(receivedEntities.size());
+        for (T receivedEntity : receivedEntities) {
+            if(!set.contains(receivedEntity.getName())) {
+                filteredEntities.add(receivedEntity);
+            }
+            set.add(receivedEntity.getName());
+        }
+        return repo.saveAll(filteredEntities);
     }
 
     private List<T> removeDupsAndSaveAll(List<T> receivedEntities) {
@@ -47,7 +55,7 @@ public abstract class ContentAssistService<T extends Nameable> {
         return savedEntities;
     }
 
-    public T save(T entity) {
+    public T save(T entity)  {
         return repo.save(entity);
     }
 

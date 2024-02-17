@@ -39,7 +39,7 @@ public class GenreService extends ContentAssistService<Genre> {
         notAddedGenres.forEach(notAddedGenresSJ::add);
 
         return notAddedGenres.isEmpty() ?
-                ResponseEntity.ok("All requested entities has been deleted successfully.") :
+                ResponseEntity.ok("All requested entities have been deleted successfully.") :
                 ResponseEntity.badRequest().body(STR."\{notAddedGenres.size()} entities were not deleted from the database. \{notAddedGenresSJ.toString()}");
     }
 

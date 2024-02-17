@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.filling_assistant.common.ContentAssistController;
-import ru.filling_assistant.country.Country;
 
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +20,12 @@ public class GenreController extends ContentAssistController<Genre> {
     }
 
     @PostMapping("/add/one")
-    public ResponseEntity<String> addNewGenre(@RequestParam String genreName) {
-        return super.tryToSaveOneEntity(new Genre(genreName));
+    public ResponseEntity<String> addNewGenre(@RequestParam String name) {
+        return super.tryToSaveOneEntity(new Genre(name));
     }
 
     @PostMapping("/add/many")
-    public ResponseEntity<List<String>> saveNewGenres(@RequestBody List<String> genreNames) {
+    public ResponseEntity<List<Long>> saveNewGenres(@RequestBody List<String> genreNames) {
         List<Genre> genres = new ArrayList<>(genreNames.size());
         genreNames.forEach(name -> genres.add(new Genre(name)));
         return super.tryToSaveListOfEntities(genres);

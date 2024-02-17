@@ -9,8 +9,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.filling_assistant.genres.COMMON;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.Matchers.blankString;
 import static org.hamcrest.Matchers.not;
@@ -77,7 +77,7 @@ class GenreControllerTest {
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("All requested genres has been deleted successfully."));
+                .andExpect(content().string("All requested entities have been deleted successfully."));
     }
 
     @Test
@@ -85,12 +85,17 @@ class GenreControllerTest {
     void addMultipleGenres() throws Exception {
         String url = ENDPOINT_URL + "/add/many";
         String json = gson.toJson(FIVE_RANDOM_GENRE_NAMES);
-
+        System.out.println("json = " + json);
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("new genres have been added successfully."));
+                .andExpect(res -> {
+                    String contentAsString = res.getResponse().getContentAsString();
+                    ArrayList<String> arrayList = gson.fromJson(contentAsString, ArrayList.class);
+                    long count = arrayList.stream().mapToLong(Long::parseLong).count();
+                    assertEquals(5, count);
+                });
     }
 
     @Test
@@ -103,7 +108,7 @@ class GenreControllerTest {
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("All requested genres has been deleted successfully."));
+                .andExpect(content().string("All requested entities have been deleted successfully."));
     }
 
     @Test
@@ -118,7 +123,7 @@ class GenreControllerTest {
         mockMvc.perform(post(url)
                         .param("name", GENERATED_GENRE_NAME))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Cannot save because already exists in database."));
+                .andExpect(content().string("Cannot save any, because all requested entities already exist in database."));
 
         url = ENDPOINT_URL + "/delete";
         List<String> singleton = List.of(GENERATED_GENRE_NAME);
@@ -128,7 +133,7 @@ class GenreControllerTest {
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("All requested genres has been deleted successfully."));
+                .andExpect(content().string("All requested entities have been deleted successfully."));
     }
 
     @Test
@@ -137,28 +142,27 @@ class GenreControllerTest {
         for (int i = 0; i < 3; i++) {
             genreNames.add(genreNames.getFirst());
         }
-        String json = gson.toJson(genreNames);
+        Set<String> set = new HashSet<>(List.copyOf(FIVE_RANDOM_GENRE_NAMES));
+        String namesToDeleteAfterSave = gson.toJson(set);
 
+        String json = gson.toJson(genreNames);
         String url = ENDPOINT_URL + "/add/many";
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(res -> {
-                    List<String> expectedList = List.copyOf(FIVE_RANDOM_GENRE_NAMES);
-                    List<String> actualList = gson.fromJson(res.getResponse().getContentAsString(), List.class);
-                    assertEquals(expectedList.size(), actualList.size());
-                    for (String expected : expectedList) {
-                        assertTrue(actualList.contains(expected));
-                    }
+                .andDo(res -> {
+                    int expectedSize = set.size();
+                    List<Long> list = gson.fromJson(res.getResponse().getContentAsString(), List.class);
+                    assertEquals(expectedSize,list.size());
                 });
 
         url = ENDPOINT_URL + "/delete";
         mockMvc.perform(delete(url)
                         .contentType("application/json")
-                        .content(json))
+                        .content(namesToDeleteAfterSave))
                 .andExpect(status().isOk())
-                .andExpect(content().string("All requested genres has been deleted successfully."));
+                .andExpect(content().string("All requested entities have been deleted successfully."));
     }
 //
 //    @Test

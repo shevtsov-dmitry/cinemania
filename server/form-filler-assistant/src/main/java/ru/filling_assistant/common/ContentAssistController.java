@@ -14,30 +14,36 @@ public abstract class ContentAssistController<T extends Nameable> {
         this.service = service;
     }
 
-    public ResponseEntity<String> tryToSaveOneEntity(T country) {
-        final String countryName = country.getName();
-        if (countryName.isBlank()) {
-            return ResponseEntity.badRequest().body("incoming parameter data is empty.");
+    public ResponseEntity<String> tryToSaveOneEntity(T entity) {
+        if (entity.getName().isBlank()) {
+            return ResponseEntity.badRequest().build();
         }
 
         try {
-            T saved = service.save(country);
-            return ResponseEntity.ok(saved.toString());
+            return ResponseEntity.ok(service.save(entity).getId().toString());
         } catch (Exception e) {
-            final List<T> singletonEntityList = new ArrayList<>(List.of(country));
-            return ResponseEntity.ok(service.saveWithoutDuplicates(singletonEntityList).getFirst().getId().toString());
+            return attemptToRemoveDuplicatesThenSave(new ArrayList<>(List.of(entity)));
         }
     }
 
-    public ResponseEntity<List<String>> tryToSaveListOfEntities(List<T> entities) {
+    private ResponseEntity<String> attemptToRemoveDuplicatesThenSave(List<T> singletonEntityList) {
+        try {
+            return ResponseEntity.badRequest().body(service.saveWithoutDuplicates(singletonEntityList).getFirst().getId().toString());
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body("Cannot save any, because all requested entities already exist in database.");
+        }
+    }
+
+    public ResponseEntity<List<Long>> tryToSaveListOfEntities(List<T> entities) {
         entities.removeIf(element -> element.getName().isBlank());
         try {
             return ResponseEntity.ok(service.saveNewEntities(entities).stream()
-                    .map(entity -> entity.getId().toString())
+                    .map(Nameable::getId)
                     .collect(Collectors.toList()));
-        } catch (UnsupportedOperationException e) {
+        } catch (Exception e) {
+
             return ResponseEntity.ok(service.saveWithoutDuplicates(entities).stream()
-                    .map(entity -> entity.getId().toString())
+                    .map(Nameable::getId)
                     .collect(Collectors.toList()));
         }
     }

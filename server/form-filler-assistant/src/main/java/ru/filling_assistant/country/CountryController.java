@@ -25,7 +25,7 @@ public class CountryController extends ContentAssistController<Country> {
     }
 
     @PostMapping("/add/many")
-    public ResponseEntity<List<String>> addNewCountries(@RequestBody List<String> countryNames) {
+    public ResponseEntity<List<Long>> addNewCountries(@RequestBody List<String> countryNames) {
         List<Country> countries = new ArrayList<>(countryNames.size());
         countryNames.forEach(name -> countries.add(new Country(name)));
         return super.tryToSaveListOfEntities(countries);
