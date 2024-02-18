@@ -1,14 +1,10 @@
-package ru.filling_assistant.genres.controller;
+package ru.filling_assistant.genre.controller;
 
 import com.google.gson.Gson;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.filling_assistant.genres.COMMON;
+import ru.filling_assistant.genre.COMMON;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -29,7 +25,7 @@ public class AbstractControllerTestApi {
 
     @Autowired
     private MockMvc mockMvc;
-    protected String ENDPOINT_URL;
+    private final String ENDPOINT_URL = "/fillingAssistants";
     protected String CONTROLLER_REQUEST_MAPPING;
 
     static final String GENERATED_NAME;
@@ -140,7 +136,7 @@ public class AbstractControllerTestApi {
         String namesToDeleteAfterSave = gson.toJson(set);
 
         String json = gson.toJson(genreNames);
-        String url = ENDPOINT_URL + "/generes" + "/add/many";
+        String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/add/many";
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(json))
