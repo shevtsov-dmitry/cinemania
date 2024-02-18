@@ -1,18 +1,19 @@
-package ru.filling_assistant.genres;
+package ru.filling_assistant.genre;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.filling_assistant.common.ContentAssistController;
+import ru.filling_assistant.common.BaseController;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/fillingAssistants/genres")
-public class GenreController extends ContentAssistController<Genre> {
+public class GenreController extends BaseController<Genre> {
 
     private final GenreService service;
+
     @Autowired
     public GenreController(GenreService service) {
         super(service);

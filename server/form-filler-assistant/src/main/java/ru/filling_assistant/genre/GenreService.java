@@ -1,23 +1,22 @@
-package ru.filling_assistant.genres;
+package ru.filling_assistant.genre;
 
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.filling_assistant.common.ContentAssistService;
-import ru.filling_assistant.genres.Genre;
-import ru.filling_assistant.genres.GenreRepo;
+import ru.filling_assistant.common.BaseService;
 
 import java.util.List;
-import java.util.StringJoiner;
 
 @Service
-public class GenreService extends ContentAssistService<Genre> {
+public class GenreService extends BaseService<Genre> {
 
     private final GenreRepo repo;
     private final Pageable foundGenreAmountRestriction = PageRequest.of(0, 5);
 
+    @Autowired
     public GenreService(GenreRepo repo) {
         super(repo);
         this.repo = repo;
@@ -34,13 +33,7 @@ public class GenreService extends ContentAssistService<Genre> {
 
     @Transactional
     public ResponseEntity<String> deleteGenres(List<String> genreNamesToDelete) {
-        List<String> notAddedGenres = genreNamesToDelete.stream().filter(name -> repo.deleteByName(name) == 0).toList();
-        StringJoiner notAddedGenresSJ = new StringJoiner(", ", "[", "]");
-        notAddedGenres.forEach(notAddedGenresSJ::add);
-
-        return notAddedGenres.isEmpty() ?
-                ResponseEntity.ok("All requested entities have been deleted successfully.") :
-                ResponseEntity.badRequest().body(STR."\{notAddedGenres.size()} entities were not deleted from the database. \{notAddedGenresSJ.toString()}");
+        return super.deleteEntitiesByName(genreNamesToDelete);
     }
 
 }

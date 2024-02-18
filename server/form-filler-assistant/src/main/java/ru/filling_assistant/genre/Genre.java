@@ -1,8 +1,7 @@
-package ru.filling_assistant.genres;
+package ru.filling_assistant.genre;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ru.filling_assistant.common.Nameable;
 

@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ContentAssistController<T extends Nameable> {
+public abstract class BaseController<T extends Nameable> {
 
-    private final ContentAssistService<T> service;
+    private final BaseService<T> service;
 
-    protected ContentAssistController(ContentAssistService<T> service) {
+    protected BaseController(BaseService<T> service) {
         this.service = service;
     }
 

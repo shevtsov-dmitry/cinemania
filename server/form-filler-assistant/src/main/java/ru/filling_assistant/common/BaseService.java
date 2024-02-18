@@ -1,17 +1,14 @@
 package ru.filling_assistant.common;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.ResponseEntity;
 
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public abstract class ContentAssistService<T extends Nameable> {
-    private final JpaRepository<T, Long> repo;
+public abstract class BaseService<T extends Nameable> {
+    private final BaseRepo<T> repo;
 
-    public ContentAssistService(JpaRepository<T, Long> repo) {
+    public BaseService(BaseRepo<T> repo) {
         this.repo = repo;
     }
 
@@ -61,5 +58,15 @@ public abstract class ContentAssistService<T extends Nameable> {
 
     public List<T> saveNewEntities(List<T> entities) {
         return repo.saveAll(entities);
+    }
+
+    public ResponseEntity<String> deleteEntitiesByName(List<String> entityNamesToDelete) {
+        List<String> notAddedEntities = entityNamesToDelete.stream().filter(name -> repo.deleteByName(name) == 0).toList();
+        StringJoiner notAddedEntitiesSJ = new StringJoiner(", ", "[", "]");
+        notAddedEntities.forEach(notAddedEntitiesSJ::add);
+
+        return notAddedEntities.isEmpty() ?
+                ResponseEntity.ok("All requested entities have been deleted successfully.") :
+                ResponseEntity.badRequest().body(STR."\{notAddedEntities.size()} entities were not deleted from the database. \{notAddedEntitiesSJ.toString()}");
     }
 }

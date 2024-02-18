@@ -3,14 +3,15 @@ package ru.filling_assistant.country;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.filling_assistant.common.ContentAssistController;
+import ru.filling_assistant.common.BaseController;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/fillingAssistants/countries")
-public class CountryController extends ContentAssistController<Country> {
+public class CountryController extends BaseController<Country> {
+
     private final CountryService service;
 
     @Autowired
@@ -20,8 +21,8 @@ public class CountryController extends ContentAssistController<Country> {
     }
 
     @PostMapping("/add/one")
-    public ResponseEntity<String> addNewCountry(@RequestParam String countryName) {
-        return super.tryToSaveOneEntity(new Country(countryName));
+    public ResponseEntity<String> addNewCountry(@RequestParam String name) {
+        return super.tryToSaveOneEntity(new Country(name));
     }
 
     @PostMapping("/add/many")
@@ -34,6 +35,11 @@ public class CountryController extends ContentAssistController<Country> {
     @GetMapping("/get/bySequence")
     public List<String> findCountries(@RequestParam String sequence) {
         return service.findMatchedCountries(sequence);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteRequestedCountries(@RequestBody List<String> countryNames) {
+        return service.deleteCountries(countryNames);
     }
 
 }
