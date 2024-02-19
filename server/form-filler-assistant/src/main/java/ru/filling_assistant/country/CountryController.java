@@ -32,7 +32,7 @@ public class CountryController extends BaseController<Country> {
         return super.tryToSaveListOfEntities(countries);
     }
 
-    @GetMapping("/get/bySequence")
+    @GetMapping(value = "/get/bySequence", produces = "application/json;charset=UTF-8")
     public List<String> findCountries(@RequestParam String sequence) {
         return service.findMatchedCountries(sequence);
     }

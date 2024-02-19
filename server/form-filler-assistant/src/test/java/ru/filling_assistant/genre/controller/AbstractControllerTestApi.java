@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.blankString;
 import static org.hamcrest.Matchers.not;
@@ -21,12 +22,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @SpringBootTest
-public class AbstractControllerTestApi {
+public abstract class AbstractControllerTestApi {
 
     @Autowired
-    private MockMvc mockMvc;
-    private final String ENDPOINT_URL = "/fillingAssistants";
-    protected String CONTROLLER_REQUEST_MAPPING;
+    MockMvc mockMvc;
+    final String ENDPOINT_URL = "/fillingAssistants";
+    String CONTROLLER_REQUEST_MAPPING;
 
     static final String GENERATED_NAME;
     static final Gson gson = new Gson();
@@ -155,59 +156,19 @@ public class AbstractControllerTestApi {
                 .andExpect(content().string("All requested entities have been deleted successfully."));
     }
 
+    public abstract void findEntityNamesBySequences() throws Exception;
 
-//    @Test
-//    void addGenresWithDupsThenAgainButWithNewElements() {
-//        List<String> genreNames = List.of("Сказки", "Короткометражные", "Образовательные", "Сказки", "Сказки", "Образовательные");
-//        List<Genre> newGenres = List.of(new Genre("NEW"), new Genre("ELEMENTS"), new Genre("TESTING"));
-//        List<Genre> genres = genreNames.stream().map(Genre::new).toList();
-//        service.saveWithoutDuplicates(genres);
-//        List<String> genreNamesWithNewEls = new ArrayList<>();
-//        genreNamesWithNewEls.addAll(genreNames);
-//        genreNamesWithNewEls.addAll(newGenres.stream().map(Genre::getName).toList());
-//        List<Genre> genresWithNewEls = new ArrayList<>(genreNamesWithNewEls.stream().map(Genre::new).toList());
-//        service.saveWithoutDuplicates(genresWithNewEls);
-//        for (Genre genre : newGenres) {
-//            assertNotNull(repo.findByName(genre.getName()));
-//        }
-//    }
-//
-//    @RepeatedTest(2)
-//    void insertOneGenreMoreThanOnce() {
-//        Genre genre = new Genre("комедия");
-//        service.saveWithoutDuplicates(new ArrayList<>(List.of(genre)));
-//        String answer = service.saveWithoutDuplicates(new ArrayList<>(List.of(genre)));
-//        assertEquals(answer, "Cannot save because already exist in database.");
-//        assertNotNull(repo.findByName(genre.getName()));
-//    }
-//
-//    @Test
-//    void FindGenreNamesByPreparedSequences() {
-//        List<Genre> genres = List.of(new Genre("Драма"), new Genre("Драматургия"), new Genre("Другое"), new Genre("Дружба"));
-//        repo.saveAll(genres);
-//
-//        List<String> case1Actual = service.findMatchedGenres("Д");
-//        List<String> case1Expected = List.of("Драма", "Драматургия", "Другое", "Дружба");
-//
-//        List<String> case2Actual = service.findMatchedGenres("Др");
-//        List<String> case2Expected = List.of("Драма", "Драматургия", "Другое", "Дружба");
-//
-//        List<String> case3Actual = service.findMatchedGenres("Дру");
-//        List<String> case3Expected = List.of("Другое", "Дружба");
-//
-//        List<String> case4Actual = service.findMatchedGenres("Друж");
-//        List<String> case4Expected = List.of("Дружба");
-//
-//        List<String> case5Actual = service.findMatchedGenres("Дра");
-//        List<String> case5Expected = List.of("Драма", "Драматургия");
-//
-//        assertLinesMatch(case1Expected, case1Actual);
-//        assertLinesMatch(case2Expected, case2Actual);
-//        assertLinesMatch(case3Expected, case3Actual);
-//        assertLinesMatch(case4Expected, case4Actual);
-//        assertLinesMatch(case5Expected, case5Actual);
-//    }
-//
+    void checkSequenceRequest(String sequence, List<String> expected) throws Exception {
+        String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/get/bySequence";
+
+        mockMvc.perform(get(url)
+                        .param("sequence", sequence))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(result ->
+                        expected.stream().map(el -> "\"".concat(el).concat("\"")).toList().toString()
+                        .equals(result.getResponse().getContentAsString()));
+    }
 //    @Test
 //    void FindNotMoreThanFiveGenreNamesBySequence() {
 //        List<Genre> genres = List.of(

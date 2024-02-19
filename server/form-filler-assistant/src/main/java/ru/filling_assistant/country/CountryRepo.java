@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CountryRepo extends BaseRepo<Country> {
-    @Query("FROM Country c WHERE c.name LIKE ?1%")
+    @Query("SELECT c.name FROM Country c WHERE c.name LIKE ?1%")
     List<String> getCountryNamesBySimilarStringSequence(String sequence, Pageable pageable);
 }

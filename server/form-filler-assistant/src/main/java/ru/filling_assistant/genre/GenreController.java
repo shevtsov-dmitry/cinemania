@@ -32,7 +32,7 @@ public class GenreController extends BaseController<Genre> {
         return super.tryToSaveListOfEntities(genres);
     }
 
-    @GetMapping("/get/bySequence")
+    @GetMapping(value = "/get/bySequence", produces = "application/json;charset=UTF-8")
     public ResponseEntity<List<String>> findGenres(@RequestParam String sequence) {
         return ResponseEntity.ok(service.findMatchedGenres(sequence));
     }
