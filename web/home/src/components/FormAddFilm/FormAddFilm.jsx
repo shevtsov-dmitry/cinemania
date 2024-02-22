@@ -62,6 +62,8 @@ function FormAddFilm() {
         popupWatchTimeRef,
         popupRatingRef,
     ]
+
+
     const [focusedPopup, setFocusedPopup] = useState(null)
     // requests data
     const [retrievedSuggestions, setRetrievedSuggestions] = useState([])
@@ -91,8 +93,9 @@ function FormAddFilm() {
             .then((data) => {
                 const listItems = Object.keys(data).map((k) => (
                     <button
-                        className="content-assist-popup-btn"
+                        className="text-left " // absolute
                         type="submit"
+                        onClick={null}
                         key={k}
                     >
                         {data[k]}
@@ -107,11 +110,11 @@ function FormAddFilm() {
 
     function retrieveMatches(name, value) {
         if (name === 'genre') {
-            let url = `${serverUrl}/film-info/genre/get/many/by-sequence?sequence=`
+            let url = `${serverUrl}/fillingAssistants/genres/get/bySequence?sequence=`
             url = url.concat(value)
             return fetch(url)
         } else if (name === 'country') {
-            let url = `${serverUrl}/film-info/country/get/many/by-sequence?sequence=`
+            let url = `${serverUrl}/fillingAssistants/countries/get/bySequence?sequence=`
             let countryName = ''
             if (value.length > 0) {
                 countryName =
@@ -146,7 +149,7 @@ function FormAddFilm() {
     }
 
     function displayOrHideSuggestionsBlock(suggestion) {
-        suggestion.addEventListener('focus', (e) => {
+        suggestion.addEventListener('focus', () => {
             suggestion.style.backgroundColor = '#2b2d42'
             suggestion.style.color = 'white'
         })
@@ -190,18 +193,18 @@ function FormAddFilm() {
 
     const typingSuggestions = (refName) => {
         return (
-            <ul className="typing-suggestions-ul" ref={getPopupRef(refName)}>
+            <ul className="flex flex-col bg-sky-200 rounded-ee-2xl" ref={getPopupRef(refName)}>
                 {retrievedSuggestions}
             </ul>
         )
     }
 
-    function handleInputChange(input) {
+    function launchActionsListForInput(input) {
         const { name, value } = input.target
         setInputName(name)
         setInputValue(value)
         setGlobalNameValuesForReferences(name, value)
-        const promisedData = retrieveMatches(inputName, inputValue)
+        const promisedData = retrieveMatches(name, value)
         fillContentAssistList(promisedData)
     }
 
@@ -297,7 +300,7 @@ function FormAddFilm() {
                             </p>
                         </Link>
                     </div>
-                    <li className="mt-[-10px] mb-2 text-center text-3xl font-bold">
+                    <li className="mb-2 mt-[-10px] text-center text-3xl font-bold">
                         Добавить фильм
                     </li>
                     <li className="form-li">
@@ -308,10 +311,9 @@ function FormAddFilm() {
                             type="search"
                             name="filmName"
                             value={filmName}
-                            onChange={handleInputChange}
+                            onChange={launchActionsListForInput}
                         />
                         <div className="relative-structure-to-hold-type-suggestions">
-                            {typingSuggestions('filmName')}
                         </div>
                     </li>
                     <li className="form-li">
@@ -322,7 +324,7 @@ function FormAddFilm() {
                             type="search"
                             name="country"
                             value={country}
-                            onChange={handleInputChange}
+                            onChange={launchActionsListForInput}
                         />
                         <div className="relative-structure-to-hold-type-suggestions">
                             {typingSuggestions('country')}
@@ -336,10 +338,9 @@ function FormAddFilm() {
                             type="date"
                             name="releaseDate"
                             value={releaseDate}
-                            onChange={handleInputChange}
+                            onChange={launchActionsListForInput}
                         />
                         <div className="relative-structure-to-hold-type-suggestions">
-                            {typingSuggestions('releaseDate')}
                         </div>
                     </li>
                     <li className="form-li">
@@ -350,7 +351,7 @@ function FormAddFilm() {
                             type="search"
                             name="genre"
                             value={genre}
-                            onChange={handleInputChange}
+                            onChange={launchActionsListForInput}
                         />
                         <div className="relative-structure-to-hold-type-suggestions">
                             {typingSuggestions('genre')}
@@ -362,7 +363,6 @@ function FormAddFilm() {
                             {inputsContent()}
                         </div>
                         <div className="relative-structure-to-hold-type-suggestions">
-                            {typingSuggestions('minimalAge')}
                         </div>
                     </li>
                     <li className="form-li">
@@ -373,10 +373,9 @@ function FormAddFilm() {
                             className="scale-90"
                             name="imageUrl"
                             value={imageUrl}
-                            onChange={handleInputChange}
+                            onChange={launchActionsListForInput}
                         />
                         <div className="relative-structure-to-hold-type-suggestions">
-                            {typingSuggestions('imageUrl')}
                         </div>
                     </li>
                     <li className="form-li">
@@ -387,10 +386,9 @@ function FormAddFilm() {
                             className="scale-90"
                             name="videoUrl"
                             value={videoUrl}
-                            onChange={handleInputChange}
+                            onChange={launchActionsListForInput}
                         />
                         <div className="relative-structure-to-hold-type-suggestions">
-                            {typingSuggestions('imageUrl')}
                         </div>
                     </li>
                     <li className="form-li">
@@ -402,10 +400,9 @@ function FormAddFilm() {
                             placeholder={'ч:мм'}
                             name="watchTime"
                             value={watchTime}
-                            onChange={handleInputChange}
+                            onChange={launchActionsListForInput}
                         />
                         <div className="relative-structure-to-hold-type-suggestions">
-                            {typingSuggestions('watchTime')}
                         </div>
                     </li>
                     <li className="form-li">
@@ -417,10 +414,9 @@ function FormAddFilm() {
                             placeholder="6.89"
                             name="rating"
                             value={rating}
-                            onChange={handleInputChange}
+                            onChange={launchActionsListForInput}
                         />
                         <div className="relative-structure-to-hold-type-suggestions">
-                            {typingSuggestions('rating')}
                         </div>
                     </li>
                 </ul>
@@ -439,38 +435,22 @@ function FormAddFilm() {
     function inputsContent() {
         return (
             <>
-                <div>
-                    <input type="radio" name="minimalAge" value="0" />
-                    <label htmlFor="" className="ml-0.5">
-                        0+
-                    </label>
-                </div>
-                <div>
-                    <input type="radio" name="minimalAge" value="6" />
-                    <label htmlFor="" className="ml-0.5">
-                        6+
-                    </label>
-                </div>
-                <div>
-                    <input type="radio" name="minimalAge" value="12" />
-                    <label htmlFor="" className="ml-0.5">
-                        12+
-                    </label>
-                </div>
-                <div>
-                    <input type="radio" name="minimalAge" value="16" />
-                    <label htmlFor="" className="ml-0.5">
-                        16+
-                    </label>
-                </div>
-                <div>
-                    <input type="radio" name="minimalAge" value="18" />
-                    <label htmlFor="" className="ml-0.5">
-                        18+
-                    </label>
-                </div>
+                ageDiv(0);
+                ageDiv(6);
+                ageDiv(12);
+                ageDiv(16);
+                ageDiv(18);
             </>
         )
+
+        function ageDiv(age) {
+            return <div>
+                < input type="radio" name="minimalAge" value={age} />
+                <label htmlFor="" className="ml-0.5">
+                    {age}+
+                </label>
+            </div >
+        }
     }
 
     return (
