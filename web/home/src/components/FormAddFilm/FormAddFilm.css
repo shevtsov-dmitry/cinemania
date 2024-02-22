@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 .input {
-    @apply w-full rounded border-2 border-zinc-200 bg-white;
+  @apply w-full rounded border-2 border-zinc-200 bg-white dark:bg-zinc-800 dark:text-white;
 }
 
 /*# sourceMappingURL=FormAddFilm.css.map */
