@@ -297,14 +297,14 @@ function FormAddFilm() {
                             </p>
                         </Link>
                     </div>
-                    <li className="mt-[-15px] text-center text-3xl font-bold">
-                        add film
+                    <li className="mt-[-10px] mb-2 text-center text-3xl font-bold">
+                        Добавить фильм
                     </li>
                     <li className="form-li">
-                        <p>film name</p>
+                        <p>Название фильма</p>
                         <input
                             ref={filmNameRef}
-                            className="input"
+                            className="input pl-2"
                             type="search"
                             name="filmName"
                             value={filmName}
@@ -315,10 +315,10 @@ function FormAddFilm() {
                         </div>
                     </li>
                     <li className="form-li">
-                        <p>country</p>
+                        <p>Страна</p>
                         <input
                             ref={countryRef}
-                            className="input"
+                            className="input pl-2"
                             type="search"
                             name="country"
                             value={country}
@@ -329,10 +329,10 @@ function FormAddFilm() {
                         </div>
                     </li>
                     <li className="form-li">
-                        <p>release date</p>
+                        <p>Дата релиза</p>
                         <input
                             ref={releaseDateRef}
-                            className="input w-full"
+                            className="input w-full pl-2"
                             type="date"
                             name="releaseDate"
                             value={releaseDate}
@@ -343,10 +343,10 @@ function FormAddFilm() {
                         </div>
                     </li>
                     <li className="form-li">
-                        <p>genre</p>
+                        <p>Жанр</p>
                         <input
                             ref={genreRef}
-                            className="input"
+                            className="input pl-2"
                             type="search"
                             name="genre"
                             value={genre}
@@ -357,7 +357,7 @@ function FormAddFilm() {
                         </div>
                     </li>
                     <li className="form-li" ref={minimalAgeRef}>
-                        <p>age</p>
+                        <p>Возраст</p>
                         <div className="flex w-full justify-evenly">
                             {inputsContent()}
                         </div>
@@ -366,7 +366,7 @@ function FormAddFilm() {
                         </div>
                     </li>
                     <li className="form-li">
-                        <p>poster</p>
+                        <p>Превью</p>
                         <input
                             ref={imageUrlRef}
                             type="file"
@@ -380,7 +380,7 @@ function FormAddFilm() {
                         </div>
                     </li>
                     <li className="form-li">
-                        <p>video</p>
+                        <p>Видео</p>
                         <input
                             type="file"
                             ref={videoUrlRef}
@@ -394,12 +394,12 @@ function FormAddFilm() {
                         </div>
                     </li>
                     <li className="form-li">
-                        <p>watch time</p>
+                        <p>Время просмотра</p>
                         <input
                             ref={watchTimeRef}
-                            className="input"
+                            className="input pl-2"
                             type="text"
-                            placeholder={'hh:mm'}
+                            placeholder={'ч:мм'}
                             name="watchTime"
                             value={watchTime}
                             onChange={handleInputChange}
@@ -409,10 +409,10 @@ function FormAddFilm() {
                         </div>
                     </li>
                     <li className="form-li">
-                        <p>rating</p>
+                        <p>Рейтинг</p>
                         <input
                             ref={ratingRef}
-                            className="input"
+                            className="input pl-2"
                             type="text"
                             placeholder="6.89"
                             name="rating"
@@ -429,7 +429,7 @@ function FormAddFilm() {
                         className="rounded-2xl bg-red-600 p-1.5 font-bold text-white"
                         id="add-film-button"
                     >
-                        submit
+                        Принять
                     </button>
                 </div>
             </form>
@@ -442,31 +442,31 @@ function FormAddFilm() {
                 <div>
                     <input type="radio" name="minimalAge" value="0" />
                     <label htmlFor="" className="ml-0.5">
-                        0
+                        0+
                     </label>
                 </div>
                 <div>
                     <input type="radio" name="minimalAge" value="6" />
                     <label htmlFor="" className="ml-0.5">
-                        6
+                        6+
                     </label>
                 </div>
                 <div>
                     <input type="radio" name="minimalAge" value="12" />
                     <label htmlFor="" className="ml-0.5">
-                        12
+                        12+
                     </label>
                 </div>
                 <div>
                     <input type="radio" name="minimalAge" value="16" />
                     <label htmlFor="" className="ml-0.5">
-                        16
+                        16+
                     </label>
                 </div>
                 <div>
                     <input type="radio" name="minimalAge" value="18" />
                     <label htmlFor="" className="ml-0.5">
-                        18
+                        18+
                     </label>
                 </div>
             </>
