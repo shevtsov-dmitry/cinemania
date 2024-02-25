@@ -1,71 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { Children, useEffect, useEjfect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-
-
 
 function FormAddFilm() {
     // *** ASSIGNMENT
     const serverUrl = 'http://localhost:8080'
     const suggestionsTextHighlightColor = '#f72585'
 
-    const [focusedReference, setFocusedReference] = useState(null)
-    // requests data
+    const [retrievedSuggestionsDivs, setRetrievedSuggestionsDivs] = useState([])
 
-    const [focusedPopup, setFocusedPopup] = useState(null)
-    const [retrievedSuggestions, setRetrievedSuggestions] = useState([])
-
-    const formUl = useRef()
-
-    const formFieldsMap = {}
-    const autoFillingFormFields = []
-    useEffect(() => {
-        if (formUl.current.chidren == null) { return }
-        for (let li of formUl.current.chidren) {
-            formFieldsMap[li.id] = li
-        }
-        initAutoFillingFormFields()
-
-        function initAutoFillingFormFields() {
-            for (const k in formFieldsMap) {
-                if (formFieldsMap.hasOwnProperty(k)) {
-                    const li = formFieldsMap[k]
-
-                    if (li.children[2] != null && li.children[2].classList.contains("typingSuggestions")) {
-                        autoFillingFormFields.push(li)
-                    }
-                }
-            }
-        }
-    }, [])
-
-    // !!!!!! FIX 
-    function applyTextAutosuggestion(name, inputVal) {
-        if (autoFillingFormFields == null) return;
-        autoFillingFormFields.forEach(li => li.children[2].innerHTML = "");
-        const data = fetchAutosuggestionsList(name, inputVal);
-        createDivFromRetrievedSuggestion(data);
-    }
-
-    function createDivFromRetrievedSuggestion(promise) {
-        promise
-            .then((response) => response.json())
-            .then((data) => {
-                const listItems = Object.keys(data).map((k) => (
-                    <button
-                        className="text-left " // absolute
-                        type="submit"
-                        onClick={null}
-                        key={k}
-                    >
-                        {data[k]}
-                    </button>
-                ))
-                setRetrievedSuggestions(listItems)
-            })
-            .catch((e) => {
-                console.error('Error fetching or parsing data:', e)
-            })
-    }
+    // auto filling fields
+    const [genreFillerContent, setGenreFillerContent] = useState(null)
+    const [countyFillerContent, setCountryFillerContent] = useState(null)
+    const contentFillers = [
+        genreFillerContent,
+        countyFillerContent
+    ]
 
     function fetchAutosuggestionsList(name, inputVal) {
         if (name === 'genre') {
@@ -77,12 +26,48 @@ function FormAddFilm() {
             let countryName = ''
             if (inputVal.length > 0) {
                 countryName =
-                    inputVal[0].toUpperCase() + inputVal.substring(1, inputVal.length)
+                    inputVal[0].toUpperCase() +
+                    inputVal.substring(1, inputVal.length)
             }
             url = url.concat(countryName)
             return fetch(url)
         }
         return Promise.resolve(null)
+    }
+
+    function createDivFromRetrievedSuggestion(promise) {
+        promise
+            .then((response) => response.json())
+            .then((data) => {
+                const listItemsDiv = Object.keys(data).map((k) => (
+                    <button
+                        className="text-left " // absolute
+                        type="submit"
+                        onClick={null}
+                        key={k}
+                    >
+                        {data[k]}
+                    </button>
+                ))
+                setRetrievedSuggestionsDivs(listItemsDiv)
+            })
+            .catch((e) => {
+                console.error('Error fetching or parsing data:', e)
+            })
+    }
+
+    function applyTextAutosuggestion(name, inputVal) {
+        const promise = fetchAutosuggestionsList(name, inputVal)
+        createDivFromRetrievedSuggestion(promise)
+
+        contentFillers.map(el => el = null)
+        if (name === "country") {
+            console.log(retrievedSuggestionsDivs)
+            setCountryFillerContent(retrievedSuggestionsDivs)
+        }
+        if (name === "genre") {
+            setGenreFillerContent(retrievedSuggestionsDivs)
+        }
     }
 
     // function highlightPopupElementTextColorWhileTyping() {
@@ -98,65 +83,26 @@ function FormAddFilm() {
     //             )}`
     //     }
     // }
-    //
-    // function hideTypeSuggestionsPopupWhenNotFocused() {
-    //     for (let child of inputFieldReferencesList) {
-    //         child.current.addEventListener('focus', () => {
-    //             focusedPopup.current.style.display = 'none'
-    //         })
-    //     }
-    // }
-    //
-    // function displayOrHideSuggestionsBlock(suggestion) {
-    //     suggestion.addEventListener('focus', () => {
-    //         suggestion.style.backgroundColor = '#2b2d42'
-    //         suggestion.style.color = 'white'
-    //     })
-    //     suggestion.addEventListener('blur', () => {
-    //         suggestion.style.backgroundColor = '' // Reset the background color when focus is removed
-    //         suggestion.style.color = 'black'
-    //     })
-    //     suggestion.addEventListener('click', () => {
-    //         focusedPopup.current.style.display = 'none'
-    //     })
-    // }
-    //
-    // function autoCompleteSuggestionOnClick(suggestion) {
-    //     suggestion.addEventListener('click', () => {
-    //         focusedReference.current.value = suggestion.textContent
-    //     })
-    // }
 
-    // popups change
-    // useEffect(() => {
-    //     if (focusedPopup == null || retrievedSuggestions == null) {
-    //         return
-    //     }
-    //     focusedPopup.current.style.display = 'flex'
-    //     for (let suggestion of focusedPopup.current.children) {
-    //         displayOrHideSuggestionsBlock(suggestion)
-    //         autoCompleteSuggestionOnClick(suggestion)
-    //     }
-    //     highlightPopupElementTextColorWhileTyping()
-    //     hideTypeSuggestionsPopupWhenNotFocused()
-    // }, [retrievedSuggestions])
-
-    function typingSuggestionsWrapper() {
-        return (
-            <ul className="flex flex-col bg-sky-200 rounded-ee-2xl">
-                {retrievedSuggestions}
-            </ul>
-        )
+    function displayOrHideSuggestionsBlock(suggestion) {
+        suggestion.addEventListener('focus', () => {
+            suggestion.style.backgroundColor = '#2b2d42'
+            suggestion.style.color = 'white'
+        })
+        suggestion.addEventListener('blur', () => {
+            suggestion.style.backgroundColor = '' // Reset the background color when focus is removed
+            suggestion.style.color = 'black'
+        })
+        suggestion.addEventListener('click', () => {
+            // focusedPopup.current.style.display = 'none'
+        })
     }
-    //
-    // function launchActionsListForInput(input) {
-    //     const { name, value } = input.target
-    //     setInputName(name)
-    //     setInputValue(value)
-    //     const promisedData = retrieveMatches(name, value)
-    //     fillContentAssistList(promisedData)
-    // }
 
+    function autoCompleteSuggestionOnClick(suggestion) {
+        suggestion.addEventListener('click', () => {
+            // focusedReference.current.value = suggestion.textContent
+        })
+    }
 
     function prepareFormDataToSend(formRef) {
         formRef.preventDefault()
@@ -178,10 +124,9 @@ function FormAddFilm() {
         return (
             <form
                 onSubmit={() => prepareFormDataToSend()}
-                // onSubmit={prepareFormDataToSend}
-                className='flex w-fit flex-col content-center items-center justify-center gap-3 rounded-2xl bg-[#f4f3ee] dark:bg-stone-80r dark:text-blue-100 p-4'
+                className="dark:bg-stone-80r flex w-fit flex-col content-center items-center justify-center gap-3 rounded-2xl bg-[#f4f3ee] p-4 dark:text-blue-100"
             >
-                <ul className="w-fit" ref={formUl}>
+                <ul className="w-fit">
                     <li
                         id="close-form-sign"
                         className="relative mt-[-10px] flex justify-between p-0"
@@ -196,7 +141,7 @@ function FormAddFilm() {
                     <li className="mb-2 mt-[-10px] text-center text-3xl font-bold">
                         Добавить фильм
                     </li>
-                    <li id='filmName' className="form-li">
+                    <li id="filmName" className="form-li">
                         <p>Название фильма</p>
                         <input
                             className="input pl-2"
@@ -204,19 +149,22 @@ function FormAddFilm() {
                             name="filmName"
                         />
                     </li>
-                    <li id='country' className="form-li">
+                    <li id="country" className="form-li">
                         <p>Страна</p>
                         <input
                             className="input pl-2"
                             type="search"
                             name="country"
-                            onChange={(ev) => applyTextAutosuggestion("genre", ev.target.value)}
+                            onChange={(ev) =>
+                                applyTextAutosuggestion(
+                                    'country',
+                                    ev.target.value
+                                )
+                            }
                         />
-                        <div className='typingSuggestions'>
-                            {typingSuggestionsWrapper('country')}
-                        </div>
+                        <div className="typingSuggestions">{countyFillerContent}</div>
                     </li>
-                    <li id='releaseDate' className="form-li">
+                    <li id="releaseDate" className="form-li">
                         <p>Дата релиза</p>
                         <input
                             className="input w-full pl-2"
@@ -224,25 +172,28 @@ function FormAddFilm() {
                             name="releaseDate"
                         />
                     </li>
-                    <li id='genre' className="form-li">
+                    <li id="genre" className="form-li">
                         <p>Жанр</p>
                         <input
                             className="input pl-2"
                             type="search"
                             name="genre"
-                            onChange={(ev) => applyTextAutosuggestion("genre", ev.target.value)}
+                            onChange={(ev) =>
+                                applyTextAutosuggestion(
+                                    'genre',
+                                    ev.target.value
+                                )
+                            }
                         />
-                        <div className='typingSuggestions'>
-                            {typingSuggestionsWrapper('genre')}
-                        </div>
+                        <div className="typingSuggestions">{genreFillerContent}</div>
                     </li>
-                    <li id='ageRestriction' className="form-li" >
+                    <li id="ageRestriction" className="form-li">
                         <p>Возраст</p>
                         <div className="flex w-full justify-evenly">
                             {setAgeDiv()}
                         </div>
                     </li>
-                    <li id='poster' className="form-li">
+                    <li id="poster" className="form-li">
                         <p>Постер</p>
                         <input
                             type="file"
@@ -250,7 +201,7 @@ function FormAddFilm() {
                             name="imageUrl"
                         />
                     </li>
-                    <li id='video' className="form-li">
+                    <li id="video" className="form-li">
                         <p>Видео</p>
                         <input
                             type="file"
@@ -301,14 +252,17 @@ function FormAddFilm() {
         )
 
         function createAgeDiv(age) {
-            return <div>
-                < input type="radio" name="minimalAge" value={age} />
-                <label htmlFor="" className="ml-0.5">
-                    {age}+
-                </label>
-            </div >
+            return (
+                <div>
+                    <input type="radio" name="minimalAge" value={age} />
+                    <label htmlFor="" className="ml-0.5">
+                        {age}+
+                    </label>
+                </div>
+            )
         }
     }
+
     return (
         <>
             <div className="column flex flex-col justify-center">{form()}</div>
