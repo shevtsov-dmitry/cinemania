@@ -9,12 +9,10 @@ function FormAddFilm() {
     const suggestionsTextHighlightColor = '#f72585'
 
     const [focusedReference, setFocusedReference] = useState(null)
+    // requests data
 
     const [focusedPopup, setFocusedPopup] = useState(null)
-    // requests data
     const [retrievedSuggestions, setRetrievedSuggestions] = useState([])
-    const [inputName, setInputName] = useState(null)
-    const [inputValue, setInputValue] = useState(null)
 
     const formUl = useRef()
 
@@ -40,10 +38,11 @@ function FormAddFilm() {
         }
     }, [])
 
-    function applyTextAutosuggestion(name) {
+    // !!!!!! FIX 
+    function applyTextAutosuggestion(name, inputVal) {
         if (autoFillingFormFields == null) return;
         autoFillingFormFields.forEach(li => li.children[2].innerHTML = "");
-        const data = fetchAutosuggestionsList(name);
+        const data = fetchAutosuggestionsList(name, inputVal);
         createDivFromRetrievedSuggestion(data);
     }
 
@@ -68,17 +67,17 @@ function FormAddFilm() {
             })
     }
 
-    function fetchAutosuggestionsList(name, inputValue) {
+    function fetchAutosuggestionsList(name, inputVal) {
         if (name === 'genre') {
             let url = `${serverUrl}/fillingAssistants/genres/get/bySequence?sequence=`
-            url = url.concat(inputValue)
+            url = url.concat(inputVal)
             return fetch(url)
         } else if (name === 'country') {
             let url = `${serverUrl}/fillingAssistants/countries/get/bySequence?sequence=`
             let countryName = ''
-            if (inputValue.length > 0) {
+            if (inputVal.length > 0) {
                 countryName =
-                    inputValue[0].toUpperCase() + inputValue.substring(1, inputValue.length)
+                    inputVal[0].toUpperCase() + inputVal.substring(1, inputVal.length)
             }
             url = url.concat(countryName)
             return fetch(url)
@@ -211,7 +210,7 @@ function FormAddFilm() {
                             className="input pl-2"
                             type="search"
                             name="country"
-                            onInput={() => applyTextAutosuggestion("country")}
+                            onChange={(ev) => applyTextAutosuggestion("genre", ev.target.value)}
                         />
                         <div className='typingSuggestions'>
                             {typingSuggestionsWrapper('country')}
@@ -231,7 +230,7 @@ function FormAddFilm() {
                             className="input pl-2"
                             type="search"
                             name="genre"
-                            onChange={() => applyTextAutosuggestion("genre")}
+                            onChange={(ev) => applyTextAutosuggestion("genre", ev.target.value)}
                         />
                         <div className='typingSuggestions'>
                             {typingSuggestionsWrapper('genre')}
