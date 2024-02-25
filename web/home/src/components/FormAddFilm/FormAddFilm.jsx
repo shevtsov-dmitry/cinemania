@@ -7,14 +7,13 @@ function FormAddFilm() {
     const suggestionsTextHighlightColor = '#f72585'
 
     const [retrievedSuggestionsDivs, setRetrievedSuggestionsDivs] = useState([])
+    const [currentName, setCurrentName] = useState('')
 
     // auto filling fields
     const [genreFillerContent, setGenreFillerContent] = useState(null)
     const [countyFillerContent, setCountryFillerContent] = useState(null)
-    const contentFillers = [
-        genreFillerContent,
-        countyFillerContent
-    ]
+
+    const contentFillers = [genreFillerContent, countyFillerContent]
 
     function fetchAutosuggestionsList(name, inputVal) {
         if (name === 'genre') {
@@ -57,18 +56,31 @@ function FormAddFilm() {
     }
 
     function applyTextAutosuggestion(name, inputVal) {
+        setCurrentName(name)
         const promise = fetchAutosuggestionsList(name, inputVal)
         createDivFromRetrievedSuggestion(promise)
+    }
 
-        contentFillers.map(el => el = null)
-        if (name === "country") {
-            console.log(retrievedSuggestionsDivs)
+    useEffect(() => {
+        contentFillers.map((el) => (el = null))
+        if (currentName === 'country') {
             setCountryFillerContent(retrievedSuggestionsDivs)
         }
-        if (name === "genre") {
+        if (currentName === 'genre') {
             setGenreFillerContent(retrievedSuggestionsDivs)
         }
-    }
+    }, [retrievedSuggestionsDivs])
+
+    // useEffect(() => {
+    //     contentFillers.map((el) => (el = null))
+    //     if (name === 'country') {
+    //         console.log(retrievedSuggestionsDivs)
+    //         setCountryFillerContent(retrievedSuggestionsDivs)
+    //     }
+    //     if (name === 'genre') {
+    //         setGenreFillerContent(retrievedSuggestionsDivs)
+    //     }
+    // }, [retrievedSuggestionsDivs])
 
     // function highlightPopupElementTextColorWhileTyping() {
     //     let length = inputValue.length
@@ -124,7 +136,7 @@ function FormAddFilm() {
         return (
             <form
                 onSubmit={() => prepareFormDataToSend()}
-                className="dark:bg-stone-80r flex w-fit flex-col content-center items-center justify-center gap-3 rounded-2xl bg-[#f4f3ee] p-4 dark:text-blue-100"
+                className="dark:bg-stone-80r flex w-fit flex-col content-center items-center justify-center gap-3 rounded-2xl bg-[#f4f3ee] p-4 dark:bg-neutral-800 dark:text-blue-100"
             >
                 <ul className="w-fit">
                     <li
@@ -162,7 +174,9 @@ function FormAddFilm() {
                                 )
                             }
                         />
-                        <div className="typingSuggestions">{countyFillerContent}</div>
+                        <div className="typingSuggestions">
+                            {countyFillerContent}
+                        </div>
                     </li>
                     <li id="releaseDate" className="form-li">
                         <p>Дата релиза</p>
@@ -185,7 +199,9 @@ function FormAddFilm() {
                                 )
                             }
                         />
-                        <div className="typingSuggestions">{genreFillerContent}</div>
+                        <div className="typingSuggestions">
+                            {genreFillerContent}
+                        </div>
                     </li>
                     <li id="ageRestriction" className="form-li">
                         <p>Возраст</p>
