@@ -8,6 +8,10 @@ function FormAddFilm() {
 
     const [retrievedSuggestionsDivs, setRetrievedSuggestionsDivs] = useState([])
     const [currentName, setCurrentName] = useState('')
+    const [currentFieldInput, setCurrentFieldInput] = useState('')
+
+    const [countryInputValue, setCountryInputValue] = useState('')
+    const [genreInputValue, setGenreInputValue] = useState('')
 
     // auto filling fields
     const [genreFillerContent, setGenreFillerContent] = useState(null)
@@ -40,9 +44,14 @@ function FormAddFilm() {
             .then((data) => {
                 const listItemsDiv = Object.keys(data).map((k) => (
                     <button
-                        className="text-left " // absolute
+                        className="text-left"
                         type="submit"
-                        onClick={null}
+                        onClick={(ev) => {
+                            ev.preventDefault()
+                            const autoSuggestion = ev.currentTarget.textContent
+                            changeInputTextOnAutoSuggestion(autoSuggestion)
+                            setRetrievedSuggestionsDivs([])
+                        }}
                         key={k}
                     >
                         {data[k]}
@@ -55,10 +64,21 @@ function FormAddFilm() {
             })
     }
 
+    function changeInputTextOnAutoSuggestion(autoSuggestion) {
+        if (currentName === 'country') {
+            setCountryInputValue(autoSuggestion)
+        }
+        if (currentName === 'genre') {
+            setGenreInputValue(autoSuggestion)
+        }
+    }
+
     function applyTextAutosuggestion(name, inputVal) {
         setCurrentName(name)
+        setCurrentFieldInput(inputVal)
         const promise = fetchAutosuggestionsList(name, inputVal)
         createDivFromRetrievedSuggestion(promise)
+        highlightPopupElementTextColorWhileTyping()
     }
 
     useEffect(() => {
@@ -82,19 +102,18 @@ function FormAddFilm() {
     //     }
     // }, [retrievedSuggestionsDivs])
 
-    // function highlightPopupElementTextColorWhileTyping() {
-    //     let length = inputValue.length
-    //     const suggestedVariants = focusedPopup.current.children
-    //     for (let suggestedVariant of suggestedVariants) {
-    //         suggestedVariant.innerHTML =
-    //             `<span style="color: ${suggestionsTextHighlightColor};">` +
-    //             `${suggestedVariant.textContent.substring(0, length)}</span>` +
-    //             `${suggestedVariant.textContent.substring(
-    //                 length,
-    //                 suggestedVariant.textContent.length
-    //             )}`
-    //     }
-    // }
+    function highlightPopupElementTextColorWhileTyping() {
+        let length = currentFieldInput.length
+        for (let suggestedVariant of retrievedSuggestionsDivs) {
+            // suggestedVariant.current.innerHTML =
+            //     `<span style="color: ${suggestionsTextHighlightColor};">` +
+            //     `${suggestedVariant.textContent.substring(0, length)}</span>` +
+            //     `${suggestedVariant.textContent.substring(
+            //         length,
+            //         suggestedVariant.textContent.length
+            //     )}`
+        }
+    }
 
     function displayOrHideSuggestionsBlock(suggestion) {
         suggestion.addEventListener('focus', () => {
@@ -107,12 +126,6 @@ function FormAddFilm() {
         })
         suggestion.addEventListener('click', () => {
             // focusedPopup.current.style.display = 'none'
-        })
-    }
-
-    function autoCompleteSuggestionOnClick(suggestion) {
-        suggestion.addEventListener('click', () => {
-            // focusedReference.current.value = suggestion.textContent
         })
     }
 
@@ -167,12 +180,14 @@ function FormAddFilm() {
                             className="input pl-2"
                             type="search"
                             name="country"
-                            onChange={(ev) =>
+                            value={countryInputValue}
+                            onChange={(ev) => {
+                                setCountryInputValue(ev.target.value)
                                 applyTextAutosuggestion(
                                     'country',
                                     ev.target.value
                                 )
-                            }
+                            }}
                         />
                         <div className="typingSuggestions">
                             {countyFillerContent}
@@ -192,12 +207,14 @@ function FormAddFilm() {
                             className="input pl-2"
                             type="search"
                             name="genre"
-                            onChange={(ev) =>
+                            value={genreInputValue}
+                            onChange={(ev) => {
+                                setGenreInputValue(ev.currentTarget.value)
                                 applyTextAutosuggestion(
                                     'genre',
                                     ev.target.value
                                 )
-                            }
+                            }}
                         />
                         <div className="typingSuggestions">
                             {genreFillerContent}

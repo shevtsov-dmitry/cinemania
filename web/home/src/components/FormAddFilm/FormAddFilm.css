@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 .input {
-  @apply w-full rounded border-2 border-zinc-200 bg-white dark:bg-zinc-800 dark:text-white;
+    @apply w-full rounded border-2 border-zinc-200 bg-white dark:bg-zinc-800 dark:text-white;
 }
 
 .typingSuggestions {
-  @apply flex flex-col bg-emerald-50 text-black dark:bg-blue-900 dark:text-white absolute z-[100];
+    @apply absolute z-[100] flex flex-col bg-emerald-50 text-black dark:bg-blue-900 dark:text-white;
 }
 
 /*# sourceMappingURL=FormAddFilm.css.map */
