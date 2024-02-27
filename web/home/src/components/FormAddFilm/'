@@ -7,8 +7,8 @@ function FormAddFilm() {
     const suggestionsTextHighlightColor = '#f72585'
 
     const [retrievedSuggestionsDivs, setRetrievedSuggestionsDivs] = useState([])
-    const [currentInputFieldName, setCurrentInputFieldName] = useState('')
-    const [currentFieldInputValue, setCurrentFieldInputValue] = useState('')
+    const [currentName, setCurrentName] = useState('')
+    const [currentFieldInput, setCurrentFieldInput] = useState('')
 
     const [countryInputValue, setCountryInputValue] = useState('')
     const [genreInputValue, setGenreInputValue] = useState('')
@@ -18,17 +18,6 @@ function FormAddFilm() {
     const [countyFillerContent, setCountryFillerContent] = useState(null)
 
     const contentFillers = [genreFillerContent, countyFillerContent]
-
-    useEffect(() => {
-        contentFillers.map((el) => (el = null))
-        if (currentInputFieldName === 'country') {
-            setCountryFillerContent(retrievedSuggestionsDivs)
-        }
-        if (currentInputFieldName === 'genre') {
-            setGenreFillerContent(retrievedSuggestionsDivs)
-        }
-        highlightPopupElementTextColorWhileTyping(currentFieldInputValue)
-    }, [retrievedSuggestionsDivs])
 
     function fetchAutosuggestionsList(name, inputVal) {
         if (name === 'genre') {
@@ -49,10 +38,6 @@ function FormAddFilm() {
         return Promise.resolve(null)
     }
 
-    function highlightPopupElementTextColorWhileTyping(input) {
-
-    }
-
     function createDivFromRetrievedSuggestion(promise) {
         promise
             .then((response) => response.json())
@@ -64,10 +49,9 @@ function FormAddFilm() {
                         onClick={(ev) => {
                             ev.preventDefault()
                             const autoSuggestion = ev.currentTarget.textContent
-                            changeInputTextToAutoSuggestion(autoSuggestion)
+                            changeInputTextOnAutoSuggestion(autoSuggestion)
                             setRetrievedSuggestionsDivs([])
                         }}
-                        onFocus={ev => whenLastElementFocused_hideSuggestionsOnBlur(ev, data, k)}
                         key={k}
                     >
                         {data[k]}
@@ -78,32 +62,73 @@ function FormAddFilm() {
             .catch((e) => {
                 console.error('Error fetching or parsing data:', e)
             })
-
-        function whenLastElementFocused_hideSuggestionsOnBlur(ev, data, k) {
-            if (parseInt(k) === data.length - 1) {
-                ev.currentTarget.addEventListener("blur", () => setRetrievedSuggestionsDivs([]))
-            }
-        }
     }
 
-
-
-    function changeInputTextToAutoSuggestion(autoSuggestion) {
-        if (currentInputFieldName === 'country') {
+    function changeInputTextOnAutoSuggestion(autoSuggestion) {
+        if (currentName === 'country') {
             setCountryInputValue(autoSuggestion)
         }
-        if (currentInputFieldName === 'genre') {
+        if (currentName === 'genre') {
             setGenreInputValue(autoSuggestion)
         }
     }
 
     function applyTextAutosuggestion(name, inputVal) {
-        setCurrentInputFieldName(name)
-        setCurrentFieldInputValue(inputVal)
+        setCurrentName(name)
+        setCurrentFieldInput(inputVal)
         const promise = fetchAutosuggestionsList(name, inputVal)
         createDivFromRetrievedSuggestion(promise)
+        highlightPopupElementTextColorWhileTyping()
     }
 
+    useEffect(() => {
+        contentFillers.map((el) => (el = null))
+        if (currentName === 'country') {
+            setCountryFillerContent(retrievedSuggestionsDivs)
+        }
+        if (currentName === 'genre') {
+            setGenreFillerContent(retrievedSuggestionsDivs)
+        }
+    }, [retrievedSuggestionsDivs])
+
+    // useEffect(() => {
+    //     contentFillers.map((el) => (el = null))
+    //     if (name === 'country') {
+    //         console.log(retrievedSuggestionsDivs)
+    //         setCountryFillerContent(retrievedSuggestionsDivs)
+    //     }
+    //     if (name === 'genre') {
+    //         setGenreFillerContent(retrievedSuggestionsDivs)
+    //     }
+    // }, [retrievedSuggestionsDivs])
+
+    function highlightPopupElementTextColorWhileTyping() {
+        let length = currentFieldInput.length
+        console.log(length)
+        // for (let suggestedVariant of retrievedSuggestionsDivs) {
+        //     suggestedVariant.current.innerHTML =
+        //         `<span style="color: ${suggestionsTextHighlightColor};">` +
+        //         `${suggestedVariant.textContent.substring(0, length)}</span>` +
+        //         `${suggestedVariant.textContent.substring(
+        //             length,
+        //             suggestedVariant.textContent.length
+        //         )}`
+        // }
+    }
+
+    function displayOrHideSuggestionsBlock(suggestion) {
+        suggestion.addEventListener('focus', () => {
+            suggestion.style.backgroundColor = '#2b2d42'
+            suggestion.style.color = 'white'
+        })
+        suggestion.addEventListener('blur', () => {
+            suggestion.style.backgroundColor = '' // Reset the background color when focus is removed
+            suggestion.style.color = 'black'
+        })
+        suggestion.addEventListener('click', () => {
+            // focusedPopup.current.style.display = 'none'
+        })
+    }
 
     function prepareFormDataToSend(formRef) {
         formRef.preventDefault()
