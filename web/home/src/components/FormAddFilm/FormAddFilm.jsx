@@ -44,7 +44,7 @@ function FormAddFilm() {
             .then((data) => {
                 const listItemsDiv = Object.keys(data).map((k) => (
                     <button
-                        className="bg-yellow-400 px-2 text-left"
+                        className="bg-amber-100 px-2 text-left dark:text-white dark:bg-purple-800"
                         type="submit"
                         onClick={(ev) => {
                             ev.preventDefault()
@@ -213,7 +213,11 @@ function FormAddFilm() {
                     <li id="ageRestriction" className="form-li">
                         <p>Возраст</p>
                         <div className="flex w-full justify-evenly">
-                            {setAgeDiv()}
+                            {createAgeDiv(0)}
+                            {createAgeDiv(6)}
+                            {createAgeDiv(12)}
+                            {createAgeDiv(16)}
+                            {createAgeDiv(18)}
                         </div>
                     </li>
                     <li id="poster" className="form-li">
@@ -263,27 +267,19 @@ function FormAddFilm() {
         )
     }
 
-    function setAgeDiv() {
+    function createAgeDiv(age) {
         return (
             <>
-                {createAgeDiv(0)}
-                {createAgeDiv(6)}
-                {createAgeDiv(12)}
-                {createAgeDiv(16)}
-                {createAgeDiv(18)}
+                <input
+                    type="radio"
+                    name="minimalAge"
+                    value={age}
+                />
+                <label htmlFor="" className="ml-0.5">
+                    {age}+
+                </label>
             </>
         )
-
-        function createAgeDiv(age) {
-            return (
-                <div>
-                    <input type="radio" name="minimalAge" value={age} />
-                    <label htmlFor="" className="ml-0.5">
-                        {age}+
-                    </label>
-                </div>
-            )
-        }
     }
 
     return <div className="column flex flex-col justify-center">{form()}</div>
