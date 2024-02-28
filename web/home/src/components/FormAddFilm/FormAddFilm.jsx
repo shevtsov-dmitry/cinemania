@@ -140,7 +140,6 @@ function FormAddFilm() {
             releaseDate: form.get('releaseDate'),
             genre: form.get('genre'),
             minimalAge: form.get('minimalAge'),
-            imageUrl: form.get('imageUrl'),
             watchTime: form.get('watchTime'),
             rating: form.get('rating'),
         }
@@ -150,7 +149,9 @@ function FormAddFilm() {
     function form() {
         return (
             <form
-                onSubmit={() => prepareFormDataToSend()}
+                onSubmit={(event) => {
+                    prepareFormDataToSend();
+                }}
                 className="dark:bg-stone-80r flex w-fit flex-col content-center items-center justify-center gap-3 rounded-2xl bg-[#f4f3ee] p-4 dark:bg-neutral-800 dark:text-blue-100"
             >
                 <ul className="w-fit">
@@ -171,6 +172,8 @@ function FormAddFilm() {
                     <li id="filmName" className="form-li">
                         <p>Название фильма</p>
                         <input
+                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
+                            onSubmit={event => event.preventDefault()}
                             className="input pl-2"
                             type="search"
                             name="filmName"
@@ -179,6 +182,7 @@ function FormAddFilm() {
                     <li id="country" className="form-li">
                         <p>Страна</p>
                         <input
+                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
                             className="input pl-2"
                             type="search"
                             name="country"
@@ -192,6 +196,7 @@ function FormAddFilm() {
                     <li id="releaseDate" className="form-li">
                         <p>Дата релиза</p>
                         <input
+                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
                             className="input w-full pl-2"
                             type="date"
                             name="releaseDate"
@@ -200,6 +205,7 @@ function FormAddFilm() {
                     <li id="genre" className="form-li">
                         <p>Жанр</p>
                         <input
+                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
                             className="input pl-2"
                             type="search"
                             name="genre"
@@ -236,9 +242,11 @@ function FormAddFilm() {
                             name="videoUrl"
                         />
                     </li>
+                     {/*TODO gather this param automatically*/}
                     <li className="form-li">
                         <p>Время просмотра</p>
                         <input
+                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
                             className="input pl-2"
                             type="text"
                             placeholder={'ч:мм'}
@@ -248,6 +256,7 @@ function FormAddFilm() {
                     <li className="form-li">
                         <p>Рейтинг</p>
                         <input
+                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
                             className="input pl-2"
                             type="text"
                             placeholder="6.89"
@@ -271,6 +280,7 @@ function FormAddFilm() {
         return (
             <>
                 <input
+                    onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
                     type="radio"
                     name="minimalAge"
                     value={age}
