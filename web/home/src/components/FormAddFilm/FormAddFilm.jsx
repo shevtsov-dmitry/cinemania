@@ -8,29 +8,14 @@ function FormAddFilm() {
 
     const [retrievedSuggestionsDivs, setRetrievedSuggestionsDivs] = useState([])
 
-    const [countryFieldData, setCountryFieldData] = useState({
-        name: 'country',
-        input: '',
-    })
-    const [genreFieldData, setGenreFieldData] = useState({
-        name: 'genre',
-        input: '',
-    })
-
-    // auto filling fields
+    const [currentInputName, setCurrentInputName] = useState('')
+    const [currentInputValue, setCurrentInputValue] = useState('')
+    // auto filling
+    const [countryInput, setCountryInput] = useState('')
+    const [genreInput, setGenreInput] = useState('')
     const [genreFillerContent, setGenreFillerContent] = useState(null)
     const [countryFillerContent, setCountryFillerContent] = useState(null)
     const autoSuggestionDivs = [genreFillerContent, countryFillerContent]
-
-    // useEffect(() => {
-    //     if (countryInputValue === 'country') {
-    //         setCountryFillerContent(retrievedSuggestionsDivs)
-    //     }
-    //     if ( === 'genre') {
-    //         setGenreFillerContent(retrievedSuggestionsDivs)
-    //     }
-    //     highlightPopupElementTextColorWhileTyping(currentFieldInputValue)
-    // }, [retrievedSuggestionsDivs])
 
     async function fetchAutosuggestionsList(name, inputVal) {
         if (name === 'genre') {
@@ -53,30 +38,36 @@ function FormAddFilm() {
 
     function highlightPopupElementTextColorWhileTyping(input) {}
 
-    function createDivFromRetrievedSuggestion(promise, name) {
+    function createDivFromRetrievedSuggestion(promise, name, inputVal) {
         promise
             .then((response) => response.json())
             .then((data) => {
                 const listItemsDiv = Object.keys(data).map((k) => (
                     <button
-                        className="bg-gray-100 text-left"
+                        className="bg-yellow-400 px-2 text-left"
                         type="submit"
                         onClick={(ev) => {
                             ev.preventDefault()
                             const autoSuggestion = ev.currentTarget.textContent
+                            if (
+                                autoSuggestion === inputVal &&
+                                inputVal.length !== 0
+                            ) {
+                                ev.currentTarget.style.display = 'none'
+                            }
                             changeInputTextToAutoSuggestion(
                                 autoSuggestion,
                                 name
                             )
                             setRetrievedSuggestionsDivs([])
                         }}
-                        onFocus={(ev) =>
+                        onFocus={(ev) => {
                             whenLastElementFocused_hideSuggestionsOnBlur(
                                 ev,
                                 data,
                                 k
                             )
-                        }
+                        }}
                         key={k}
                     >
                         {data[k]}
@@ -84,48 +75,61 @@ function FormAddFilm() {
                 ))
                 setRetrievedSuggestionsDivs(listItemsDiv)
             })
-            .catch((e) => {
-                console.error('Error fetching or parsing data:', e)
-            })
+
+        function changeInputTextToAutoSuggestion(autoSuggestion, name) {
+            if (name === 'country') {
+                setCountryInput(autoSuggestion)
+            }
+            if (name === 'genre') {
+                setGenreInput(autoSuggestion)
+            }
+        }
 
         function whenLastElementFocused_hideSuggestionsOnBlur(ev, data, k) {
             if (parseInt(k) === data.length - 1) {
                 ev.currentTarget.addEventListener('blur', () => {
-                    setCountryFillerContent(null)
-                    setGenreFillerContent(null)
+                    setRetrievedSuggestionsDivs([])
                 })
             }
         }
     }
 
-    function changeInputTextToAutoSuggestion(autoSuggestion, name) {
-        if (name === 'country') {
-            setCountryFieldData({
-                ...countryFieldData,
-                input: autoSuggestion,
-            })
-        }
-        if (name === 'genre') {
-            setGenreFieldData({
-                ...genreFieldData,
-                input: autoSuggestion,
-            })
-        }
+    useEffect(() => {
+        setCurrentInputName('country')
+        setCurrentInputValue(countryInput)
+        applyTextAutosuggestion('country', countryInput)
+    }, [countryInput])
+
+    useEffect(() => {
+        setCurrentInputName('genre')
+        setCurrentInputValue(genreInput)
+        applyTextAutosuggestion('genre', genreInput)
+    }, [genreInput])
+
+    function applyTextAutosuggestion(name, inputVal) {
+        const promise = fetchAutosuggestionsList(name, inputVal)
+        createDivFromRetrievedSuggestion(promise, name, inputVal)
     }
 
-    function applyTextAutosuggestion(data) {
-        const name = data.name
-        const inputVal = data.input
-        console.log(name + ' and ' + inputVal)
-        if (name === 'country') {
+    useEffect(() => {
+        if (
+            currentInputValue.length !== 0 &&
+            retrievedSuggestionsDivs.length !== 0
+        ) {
+            if (
+                currentInputValue.length ===
+                retrievedSuggestionsDivs[0].props.children.length
+            ) {
+                setRetrievedSuggestionsDivs([])
+            }
+        }
+        if (currentInputName === 'country') {
             setCountryFillerContent(retrievedSuggestionsDivs)
         }
-        if (name === 'genre') {
+        if (currentInputName === 'genre') {
             setGenreFillerContent(retrievedSuggestionsDivs)
         }
-        const promise = fetchAutosuggestionsList(name, inputVal)
-        createDivFromRetrievedSuggestion(promise, name)
-    }
+    }, [retrievedSuggestionsDivs])
 
     function prepareFormDataToSend(formRef) {
         formRef.preventDefault()
@@ -178,14 +182,8 @@ function FormAddFilm() {
                             className="input pl-2"
                             type="search"
                             name="country"
-                            value={countryFieldData.input}
-                            onChange={(ev) => {
-                                setCountryFieldData({
-                                    ...countryFieldData,
-                                    input: ev.currentTarget.value,
-                                })
-                                applyTextAutosuggestion(countryFieldData)
-                            }}
+                            value={countryInput}
+                            onChange={(ev) => setCountryInput(ev.target.value)}
                         />
                         <div className="typingSuggestions">
                             {countryFillerContent}
@@ -205,14 +203,8 @@ function FormAddFilm() {
                             className="input pl-2"
                             type="search"
                             name="genre"
-                            value={genreFieldData.input}
-                            onChange={(ev) => {
-                                setGenreFieldData({
-                                    ...genreFieldData,
-                                    input: ev.currentTarget.value,
-                                })
-                                applyTextAutosuggestion(genreFieldData)
-                            }}
+                            value={genreInput}
+                            onChange={(ev) => setGenreInput(ev.target.value)}
                         />
                         <div className="typingSuggestions">
                             {genreFillerContent}

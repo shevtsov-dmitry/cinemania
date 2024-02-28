@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.filling_assistant.common.BaseController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -34,6 +35,7 @@ public class GenreController extends BaseController<Genre> {
 
     @GetMapping(value = "/get/bySequence", produces = "application/json;charset=UTF-8")
     public ResponseEntity<List<String>> findGenres(@RequestParam String sequence) {
+        if(sequence.isBlank()) return ResponseEntity.ok(Collections.emptyList());
         return ResponseEntity.ok(service.findMatchedGenres(sequence));
     }
 
