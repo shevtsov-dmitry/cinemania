@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @RestController
-@RequestMapping("/videos/posters")
+@RequestMapping("/posters")
 public class PosterController {
 
     private final PosterService service;

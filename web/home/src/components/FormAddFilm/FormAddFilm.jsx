@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import { Link } from 'react-router-dom'
 
 function FormAddFilm() {
     // *** ASSIGNMENT
-    const serverUrl = 'http://localhost:8080'
+    const FILLING_ASSISTANT_URL = 'http://localhost:8001'
+    const BINARY_STORAGE_URL = 'http://localhost:8080'
     const suggestionsTextHighlightColor = '#f72585'
 
     const [retrievedSuggestionsDivs, setRetrievedSuggestionsDivs] = useState([])
@@ -17,14 +18,17 @@ function FormAddFilm() {
     const [countryFillerContent, setCountryFillerContent] = useState(null)
     const autoSuggestionDivs = [genreFillerContent, countryFillerContent]
 
+    const posterInputRef = useRef()
+    const videoInputRef = useRef()
+
     async function fetchAutosuggestionsList(name, inputVal) {
         if (name === 'genre') {
-            let url = `${serverUrl}/fillingAssistants/genres/get/bySequence?sequence=`
+            let url = `${FILLING_ASSISTANT_URL}/fillingAssistants/genres/get/bySequence?sequence=`
             url = url.concat(inputVal)
             return fetch(url)
         } else if (name === 'country') {
             let countryName = ''
-            let url = `${serverUrl}/fillingAssistants/countries/get/bySequence?sequence=`
+            let url = `${FILLING_ASSISTANT_URL}/fillingAssistants/countries/get/bySequence?sequence=`
             if (inputVal.length > 0) {
                 countryName =
                     inputVal[0].toUpperCase() +
@@ -44,7 +48,7 @@ function FormAddFilm() {
             .then((data) => {
                 const listItemsDiv = Object.keys(data).map((k) => (
                     <button
-                        className="bg-amber-100 px-2 text-left dark:text-white dark:bg-purple-800"
+                        className="bg-amber-100 px-2 text-left dark:text-white dark:bg-slate-900 dark:focus:bg-slate-700 dark:focus:text-teal-300   @/h.h//"
                         type="submit"
                         onClick={(ev) => {
                             ev.preventDefault()
@@ -131,9 +135,10 @@ function FormAddFilm() {
         }
     }, [retrievedSuggestionsDivs])
 
-    function prepareFormDataToSend(formRef) {
-        formRef.preventDefault()
-        const form = new FormData(formRef)
+
+    const formRef = useRef();
+    function prepareFormDataToSend() {
+        const form = new FormData(formRef.current)
         const json = {
             filmName: form.get('filmName'),
             country: form.get('country'),
@@ -143,15 +148,28 @@ function FormAddFilm() {
             watchTime: form.get('watchTime'),
             rating: form.get('rating'),
         }
-        console.log(json)
+        // console.log(json)
+
+        const posterFile = posterInputRef.current.files[0]
+        const posterFormData = new FormData();
+        posterFormData.append('file', posterFile);
+        fetch(`${BINARY_STORAGE_URL}/posters/upload`, {
+            method: "POST",
+            body: posterFormData
+        }).then(res => res.json())
+            .then(ans => {
+                console.log(ans)
+            })
     }
+
 
     function form() {
         return (
             <form
-                onSubmit={(event) => {
-                    prepareFormDataToSend();
-                }}
+                ref={formRef}
+                // onSubmit={(event) => {
+                //     prepareFormDataToSend(event.currentTarget);
+                // }}
                 className="dark:bg-stone-80r flex w-fit flex-col content-center items-center justify-center gap-3 rounded-2xl bg-[#f4f3ee] p-4 dark:bg-neutral-800 dark:text-blue-100"
             >
                 <ul className="w-fit">
@@ -219,16 +237,17 @@ function FormAddFilm() {
                     <li id="ageRestriction" className="form-li">
                         <p>Возраст</p>
                         <div className="flex w-full justify-evenly">
-                            {createAgeDiv(0)}
-                            {createAgeDiv(6)}
-                            {createAgeDiv(12)}
-                            {createAgeDiv(16)}
-                            {createAgeDiv(18)}
+                            {createAgeRadioInput(0)}
+                            {createAgeRadioInput(6)}
+                            {createAgeRadioInput(12)}
+                            {createAgeRadioInput(16)}
+                            {createAgeRadioInput(18)}
                         </div>
                     </li>
                     <li id="poster" className="form-li">
                         <p>Постер</p>
                         <input
+                            ref={posterInputRef}
                             type="file"
                             className="scale-90"
                             name="imageUrl"
@@ -237,6 +256,7 @@ function FormAddFilm() {
                     <li id="video" className="form-li">
                         <p>Видео</p>
                         <input
+                            ref={videoInputRef}
                             type="file"
                             className="scale-90"
                             name="videoUrl"
@@ -266,8 +286,13 @@ function FormAddFilm() {
                 </ul>
                 <div className="button-aligner">
                     <button
+                        onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
                         className="rounded-2xl bg-red-600 p-1.5 font-bold text-white"
                         id="add-film-button"
+                        onClick={(ev)=> {
+                            ev.preventDefault()
+                            prepareFormDataToSend()
+                        }}
                     >
                         Принять
                     </button>
@@ -276,7 +301,7 @@ function FormAddFilm() {
         )
     }
 
-    function createAgeDiv(age) {
+    function createAgeRadioInput(age) {
         return (
             <>
                 <input
