@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 function FormAddFilm() {
@@ -40,7 +40,7 @@ function FormAddFilm() {
         return Promise.resolve(null)
     }
 
-    function highlightPopupElementTextColorWhileTyping(input) {}
+    function highlightPopupElementTextColorWhileTyping(input) { }
 
     function createDivFromRetrievedSuggestion(promise, name, inputVal) {
         promise
@@ -150,16 +150,46 @@ function FormAddFilm() {
         }
         // console.log(json)
 
-        const posterFile = posterInputRef.current.files[0]
-        const posterFormData = new FormData();
-        posterFormData.append('file', posterFile);
-        fetch(`${BINARY_STORAGE_URL}/posters/upload`, {
-            method: "POST",
-            body: posterFormData
-        }).then(res => res.json())
-            .then(ans => {
-                console.log(ans)
+        function savePoster() {
+            const posterFile = posterInputRef.current.files[0]
+            if (posterFile == null) {
+                return
+            }
+            const posterFormData = new FormData()
+            posterFormData.append('file', posterFile)
+            fetch(`${BINARY_STORAGE_URL}/posters/upload`, {
+                method: 'POST',
+                body: posterFormData,
             })
+                .then((res) => res.json())
+                .then((ans) => {
+                    console.log("log: Poster - " + ans)
+                })
+        }
+
+        function saveVideo() {
+            const videoFile = videoInputRef.current.files[0]
+            if (videoFile == null) {
+                return
+            }
+            const videoFormData = new FormData()
+            videoFormData.append('file', videoFile)
+            fetch(`${BINARY_STORAGE_URL}/videos/upload`, {
+                method: 'POST',
+                body: videoFormData,
+            })
+                .then((res) => res.json())
+                .then((ans) => {
+                    console.log("log: Video - " + ans)
+                })
+
+
+        }
+
+        savePoster()
+        saveVideo()
+
+
     }
 
 
@@ -262,7 +292,7 @@ function FormAddFilm() {
                             name="videoUrl"
                         />
                     </li>
-                     {/*TODO gather this param automatically*/}
+                    {/*TODO gather this param automatically*/}
                     <li className="form-li">
                         <p>Время просмотра</p>
                         <input
@@ -289,7 +319,7 @@ function FormAddFilm() {
                         onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
                         className="rounded-2xl bg-red-600 p-1.5 font-bold text-white"
                         id="add-film-button"
-                        onClick={(ev)=> {
+                        onClick={(ev) => {
                             ev.preventDefault()
                             prepareFormDataToSend()
                         }}

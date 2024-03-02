@@ -57,7 +57,7 @@ public class PosterController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
         return service.deleteById(id) ?
-                new ResponseEntity<>(STR."video file with id \{id} successfully deleted.", httpHeaders, HttpStatus.OK) :
+                new ResponseEntity<>(STR."poster image with id \{id} successfully deleted.", httpHeaders, HttpStatus.OK) :
                 ResponseEntity.notFound().build();
     }
 
