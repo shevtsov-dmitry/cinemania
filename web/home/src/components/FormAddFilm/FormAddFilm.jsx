@@ -209,7 +209,17 @@ function FormAddFilm() {
         const posterId = await savePoster()
         const videoId = await saveVideo()
         const metadataId = await saveMetadata(posterId, videoId)
-        console.log(metadataId)
+
+        if(posterId === undefined || posterId === "") {
+
+        }
+        else if(videoId === undefined || videoId === "") {
+
+        }
+        else if(metadataId === undefined || metadataId === "") {
+
+        }
+
     }
 
     function form() {
@@ -332,20 +342,33 @@ function FormAddFilm() {
                         />
                     </li>
                 </ul>
-                <div className="button-aligner">
+                <div className="button-aligner flex">
                     <button
                         onKeyDown={(event) =>
                             event.keyCode === 13 && event.preventDefault()
                         }
-                        className="rounded-2xl bg-red-600 p-1.5 font-bold text-white"
+                        className="rounded-2xl bg-red-600 p-1.5 font-bold text-white transition-transform"
                         id="add-film-button"
-                        onClick={(ev) => {
-                            ev.preventDefault()
+                        onClick={(event) => {
+                            event.preventDefault()
                             prepareFormDataToSend()
+                            const el = event.currentTarget
+                            el.style.transform = 'scale(0.95)';
+                            el.classList.add("bg-green-600")
+                            setTimeout(() => {
+                                el.style.transform = 'scale(1)';
+                                el.classList.remove("bg-green-600")
+                            }, 230);
                         }}
                     >
                         Принять
                     </button>
+                    <div className="absolute items-center justify-center ml-24 mt-1">
+                        <button
+                            className="p-0 m-0 text-[0.70em] opacity-50">
+                            <u>Очистить форму</u>
+                        </button>
+                    </div>
                 </div>
             </form>
         )
