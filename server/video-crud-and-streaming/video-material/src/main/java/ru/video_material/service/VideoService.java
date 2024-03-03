@@ -37,6 +37,7 @@ public class VideoService {
     public ResponseEntity<String> saveMetadata(VideoMetadata videoMetadata) {
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
+        System.out.println(videoMetadata);
         final String id = metadataRepo.save(videoMetadata).getId();
         return new ResponseEntity<>(id, httpHeaders, HttpStatus.OK);
     }

@@ -19,7 +19,6 @@ public class VideoMetadata {
     private String title;
     private String releaseDate;
     private String country;
-    private String contentType;
     private String genre;
     private Integer age;
     private String posterId;

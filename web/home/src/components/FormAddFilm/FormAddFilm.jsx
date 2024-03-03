@@ -40,7 +40,7 @@ function FormAddFilm() {
         return Promise.resolve(null)
     }
 
-    function highlightPopupElementTextColorWhileTyping(input) { }
+    function highlightPopupElementTextColorWhileTyping(input) {}
 
     function createDivFromRetrievedSuggestion(promise, name, inputVal) {
         promise
@@ -48,7 +48,7 @@ function FormAddFilm() {
             .then((data) => {
                 const listItemsDiv = Object.keys(data).map((k) => (
                     <button
-                        className="bg-amber-100 px-2 text-left dark:text-white dark:bg-slate-900 dark:focus:bg-slate-700 dark:focus:text-teal-300   @/h.h//"
+                        className="@/h.h// bg-amber-100 px-2 text-left dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700   dark:focus:text-teal-300"
                         type="submit"
                         onClick={(ev) => {
                             ev.preventDefault()
@@ -135,63 +135,82 @@ function FormAddFilm() {
         }
     }, [retrievedSuggestionsDivs])
 
+    const formRef = useRef()
 
-    const formRef = useRef();
-    function prepareFormDataToSend() {
-        const form = new FormData(formRef.current)
-        const json = {
-            filmName: form.get('filmName'),
-            country: form.get('country'),
-            releaseDate: form.get('releaseDate'),
-            genre: form.get('genre'),
-            minimalAge: form.get('minimalAge'),
-            watchTime: form.get('watchTime'),
-            rating: form.get('rating'),
-        }
-        // console.log(json)
-
-        function savePoster() {
-            const posterFile = posterInputRef.current.files[0]
-            if (posterFile == null) {
-                return
-            }
-            const posterFormData = new FormData()
-            posterFormData.append('file', posterFile)
-            fetch(`${BINARY_STORAGE_URL}/posters/upload`, {
-                method: 'POST',
-                body: posterFormData,
-            })
-                .then((res) => res.json())
-                .then((ans) => {
-                    console.log("log: Poster - " + ans)
+    async function prepareFormDataToSend() {
+        async function savePoster() {
+            return new Promise(resolve => {
+                const posterFile = posterInputRef.current.files[0]
+                if (posterFile == null) {
+                    return
+                }
+                const posterFormData = new FormData()
+                posterFormData.append('file', posterFile)
+                fetch(`${BINARY_STORAGE_URL}/posters/upload`, {
+                    method: 'POST',
+                    body: posterFormData,
                 })
-        }
-
-        function saveVideo() {
-            const videoFile = videoInputRef.current.files[0]
-            if (videoFile == null) {
-                return
-            }
-            const videoFormData = new FormData()
-            videoFormData.append('file', videoFile)
-            fetch(`${BINARY_STORAGE_URL}/videos/upload`, {
-                method: 'POST',
-                body: videoFormData,
+                    .then((res) => res.text())
+                    .then((id) => {
+                        return resolve(id)
+                    })
             })
-                .then((res) => res.json())
-                .then((ans) => {
-                    console.log("log: Video - " + ans)
-                })
-
 
         }
 
-        savePoster()
-        saveVideo()
+        async function saveVideo() {
+            return new Promise(resolve => {
+                const videoFile = videoInputRef.current.files[0]
+                if (videoFile == null) {
+                    return
+                }
+                const videoFormData = new FormData()
+                videoFormData.append('file', videoFile)
+                fetch(`${BINARY_STORAGE_URL}/videos/upload`, {
+                    method: 'POST',
+                    body: videoFormData,
+                })
+                    .then((res) => res.text())
+                    .then((id) => {
+                        return resolve(id)
+                    })
+            })
 
+        }
 
+        async function saveMetadata(posterId, videoId) {
+            return new Promise(resolve => {
+                const form = new FormData(formRef.current)
+                const metadata = {
+                    title: form.get('title'),
+                    releaseDate: form.get('releaseDate'),
+                    country: form.get('country'),
+                    genre: form.get('genre'),
+                    age: form.get('age'),
+                    rating: form.get('rating'),
+                    posterId: posterId,
+                    videoId: videoId,
+                }
+                fetch(`${BINARY_STORAGE_URL}/videos/save/metadata`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json',
+                    },
+                    body: JSON.stringify(metadata),
+                })
+                    .then((res) => res.text())
+                    .then((id) => {
+                        resolve(id)
+                    })
+            })
+
+        }
+
+        const posterId = await savePoster()
+        const videoId = await saveVideo()
+        const metadataId = await saveMetadata(posterId, videoId)
+        console.log(metadataId)
     }
-
 
     function form() {
         return (
@@ -217,20 +236,24 @@ function FormAddFilm() {
                     <li className="mb-2 mt-[-10px] text-center text-3xl font-bold">
                         Добавить фильм
                     </li>
-                    <li id="filmName" className="form-li">
+                    <li id="title" className="form-li">
                         <p>Название фильма</p>
                         <input
-                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
-                            onSubmit={event => event.preventDefault()}
+                            onKeyDown={(event) =>
+                                event.keyCode === 13 && event.preventDefault()
+                            }
+                            onSubmit={(event) => event.preventDefault()}
                             className="input pl-2"
                             type="search"
-                            name="filmName"
+                            name="title"
                         />
                     </li>
                     <li id="country" className="form-li">
                         <p>Страна</p>
                         <input
-                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
+                            onKeyDown={(event) =>
+                                event.keyCode === 13 && event.preventDefault()
+                            }
                             className="input pl-2"
                             type="search"
                             name="country"
@@ -244,7 +267,9 @@ function FormAddFilm() {
                     <li id="releaseDate" className="form-li">
                         <p>Дата релиза</p>
                         <input
-                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
+                            onKeyDown={(event) =>
+                                event.keyCode === 13 && event.preventDefault()
+                            }
                             className="input w-full pl-2"
                             type="date"
                             name="releaseDate"
@@ -253,7 +278,9 @@ function FormAddFilm() {
                     <li id="genre" className="form-li">
                         <p>Жанр</p>
                         <input
-                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
+                            onKeyDown={(event) =>
+                                event.keyCode === 13 && event.preventDefault()
+                            }
                             className="input pl-2"
                             type="search"
                             name="genre"
@@ -292,21 +319,12 @@ function FormAddFilm() {
                             name="videoUrl"
                         />
                     </li>
-                    {/*TODO gather this param automatically*/}
-                    <li className="form-li">
-                        <p>Время просмотра</p>
-                        <input
-                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
-                            className="input pl-2"
-                            type="text"
-                            placeholder={'ч:мм'}
-                            name="watchTime"
-                        />
-                    </li>
                     <li className="form-li">
                         <p>Рейтинг</p>
                         <input
-                            onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
+                            onKeyDown={(event) =>
+                                event.keyCode === 13 && event.preventDefault()
+                            }
                             className="input pl-2"
                             type="text"
                             placeholder="6.89"
@@ -316,7 +334,9 @@ function FormAddFilm() {
                 </ul>
                 <div className="button-aligner">
                     <button
-                        onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
+                        onKeyDown={(event) =>
+                            event.keyCode === 13 && event.preventDefault()
+                        }
                         className="rounded-2xl bg-red-600 p-1.5 font-bold text-white"
                         id="add-film-button"
                         onClick={(ev) => {
@@ -335,9 +355,11 @@ function FormAddFilm() {
         return (
             <>
                 <input
-                    onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
+                    onKeyDown={(event) =>
+                        event.keyCode === 13 && event.preventDefault()
+                    }
                     type="radio"
-                    name="minimalAge"
+                    name="age"
                     value={age}
                 />
                 <label htmlFor="" className="ml-0.5">
