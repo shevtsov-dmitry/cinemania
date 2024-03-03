@@ -136,10 +136,11 @@ function FormAddFilm() {
     }, [retrievedSuggestionsDivs])
 
     const formRef = useRef()
+    const formSaveStatus = useRef()
 
     async function prepareFormDataToSend() {
         async function savePoster() {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 const posterFile = posterInputRef.current.files[0]
                 if (posterFile == null) {
                     return
@@ -155,11 +156,10 @@ function FormAddFilm() {
                         return resolve(id)
                     })
             })
-
         }
 
         async function saveVideo() {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 const videoFile = videoInputRef.current.files[0]
                 if (videoFile == null) {
                     return
@@ -175,11 +175,10 @@ function FormAddFilm() {
                         return resolve(id)
                     })
             })
-
         }
 
         async function saveMetadata(posterId, videoId) {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 const form = new FormData(formRef.current)
                 const metadata = {
                     title: form.get('title'),
@@ -203,21 +202,37 @@ function FormAddFilm() {
                         resolve(id)
                     })
             })
-
         }
 
-        const posterId = await savePoster()
+        let posterId = await savePoster()
         const videoId = await saveVideo()
         const metadataId = await saveMetadata(posterId, videoId)
-
-        if(posterId === undefined || posterId === "") {
-
+        const statusBar = formSaveStatus.current
+        // posterId = undefined
+        if (
+            posterId === undefined ||
+            posterId === '' ||
+            videoId === undefined ||
+            videoId === '' ||
+            metadataId === undefined ||
+            metadataId === ''
+        ) {
+            // TODO make option to read log if something gone wrong was not uploaded
+            statusBar.innerHTML = 'Ошибка при сохранении. <u>Подробнее</u>'
+            statusBar.style.color = 'red'
+            return
         }
-        else if(videoId === undefined || videoId === "") {
 
-        }
-        else if(metadataId === undefined || metadataId === "") {
-
+        displaySuccessSaveMessage()
+        function displaySuccessSaveMessage() {
+            statusBar.textContent = 'Сохранено ✅'
+            statusBar.style.fontSize = "0.8em"
+            statusBar.style.color = "green"
+            statusBar.style.marginTop = "-6px"
+            setTimeout(() => {
+                statusBar.textContent = ''
+                statusBar.style.fontSize = "0.7em"
+            }, 1500)
         }
 
     }
@@ -343,6 +358,16 @@ function FormAddFilm() {
                     </li>
                 </ul>
                 <div className="button-aligner flex">
+                    <div
+                        className={
+                            'absolute -ml-28 -mt-1.5 flex h-12 w-24 justify-center overflow-hidden items-center font-medium'
+                        }
+                    >
+                        <p
+                            className="m-0 p-0 text-[0.7em] text-center"
+                            ref={formSaveStatus}
+                        ></p>
+                    </div>
                     <button
                         onKeyDown={(event) =>
                             event.keyCode === 13 && event.preventDefault()
@@ -353,19 +378,18 @@ function FormAddFilm() {
                             event.preventDefault()
                             prepareFormDataToSend()
                             const el = event.currentTarget
-                            el.style.transform = 'scale(0.95)';
-                            el.classList.add("bg-green-600")
+                            el.style.transform = 'scale(0.95)'
+                            el.classList.add('bg-green-600')
                             setTimeout(() => {
-                                el.style.transform = 'scale(1)';
-                                el.classList.remove("bg-green-600")
-                            }, 230);
+                                el.style.transform = 'scale(1)'
+                                el.classList.remove('bg-green-600')
+                            }, 230)
                         }}
                     >
                         Принять
                     </button>
-                    <div className="absolute items-center justify-center ml-24 mt-1">
-                        <button
-                            className="p-0 m-0 text-[0.70em] opacity-50">
+                    <div className="absolute ml-24 mt-1 items-center justify-center">
+                        <button className="m-0 p-0 text-[0.70em] opacity-50">
                             <u>Очистить форму</u>
                         </button>
                     </div>
