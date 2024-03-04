@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import {useEffect, useRef, useState} from 'react'
 import FormAddFilm from '../FormAddFilm/FormAddFilm'
-import { Link, Route, Routes } from 'react-router-dom'
+import {Link, Route, Routes} from 'react-router-dom'
 
 export function Header() {
     const generalTopicsRef = useRef()
@@ -51,27 +51,11 @@ export function Header() {
         }
     }
 
-    function generalTopicsLiContent() {
-        if (burgerActive) {
-            return (
-                <>
-                    {/*▼ᐁ*/}
-                    <li className="topic">Фильмы ▼</li>
-                    <li className="topic">Сериалы ▼</li>
-                    <li className="topic">Мультфильмы ▼</li>
-                    <li className="topic">Аниме ▼</li>
-                </>
-            )
-        } else {
-            return (
-                <>
-                    <li className="topic">Фильмы</li>
-                    <li className="topic">Сериалы</li>
-                    <li className="topic">Мультфильмы</li>
-                    <li className="topic">Аниме</li>
-                </>
-            )
-        }
+    function generalTopicsLiContent() { // signs variants: ▼ᐁ
+        const topics = ["Фильмы", "Сериалы", "Мультфильмы", "Аниме"]
+            return burgerActive ?
+                <>{topics.map((string, index) => <li key={index}>{string.concat(" ▼")}</li>)}</> :
+                <>{topics.map((string, index) => <li key={index}>{string}</li>)}</>
     }
 
     function newsAndCollectionContent() {
@@ -172,7 +156,7 @@ export function Header() {
                                 className="opacity-85 absolute h-full w-full bg-gray-800 backdrop-blur-md dark:backdrop-blur-lg"
                             ></div>
                             <div className="z-50">
-                                <FormAddFilm />
+                                <FormAddFilm/>
                             </div>
                         </div>
                     }

@@ -1,5 +1,5 @@
-import { Header } from './components/main/Header'
-import { Preview } from './components/main/Preview'
+import { Header } from './components/Main/Header'
+import { Preview } from './components/Main/Preview'
 import { Route, Routes } from 'react-router-dom'
 import FormAddFilm from './components/FormAddFilm/FormAddFilm'
 
