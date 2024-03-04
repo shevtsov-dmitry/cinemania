@@ -51,7 +51,7 @@ public class VideoService {
     }
     public byte[] downloadVideoById(String id) throws IOException {
         GridFSFile foundFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
-        Assert.notNull(foundFile, "Video-material service. File is null in downloadVideoById() when try to retrieve it from database by id.");
+        Assert.notNull(foundFile, "Video-material service. File is null in downloadVideoById(String id) when try to retrieve it from database.");
         var outputStream = new ByteArrayOutputStream();
         operations.getResource(Objects.requireNonNull(foundFile)).getInputStream().transferTo(outputStream);
         return outputStream.toByteArray();
@@ -60,7 +60,7 @@ public class VideoService {
     public String deleteVideoById(String id) {
         final Query query = new Query(Criteria.where("_id").is(id));
         gridFsTemplate.delete(query);
-        if (gridFsTemplate.findOne(query) == null) {
+        if (gridFsTemplate.findOne(query) != null) {
             throw new IllegalArgumentException(STR."Deletion failed. The video with id \{id} doesn't exist in GridFS.");
         }
         return id;

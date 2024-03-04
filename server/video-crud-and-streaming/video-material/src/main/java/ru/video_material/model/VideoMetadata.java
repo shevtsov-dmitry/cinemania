@@ -25,27 +25,6 @@ public class VideoMetadata {
     private String videoId;
     private float rating;
 
-    public VideoMetadata(String title, String releaseDate, String country,
-                         String genre, Integer age) {
-        this.title = title;
-        this.releaseDate = releaseDate;
-        this.country = country;
-        this.genre = genre;
-        this.age = age;
-    }
-
-    public VideoMetadata(String title, String releaseDate,
-                         String country, String genre, Integer age,
-                         String posterId, String videoId) {
-        this.title = title;
-        this.releaseDate = releaseDate;
-        this.country = country;
-        this.genre = genre;
-        this.age = age;
-        this.posterId = posterId;
-        this.videoId = videoId;
-    }
-
     public VideoMetadata(String title, String releaseDate,
                          String country, String genre, Integer age,
                          String posterId, String videoId, Float rating) {
