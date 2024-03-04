@@ -8,17 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.multipart.MultipartFile;
 import ru.video_material.controller.PosterControllerTest;
 import ru.video_material.controller.VideoControllerTest;
-import ru.video_material.model.Poster;
-import ru.video_material.model.Video;
 import ru.video_material.model.VideoMetadata;
 
-import java.sql.SQLOutput;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;

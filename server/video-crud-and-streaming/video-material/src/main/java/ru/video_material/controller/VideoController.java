@@ -26,6 +26,40 @@ public class VideoController {
         this.service = service;
     }
 
+    // ### VIDEO
+    @PostMapping("/upload")
+    public ResponseEntity<String> saveVideo(@RequestBody MultipartFile file) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
+        try {
+            final String videoId = service.saveVideo(file);
+            return new ResponseEntity<>(videoId, httpHeaders, HttpStatus.OK);
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>(e.getMessage(), httpHeaders, HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Couldn't read video file.", httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/download/byId/{id}")
+    public ResponseEntity<byte[]> downloadVideoById(@PathVariable String id){
+        try {
+            return ResponseEntity.ok(service.downloadVideoById(id));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("The file's not found.".getBytes());
+        }
+    }
+
+    @DeleteMapping("/delete/byId/{id}")
+    public ResponseEntity<String> delete(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok(service.deleteVideoById(id));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+    // ### METADATA
     @PostMapping("/save/metadata")
     public ResponseEntity<String> saveMetadata(@RequestBody VideoMetadata videoMetadata) {
         return service.saveMetadata(videoMetadata);
@@ -41,30 +75,6 @@ public class VideoController {
         return service.deleteMetadataById(id);
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> saveVideo(@RequestBody MultipartFile file) {
-        var httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
-        try {
-            final String videoId = service.saveVideo(file);
-            return new ResponseEntity<>(videoId, httpHeaders, HttpStatus.OK);
-        } catch (NullPointerException e) {
-            return new ResponseEntity<>(e.getMessage(), httpHeaders, HttpStatus.BAD_REQUEST);
-        } catch (IOException e) {
-            return new ResponseEntity<>("Couldn't read video file.", httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping("/delete/byId/{id}")
-    public ResponseEntity<String> delete(@PathVariable String id) {
-        try {
-            service.deleteVideoById(id);
-            return ResponseEntity.ok(id);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
-    }
-
     @GetMapping("/get/byTitle/{title}")
     public ResponseEntity<List<VideoMetadata>> getMetadataByTitle(@PathVariable String title) {
         return service.getMetadataByTitle(title);
@@ -74,7 +84,5 @@ public class VideoController {
     public ResponseEntity<VideoMetadata> getMetadataById(@PathVariable String id){
         return service.getMetadataById(id);
     }
-
-
 
 }
