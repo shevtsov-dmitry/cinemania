@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react'
 import FormAddFilm from '../FormAddFilm/FormAddFilm'
 import {Link, Route, Routes} from 'react-router-dom'
-import {VideoPlayer} from "../VideoPlayer";
+import {FilmPage} from "../FilmPage";
 
 export function Header() {
     const generalTopicsRef = useRef()
@@ -171,7 +171,10 @@ export function Header() {
                 <Route
                     path="/watch"
                     element={
-                        <VideoPlayer/>
+                    <div className="fixed w-dvw h-dvh z-[1000]">
+                        <FilmPage/>
+                    </div>
+
                     }
                 />
             </Routes>
