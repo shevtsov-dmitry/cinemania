@@ -1,5 +1,4 @@
-server:
-  port: 8081
+
 spring:
   data:
     mongodb:
@@ -18,5 +17,6 @@ spring:
       max-file-size: 10GB
       max-request-size: 10GB
 #spring.servlet.multipart.max-file-size=150MB
-
+server:
+  port: 8081
 #spring.servlet.multipart.max-request-size=150MB
