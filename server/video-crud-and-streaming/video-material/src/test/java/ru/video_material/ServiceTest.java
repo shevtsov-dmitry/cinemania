@@ -10,7 +10,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.video_material.controller.PosterControllerTest;
 import ru.video_material.controller.VideoControllerTest;
-import ru.video_material.model.VideoMetadata;
+import ru.video_material.model.ContentMetadata;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.ResponseEntity.ok;
@@ -62,7 +62,7 @@ class ServiceTest {
         assertNotNull(videoId);
         assertNotNull(posterId);
 
-        var videoMetadata = new VideoMetadata(
+        var videoMetadata = new ContentMetadata(
                 "Star wars",
                 "2022-10-30",
                 "USA",

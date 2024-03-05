@@ -2,10 +2,8 @@ package ru.video_material.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.NonNull;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.regex.Matcher;
@@ -14,7 +12,7 @@ import java.util.regex.Pattern;
 @Data
 @Document
 @NoArgsConstructor
-public class VideoMetadata {
+public class ContentMetadata {
     private String id;
     private String title;
     private String releaseDate;
@@ -25,9 +23,9 @@ public class VideoMetadata {
     private String videoId;
     private float rating;
 
-    public VideoMetadata(String title, String releaseDate,
-                         String country, String genre, Integer age,
-                         String posterId, String videoId, Float rating) {
+    public ContentMetadata(String title, String releaseDate,
+                           String country, String genre, Integer age,
+                           String posterId, String videoId, Float rating) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.country = country;

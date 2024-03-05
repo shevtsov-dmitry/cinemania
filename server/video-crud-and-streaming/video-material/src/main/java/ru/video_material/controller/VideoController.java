@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.video_material.model.VideoMetadata;
+import ru.video_material.model.ContentMetadata;
 import ru.video_material.service.VideoService;
 
 import java.io.IOException;
@@ -61,8 +61,8 @@ public class VideoController {
 
     // ### METADATA
     @PostMapping("/save/metadata")
-    public ResponseEntity<String> saveMetadata(@RequestBody VideoMetadata videoMetadata) {
-        return service.saveMetadata(videoMetadata);
+    public ResponseEntity<String> saveMetadata(@RequestBody ContentMetadata contentMetadata) {
+        return service.saveMetadata(contentMetadata);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -76,12 +76,12 @@ public class VideoController {
     }
 
     @GetMapping("/get/byTitle/{title}")
-    public ResponseEntity<List<VideoMetadata>> getMetadataByTitle(@PathVariable String title) {
+    public ResponseEntity<List<ContentMetadata>> getMetadataByTitle(@PathVariable String title) {
         return service.getMetadataByTitle(title);
     }
 
     @GetMapping("/get/byId/{id}")
-    public ResponseEntity<VideoMetadata> getMetadataById(@PathVariable String id){
+    public ResponseEntity<ContentMetadata> getMetadataById(@PathVariable String id){
         return service.getMetadataById(id);
     }
 

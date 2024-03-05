@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import ru.video_material.service.PosterService;
+import ru.video_material.util.PosterWithMetadata;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -43,14 +45,59 @@ public class PosterController {
 
     @GetMapping(value = "/get/byId/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getPosterById(@PathVariable String id) {
+        PosterWithMetadata data = service.getPosterWithMetadataById(id);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(new MediaType("image", "jpeg"));
+        httpHeaders.set("id", data.getContentId());
         try {
-            return new ResponseEntity<>(service.getById(id), httpHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(data.getData(), httpHeaders, HttpStatus.OK);
         } catch (NullPointerException ex) {
-            return new ResponseEntity<>("Poster Not Found.".getBytes(), httpHeaders, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping(value = "/get/byId/test/{id}/{secId}")
+    public PosterWithMetadata[] somethingTEST(@PathVariable String id, @PathVariable String secId) {
+        PosterWithMetadata data1 = service.getPosterWithMetadataById(id);
+        PosterWithMetadata data2 = service.getPosterWithMetadataById(secId);
+        try {
+            return new PosterWithMetadata[]{
+                    data1,
+                    data2
+            };
+        } catch (NullPointerException ex) {
+            throw new InternalError();
+        }
+    }
+
+//    @GetMapping("/images")
+//    public ResponseEntity<byte[]> getImages() throws IOException {
+//        List<byte[]> imageBytesList = new ArrayList<>();
+//        for (int i = 1; i <= 5; i++) {
+//            String filePath = "path/to/your/image" + i + ".jpg"; // Replace with your actual path
+//            byte[] imageData = Files.readAllBytes(Paths.get(filePath));
+//            imageBytesList.add(imageData);
+//        }
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.MULTIPART_MIXED);
+//        StringBuilder boundary = new StringBuilder("myboundary");
+//
+//        MultipartBodyWriter writer = new MultipartBodyWriter(boundary.toString());
+//        try {
+//            for (byte[] imageData : imageBytesList) {
+//                MultiValueMap<String, String> partHeaders = new LinkedMultiValueMap<>();
+//                partHeaders.add("Content-Type", "image/jpeg; filename=image" + imageBytesList.indexOf(imageData) + ".jpg");
+//                writer.addPart("image", partHeaders, imageData);
+//            }
+//            return ResponseEntity.ok()
+//                    .headers(headers)
+//                    .body(writer.build());
+//        } catch (MultipartException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
+
 
     @DeleteMapping("/delete/byId/{id}")
     public ResponseEntity<String> deletePosterById(@PathVariable String id) {
@@ -60,5 +107,6 @@ public class PosterController {
                 new ResponseEntity<>(STR."poster image with id \{id} successfully deleted.", httpHeaders, HttpStatus.OK) :
                 ResponseEntity.notFound().build();
     }
+
 
 }

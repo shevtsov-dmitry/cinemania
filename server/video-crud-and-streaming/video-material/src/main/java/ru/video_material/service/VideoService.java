@@ -12,7 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
-import ru.video_material.model.VideoMetadata;
+import ru.video_material.model.ContentMetadata;
 import ru.video_material.repo.MetadataRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,24 +67,24 @@ public class VideoService {
     }
 
     // ### METADATA
-    public ResponseEntity<String> saveMetadata(VideoMetadata videoMetadata) {
+    public ResponseEntity<String> saveMetadata(ContentMetadata contentMetadata) {
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
-        System.out.println(videoMetadata);
-        final String id = metadataRepo.save(videoMetadata).getId();
+        System.out.println(contentMetadata);
+        final String id = metadataRepo.save(contentMetadata).getId();
         return new ResponseEntity<>(id, httpHeaders, HttpStatus.OK);
     }
 
-    public ResponseEntity<List<VideoMetadata>> getMetadataByTitle(String title) {
-        List<VideoMetadata> occurrences = metadataRepo.getByTitle(title);
+    public ResponseEntity<List<ContentMetadata>> getMetadataByTitle(String title) {
+        List<ContentMetadata> occurrences = metadataRepo.getByTitle(title);
         if (occurrences == null) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(occurrences);
     }
 
-    public ResponseEntity<VideoMetadata> getMetadataById(String id) {
-        VideoMetadata metadata = metadataRepo.getById(id);
+    public ResponseEntity<ContentMetadata> getMetadataById(String id) {
+        ContentMetadata metadata = metadataRepo.getById(id);
         if (metadata == null) {
             return ResponseEntity.badRequest().build();
         }
