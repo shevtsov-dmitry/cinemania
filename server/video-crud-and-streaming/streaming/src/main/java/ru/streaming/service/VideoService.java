@@ -1,6 +1,7 @@
 package ru.streaming.service;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
+import org.springframework.util.Assert;
 import ru.streaming.repo.VideoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,21 +22,19 @@ import static ru.streaming.constants.ApplicationConstants.CHUNK_SIZE;
 
 @Service
 public class VideoService {
-    private final VideoRepo repo;
     private final GridFsTemplate gridFsTemplate;
     private final GridFsOperations operations;
 
     @Autowired
-    public VideoService(VideoRepo repo, GridFsTemplate gridFsTemplate, GridFsOperations operations) {
-        this.repo = repo;
+    public VideoService(GridFsTemplate gridFsTemplate, GridFsOperations operations) {
         this.gridFsTemplate = gridFsTemplate;
         this.operations = operations;
     }
 
-    public ResponseEntity<byte[]> prepareContent(final String title, final String range) {
+    public ResponseEntity<byte[]> prepareContent(final String id, final String range) {
         try {
             // TODO: fix the retrieval of the whole video file from gridfs. Instead need to retrieve small chunks of video.
-            byte[] binaryContent = getFileAsBinary(title);
+            byte[] binaryContent = getFileAsBinary(id);
             return range == null ?
                     contentFromBeginning(binaryContent) :
                     contentFromRange(binaryContent, range);
@@ -74,8 +73,9 @@ public class VideoService {
         return response(httpStatus, headers, binaryVideoContent);
     }
 
-    private byte[] getFileAsBinary(String title) throws IOException, NullPointerException {
-        GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(title)));
+    private byte[] getFileAsBinary(String id) throws IOException, NullPointerException {
+        GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
+        Assert.notNull(file, "FILE IS NULL");
         var outputStream = new ByteArrayOutputStream();
         operations.getResource(Objects.requireNonNull(file)).getInputStream().transferTo(outputStream);
         return outputStream.toByteArray();

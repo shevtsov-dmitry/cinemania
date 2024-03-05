@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react'
 import FormAddFilm from '../FormAddFilm/FormAddFilm'
 import {Link, Route, Routes} from 'react-router-dom'
+import {VideoPlayer} from "../VideoPlayer";
 
 export function Header() {
     const generalTopicsRef = useRef()
@@ -53,9 +54,9 @@ export function Header() {
 
     function generalTopicsLiContent() { // signs variants: ▼ᐁ
         const topics = ["Фильмы", "Сериалы", "Мультфильмы", "Аниме"]
-            return burgerActive ?
-                <>{topics.map((string, index) => <li key={index}>{string.concat(" ▼")}</li>)}</> :
-                <>{topics.map((string, index) => <li key={index}>{string}</li>)}</>
+        return burgerActive ?
+            <>{topics.map((string, index) => <li key={index}>{string.concat(" ▼")}</li>)}</> :
+            <>{topics.map((string, index) => <li key={index}>{string}</li>)}</>
     }
 
     function newsAndCollectionContent() {
@@ -93,6 +94,17 @@ export function Header() {
                 >
                     {newsAndCollectionContent()}
                 </div>
+
+                <Link to="/add-new-film">
+                    <p className="hover:cursor-pointer hover:text-orange-400 transition-colors hover:underline">
+                        Добавить новый фильм
+                    </p>
+                </Link>
+                <Link to="/watch">
+                    <p className="hover:cursor-pointer hover:text-orange-400 transition-colors hover:underline">Смотреть
+                        Онлайн</p>
+                </Link>
+
                 <div className="flex w-fit items-center justify-end gap-5">
                     <div
                         id="search"
@@ -137,11 +149,6 @@ export function Header() {
                         src={'icons/close.png'}
                         alt=""
                     />
-                    <Link to="/add-new-film">
-                        <p className="hover:cursor-pointer">
-                            Добавить новый фильм
-                        </p>
-                    </Link>
                 </div>
             </header>
             {showOpenedBurgerPanel()}
@@ -159,6 +166,12 @@ export function Header() {
                                 <FormAddFilm/>
                             </div>
                         </div>
+                    }
+                />
+                <Route
+                    path="/watch"
+                    element={
+                        <VideoPlayer/>
                     }
                 />
             </Routes>

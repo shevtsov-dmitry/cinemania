@@ -5,8 +5,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
+import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.data.mongodb.gridfs.ReactiveGridFsTemplate;
 
 import static ru.streaming.constants.ApplicationConstants.*;
 
@@ -17,7 +19,8 @@ public class MongoConfig extends AbstractMongoClientConfiguration{
     private final MappingMongoConverter mongoConverter;
 
     @Autowired
-    public MongoConfig(@Lazy MappingMongoConverter mongoConverter) {this.mongoConverter = mongoConverter;
+    public MongoConfig(@Lazy MappingMongoConverter mongoConverter) {
+        this.mongoConverter = mongoConverter;
     }
 
     @Bean
