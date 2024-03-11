@@ -13,6 +13,7 @@ import ru.video_material.util.PosterWithMetadata;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @RestController
 @RequestMapping("/posters")
@@ -56,48 +57,15 @@ public class PosterController {
         }
     }
 
-    @GetMapping(value = "/get/byId/test/{id}/{secId}")
-    public PosterWithMetadata[] somethingTEST(@PathVariable String id, @PathVariable String secId) {
-        PosterWithMetadata data1 = service.getPosterWithMetadataById(id);
-        PosterWithMetadata data2 = service.getPosterWithMetadataById(secId);
-        try {
-            return new PosterWithMetadata[]{
-                    data1,
-                    data2
-            };
-        } catch (NullPointerException ex) {
-            throw new InternalError();
-        }
+    @GetMapping(value = "/get/recent/ids/{limit}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getRecentSavedPosterIds(@PathVariable int limit){
+        return ResponseEntity.ok(service.getRecentSavedPosterIds(limit));
     }
 
-//    @GetMapping("/images")
-//    public ResponseEntity<byte[]> getImages() throws IOException {
-//        List<byte[]> imageBytesList = new ArrayList<>();
-//        for (int i = 1; i <= 5; i++) {
-//            String filePath = "path/to/your/image" + i + ".jpg"; // Replace with your actual path
-//            byte[] imageData = Files.readAllBytes(Paths.get(filePath));
-//            imageBytesList.add(imageData);
-//        }
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.MULTIPART_MIXED);
-//        StringBuilder boundary = new StringBuilder("myboundary");
-//
-//        MultipartBodyWriter writer = new MultipartBodyWriter(boundary.toString());
-//        try {
-//            for (byte[] imageData : imageBytesList) {
-//                MultiValueMap<String, String> partHeaders = new LinkedMultiValueMap<>();
-//                partHeaders.add("Content-Type", "image/jpeg; filename=image" + imageBytesList.indexOf(imageData) + ".jpg");
-//                writer.addPart("image", partHeaders, imageData);
-//            }
-//            return ResponseEntity.ok()
-//                    .headers(headers)
-//                    .body(writer.build());
-//        } catch (MultipartException e) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//    }
-
+    @GetMapping(value = "/get/recent/{limit}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<List<byte[]>>> getRecentlySavedPosters(@PathVariable int limit) {
+        return ResponseEntity.ok(service.getRecentlySavedPosters(limit));
+    }
 
     @DeleteMapping("/delete/byId/{id}")
     public ResponseEntity<String> deletePosterById(@PathVariable String id) {

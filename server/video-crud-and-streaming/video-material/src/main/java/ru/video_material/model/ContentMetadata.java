@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,7 @@ public class ContentMetadata {
     private String posterId;
     private String videoId;
     private float rating;
+    private LocalDateTime createdAt;
 
     public ContentMetadata(String title, String releaseDate,
                            String country, String genre, Integer age,
@@ -34,6 +36,7 @@ public class ContentMetadata {
         this.posterId = posterId;
         this.videoId = videoId;
         this.rating = rating;
+        this.createdAt = LocalDateTime.now();
     }
 
 //    @PrePersist

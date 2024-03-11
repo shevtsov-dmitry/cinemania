@@ -1,6 +1,9 @@
 package ru.video_material.service;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
+import org.bson.codecs.configuration.CodecProvider;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,10 +23,14 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
 import static java.lang.StringTemplate.STR;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Service
 public class VideoService {
@@ -40,6 +47,9 @@ public class VideoService {
         this.operations = operations;
     }
 
+//    // codecs are used to support current date time storage
+//    CodecProvider codecProvider = PojoCodecProvider.builder().automatic(true).build();
+//    CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromProviders(codecProvider));
     // ### VIDEO
     public String saveVideo(MultipartFile file) throws IOException {
         ObjectId savedFileId = gridFsTemplate.store(
@@ -68,9 +78,9 @@ public class VideoService {
 
     // ### METADATA
     public ResponseEntity<String> saveMetadata(ContentMetadata contentMetadata) {
+        contentMetadata.setCreatedAt(LocalDateTime.now());
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
-        System.out.println(contentMetadata);
         final String id = metadataRepo.save(contentMetadata).getId();
         return new ResponseEntity<>(id, httpHeaders, HttpStatus.OK);
     }
