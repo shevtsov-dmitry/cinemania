@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+    import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 function FormAddFilm() {
@@ -137,6 +137,7 @@ function FormAddFilm() {
 
     const formRef = useRef()
     const formSaveStatus = useRef()
+    const loadingRef = useRef()
 
     async function prepareFormDataToSend() {
         async function savePoster() {
@@ -208,6 +209,8 @@ function FormAddFilm() {
         const videoId = await saveVideo()
         const metadataId = await saveMetadata(posterId, videoId)
         const statusBar = formSaveStatus.current
+
+        loadingRef.current.style.display = "none"
         // posterId = undefined
         if (
             posterId === undefined ||
@@ -367,6 +370,7 @@ function FormAddFilm() {
                             className="m-0 p-0 text-[0.7em] text-center"
                             ref={formSaveStatus}
                         ></p>
+                        <img ref={loadingRef} src="icons/loading.gif" className="w-7 hidden" />
                     </div>
                     <button
                         onKeyDown={(event) =>
@@ -377,13 +381,23 @@ function FormAddFilm() {
                         onClick={(event) => {
                             event.preventDefault()
                             prepareFormDataToSend()
-                            const el = event.currentTarget
-                            el.style.transform = 'scale(0.95)'
-                            el.classList.add('bg-green-600')
-                            setTimeout(() => {
-                                el.style.transform = 'scale(1)'
-                                el.classList.remove('bg-green-600')
-                            }, 230)
+                            animateButtonPress();
+                            showLoadingIcon();
+
+                            function animateButtonPress() {
+                                const el = event.currentTarget
+                                el.style.transform = 'scale(0.95)'
+                                el.classList.add('bg-green-600')
+                                setTimeout(() => {
+                                    el.style.transform = 'scale(1)'
+                                    el.classList.remove('bg-green-600')
+                                }, 230)
+                            }
+
+                            function showLoadingIcon() {
+                                loadingRef.current.style.display = "block"
+                            }
+
                         }}
                     >
                         Принять
