@@ -2,15 +2,18 @@ import {useEffect, useRef, useState} from 'react'
 import {SideScrollArrow} from '../common/util/SideScrollArrow/SideScrollArrow'
 
 export function Preview() {
+    const OPTIONS = {
+        posters_displayed: 15,
+    }
+
     const scrollableBlockRef = useRef()
     const rightArrowRef = useRef()
     const leftArrowRef = useRef()
     const arrowsHolder = useRef()
     const [isBlockHovered, setIsBlockHovered] = useState(false)
 
-    const ARROW_SCROLL_DISTANCE = 800
     const Arrow = new SideScrollArrow(scrollableBlockRef)
-
+    const ARROW_SCROLL_DISTANCE = 800
     const scrollLeft = () => Arrow.scrollLeft(ARROW_SCROLL_DISTANCE)
     const scrollRight = () => Arrow.scrollRight(ARROW_SCROLL_DISTANCE)
     const hideArrowsLeaningScreen = () =>
@@ -43,40 +46,44 @@ export function Preview() {
         }
     }, [])
 
-    const [posters, setPosters] = useState([])
-
+    const [idAndPosters, setIdAndPosters] = useState([])
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const url = "http://localhost:8080/posters/get/recent/1";
+                const url = "http://localhost:8080/posters/get/recent/" + OPTIONS.posters_displayed;
                 const response = await fetch(url);
-                const data = await response.json();
-                const poster = `data:image/png;base64,${data[0][1]}`;
-                setPosters([poster])
+                const json = await response.json();
+                const idAndPoster = []
+                for (const element of json) {
+                    const metadataId = element[0]
+                    const imageBytes = element[1]
+                    const poster = `data:image/jpeg;base64,${imageBytes}`;
+                    idAndPoster.push([metadataId, poster])
+                }
+                setIdAndPosters(idAndPoster)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-
         fetchData(); // Call the function to fetch data on component mount
     }, []);
 
-    function showPosters() {
-        return <img src={posters[0]} alt="poster"/>
-    }
-
 
     function fillBlockWithPosters() {
+
         const content = []
-        for (let i = 0; i < posters.length; i++) {
+        for (const el of idAndPosters) {
+            const id = el[0]
+            const poster = el[1]
             content.push(
                 <li
-                    key={i}
+                    key={id}
                     className={
-                        "z-10 h-80 w-60 rounded-3xl bg-indigo-900 transition-all hover:scale-105 hover:cursor-pointer"
+                        "z-10 h-96 w-64 rounded-3xl bg-indigo-900 transition-all hover:scale-105 hover:cursor-pointer bg-cover bg-center"
                     }
-                ></li>
+                    style={{backgroundImage: `url(${poster})`}}>
+                </li>
             )
         }
         return content
@@ -127,11 +134,7 @@ export function Preview() {
                     </div>
                 </div>
             </div>
-            <div>
-                {posters ?
-                    showPosters() :
-                    <p className="text-white text-4xl">Loading posters...</p>}
-            </div>
+
         </>
     )
 }
