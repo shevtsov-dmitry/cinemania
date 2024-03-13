@@ -71,23 +71,41 @@ export function Preview() {
 
 
     function fillBlockWithPosters() {
-
         const content = []
         for (const el of idAndPosters) {
             const id = el[0]
-            const poster = el[1]
-            content.push(
-                <li
-                    key={id}
-                    className={
-                        "z-10 h-96 w-64 rounded-3xl bg-indigo-900 transition-all hover:scale-105 hover:cursor-pointer bg-cover bg-center"
-                    }
-                    style={{backgroundImage: `url(${poster})`}}>
-                </li>
-            )
+            const imageBytes = el[1]
+            const poster = new Poster(id, imageBytes)
+            content.push(poster.DOM)
         }
         return content
     }
+
+    class Poster {
+        constructor(metadataId, poster) {
+            this._metadataId = metadataId;
+            this._poster = poster;
+            this._DOM = <li
+                key={metadataId}
+                className={
+                    "z-10 h-96 w-64 rounded-3xl bg-indigo-900 transition-all hover:scale-105 hover:cursor-pointer bg-cover bg-center"
+                }
+                style={{backgroundImage: `url(${poster})`}}
+                onMouseEnter={(ev) => {
+                }}
+            >
+            </li>;
+        }
+
+        get metadataId() {
+            return this._id;
+        }
+        get DOM() {
+            return this._DOM;
+        }
+
+    }
+
 
     return (
         <>
