@@ -35,7 +35,8 @@ public class GenreController extends BaseController<Genre> {
 
     @GetMapping(value = "/get/bySequence", produces = "application/json;charset=UTF-8")
     public ResponseEntity<List<String>> findGenres(@RequestParam String sequence) {
-        if(sequence.isBlank()) return ResponseEntity.ok(Collections.emptyList());
+        if (sequence.isBlank())
+            return ResponseEntity.ok(Collections.emptyList());
         return ResponseEntity.ok(service.findMatchedGenres(sequence));
     }
 

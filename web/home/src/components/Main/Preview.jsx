@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { SideScrollArrow } from '../common/util/SideScrollArrow/SideScrollArrow'
+import {useEffect, useRef, useState} from 'react'
+import {SideScrollArrow} from '../common/util/SideScrollArrow/SideScrollArrow'
 
 export function Preview() {
     const scrollableBlockRef = useRef()
@@ -19,7 +19,6 @@ export function Preview() {
         Arrow.hideShowArrowsOnHover(isBlockHovered, arrowsHolder)
 
     useEffect(() => {
-        // init
         leftArrowRef.current.style.visibility = 'hidden'
     }, [])
 
@@ -43,6 +42,45 @@ export function Preview() {
             }
         }
     }, [])
+
+    const [posters, setPosters] = useState([])
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const url = "http://localhost:8080/posters/get/recent/1";
+                const response = await fetch(url);
+                const data = await response.json();
+                const poster = `data:image/png;base64,${data[0][1]}`;
+                setPosters([poster])
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData(); // Call the function to fetch data on component mount
+    }, []);
+
+    function showPosters() {
+        return <img src={posters[0]} alt="poster"/>
+    }
+
+
+    function fillBlockWithPosters() {
+        const content = []
+        for (let i = 0; i < posters.length; i++) {
+            content.push(
+                <li
+                    key={i}
+                    className={
+                        "z-10 h-80 w-60 rounded-3xl bg-indigo-900 transition-all hover:scale-105 hover:cursor-pointer"
+                    }
+                ></li>
+            )
+        }
+        return content
+    }
 
     return (
         <>
@@ -89,22 +127,12 @@ export function Preview() {
                     </div>
                 </div>
             </div>
+            <div>
+                {posters ?
+                    showPosters() :
+                    <p className="text-white text-4xl">Loading posters...</p>}
+            </div>
         </>
     )
 }
 
-function fillBlockWithPosters() {
-    const content = []
-    for (let i = 0; i < 15; i++) {
-        content.push(
-            <li
-                key={i}
-                className={
-                    `z-10 h-80 w-60 rounded-3xl bg-indigo-900 transition-all ` +
-                    'hover:scale-105 hover:cursor-pointer '
-                }
-            ></li>
-        )
-    }
-    return content
-}
