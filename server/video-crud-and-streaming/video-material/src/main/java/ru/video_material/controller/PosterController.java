@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
+import ru.video_material.model.ContentMetadata;
 import ru.video_material.service.PosterService;
 import ru.video_material.util.PosterWithMetadata;
 
@@ -55,6 +56,16 @@ public class PosterController {
         } catch (NullPointerException ex) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping(value = "/get/metadata/byTitle/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ContentMetadata>> getMetadataByTitle(@PathVariable String title) {
+        return service.getMetadataByTitle(title);
+    }
+
+    @GetMapping(value = "/get/metadata/byId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ContentMetadata> getMetadataById(@PathVariable String id){
+        return service.getMetadataById(id);
     }
 
     @GetMapping(value = "/get/recent/ids/{limit}", produces = MediaType.APPLICATION_JSON_VALUE)

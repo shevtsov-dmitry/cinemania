@@ -81,12 +81,12 @@ public class VideoController {
         return service.deleteMetadataById(id);
     }
 
-    @GetMapping("/get/byTitle/{title}")
+    @GetMapping("/get/metadata/byTitle/{title}")
     public ResponseEntity<List<ContentMetadata>> getMetadataByTitle(@PathVariable String title) {
         return service.getMetadataByTitle(title);
     }
 
-    @GetMapping("/get/byId/{id}")
+    @GetMapping("/get/metadata/byId/{id}")
     public ResponseEntity<ContentMetadata> getMetadataById(@PathVariable String id){
         return service.getMetadataById(id);
     }

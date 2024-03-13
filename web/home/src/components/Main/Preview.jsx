@@ -73,7 +73,7 @@ export function Preview() {
     function fillBlockWithPosters() {
         const content = []
         for (const el of idAndPosters) {
-            const id = el[0]
+            const id = atob(el[0])
             const imageBytes = el[1]
             const poster = new Poster(id, imageBytes)
             content.push(poster.DOM)
@@ -81,31 +81,61 @@ export function Preview() {
         return content
     }
 
+    const [isPosterHovered, setIsPosterHovered] = useState(false)
+    const [metadataOnPoster, setMetadataOnPoster] = useState({})
+    const hoveredPosterPopup = useRef()
+
+    useEffect(() => {
+        console.log(metadataOnPoster)
+
+    }, [metadataOnPoster]);
+
     class Poster {
         constructor(metadataId, poster) {
             this._metadataId = metadataId;
             this._poster = poster;
-            this._DOM = <li
-                key={metadataId}
+            this._DOM = this.initDOM()
+        }
+
+        initDOM() {
+            return <li
+                key={this._metadataId}
                 className={
                     "z-10 h-96 w-64 rounded-3xl bg-indigo-900 transition-all hover:scale-105 hover:cursor-pointer bg-cover bg-center"
                 }
-                style={{backgroundImage: `url(${poster})`}}
-                onMouseEnter={(ev) => {
+                style={{backgroundImage: `url(${this._poster})`}}
+                onMouseEnter={async (ev) => {
+                    setIsPosterHovered(true)
+                    const url = "http://localhost:8080/posters/get/metadata/byId/" + this._metadataId
+                    const res = await fetch(url)
+                    const json = await res.json()
+                    setMetadataOnPoster(json)
                 }}
+                onMouseLeave={() => setIsPosterHovered(false)}
             >
-            </li>;
+                {isPosterHovered && this._metadataId == metadataOnPoster.id ? showInfoOnPosterHover() : <div/>}
+            </li>
         }
 
         get metadataId() {
             return this._id;
         }
+
         get DOM() {
             return this._DOM;
         }
 
     }
-
+    function showInfoOnPosterHover() {
+        const json = metadataOnPoster
+        return <div className="absolute content-[''] h-96 w-64 rounded-3xl bg-black opacity-70 p-4">
+            <h3 className="bg-inherit text-white text-3xl font-bold">{json.title}</h3>
+            <p className="text-white select-none">{json.age}</p>
+            <p className="text-white select-none">{json.genre}</p>
+            <p className="text-white select-none">{json.country}</p>
+            <p className="text-white select-none">{json.releaseDate}</p>
+        </div>;
+    }
 
     return (
         <>

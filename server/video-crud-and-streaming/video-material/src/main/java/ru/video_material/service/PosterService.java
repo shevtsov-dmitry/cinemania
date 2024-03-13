@@ -5,6 +5,7 @@ import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.video_material.model.ContentMetadata;
@@ -78,6 +79,22 @@ public class PosterService {
             images.add(metadataIdAndPosterBinary);
         }
         return images;
+    }
+
+    public ResponseEntity<List<ContentMetadata>> getMetadataByTitle(String title) {
+        List<ContentMetadata> occurrences = metadataRepo.getByTitle(title);
+        if (occurrences == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(occurrences);
+    }
+
+    public ResponseEntity<ContentMetadata> getMetadataById(String id) {
+        ContentMetadata metadata = metadataRepo.getById(id);
+        if (metadata == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(metadata);
     }
 
 }
