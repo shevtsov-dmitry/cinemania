@@ -119,7 +119,7 @@ export function Preview() {
                     isPosterHovered && this._metadataId === metadataOnPoster.id ? (
                         <>
                             <div className="flex w-64 justify-center">
-                                <button className="bg-blue-300 absolute z-10 rounded opacity-70 ">Смотреть</button>
+                                <button className="bg-pink-700 hover:opacity-95 text-white absolute z-10 rounded-3xl bottom-0 mb-10 p-4 text-2xl font-bold font-sans select-none opacity-75">Смотреть</button>
                             </div>
                             {showInfoOnPosterHover()}
                         </>
