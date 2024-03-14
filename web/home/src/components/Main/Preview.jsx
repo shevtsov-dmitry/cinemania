@@ -47,6 +47,7 @@ export function Preview() {
     }, [])
 
     const [idAndPosters, setIdAndPosters] = useState([])
+    const [isPostersLoaded, setIsPostersLoaded] = useState(false)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -54,6 +55,7 @@ export function Preview() {
                 const url = "http://localhost:8080/posters/get/recent/" + OPTIONS.posters_displayed;
                 const response = await fetch(url);
                 const json = await response.json();
+                setIsPostersLoaded(true)
                 const idAndPoster = []
                 for (const element of json) {
                     const metadataId = element[0]
@@ -166,7 +168,9 @@ export function Preview() {
                     className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
                 >
                     <ul className="flex w-fit gap-4">
-                        {fillBlockWithPosters()}
+                        {isPostersLoaded ?
+                            fillBlockWithPosters() :
+                            <p className="text-2xl font-bold text-white opacity-20">Постеры загружаются...</p>}
                     </ul>
                 </div>
                 <div
