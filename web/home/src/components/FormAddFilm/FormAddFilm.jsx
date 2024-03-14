@@ -22,7 +22,7 @@ function FormAddFilm() {
     const videoInputRef = useRef()
 
     async function fetchAutosuggestionsList(name, inputVal) {
-        if (name === 'genre') {
+        if (name === 'genre' ) {
             let url = `${FILLING_ASSISTANT_URL}/fillingAssistants/genres/get/bySequence?sequence=`
             url = url.concat(inputVal)
             return fetch(url)
@@ -111,6 +111,9 @@ function FormAddFilm() {
     }, [genreInput])
 
     function applyTextAutosuggestion(name, inputVal) {
+        if(inputVal.length === 0) {
+            return
+        }
         const promise = fetchAutosuggestionsList(name, inputVal)
         createDivFromRetrievedSuggestion(promise, name, inputVal)
     }

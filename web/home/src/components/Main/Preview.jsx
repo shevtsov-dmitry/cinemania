@@ -113,7 +113,18 @@ export function Preview() {
                 }}
                 onMouseLeave={() => setIsPosterHovered(false)}
             >
-                {isPosterHovered && this._metadataId == metadataOnPoster.id ? showInfoOnPosterHover() : <div/>}
+                {
+                    isPosterHovered && this._metadataId === metadataOnPoster.id ? (
+                        <>
+                            <div className="flex w-64 justify-center">
+                                <button className="bg-blue-300 absolute z-10 rounded opacity-70 ">Смотреть</button>
+                            </div>
+                            {showInfoOnPosterHover()}
+                        </>
+
+                    ) : <div/>
+                }
+
             </li>
         }
 
@@ -126,6 +137,7 @@ export function Preview() {
         }
 
     }
+
     function showInfoOnPosterHover() {
         const json = metadataOnPoster
         return <div className="absolute content-[''] h-96 w-64 rounded-3xl bg-black opacity-70 p-4">
