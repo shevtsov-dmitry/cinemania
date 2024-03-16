@@ -1,7 +1,8 @@
 import {useEffect, useRef, useState} from 'react'
 import FormAddFilm from '../FormAddFilm/FormAddFilm'
 import {Link, Route, Routes} from 'react-router-dom'
-import {FilmPage} from "../FilmPage";
+import {FilmPage} from '../FilmPage'
+import App from '../../App'
 
 export function Header() {
     const generalTopicsRef = useRef()
@@ -37,7 +38,7 @@ export function Header() {
                 <>
                     <main
                         id="burger-popup"
-                        className="w-lvw h-lvh fixed z-20 bg-neutral-800 transition-all"
+                        className="fixed z-20 h-lvh w-lvw bg-neutral-800 transition-all"
                     >
                         <div className="ml-5 mt-2 text-[1.25em] uppercase leading-9 text-white">
                             <ul className="">{generalTopicsLiContent()}</ul>
@@ -52,11 +53,22 @@ export function Header() {
         }
     }
 
-    function generalTopicsLiContent() { // signs variants: ▼ᐁ
-        const topics = ["Фильмы", "Сериалы", "Мультфильмы", "Аниме"]
-        return burgerActive ?
-            <>{topics.map((string, index) => <li key={index}>{string.concat(" ▼")}</li>)}</> :
-            <>{topics.map((string, index) => <li key={index}>{string}</li>)}</>
+    function generalTopicsLiContent() {
+        // signs variants: ▼ᐁ
+        const topics = ['Фильмы', 'Сериалы', 'Мультфильмы', 'Аниме']
+        return burgerActive ? (
+            <>
+                {topics.map((string, index) => (
+                    <li key={index}>{string.concat(' ▼')}</li>
+                ))}
+            </>
+        ) : (
+            <>
+                {topics.map((string, index) => (
+                    <li key={index}>{string}</li>
+                ))}
+            </>
+        )
     }
 
     function newsAndCollectionContent() {
@@ -74,12 +86,14 @@ export function Header() {
                 id="upper-header"
                 className="text-amber-whiteflex ml-[3.5%] mr-[3.5%] flex items-center justify-between text-white"
             >
+                {/*<Link to="/">*/}
                 <img
                     className="mt-2 w-16"
                     id="company-logo"
                     src="icons/company_logo.png"
                     alt="company logo"
                 />
+                {/*</Link>*/}
                 <ul
                     ref={generalTopicsRef}
                     id="general-topics"
@@ -96,13 +110,9 @@ export function Header() {
                 </div>
 
                 <Link to="/add-new-film">
-                    <p className="hover:cursor-pointer hover:text-orange-400 transition-colors hover:underline">
+                    <p className="transition-colors hover:cursor-pointer hover:text-orange-400 hover:underline">
                         Добавить новый фильм
                     </p>
-                </Link>
-                <Link to="/watch">
-                    <p className="hover:cursor-pointer hover:text-orange-400 transition-colors hover:underline">Смотреть
-                        Онлайн</p>
                 </Link>
 
                 <div className="flex w-fit items-center justify-end gap-5">
@@ -157,10 +167,10 @@ export function Header() {
                 <Route
                     path="/add-new-film"
                     element={
-                        <div className="w-dvw h-dvh fixed left-0 top-0 z-50 flex items-center justify-center">
+                        <div className="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center">
                             <div
                                 id="blurred-bg-when-add-film-form-oppened"
-                                className="opacity-85 absolute h-full w-full bg-gray-800 backdrop-blur-md dark:backdrop-blur-lg"
+                                className="absolute h-full w-full bg-gray-800 opacity-85 backdrop-blur-md dark:backdrop-blur-lg"
                             ></div>
                             <div className="z-50">
                                 <FormAddFilm/>
@@ -168,15 +178,15 @@ export function Header() {
                         </div>
                     }
                 />
-                <Route
-                    path="/watch"
-                    element={
-                    <div className="fixed w-dvw h-dvh z-[1000]">
-                        <FilmPage/>
-                    </div>
-
-                    }
-                />
+                {/*<Route*/}
+                {/*    path="/watch"*/}
+                {/*    element={*/}
+                {/*        <div className="fixed z-[1000] h-dvh w-dvw">*/}
+                {/*            <FilmPage videoId={'65ef1be446b83239f8382e92'}/>*/}
+                {/*        </div>*/}
+                {/*    }*/}
+                {/*/>*/}
+                {/*<Route path="/" element={<App/>}></Route>*/}
             </Routes>
         </>
     )
