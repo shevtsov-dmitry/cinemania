@@ -9,10 +9,13 @@ export function Preview() {
         posters_displayed: 15,
     }
 
+    let [isPlayerOpened, setIsPlayerOpened] = useState(false)
+
     const scrollableBlockRef = useRef()
     const rightArrowRef = useRef()
     const leftArrowRef = useRef()
     const arrowsHolder = useRef()
+
     const [isBlockHovered, setIsBlockHovered] = useState(false)
 
     const Arrow = new SideScrollArrow(scrollableBlockRef)
@@ -89,7 +92,6 @@ export function Preview() {
 
     const [isPosterHovered, setIsPosterHovered] = useState(false)
     const [metadataOnPoster, setMetadataOnPoster] = useState({})
-    const hoveredPosterPopup = useRef()
 
     class Poster {
         constructor(metadataId, poster) {
@@ -121,9 +123,15 @@ export function Preview() {
                     this._metadataId === metadataOnPoster.id ? (
                         <>
                             <div className="flex w-64 justify-center">
-                                <Link className="z-10 absolute bottom-0  mb-10" to="/watch">
+                                <Link
+                                    className="absolute bottom-0 z-10  mb-10"
+                                    to="/watch"
+                                >
                                     <button
-                                        className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95">
+                                        className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"
+                                        onClick={() => {
+                                            setIsPlayerOpened(true)
+                                        }}>
                                         Смотреть
                                     </button>
                                 </Link>
@@ -161,63 +169,77 @@ export function Preview() {
         )
     }
 
-    return (
-        <>
-            <h3 className={'p-2 text-2xl font-bold text-white'}>Новинки</h3>
-            <div
-                id="previews-sequence-block"
-                onMouseEnter={() => {
-                    setIsBlockHovered(true)
-                }}
-                onMouseLeave={() => {
-                    setIsBlockHovered(false)
-                }}
-            >
+    function showPreview() {
+        return (
+            <>
+                <h3 className={'p-2 text-2xl font-bold text-white'}>Новинки</h3>
                 <div
-                    ref={scrollableBlockRef}
-                    className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
+                    id="previews-sequence-block"
+                    onMouseEnter={() =>
+                        setIsBlockHovered(true)
+                    }
+                    onMouseLeave={() => {
+                        setIsBlockHovered(false)
+                    }}
                 >
-                    <ul className="flex w-fit gap-4">
-                        {isPostersLoaded ? (
-                            fillBlockWithPosters()
-                        ) : (
-                            <p className="text-2xl font-bold text-white opacity-20">
-                                Постеры загружаются...
-                            </p>
-                        )}
-                    </ul>
-                </div>
-                <div
-                    ref={arrowsHolder}
-                    className={`arrows-holder absolute -mt-[20.5rem] h-[20rem] w-dvw `}
-                >
-                    <div className="centered-arrow left-8" onClick={scrollLeft}>
-                        <img
-                            ref={leftArrowRef}
-                            src={'icons/left-arrow.png'}
-                            className={'arrow max-md:w-0 max-md:bg-transparent'}
-                            alt={'scroll left'}
-                        />
+                    <div
+                        ref={scrollableBlockRef}
+                        className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
+                    >
+                        <ul className="flex w-fit gap-4">
+                            {isPostersLoaded ? (
+                                fillBlockWithPosters()
+                            ) : (
+                                <p className="text-2xl font-bold text-white opacity-20">
+                                    Постеры загружаются...
+                                </p>
+                            )}
+                        </ul>
                     </div>
                     <div
-                        className="centered-arrow right-0"
-                        onClick={scrollRight}
+                        ref={arrowsHolder}
+                        className={`arrows-holder absolute -mt-[20.5rem] h-[20rem] w-dvw `}
                     >
-                        <img
-                            ref={rightArrowRef}
-                            src={'icons/right-arrow.png'}
-                            className={'arrow max-md:w-0 max-md:bg-transparent'}
-                            alt={'scroll right'}
-                        />
+                        <div
+                            className="centered-arrow left-8"
+                            onClick={scrollLeft}
+                        >
+                            <img
+                                ref={leftArrowRef}
+                                src={'icons/left-arrow.png'}
+                                className={
+                                    'arrow max-md:w-0 max-md:bg-transparent'
+                                }
+                                alt={'scroll left'}
+                            />
+                        </div>
+                        <div
+                            className="centered-arrow right-0"
+                            onClick={scrollRight}
+                        >
+                            <img
+                                ref={rightArrowRef}
+                                src={'icons/right-arrow.png'}
+                                className={
+                                    'arrow max-md:w-0 max-md:bg-transparent'
+                                }
+                                alt={'scroll right'}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </>
+        )
+    }
 
+    return (
+        <>
+            {showPreview()}
             <Routes>
-                <Route path="/watch" element={<FilmPage videoId={
-                    metadataOnPoster.videoId
-                }/>}></Route>
-                {/*<Route path="/" element={<App/>} ></Route>*/}
+                <Route
+                    path="/watch"
+                    element={<FilmPage videoId={metadataOnPoster.videoId}/>}
+                ></Route>
             </Routes>
         </>
     )
