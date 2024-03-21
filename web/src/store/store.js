@@ -1,8 +1,8 @@
-import videoReducer from "./videoReducer";
+import videoPlayerSlice from "./videoPlayerSlice";
+import { configureStore } from "@reduxjs/toolkit";
 
-
-const rootReducer = combineReducers({
-    video: videoReducer,
+export const store = configureStore({
+    reducer: {
+        videoPlayer: videoPlayerSlice
+    }
 })
-
-export const store = createStore(rootReducer)

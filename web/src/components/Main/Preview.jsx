@@ -1,16 +1,12 @@
-import {useEffect, useRef, useState} from 'react'
-import {SideScrollArrow} from '../common/util/SideScrollArrow/SideScrollArrow'
-import {Link, Route, Routes} from 'react-router-dom'
-import {FilmPage} from '../FilmPage'
-import App from '../../App'
+import { useEffect, useRef, useState } from 'react'
+import { SideScrollArrow } from '../common/util/SideScrollArrow/SideScrollArrow'
+import { Link, Route, Routes } from 'react-router-dom'
+import { FilmPage } from '../FilmPage'
+import { useDispatch, useSelector } from "react-redux";
+import { setPlayerOpened, setVideoId, videoPlayerSlice } from "../../store/videoPlayerSlice";
 
 export function Preview() {
-    const OPTIONS = {
-        posters_displayed: 15,
-    }
-
-    let [isPlayerOpened, setIsPlayerOpened] = useState(false)
-
+    // *** EDGE SCREEN ARROWS
     const scrollableBlockRef = useRef()
     const rightArrowRef = useRef()
     const leftArrowRef = useRef()
@@ -28,7 +24,9 @@ export function Preview() {
         Arrow.hideShowArrowsOnHover(isBlockHovered, arrowsHolder)
 
     useEffect(() => {
-        leftArrowRef.current.style.visibility = 'hidden'
+        if (!isPlayerOpened) {
+            leftArrowRef.current.style.visibility = 'hidden'
+        }
     }, [])
 
     useEffect(() => {
@@ -52,15 +50,21 @@ export function Preview() {
         }
     }, [])
 
+    // *** PREVIEW PANEL
+    const videoPlayerState = useSelector(state => state.videoPlayer)
+    let isPlayerOpened = videoPlayerState.isPlayerOpened
+    const dispatch = useDispatch()
+
     const [idAndPosters, setIdAndPosters] = useState([])
     const [isPostersLoaded, setIsPostersLoaded] = useState(false)
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchRecentlyAddedPosters = async () => {
             try {
+                const postersToDisplay = 15
                 const url =
-                    'http://localhost:8080/posters/get/recent/' +
-                    OPTIONS.posters_displayed
+                    'http://localhost:8080/posters/get/recent/' + postersToDisplay
+
                 const response = await fetch(url)
                 const json = await response.json()
                 setIsPostersLoaded(true)
@@ -76,7 +80,7 @@ export function Preview() {
                 console.error('Error fetching data:', error)
             }
         }
-        fetchData() // Call the function to fetch data on component mount
+        fetchRecentlyAddedPosters() // Call the function to fetch data on component mount
     }, [])
 
     function fillBlockWithPosters() {
@@ -107,12 +111,10 @@ export function Preview() {
                     className={
                         'z-10 h-96 w-64 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer'
                     }
-                    style={{backgroundImage: `url(${this._poster})`}}
+                    style={{ backgroundImage: `url(${this._poster})` }}
                     onMouseEnter={async (ev) => {
                         setIsPosterHovered(true)
-                        const url =
-                            'http://localhost:8080/posters/get/metadata/byId/' +
-                            this._metadataId
+                        const url = 'http://localhost:8080/posters/get/metadata/byId/' + this._metadataId
                         const res = await fetch(url)
                         const json = await res.json()
                         setMetadataOnPoster(json)
@@ -120,7 +122,7 @@ export function Preview() {
                     onMouseLeave={() => setIsPosterHovered(false)}
                 >
                     {isPosterHovered &&
-                    this._metadataId === metadataOnPoster.id ? (
+                        this._metadataId === metadataOnPoster.id ? (
                         <>
                             <div className="flex w-64 justify-center">
                                 <Link
@@ -130,7 +132,7 @@ export function Preview() {
                                     <button
                                         className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"
                                         onClick={() => {
-                                            setIsPlayerOpened(true)
+                                            dispatch(setPlayerOpened(true))
                                         }}>
                                         Смотреть
                                     </button>
@@ -139,7 +141,7 @@ export function Preview() {
                             {showInfoOnPosterHover()}
                         </>
                     ) : (
-                        <div/>
+                        <div />
                     )}
                 </li>
             )
@@ -190,7 +192,7 @@ export function Preview() {
                             {isPostersLoaded ? (
                                 fillBlockWithPosters()
                             ) : (
-                                <p className="text-2xl font-bold text-white opacity-20">
+                                <p className="text-1xl font-bold text-white opacity-20">
                                     Постеры загружаются...
                                 </p>
                             )}
@@ -234,11 +236,11 @@ export function Preview() {
 
     return (
         <>
-            {showPreview()}
+            {isPlayerOpened ? <div /> : showPreview()}
             <Routes>
                 <Route
                     path="/watch"
-                    element={<FilmPage videoId={metadataOnPoster.videoId}/>}
+                    element={<FilmPage videoId={metadataOnPoster.videoId} />}
                 ></Route>
             </Routes>
         </>
