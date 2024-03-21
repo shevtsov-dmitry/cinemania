@@ -33,7 +33,10 @@ export class SideScrollArrow {
         }
     }
     hideShowArrowsOnHover(isBlockHovered, arrowsHolder) {
-        let style = arrowsHolder.current.style
+        if (arrowsHolder.current === undefined) {
+            return
+        }
+        const style = arrowsHolder.current.style
         isBlockHovered ? (style.display = 'block') : (style.display = 'none')
     }
 }

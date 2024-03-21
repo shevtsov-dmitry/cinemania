@@ -1,4 +1,4 @@
-let defaultState = {
+const defaultState = {
     isPlayerOpened: false,
     videoId: ""
 };
