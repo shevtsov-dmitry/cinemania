@@ -3,7 +3,6 @@
 .idea
 .vscode
 
-
 ### Java template
 # Compiled class file
 *.class
@@ -54,6 +53,7 @@ buildNumber.properties
 logs
 **/*.backup.*
 **/*.back.*
+.env
 
 node_modules
 bower_components
