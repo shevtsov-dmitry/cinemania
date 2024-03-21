@@ -63,7 +63,7 @@ export function Preview() {
             try {
                 const postersToDisplay = 15
                 const url =
-                    'http://localhost:8080/posters/get/recent/' + postersToDisplay
+                    `${process.env.REACT_APP_SERVER_URL}:8080/posters/get/recent/${postersToDisplay}`
 
                 const response = await fetch(url)
                 const json = await response.json()
@@ -114,7 +114,7 @@ export function Preview() {
                     style={{ backgroundImage: `url(${this._poster})` }}
                     onMouseEnter={async (ev) => {
                         setIsPosterHovered(true)
-                        const url = 'http://localhost:8080/posters/get/metadata/byId/' + this._metadataId
+                        const url = `${process.env.REACT_APP_SERVER_URL}:8080/posters/get/metadata/byId/${this._metadataId}`
                         const res = await fetch(url)
                         const json = await res.json()
                         setMetadataOnPoster(json)

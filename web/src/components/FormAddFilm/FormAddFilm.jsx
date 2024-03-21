@@ -1,10 +1,10 @@
-    import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 function FormAddFilm() {
     // *** ASSIGNMENT
-    const FILLING_ASSISTANT_URL = 'http://localhost:8001'
-    const BINARY_STORAGE_URL = 'http://localhost:8080'
+    const FILLING_ASSISTANT_URL = `${process.env.REACT_APP_SERVER_URL}:8001`
+    const BINARY_STORAGE_URL = `${process.env.REACT_APP_SERVER_URL}:8080`
     const suggestionsTextHighlightColor = '#f72585'
 
     const [retrievedSuggestionsDivs, setRetrievedSuggestionsDivs] = useState([])
@@ -22,7 +22,7 @@ function FormAddFilm() {
     const videoInputRef = useRef()
 
     async function fetchAutosuggestionsList(name, inputVal) {
-        if (name === 'genre' ) {
+        if (name === 'genre') {
             let url = `${FILLING_ASSISTANT_URL}/fillingAssistants/genres/get/bySequence?sequence=`
             url = url.concat(inputVal)
             return fetch(url)
@@ -40,7 +40,7 @@ function FormAddFilm() {
         return Promise.resolve(null)
     }
 
-    function highlightPopupElementTextColorWhileTyping(input) {}
+    function highlightPopupElementTextColorWhileTyping(input) { }
 
     function createDivFromRetrievedSuggestion(promise, name, inputVal) {
         promise
@@ -111,7 +111,7 @@ function FormAddFilm() {
     }, [genreInput])
 
     function applyTextAutosuggestion(name, inputVal) {
-        if(inputVal.length === 0) {
+        if (inputVal.length === 0) {
             return
         }
         const promise = fetchAutosuggestionsList(name, inputVal)
