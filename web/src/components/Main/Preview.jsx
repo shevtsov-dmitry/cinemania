@@ -2,8 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { SideScrollArrow } from '../common/util/SideScrollArrow/SideScrollArrow'
 import { Link, Route, Routes } from 'react-router-dom'
 import { FilmPage } from '../FilmPage'
-import { useDispatch, useSelector } from "react-redux";
-import { setPlayerOpened, setVideoId, videoPlayerSlice } from "../../store/videoPlayerSlice";
+import { useDispatch, useSelector } from 'react-redux'
+import {
+    setPlayerOpened,
+    setVideoId,
+    videoPlayerSlice,
+} from '../../store/videoPlayerSlice'
+import Home from './Home'
 
 export function Preview() {
     // *** EDGE SCREEN ARROWS
@@ -12,7 +17,7 @@ export function Preview() {
     const leftArrowRef = useRef()
     const arrowsHolder = useRef()
 
-    const [isBlockHovered, setIsBlockHovered] = useState(false)
+    const [isPostersBlockHovered, setIsPostersBlockHovered] = useState(false)
 
     const Arrow = new SideScrollArrow(scrollableBlockRef)
     const ARROW_SCROLL_DISTANCE = 800
@@ -21,7 +26,7 @@ export function Preview() {
     const hideArrowsLeaningScreen = () =>
         Arrow.hideArrowsLeaningScreen(leftArrowRef, rightArrowRef)
     const hideShowArrowsOnHover = () =>
-        Arrow.hideShowArrowsOnHover(isBlockHovered, arrowsHolder)
+        Arrow.hideShowArrowsOnHover(isPostersBlockHovered, arrowsHolder)
 
     useEffect(() => {
         if (!isPlayerOpened) {
@@ -31,7 +36,7 @@ export function Preview() {
 
     useEffect(() => {
         hideShowArrowsOnHover()
-    }, [isBlockHovered])
+    }, [isPostersBlockHovered])
 
     useEffect(() => {
         const blockElement = scrollableBlockRef.current
@@ -51,31 +56,41 @@ export function Preview() {
     }, [])
 
     // *** PREVIEW PANEL
-    const videoPlayerState = useSelector(state => state.videoPlayer)
+    const videoPlayerState = useSelector((state) => state.videoPlayer)
     let isPlayerOpened = videoPlayerState.isPlayerOpened
     const dispatch = useDispatch()
 
-    const [idAndPosters, setIdAndPosters] = useState([])
+    const [isPosterHovered, setIsPosterHovered] = useState()
+    const [metadataAndPosterBytesList, setMetadataAndPosterBytesList] =
+        useState([])
     const [isPostersLoaded, setIsPostersLoaded] = useState(false)
 
     useEffect(() => {
         const fetchRecentlyAddedPosters = async () => {
-            try {
-                const postersToDisplay = 15
-                const url =
-                    `${process.env.REACT_APP_SERVER_URL}:8080/posters/get/recent/${postersToDisplay}`
-
-                const response = await fetch(url)
-                const json = await response.json()
-                setIsPostersLoaded(true)
-                const idAndPoster = []
-                for (const element of json) {
-                    const metadataId = element[0]
-                    const imageBytes = element[1]
-                    const poster = `data:image/jpeg;base64,${imageBytes}`
-                    idAndPoster.push([metadataId, poster])
+            function parseMapsFromBase64(fetchedContentList) {
+                const parsedMaps = []
+                for (const elementMap of fetchedContentList) {
+                    let map = {}
+                    for (const k in elementMap) {
+                        map = {
+                            ...map,
+                            k: atob(elementMap[k]),
+                        }
+                    }
+                    parsedMaps.push(map)
                 }
-                setIdAndPosters(idAndPoster)
+                return parsedMaps
+            }
+
+            try {
+                const postersAmountToDisplay = 1
+                const url = `${process.env.REACT_APP_SERVER_URL}:8080/posters/get/recent/${postersAmountToDisplay}`
+                const response = await fetch(url)
+                const fetchedContentList = await response.json()
+                setIsPostersLoaded(true)
+                setMetadataAndPosterBytesList(
+                    parseMapsFromBase64(fetchedContentList)
+                )
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
@@ -84,24 +99,44 @@ export function Preview() {
     }, [])
 
     function fillBlockWithPosters() {
-        const content = []
-        for (const el of idAndPosters) {
-            const id = atob(el[0])
-            const imageBytes = el[1]
-            const poster = new Poster(id, imageBytes)
-            content.push(poster.DOM)
+        const posters = []
+        for (const el of metadataAndPosterBytesList) {
+            const poster = new Poster(el)
+            posters.push(poster.DOM)
         }
-        return content
+        return posters
     }
 
-    const [isPosterHovered, setIsPosterHovered] = useState(false)
-    const [metadataOnPoster, setMetadataOnPoster] = useState({})
-
+    // TODO: refactor to mutual component
     class Poster {
-        constructor(metadataId, poster) {
-            this._metadataId = metadataId
-            this._poster = poster
+        constructor(fetchedMap) {
+            this._metadataId = fetchedMap.metadataId
+            this._title = fetchedMap.title
+            this._poster = fetchedMap.poster
+            this._country = fetchedMap.country
+            this._releaseDate = fetchedMap.releaseDate
+            this._genre = fetchedMap.genre
+            this._rating = fetchedMap.rating
+            this._videoId = fetchedMap.videoId
+            this._age = fetchedMap.age
+
             this._DOM = this.initDOM()
+        }
+
+        InfoOnPosterHover() {
+            return (
+                <div className="absolute h-96 w-64 rounded-3xl bg-black p-4 opacity-70 content-['']">
+                    <h3 className="bg-inherit text-3xl font-bold text-white">
+                        {this._title}
+                    </h3>
+                    <p className="select-none text-white">{this._age}</p>
+                    <p className="select-none text-white">{this._genre}</p>
+                    <p className="select-none text-white">{this._country}</p>
+                    <p className="select-none text-white">
+                        {this._releaseDate}
+                    </p>
+                </div>
+            )
         }
 
         initDOM() {
@@ -114,15 +149,10 @@ export function Preview() {
                     style={{ backgroundImage: `url(${this._poster})` }}
                     onMouseEnter={async (ev) => {
                         setIsPosterHovered(true)
-                        const url = `${process.env.REACT_APP_SERVER_URL}:8080/posters/get/metadata/byId/${this._metadataId}`
-                        const res = await fetch(url)
-                        const json = await res.json()
-                        setMetadataOnPoster(json)
                     }}
                     onMouseLeave={() => setIsPosterHovered(false)}
                 >
-                    {isPosterHovered &&
-                        this._metadataId === metadataOnPoster.id ? (
+                    {isPosterHovered ? (
                         <>
                             <div className="flex w-64 justify-center">
                                 <Link
@@ -133,12 +163,14 @@ export function Preview() {
                                         className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"
                                         onClick={() => {
                                             dispatch(setPlayerOpened(true))
-                                        }}>
+                                            dispatch(setVideoId())
+                                        }}
+                                    >
                                         Смотреть
                                     </button>
                                 </Link>
                             </div>
-                            {showInfoOnPosterHover()}
+                            {<InfoOnPosterHover />}
                         </>
                     ) : (
                         <div />
@@ -148,41 +180,54 @@ export function Preview() {
         }
 
         get metadataId() {
-            return this._id
+            return this._metadataId
         }
 
         get DOM() {
             return this._DOM
         }
+
+        get title() {
+            return this._title
+        }
+
+        get poster() {
+            return this._poster
+        }
+
+        get country() {
+            return this._country
+        }
+
+        get age() {
+            return this._age
+        }
+
+        get releaseDate() {
+            return this._releaseDate
+        }
+
+        get genre() {
+            return this._genre
+        }
+
+        get rating() {
+            return this._rating
+        }
+
+        get videoId() {
+            return this._videoId
+        }
     }
 
-    function showInfoOnPosterHover() {
-        const json = metadataOnPoster
-        return (
-            <div className="absolute h-96 w-64 rounded-3xl bg-black p-4 opacity-70 content-['']">
-                <h3 className="bg-inherit text-3xl font-bold text-white">
-                    {json.title}
-                </h3>
-                <p className="select-none text-white">{json.age}</p>
-                <p className="select-none text-white">{json.genre}</p>
-                <p className="select-none text-white">{json.country}</p>
-                <p className="select-none text-white">{json.releaseDate}</p>
-            </div>
-        )
-    }
-
-    function showPreview() {
+    function RecentlyAddedPosters() {
         return (
             <>
                 <h3 className={'p-2 text-2xl font-bold text-white'}>Новинки</h3>
                 <div
                     id="previews-sequence-block"
-                    onMouseEnter={() =>
-                        setIsBlockHovered(true)
-                    }
-                    onMouseLeave={() => {
-                        setIsBlockHovered(false)
-                    }}
+                    onMouseEnter={() => setIsPostersBlockHovered(true)}
+                    onMouseLeave={() => setIsPostersBlockHovered(false)}
                 >
                     <div
                         ref={scrollableBlockRef}
@@ -236,12 +281,13 @@ export function Preview() {
 
     return (
         <>
-            {isPlayerOpened ? <div /> : showPreview()}
+            {isPlayerOpened ? <div /> : <RecentlyAddedPosters />}
             <Routes>
-                <Route
-                    path="/watch"
-                    element={<FilmPage videoId={metadataOnPoster.videoId} />}
-                ></Route>
+                <Route path="/watch" element={<FilmPage />} />
+                {/*<Route*/}
+                {/*    path="/"*/}
+                {/*    element={<Home/>}*/}
+                {/*/>*/}
             </Routes>
         </>
     )

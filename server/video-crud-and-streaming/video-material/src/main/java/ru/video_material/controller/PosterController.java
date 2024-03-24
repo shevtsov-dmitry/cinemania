@@ -15,6 +15,7 @@ import ru.video_material.util.PosterWithMetadata;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/posters")
@@ -68,14 +69,14 @@ public class PosterController {
         return service.getMetadataById(id);
     }
 
-    @GetMapping(value = "/get/recent/ids/{limit}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<String>> getRecentSavedPosterIds(@PathVariable int limit){
-        return ResponseEntity.ok(service.getRecentSavedPosterIds(limit));
+    @GetMapping(value = "/get/recent/ids/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getRecentSavedPosterIds(@PathVariable int amount){
+        return ResponseEntity.ok(service.getRecentSavedPosterIds(amount));
     }
 
-    @GetMapping(value = "/get/recent/{limit}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<List<byte[]>>> getRecentlySavedPosters(@PathVariable int limit) {
-        return ResponseEntity.ok(service.getRecentlySavedPosters(limit));
+    @GetMapping(value = "/get/recent/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Map<String, byte[]>>> getRecentlySavedPosters(@PathVariable int amount) {
+        return ResponseEntity.ok(service.getRecentlySavedPosters(amount));
     }
 
     @DeleteMapping("/delete/byId/{id}")

@@ -63,22 +63,33 @@ public class PosterService {
 
 
     /* *
-    * list of byte[2]
-    * byte[0] - metadata id (mutual, not poster)
-    * byte[1] - poster binary image content
-    * */
-    public List<List<byte[]>> getRecentlySavedPosters(int amount) {
+     * list of byte[2]
+     * byte[0] - metadata id (mutual, not poster)
+     * byte[1] - poster binary image content
+     * */
+    public List<Map<String, byte[]>> getRecentlySavedPosters(int amount) {
         List<String> recentSavedPosterIds = getRecentSavedPosterIds(amount);
-        List<List<byte[]>> images = new ArrayList<>(amount);
+        List<Map<String, byte[]>> imagesAndMetadata = new ArrayList<>(amount);
+
         for (String id : recentSavedPosterIds) {
-            List<byte[]> metadataIdAndPosterBinary = new ArrayList<>(2);
+            Map<String, byte[]> data = new HashMap<>();
+
             Poster poster = posterRepo.getPosterById(id);
-            String metadataId = metadataRepo.getByPosterId(poster.getId()).getId();
-            metadataIdAndPosterBinary.add(metadataId.getBytes());
-            metadataIdAndPosterBinary.add(poster.getImage().getData());
-            images.add(metadataIdAndPosterBinary);
+            data.put("poster", poster.getImage().getData());
+
+            final ContentMetadata metadata = metadataRepo.getByPosterId(poster.getId());
+            data.put("metadataId", metadata.getId().getBytes());
+            data.put("title", metadata.getTitle().getBytes());
+            data.put("genre", metadata.getGenre().getBytes());
+            data.put("releaseDate", metadata.getReleaseDate().getBytes());
+            data.put("rating", String.valueOf(metadata.getRating()).getBytes());
+            data.put("country", metadata.getCountry().getBytes());
+            data.put("age", metadata.getAge().toString().getBytes());
+            data.put("videoId", metadata.getVideoId().getBytes());
+
+            imagesAndMetadata.add(data);
         }
-        return images;
+        return imagesAndMetadata;
     }
 
     public ResponseEntity<List<ContentMetadata>> getMetadataByTitle(String title) {
@@ -88,6 +99,7 @@ public class PosterService {
         }
         return ResponseEntity.ok(occurrences);
     }
+
 
     public ResponseEntity<ContentMetadata> getMetadataById(String id) {
         ContentMetadata metadata = metadataRepo.getById(id);
