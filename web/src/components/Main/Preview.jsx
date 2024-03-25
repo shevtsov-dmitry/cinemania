@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { SideScrollArrow } from '../common/util/SideScrollArrow'
 import { Route, Routes } from 'react-router-dom'
-import { FilmPage } from '../FilmPage'
+import { VideoPlayer } from '../VideoPlayer'
 import { useSelector } from 'react-redux'
-import { Poster, PosterClass } from '../common/util/Poster'
+import { Poster, PosterClass } from './Poster'
 import Home from './Home'
 
 export function Preview() {
@@ -79,7 +79,7 @@ export function Preview() {
         }
 
         constructPosters()
-    })
+    },[])
 
     return (
         <>
@@ -143,13 +143,7 @@ export function Preview() {
                     </div>
                 </>
             )}
-            <Routes>
-                <Route path="/watch" element={<FilmPage />} />
-                {/*<Route*/}
-                {/*    path="/"*/}
-                {/*    element={<Home/>}*/}
-                {/*/>*/}
-            </Routes>
+
         </>
     )
 }

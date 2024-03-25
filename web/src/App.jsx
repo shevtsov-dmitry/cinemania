@@ -1,6 +1,7 @@
 import {Header} from './components/Main/Header'
 import {Route, Routes} from 'react-router-dom'
 import Home from "./components/Main/Home";
+import {VideoPlayer} from "./components/VideoPlayer";
 
 export default function App() {
 
@@ -14,6 +15,7 @@ export default function App() {
                     path="/"
                     element={<Home/>}
                 />
+                <Route path="/watch" element={<VideoPlayer/>}/>
             </Routes>
         </div>
     )

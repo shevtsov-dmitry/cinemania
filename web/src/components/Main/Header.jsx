@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react'
 import FormAddFilm from '../FormAddFilm/FormAddFilm'
 import {Link, Route, Routes} from 'react-router-dom'
-import {FilmPage} from '../FilmPage'
+import {VideoPlayer} from '../VideoPlayer'
 import App from '../../App'
 
 export function Header() {
@@ -178,15 +178,7 @@ export function Header() {
                         </div>
                     }
                 />
-                {/*<Route*/}
-                {/*    path="/watch"*/}
-                {/*    element={*/}
-                {/*        <div className="fixed z-[1000] h-dvh w-dvw">*/}
-                {/*            <FilmPage videoId={'65ef1be446b83239f8382e92'}/>*/}
-                {/*        </div>*/}
-                {/*    }*/}
-                {/*/>*/}
-                {/*<Route path="/" element={<App/>}></Route>*/}
+
             </Routes>
         </>
     )
