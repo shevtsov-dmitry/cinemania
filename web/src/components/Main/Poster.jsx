@@ -1,9 +1,10 @@
 import { Link, Route, Routes } from 'react-router-dom'
-import { setPlayerOpened, setVideoId } from '../../../store/videoPlayerSlice'
+import { setPlayerOpened, setVideoId } from '../../store/videoPlayerSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Preview } from '../../Main/Preview'
+import { Preview } from './Preview'
 import {useState} from "react";
+import {VideoPlayer} from "../VideoPlayer";
 
 export class PosterClass {
     constructor(fetchedMap) {
