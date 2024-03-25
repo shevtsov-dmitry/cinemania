@@ -81,7 +81,7 @@ export function Poster(props) {
             <li
                 key={metadata.metadataId}
                 className={
-                    'z-10 h-96 w-64 rounded-3xl bg-indigo-900 bg-cover bg-center hover:scale-105 hover:cursor-pointer'
+                    'z-10 h-96 w-64 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer'
                 }
                 style={{ backgroundImage: `url(${metadata.poster})` }}
                 onMouseEnter={(ev) => {
@@ -92,22 +92,27 @@ export function Poster(props) {
                 }}
             >
                 <div className="postersInfo">
-                    {isPosterHovered ? <InfoOnPosterHover /> : <div />}
-                    <div className="flex w-64 justify-center">
-                        <Link
-                            className="absolute bottom-0 z-10  mb-10"
-                            to={`/watch/${metadata.videoId}`}
-                        >
-                            <button
-                                className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"
-                                onClick={() =>
-                                    dispatch(setVideoId(metadata.videoId))
-                                }
-                            >
-                                Смотреть
-                            </button>
-                        </Link>
-                    </div>
+                    {isPosterHovered ?
+                        <>
+                            <InfoOnPosterHover/>
+                            <div className="flex w-64 justify-center">
+                                <Link
+                                    className="absolute z-10 bottom-0 mb-10"
+                                    to={`/watch/${metadata.videoId}`}
+                                >
+                                    <button
+                                        className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"
+                                        onClick={() =>
+                                            dispatch(setVideoId(metadata.videoId))
+                                        }
+                                    >
+                                        Смотреть
+                                    </button>
+                                </Link>
+                            </div>
+                        </>
+                        : <div/>}
+
                 </div>
             </li>
         </>
