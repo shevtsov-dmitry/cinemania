@@ -1,10 +1,10 @@
 import { Link, Route, Routes } from 'react-router-dom'
-import { setPlayerOpened, setVideoId } from '../../store/videoPlayerSlice'
+import { setVideoId } from '../../store/videoPlayerSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Preview } from './Preview'
-import {useState} from "react";
-import {VideoPlayer} from "../VideoPlayer";
+import { useState } from 'react'
+import { VideoPlayer } from '../VideoPlayer'
 
 export class PosterClass {
     constructor(fetchedMap) {
@@ -57,7 +57,6 @@ export class PosterClass {
 }
 
 export function Poster(props) {
-
     const dispatch = useDispatch()
     const metadata = props.posterObject
 
@@ -97,14 +96,13 @@ export function Poster(props) {
                     <div className="flex w-64 justify-center">
                         <Link
                             className="absolute bottom-0 z-10  mb-10"
-                            to="/watch"
+                            to={`/watch/${metadata.videoId}`}
                         >
                             <button
                                 className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"
-                                onClick={() => {
-                                    dispatch(setPlayerOpened(true))
+                                onClick={() =>
                                     dispatch(setVideoId(metadata.videoId))
-                                }}
+                                }
                             >
                                 Смотреть
                             </button>

@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { SideScrollArrow } from '../common/util/SideScrollArrow'
-import { Route, Routes } from 'react-router-dom'
-import { VideoPlayer } from '../VideoPlayer'
 import { useSelector } from 'react-redux'
 import { Poster, PosterClass } from './Poster'
-import Home from './Home'
 
 export function Preview() {
     // *** EDGE SCREEN ARROWS
@@ -72,78 +69,62 @@ export function Preview() {
                     map[k] = atob(map[k])
                 }
                 const poster = new PosterClass(map)
-                posterList.push(<Poster posterObject={poster}/>)
+                posterList.push(<Poster posterObject={poster} />)
             }
             setPosters(posterList)
             setIsPostersLoaded(true)
         }
 
         constructPosters()
-    },[])
+    }, [])
 
     return (
         <>
-            {isPlayerOpened ? (
-                <div />
-            ) : (
-                <>
-                    <h3 className={'p-2 text-2xl font-bold text-white'}>
-                        Новинки
-                    </h3>
-                    <div
-                        id="previews-sequence-block"
-                        onMouseEnter={() => setIsPostersBlockHovered(true)}
-                        onMouseLeave={() => setIsPostersBlockHovered(false)}
-                    >
-                        <div
-                            ref={scrollableBlockRef}
-                            className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
-                        >
-                            <ul className="flex w-fit gap-4">
-                                {isPostersLoaded ? (
-                                    posters
-                                ) : (
-                                    <p className="text-1xl font-bold text-white opacity-20">
-                                        Постеры загружаются...
-                                    </p>
-                                )}
-                            </ul>
-                        </div>
-                        <div
-                            ref={arrowsHolder}
-                            className={`arrows-holder absolute -mt-[20.5rem] h-[20rem] w-dvw `}
-                        >
-                            <div
-                                className="centered-arrow left-8"
-                                onClick={scrollLeft}
-                            >
-                                <img
-                                    ref={leftArrowRef}
-                                    src={'icons/left-arrow.png'}
-                                    className={
-                                        'arrow max-md:w-0 max-md:bg-transparent'
-                                    }
-                                    alt={'scroll left'}
-                                />
-                            </div>
-                            <div
-                                className="centered-arrow right-0"
-                                onClick={scrollRight}
-                            >
-                                <img
-                                    ref={rightArrowRef}
-                                    src={'icons/right-arrow.png'}
-                                    className={
-                                        'arrow max-md:w-0 max-md:bg-transparent'
-                                    }
-                                    alt={'scroll right'}
-                                />
-                            </div>
-                        </div>
+            <h3 className={'p-2 text-2xl font-bold text-white'}>Новинки</h3>
+            <div
+                id="previews-sequence-block"
+                onMouseEnter={() => setIsPostersBlockHovered(true)}
+                onMouseLeave={() => setIsPostersBlockHovered(false)}
+            >
+                <div
+                    ref={scrollableBlockRef}
+                    className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
+                >
+                    <ul className="flex w-fit gap-4">
+                        {isPostersLoaded ? (
+                            posters
+                        ) : (
+                            <p className="text-1xl font-bold text-white opacity-20">
+                                Постеры загружаются...
+                            </p>
+                        )}
+                    </ul>
+                </div>
+                <div
+                    ref={arrowsHolder}
+                    className={`arrows-holder absolute -mt-[20.5rem] h-[20rem] w-dvw `}
+                >
+                    <div className="centered-arrow left-8" onClick={scrollLeft}>
+                        <img
+                            ref={leftArrowRef}
+                            src={'icons/left-arrow.png'}
+                            className={'arrow max-md:w-0 max-md:bg-transparent'}
+                            alt={'scroll left'}
+                        />
                     </div>
-                </>
-            )}
-
+                    <div
+                        className="centered-arrow right-0"
+                        onClick={scrollRight}
+                    >
+                        <img
+                            ref={rightArrowRef}
+                            src={'icons/right-arrow.png'}
+                            className={'arrow max-md:w-0 max-md:bg-transparent'}
+                            alt={'scroll right'}
+                        />
+                    </div>
+                </div>
+            </div>
         </>
     )
 }

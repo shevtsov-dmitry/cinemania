@@ -3,6 +3,7 @@ import FormAddFilm from '../FormAddFilm/FormAddFilm'
 import {Link, Route, Routes} from 'react-router-dom'
 import {VideoPlayer} from '../VideoPlayer'
 import App from '../../App'
+import Home from "./Home";
 
 export function Header() {
     const generalTopicsRef = useRef()
@@ -86,14 +87,14 @@ export function Header() {
                 id="upper-header"
                 className="text-amber-whiteflex ml-[3.5%] mr-[3.5%] flex items-center justify-between text-white"
             >
-                {/*<Link to="/">*/}
+                <Link to="/">
                 <img
-                    className="mt-2 w-16"
+                    className="mt-2 w-16 hover:cursor-pointer"
                     id="company-logo"
                     src="icons/company_logo.png"
                     alt="company logo"
                 />
-                {/*</Link>*/}
+                </Link>
                 <ul
                     ref={generalTopicsRef}
                     id="general-topics"
@@ -169,7 +170,6 @@ export function Header() {
                     element={
                         <div className="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center">
                             <div
-                                id="blurred-bg-when-add-film-form-oppened"
                                 className="absolute h-full w-full bg-gray-800 opacity-85 backdrop-blur-md dark:backdrop-blur-lg"
                             ></div>
                             <div className="z-50">
@@ -178,7 +178,6 @@ export function Header() {
                         </div>
                     }
                 />
-
             </Routes>
         </>
     )

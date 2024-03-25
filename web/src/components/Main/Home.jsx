@@ -1,6 +1,5 @@
 import { Preview } from './Preview'
-import { Route, Routes } from 'react-router-dom'
-import { VideoPlayer } from '../VideoPlayer'
+import {Header} from "./Header";
 
 export default function Home() {
     return (
