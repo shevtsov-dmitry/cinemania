@@ -13,9 +13,16 @@ function FormAddFilm() {
     const [suggestionsDOM, setSuggestionsDOM] = useState([])
 
     const [countryInput, setCountryInput] = useState('')
-    const [genreInput, setGenreInput] = useState('')
-    const [genreSuggestionsDOM, setGenreSuggestionsDOM] = useState(null)
+    const [mainGenreInput, setMainGenreInput] = useState('')
+    const [subGenresInput, setSubGenresInput] = useState('')
+
     const [countrySuggestionsDOM, setCountrySuggestionsDOM] = useState(<div />)
+    const [mainGenreSuggestionsDOM, setMainGenreSuggestionsDOM] = useState(
+        <div />
+    )
+    const [subGenresSuggestionsDOM, setSubGenresSuggestionsDOM] = useState(
+        <div />
+    )
 
     const posterInputRef = useRef()
     const videoInputRef = useRef()
@@ -54,17 +61,14 @@ function FormAddFilm() {
         }
     }, [])
 
-    function createDivFromRetrievedSuggestion(
-        suggestions,
-        formFieldName,
-        inputVal
-    ) {
+    function createDivFromRetrievedSuggestion(suggestions, formFieldName) {
         return suggestions.map((suggestion) => createDOM(suggestion))
 
         function createDOM(suggestion) {
             return (
                 <button
-                    className="bg-amber-100 px-2 text-left dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700 dark:focus:text-teal-300"
+                    className={`bg-white px-2 text-left first:rounded-t last:rounded-b 
+                    dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700 dark:focus:text-teal-300`}
                     type="submit"
                     onClick={(ev) => {
                         ev.preventDefault()
@@ -76,11 +80,6 @@ function FormAddFilm() {
                             recentInputLength: 0,
                         })
                     }}
-                    onFocus={(ev) => {
-                        ev.currentTarget.addEventListener('blur', () => {
-                            //     setSuggestionsDOM([])
-                        })
-                    }}
                     key={suggestion}
                 >
                     {suggestion}
@@ -90,14 +89,13 @@ function FormAddFilm() {
 
         function changeInputTextToAutoSuggestion(autoSuggestion) {
             if (formFieldName === 'country') setCountryInput(autoSuggestion)
-            if (formFieldName === 'genre') setGenreInput(autoSuggestion)
+            if (formFieldName === 'genre') setMainGenreInput(autoSuggestion)
         }
     }
 
     function getSuggestionsBySequence(input, list) {
         list = list.filter(
-            (string) =>
-                string.substring(0, input.length) === input
+            (string) => string.substring(0, input.length) === input
         )
         return list.slice(0, options.MAX_AUTO_SUGGESTIONS_DISPLAYED)
     }
@@ -112,7 +110,8 @@ function FormAddFilm() {
         const buffer = autoSuggestionsMap.buffer
         const recentInputLength = autoSuggestionsMap.recentInputLength
         const firstCharUpCaseInput =
-            countryInput[0].toUpperCase() + countryInput.substring(1, countryInput.length)
+            countryInput[0].toUpperCase() +
+            countryInput.substring(1, countryInput.length)
 
         let list = countryInput.length === 1 ? countries : buffer
 
@@ -128,17 +127,13 @@ function FormAddFilm() {
             recentInputLength: countryInput.length,
         })
 
-        const DOM = createDivFromRetrievedSuggestion(
-            list,
-            'country',
-            countryInput
-        )
+        const DOM = createDivFromRetrievedSuggestion(list, 'country')
         setCountrySuggestionsDOM(DOM)
     }, [countryInput])
 
     // Set genre suggestions
     useEffect(() => {
-        if (genreInput === undefined || genreInput === '') {
+        if (mainGenreInput === undefined || mainGenreInput === '') {
             return
         }
 
@@ -146,13 +141,13 @@ function FormAddFilm() {
         const buffer = autoSuggestionsMap.buffer
         const recentInputLength = autoSuggestionsMap.recentInputLength
 
-        let list = genreInput.length === 1 ? genres : buffer
+        let list = mainGenreInput.length === 1 ? genres : buffer
 
-        if (genreInput.length < recentInputLength) {
+        if (mainGenreInput.length < recentInputLength) {
             list = genres
         }
 
-        list = getSuggestionsBySequence(genreInput, list)
+        list = getSuggestionsBySequence(mainGenreInput, list)
 
         setAutoSuggestionsMap({
             ...autoSuggestionsMap,
@@ -160,13 +155,9 @@ function FormAddFilm() {
             recentInputLength: countryInput.length,
         })
 
-        const DOM = createDivFromRetrievedSuggestion(
-            list,
-            'genre',
-            genreInput
-        )
-        setGenreSuggestionsDOM(DOM)
-    }, [genreInput])
+        const DOM = createDivFromRetrievedSuggestion(list, 'genre')
+        setMainGenreSuggestionsDOM(DOM)
+    }, [mainGenreInput])
 
     // *** FORM
 
@@ -222,7 +213,8 @@ function FormAddFilm() {
                     title: form.get('title'),
                     releaseDate: form.get('releaseDate'),
                     country: form.get('country'),
-                    genre: form.get('genre'),
+                    mainGenre: form.get('mainGenre'),
+                    subGenres: form.get('subGenres'),
                     age: form.get('age'),
                     rating: form.get('rating'),
                     posterId: posterId,
@@ -316,7 +308,7 @@ function FormAddFilm() {
                     <li className="mb-2 mt-[-10px] text-center text-3xl font-bold">
                         Добавить фильм
                     </li>
-                    <li id="title" className="form-li">
+                    <li id="title">
                         <p>Название фильма</p>
                         <input
                             onKeyDown={(event) =>
@@ -328,7 +320,7 @@ function FormAddFilm() {
                             name="title"
                         />
                     </li>
-                    <li id="country" className="form-li">
+                    <li id="country">
                         <p>Страна</p>
                         <input
                             onKeyDown={(event) =>
@@ -344,7 +336,7 @@ function FormAddFilm() {
                             {countrySuggestionsDOM}
                         </div>
                     </li>
-                    <li id="releaseDate" className="form-li">
+                    <li id="releaseDate">
                         <p>Дата релиза</p>
                         <input
                             onKeyDown={(event) =>
@@ -355,23 +347,41 @@ function FormAddFilm() {
                             name="releaseDate"
                         />
                     </li>
-                    <li id="genre" className="form-li">
-                        <p>Жанр</p>
+                    <li id="mainGenre">
+                        <p>Основной жанр</p>
                         <input
                             onKeyDown={(event) =>
                                 event.keyCode === 13 && event.preventDefault()
                             }
                             className="input pl-2"
                             type="search"
-                            name="genre"
-                            value={genreInput}
-                            onChange={(ev) => setGenreInput(ev.target.value)}
+                            name="mainGenre"
+                            value={mainGenreInput}
+                            onChange={(ev) =>
+                                setMainGenreInput(ev.target.value)
+                            }
                         />
                         <div className="typingSuggestions">
-                            {genreSuggestionsDOM}
+                            {mainGenreSuggestionsDOM}
                         </div>
                     </li>
-                    <li id="ageRestriction" className="form-li">
+                    <li id="subGenres">
+                        <p>Поджанры</p>
+                        <input
+                            onKeyDown={(event) =>
+                                event.keyCode === 13 && event.preventDefault()
+                            }
+                            className="input pl-2"
+                            type="search"
+                            name="subGenres"
+                            // value={genreInput}
+                            onChange={() => {}}
+                        />
+                        <div className="typingSuggestions">
+                            {subGenresSuggestionsDOM}
+                        </div>
+                    </li>
+                    <li id="ageRestriction">
                         <p>Возраст</p>
                         <div className="flex w-full justify-evenly">
                             {createAgeRadioInput(0)}
@@ -381,7 +391,7 @@ function FormAddFilm() {
                             {createAgeRadioInput(18)}
                         </div>
                     </li>
-                    <li id="poster" className="form-li">
+                    <li id="poster">
                         <p>Постер</p>
                         <input
                             ref={posterInputRef}
@@ -390,7 +400,7 @@ function FormAddFilm() {
                             name="imageUrl"
                         />
                     </li>
-                    <li id="video" className="form-li">
+                    <li id="video">
                         <p>Видео</p>
                         <input
                             ref={videoInputRef}
@@ -399,7 +409,7 @@ function FormAddFilm() {
                             name="videoUrl"
                         />
                     </li>
-                    <li className="form-li">
+                    <li>
                         <p>Рейтинг</p>
                         <input
                             onKeyDown={(event) =>
@@ -457,7 +467,7 @@ function FormAddFilm() {
                     >
                         Принять
                     </button>
-                    <div className="absolute ml-24 mt-1 items-center justify-center">
+                    <div className="absolute ml-[108px] mt-1 items-center justify-center">
                         <button className="m-0 p-0 text-[0.70em] opacity-50">
                             <u>Очистить форму</u>
                         </button>
