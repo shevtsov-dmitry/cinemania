@@ -5,136 +5,152 @@ function FormAddFilm() {
     // *** ASSIGNMENT
     const FILLING_ASSISTANT_URL = `${process.env.REACT_APP_SERVER_URL}:8001`
     const BINARY_STORAGE_URL = `${process.env.REACT_APP_SERVER_URL}:8080`
-    const suggestionsTextHighlightColor = '#f72585'
 
-    const [retrievedSuggestionsDivs, setRetrievedSuggestionsDivs] = useState([])
+    const options = {
+        MAX_AUTO_SUGGESTIONS_DISPLAYED: 5,
+    }
 
-    const [currentInputName, setCurrentInputName] = useState('')
-    const [currentInputValue, setCurrentInputValue] = useState('')
-    // auto filling
+    const [suggestionsDOM, setSuggestionsDOM] = useState([])
+
     const [countryInput, setCountryInput] = useState('')
     const [genreInput, setGenreInput] = useState('')
-    const [genreFillerContent, setGenreFillerContent] = useState(null)
-    const [countryFillerContent, setCountryFillerContent] = useState(null)
+    const [genreSuggestionsDOM, setGenreSuggestionsDOM] = useState(null)
+    const [countrySuggestionsDOM, setCountrySuggestionsDOM] = useState(<div />)
 
     const posterInputRef = useRef()
     const videoInputRef = useRef()
 
-    async function fetchAutosuggestions(formFieldName) {
-        let urlSubdirectory = ""
-        switch (formFieldName) {
-            case "genre":
-                urlSubdirectory = "genres"
-                break
-            case "country":
-                urlSubdirectory = "countries"
-                break
-        }
-        if (urlSubdirectory.length === 0) {
-            console.error("Method: fetchAutosuggestionsList(). Couldn't fetch autosuggestions list because @formFieldName not set in switch.")
-            return "";
-        }
-        const response = await fetch(`${FILLING_ASSISTANT_URL}/filling-assistants/${urlSubdirectory}/get/all`)
-        const data = await response.json()
-        return data
-    }
+    const [autoSuggestionsMap, setAutoSuggestionsMap] = useState({})
+    const [autoSuggestionsBuffer, setAutoSuggestionsBuffer] = useState([])
 
-    function createDivFromRetrievedSuggestion(promise, name, inputVal) {
-        promise
-            .then((response) => response.json())
-            .then((data) => {
-                const listItemsDiv = Object.keys(data).map((k) => (
-                    <button
-                        className="bg-amber-100 px-2 text-left dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700   dark:focus:text-teal-300"
-                        type="submit"
-                        onClick={(ev) => {
-                            ev.preventDefault()
-                            const autoSuggestion = ev.currentTarget.textContent
-                            if (
-                                autoSuggestion === inputVal &&
-                                inputVal.length !== 0
-                            ) {
-                                ev.currentTarget.style.display = 'none'
-                            }
-                            changeInputTextToAutoSuggestion(
-                                autoSuggestion,
-                                name
-                            )
-                            setRetrievedSuggestionsDivs([])
-                        }}
-                        onFocus={(ev) => {
-                            whenLastElementFocused_hideSuggestionsOnBlur(
-                                ev,
-                                data,
-                                k
-                            )
-                        }}
-                        key={k}
-                    >
-                        {data[k]}
-                    </button>
-                ))
-                setRetrievedSuggestionsDivs(listItemsDiv)
-            })
-
-        function changeInputTextToAutoSuggestion(autoSuggestion, name) {
-            if (name === 'country') {
-                setCountryInput(autoSuggestion)
-            }
-            if (name === 'genre') {
-                setGenreInput(autoSuggestion)
-            }
-        }
-
-        function whenLastElementFocused_hideSuggestionsOnBlur(ev, data, k) {
-            if (parseInt(k) === data.length - 1) {
-                ev.currentTarget.addEventListener('blur', () => {
-                    setRetrievedSuggestionsDivs([])
-                })
-            }
-        }
-    }
-
-    async function applyTextAutosuggestion(formFieldName, inputVal) {
-        if (inputVal.length === 0) {
-            return
-        }
-        const promise = await fetchAutosuggestions(formFieldName)
-        createDivFromRetrievedSuggestion(promise, name, inputVal)
-    }
+    // *** AUTO SUGGESTIONS
 
     useEffect(() => {
-        setCurrentInputName('country')
-        setCurrentInputValue(countryInput)
-        applyTextAutosuggestion('country', countryInput)
+        fetchAutosuggestions()
+
+        async function fetchAutosuggestions() {
+            let response = await fetch(
+                `${FILLING_ASSISTANT_URL}/filling-assistants/genres/get/all`
+            )
+            let responseData = await response.json()
+            let map = {
+                genre: responseData,
+            }
+
+            response = await fetch(
+                `${FILLING_ASSISTANT_URL}/filling-assistants/countries/get/all`
+            )
+            responseData = await response.json()
+            map = {
+                ...map,
+                country: responseData,
+            }
+
+            setAutoSuggestionsMap(map)
+        }
+    }, [])
+
+    function createDivFromRetrievedSuggestion(
+        suggestions,
+        formFieldName,
+        inputVal
+    ) {
+        return suggestions.map((suggestion) => createDOM(suggestion))
+
+        function createDOM(suggestion, v) {
+            return (
+                <button
+                    className="bg-amber-100 px-2 text-left dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700 dark:focus:text-teal-300"
+                    type="submit"
+                    onClick={(ev) => {
+                        ev.preventDefault()
+                        const autoSuggestion = ev.currentTarget.textContent
+                        // if (
+                        //     autoSuggestion === inputVal &&
+                        //     inputVal.length !== 0
+                        // ) {
+                        //     // console.log("POP@!")
+                        //     destroySuggestionsPopup(formFieldName)
+                        // }
+                        // destroySuggestionsPopup(formFieldName)
+                        changeInputTextToAutoSuggestion(
+                            autoSuggestion,
+                            formFieldName
+                        )
+                        // destroySuggestionsPopup(formFieldName)
+                        // setSuggestionsDOM([])
+                    }}
+                    onFocus={(ev) => {
+                        ev.currentTarget.addEventListener('blur', () => {
+                            //     setSuggestionsDOM([])
+                        })
+                    }}
+                    key={suggestion}
+                >
+                    {suggestion}
+                </button>
+            )
+        }
+
+        function changeInputTextToAutoSuggestion(
+            autoSuggestion,
+            formFieldName
+        ) {
+            if (formFieldName === 'country') setCountryInput(autoSuggestion)
+            if (formFieldName === 'genre') setGenreInput(autoSuggestion)
+        }
+
+        // function destroySuggestionsPopup(formFieldName) {
+        //     if (formFieldName === 'country') setCountrySuggestionsDOM(<div />)
+        //     if (formFieldName === 'genre') setGenreSuggestionsDOM(<div />)
+        // }
+    }
+
+    // TODO make narrowing list each time value found
+    useEffect(() => {
+        if (countryInput === undefined || countryInput === '') {
+            return
+        }
+        setGenreSuggestionsDOM('')
+        let list = autoSuggestionsMap.country
+        const firstCharUpCaseInput =
+            countryInput[0].toUpperCase() +
+            countryInput.substring(1, countryInput.length)
+        list = list.filter(
+            (countryName) =>
+                countryName.substring(0, countryInput.length) ===
+                firstCharUpCaseInput
+        )
+        list = list.slice(0, options.MAX_AUTO_SUGGESTIONS_DISPLAYED)
+        const DOM = createDivFromRetrievedSuggestion(
+            list,
+            'country',
+            countryInput
+        )
+        setCountrySuggestionsDOM(DOM)
     }, [countryInput])
 
     useEffect(() => {
-        setCurrentInputName('genre')
-        setCurrentInputValue(genreInput)
-        applyTextAutosuggestion('genre', genreInput)
+        if (genreInput === undefined || genreInput === '') {
+            return
+        }
+        setCountrySuggestionsDOM('')
+        let list = autoSuggestionsMap.genre
+        list = list.filter(
+            (genreName) =>
+                genreName.substring(0, genreInput.length) === genreInput
+        )
+        list = list.slice(0, options.MAX_AUTO_SUGGESTIONS_DISPLAYED)
+        const DOM = createDivFromRetrievedSuggestion(list, 'genre', genreInput)
+        setGenreSuggestionsDOM(DOM)
     }, [genreInput])
 
-    useEffect(() => {
-        if (
-            currentInputValue.length !== 0 &&
-            retrievedSuggestionsDivs.length !== 0
-        ) {
-            if (
-                currentInputValue.length ===
-                retrievedSuggestionsDivs[0].props.children.length
-            ) {
-                setRetrievedSuggestionsDivs([])
-            }
-        }
-        if (currentInputName === 'country') {
-            setCountryFillerContent(retrievedSuggestionsDivs)
-        }
-        if (currentInputName === 'genre') {
-            setGenreFillerContent(retrievedSuggestionsDivs)
-        }
-    }, [retrievedSuggestionsDivs])
+    function destroySuggestionsPopup(formFieldName) {
+        if (formFieldName === 'country') setCountrySuggestionsDOM(<div />)
+        if (formFieldName === 'genre') setGenreSuggestionsDOM(<div />)
+    }
 
+    // *** FORM
 
     const formRef = useRef()
     const formSaveStatus = useRef()
@@ -307,7 +323,7 @@ function FormAddFilm() {
                             onChange={(ev) => setCountryInput(ev.target.value)}
                         />
                         <div className="typingSuggestions">
-                            {countryFillerContent}
+                            {countrySuggestionsDOM}
                         </div>
                     </li>
                     <li id="releaseDate" className="form-li">
@@ -334,7 +350,7 @@ function FormAddFilm() {
                             onChange={(ev) => setGenreInput(ev.target.value)}
                         />
                         <div className="typingSuggestions">
-                            {genreFillerContent}
+                            {genreSuggestionsDOM}
                         </div>
                     </li>
                     <li id="ageRestriction" className="form-li">
