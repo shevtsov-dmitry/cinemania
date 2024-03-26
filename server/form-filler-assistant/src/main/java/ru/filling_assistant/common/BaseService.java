@@ -1,6 +1,5 @@
 package ru.filling_assistant.common;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
@@ -48,7 +47,6 @@ public abstract class BaseService<T extends Nameable> {
             }
             noDups.add(entity.getName());
         }
-        // ? maybe should return no dups instead
         return savedEntities;
     }
 
@@ -58,6 +56,10 @@ public abstract class BaseService<T extends Nameable> {
 
     public List<T> saveNewEntities(List<T> entities) {
         return repo.saveAll(entities);
+    }
+
+    public List<T> getAllEntities() {
+        return repo.findAll();
     }
 
     public ResponseEntity<String> deleteEntitiesByName(List<String> entityNamesToDelete) {

@@ -23,12 +23,12 @@ function FormAddFilm() {
 
     async function fetchAutosuggestionsList(name, inputVal) {
         if (name === 'genre') {
-            let url = `${FILLING_ASSISTANT_URL}/fillingAssistants/genres/get/bySequence?sequence=`
+            let url = `${FILLING_ASSISTANT_URL}/filling-assistants/genres/get/bySequence?sequence=`
             url = url.concat(inputVal)
             return fetch(url)
         } else if (name === 'country') {
             let countryName = ''
-            let url = `${FILLING_ASSISTANT_URL}/fillingAssistants/countries/get/bySequence?sequence=`
+            let url = `${FILLING_ASSISTANT_URL}/filling-assistants/countries/get/bySequence?sequence=`
             if (inputVal.length > 0) {
                 countryName =
                     inputVal[0].toUpperCase() +

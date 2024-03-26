@@ -57,7 +57,7 @@ export function Preview() {
 
     useEffect(() => {
         async function constructPosters() {
-            const postersAmountToDisplay = 3
+            const postersAmountToDisplay = 20
             const url = `${process.env.REACT_APP_SERVER_URL}:8080/posters/get/recent/${postersAmountToDisplay}`
             const response = await fetch(url)
             const fetchedMaps = await response.json()

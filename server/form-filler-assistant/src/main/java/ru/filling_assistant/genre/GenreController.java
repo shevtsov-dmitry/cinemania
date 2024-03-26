@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/fillingAssistants/genres")
+@RequestMapping("/filling-assistants/genres")
 public class GenreController extends BaseController<Genre> {
 
     private final GenreService service;
@@ -33,11 +33,13 @@ public class GenreController extends BaseController<Genre> {
         return super.tryToSaveListOfEntities(genres);
     }
 
-    @GetMapping(value = "/get/bySequence", produces = "application/json;charset=UTF-8")
-    public ResponseEntity<List<String>> findGenres(@RequestParam String sequence) {
-        if (sequence.isBlank())
-            return ResponseEntity.ok(Collections.emptyList());
-        return ResponseEntity.ok(service.findMatchedGenres(sequence));
+    @GetMapping("/get/all")
+    public ResponseEntity<List<String>> getAllGenres() {
+        return ResponseEntity.ok(
+                service.getAllGenres().stream()
+                        .map(Genre::getName)
+                        .toList()
+        );
     }
 
     @DeleteMapping("/delete")

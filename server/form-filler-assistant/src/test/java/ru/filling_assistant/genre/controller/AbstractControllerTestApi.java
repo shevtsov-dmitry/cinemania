@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.blankString;
 import static org.hamcrest.Matchers.not;
@@ -26,7 +25,7 @@ public abstract class AbstractControllerTestApi {
 
     @Autowired
     MockMvc mockMvc;
-    final String ENDPOINT_URL = "/fillingAssistants";
+    final String ENDPOINT_URL = "/filling-assistants";
     String CONTROLLER_REQUEST_MAPPING;
 
     static final String GENERATED_NAME;
@@ -54,13 +53,15 @@ public abstract class AbstractControllerTestApi {
                 .andDo(res -> Long.parseLong(res.getResponse().getContentAsString()));
     }
 
-    void getOneEntity() throws Exception {
-        String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/get/bySequence";
+    void getAllEntities() throws Exception {
+        String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/get/all";
 
-        mockMvc.perform(get(url)
-                        .param("sequence", GENERATED_NAME))
+        mockMvc.perform(get(url))
                 .andExpect(status().isOk())
-                .andExpect(res -> content().string(gson.toJson(GENERATED_NAME)));
+                .andExpect(res -> {
+                    String arrayOfEntities = gson.toJson(res.getResponse().getContentAsString());
+                    System.out.println(arrayOfEntities);
+                });
     }
 
     void deleteOneEntity() throws Exception {
@@ -145,7 +146,7 @@ public abstract class AbstractControllerTestApi {
                 .andDo(res -> {
                     int expectedSize = set.size();
                     List<Long> list = gson.fromJson(res.getResponse().getContentAsString(), List.class);
-                    assertEquals(expectedSize,list.size());
+                    assertEquals(expectedSize, list.size());
                 });
 
         url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/delete";
@@ -156,8 +157,6 @@ public abstract class AbstractControllerTestApi {
                 .andExpect(content().string("All requested entities have been deleted successfully."));
     }
 
-    public abstract void findEntityNamesBySequences() throws Exception;
-
     void checkSequenceRequest(String sequence, List<String> expected) throws Exception {
         String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/get/bySequence";
 
@@ -167,21 +166,8 @@ public abstract class AbstractControllerTestApi {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(result ->
                         expected.stream().map(el -> "\"".concat(el).concat("\"")).toList().toString()
-                        .equals(result.getResponse().getContentAsString()));
+                                .equals(result.getResponse().getContentAsString()));
     }
-//    @Test
-//    void FindNotMoreThanFiveGenreNamesBySequence() {
-//        List<Genre> genres = List.of(
-//                new Genre("Драма"), new Genre("Драматургия"),
-//                new Genre("Другое"), new Genre("Дружба"),
-//                new Genre("Дорама"), new Genre("Диджитал"),
-//                new Genre("Догма"), new Genre("Дэнс")
-//        );
-//        repo.saveAll(genres);
-//        List<String> genresExpected = List.of("Драма", "Драматургия", "Другое", "Дружба", "Дорама");
-//        List<String> genresActual = service.findMatchedGenres("Д");
-//        assertLinesMatch(genresExpected, genresActual);
-//    }
 
 
 }

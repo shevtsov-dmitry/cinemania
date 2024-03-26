@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry.addMapping("/fillingAssistants/**")
+        registry.addMapping("/filling-assistants/**")
                 .allowedOrigins("http://localhost:3000", "http://localhost:5173");
     }
 };

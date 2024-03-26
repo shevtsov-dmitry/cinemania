@@ -9,7 +9,7 @@ export function VideoPlayer() {
     const videoPlayerState = useSelector(state => state.videoPlayer)
     let videoId = videoPlayerState.videoId
 
-    // FIXME should find the better way to remember state. Maybe with browser cache.
+    // FIXME should find the better way to remember state. Maybe with browser 2"cache.
     if(videoId === "") {
         videoId = window.location.pathname.replace("/watch/", "")
         dispatch(setVideoId(videoId))

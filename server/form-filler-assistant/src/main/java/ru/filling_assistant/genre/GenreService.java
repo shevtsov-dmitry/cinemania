@@ -14,7 +14,6 @@ import java.util.List;
 public class GenreService extends BaseService<Genre> {
 
     private final GenreRepo repo;
-    private final Pageable foundGenreAmountRestriction = PageRequest.of(0, 5);
 
     @Autowired
     public GenreService(GenreRepo repo) {
@@ -22,13 +21,13 @@ public class GenreService extends BaseService<Genre> {
         this.repo = repo;
     }
 
-    public List<String> findMatchedGenres(String sequence) {
-        return repo.getGenresNamesBySimilarStringSequence(sequence, foundGenreAmountRestriction);
-    }
-
     @Override
     public List<Genre> saveWithoutDuplicates(List<Genre> receivedEntities) {
         return super.saveWithoutDuplicates(receivedEntities);
+    }
+
+    public List<Genre> getAllGenres() {
+        return super.getAllEntities();
     }
 
     @Transactional
