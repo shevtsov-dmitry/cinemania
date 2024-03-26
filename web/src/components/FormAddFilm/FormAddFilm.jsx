@@ -16,31 +16,28 @@ function FormAddFilm() {
     const [genreInput, setGenreInput] = useState('')
     const [genreFillerContent, setGenreFillerContent] = useState(null)
     const [countryFillerContent, setCountryFillerContent] = useState(null)
-    const autoSuggestionDivs = [genreFillerContent, countryFillerContent]
 
     const posterInputRef = useRef()
     const videoInputRef = useRef()
 
-    async function fetchAutosuggestionsList(name, inputVal) {
-        if (name === 'genre') {
-            let url = `${FILLING_ASSISTANT_URL}/filling-assistants/genres/get/bySequence?sequence=`
-            url = url.concat(inputVal)
-            return fetch(url)
-        } else if (name === 'country') {
-            let countryName = ''
-            let url = `${FILLING_ASSISTANT_URL}/filling-assistants/countries/get/bySequence?sequence=`
-            if (inputVal.length > 0) {
-                countryName =
-                    inputVal[0].toUpperCase() +
-                    inputVal.substring(1, inputVal.length)
-            }
-            url = url.concat(countryName)
-            return fetch(url)
+    async function fetchAutosuggestions(formFieldName) {
+        let urlSubdirectory = ""
+        switch (formFieldName) {
+            case "genre":
+                urlSubdirectory = "genres"
+                break
+            case "country":
+                urlSubdirectory = "countries"
+                break
         }
-        return Promise.resolve(null)
+        if (urlSubdirectory.length === 0) {
+            console.error("Method: fetchAutosuggestionsList(). Couldn't fetch autosuggestions list because @formFieldName not set in switch.")
+            return "";
+        }
+        const response = await fetch(`${FILLING_ASSISTANT_URL}/filling-assistants/${urlSubdirectory}/get/all`)
+        const data = await response.json()
+        return data
     }
-
-    function highlightPopupElementTextColorWhileTyping(input) { }
 
     function createDivFromRetrievedSuggestion(promise, name, inputVal) {
         promise
@@ -48,7 +45,7 @@ function FormAddFilm() {
             .then((data) => {
                 const listItemsDiv = Object.keys(data).map((k) => (
                     <button
-                        className="@/h.h// bg-amber-100 px-2 text-left dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700   dark:focus:text-teal-300"
+                        className="bg-amber-100 px-2 text-left dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700   dark:focus:text-teal-300"
                         type="submit"
                         onClick={(ev) => {
                             ev.preventDefault()
@@ -98,6 +95,14 @@ function FormAddFilm() {
         }
     }
 
+    async function applyTextAutosuggestion(formFieldName, inputVal) {
+        if (inputVal.length === 0) {
+            return
+        }
+        const promise = await fetchAutosuggestions(formFieldName)
+        createDivFromRetrievedSuggestion(promise, name, inputVal)
+    }
+
     useEffect(() => {
         setCurrentInputName('country')
         setCurrentInputValue(countryInput)
@@ -109,14 +114,6 @@ function FormAddFilm() {
         setCurrentInputValue(genreInput)
         applyTextAutosuggestion('genre', genreInput)
     }, [genreInput])
-
-    function applyTextAutosuggestion(name, inputVal) {
-        if (inputVal.length === 0) {
-            return
-        }
-        const promise = fetchAutosuggestionsList(name, inputVal)
-        createDivFromRetrievedSuggestion(promise, name, inputVal)
-    }
 
     useEffect(() => {
         if (
@@ -137,6 +134,7 @@ function FormAddFilm() {
             setGenreFillerContent(retrievedSuggestionsDivs)
         }
     }, [retrievedSuggestionsDivs])
+
 
     const formRef = useRef()
     const formSaveStatus = useRef()
@@ -181,6 +179,8 @@ function FormAddFilm() {
             })
         }
 
+        function highlightPopupElementTextColorWhileTyping(input) {}
+
         async function saveMetadata(posterId, videoId) {
             return new Promise((resolve) => {
                 const form = new FormData(formRef.current)
@@ -213,7 +213,7 @@ function FormAddFilm() {
         const metadataId = await saveMetadata(posterId, videoId)
         const statusBar = formSaveStatus.current
 
-        loadingRef.current.style.display = "none"
+        loadingRef.current.style.display = 'none'
         // posterId = undefined
         if (
             posterId === undefined ||
@@ -230,26 +230,41 @@ function FormAddFilm() {
         }
 
         displaySuccessSaveMessage()
+
         function displaySuccessSaveMessage() {
             statusBar.textContent = 'Сохранено ✅'
-            statusBar.style.fontSize = "0.8em"
-            statusBar.style.color = "green"
-            statusBar.style.marginTop = "-6px"
+            statusBar.style.fontSize = '0.8em'
+            statusBar.style.color = 'green'
+            statusBar.style.marginTop = '-6px'
             setTimeout(() => {
                 statusBar.textContent = ''
-                statusBar.style.fontSize = "0.7em"
+                statusBar.style.fontSize = '0.7em'
             }, 1500)
         }
-
     }
 
-    function form() {
+    function createAgeRadioInput(age) {
         return (
+            <>
+                <input
+                    onKeyDown={(event) =>
+                        event.keyCode === 13 && event.preventDefault()
+                    }
+                    type="radio"
+                    name="age"
+                    value={age}
+                />
+                <label htmlFor="" className="ml-0.5">
+                    {age}+
+                </label>
+            </>
+        )
+    }
+
+    return (
+        <div className="column flex flex-col justify-center">
             <form
                 ref={formRef}
-                // onSubmit={(event) => {
-                //     prepareFormDataToSend(event.currentTarget);
-                // }}
                 className="dark:bg-stone-80r flex w-fit flex-col content-center items-center justify-center gap-3 rounded-2xl bg-[#f4f3ee] p-4 dark:bg-neutral-800 dark:text-blue-100"
             >
                 <ul className="w-fit">
@@ -366,14 +381,18 @@ function FormAddFilm() {
                 <div className="button-aligner flex">
                     <div
                         className={
-                            'absolute -ml-28 -mt-1.5 flex h-12 w-24 justify-center overflow-hidden items-center font-medium'
+                            'absolute -ml-28 -mt-1.5 flex h-12 w-24 items-center justify-center overflow-hidden font-medium'
                         }
                     >
                         <p
-                            className="m-0 p-0 text-[0.7em] text-center"
+                            className="m-0 p-0 text-center text-[0.7em]"
                             ref={formSaveStatus}
                         ></p>
-                        <img ref={loadingRef} src="icons/loading.gif" className="w-7 hidden" />
+                        <img
+                            ref={loadingRef}
+                            src="icons/loading.gif"
+                            className="hidden w-7"
+                        />
                     </div>
                     <button
                         onKeyDown={(event) =>
@@ -384,8 +403,8 @@ function FormAddFilm() {
                         onClick={(event) => {
                             event.preventDefault()
                             prepareFormDataToSend()
-                            animateButtonPress();
-                            showLoadingIcon();
+                            animateButtonPress()
+                            showLoadingIcon()
 
                             function animateButtonPress() {
                                 const el = event.currentTarget
@@ -398,9 +417,8 @@ function FormAddFilm() {
                             }
 
                             function showLoadingIcon() {
-                                loadingRef.current.style.display = "block"
+                                loadingRef.current.style.display = 'block'
                             }
-
                         }}
                     >
                         Принять
@@ -412,28 +430,8 @@ function FormAddFilm() {
                     </div>
                 </div>
             </form>
-        )
-    }
-
-    function createAgeRadioInput(age) {
-        return (
-            <>
-                <input
-                    onKeyDown={(event) =>
-                        event.keyCode === 13 && event.preventDefault()
-                    }
-                    type="radio"
-                    name="age"
-                    value={age}
-                />
-                <label htmlFor="" className="ml-0.5">
-                    {age}+
-                </label>
-            </>
-        )
-    }
-
-    return <div className="column flex flex-col justify-center">{form()}</div>
+        </div>
+    )
 }
 
 export default FormAddFilm
