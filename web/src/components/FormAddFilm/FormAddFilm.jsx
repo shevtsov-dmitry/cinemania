@@ -21,7 +21,6 @@ function FormAddFilm() {
     const videoInputRef = useRef()
 
     const [autoSuggestionsMap, setAutoSuggestionsMap] = useState({})
-    const [autoSuggestionsBuffer, setAutoSuggestionsBuffer] = useState([])
 
     // *** AUTO SUGGESTIONS
 
@@ -29,11 +28,16 @@ function FormAddFilm() {
         fetchAutosuggestions()
 
         async function fetchAutosuggestions() {
+            let map = {
+                buffer: [],
+                recentInputLength: 0,
+            }
             let response = await fetch(
                 `${FILLING_ASSISTANT_URL}/filling-assistants/genres/get/all`
             )
             let responseData = await response.json()
-            let map = {
+            map = {
+                ...map,
                 genre: responseData,
             }
 
@@ -57,7 +61,7 @@ function FormAddFilm() {
     ) {
         return suggestions.map((suggestion) => createDOM(suggestion))
 
-        function createDOM(suggestion, v) {
+        function createDOM(suggestion) {
             return (
                 <button
                     className="bg-amber-100 px-2 text-left dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700 dark:focus:text-teal-300"
@@ -65,20 +69,12 @@ function FormAddFilm() {
                     onClick={(ev) => {
                         ev.preventDefault()
                         const autoSuggestion = ev.currentTarget.textContent
-                        // if (
-                        //     autoSuggestion === inputVal &&
-                        //     inputVal.length !== 0
-                        // ) {
-                        //     // console.log("POP@!")
-                        //     destroySuggestionsPopup(formFieldName)
-                        // }
-                        // destroySuggestionsPopup(formFieldName)
-                        changeInputTextToAutoSuggestion(
-                            autoSuggestion,
-                            formFieldName
-                        )
-                        // destroySuggestionsPopup(formFieldName)
-                        // setSuggestionsDOM([])
+                        changeInputTextToAutoSuggestion(autoSuggestion)
+                        setAutoSuggestionsMap({
+                            ...autoSuggestionsMap,
+                            buffer: [],
+                            recentInputLength: 0,
+                        })
                     }}
                     onFocus={(ev) => {
                         ev.currentTarget.addEventListener('blur', () => {
@@ -92,36 +88,46 @@ function FormAddFilm() {
             )
         }
 
-        function changeInputTextToAutoSuggestion(
-            autoSuggestion,
-            formFieldName
-        ) {
+        function changeInputTextToAutoSuggestion(autoSuggestion) {
             if (formFieldName === 'country') setCountryInput(autoSuggestion)
             if (formFieldName === 'genre') setGenreInput(autoSuggestion)
         }
-
-        // function destroySuggestionsPopup(formFieldName) {
-        //     if (formFieldName === 'country') setCountrySuggestionsDOM(<div />)
-        //     if (formFieldName === 'genre') setGenreSuggestionsDOM(<div />)
-        // }
     }
 
-    // TODO make narrowing list each time value found
+    function getSuggestionsBySequence(input, list) {
+        list = list.filter(
+            (string) =>
+                string.substring(0, input.length) === input
+        )
+        return list.slice(0, options.MAX_AUTO_SUGGESTIONS_DISPLAYED)
+    }
+
+    // Set country suggestions
     useEffect(() => {
         if (countryInput === undefined || countryInput === '') {
             return
         }
-        setGenreSuggestionsDOM('')
-        let list = autoSuggestionsMap.country
+
+        const countries = autoSuggestionsMap.country
+        const buffer = autoSuggestionsMap.buffer
+        const recentInputLength = autoSuggestionsMap.recentInputLength
         const firstCharUpCaseInput =
-            countryInput[0].toUpperCase() +
-            countryInput.substring(1, countryInput.length)
-        list = list.filter(
-            (countryName) =>
-                countryName.substring(0, countryInput.length) ===
-                firstCharUpCaseInput
-        )
-        list = list.slice(0, options.MAX_AUTO_SUGGESTIONS_DISPLAYED)
+            countryInput[0].toUpperCase() + countryInput.substring(1, countryInput.length)
+
+        let list = countryInput.length === 1 ? countries : buffer
+
+        if (countryInput.length < recentInputLength) {
+            list = countries
+        }
+
+        list = getSuggestionsBySequence(firstCharUpCaseInput, list)
+
+        setAutoSuggestionsMap({
+            ...autoSuggestionsMap,
+            buffer: list,
+            recentInputLength: countryInput.length,
+        })
+
         const DOM = createDivFromRetrievedSuggestion(
             list,
             'country',
@@ -130,25 +136,37 @@ function FormAddFilm() {
         setCountrySuggestionsDOM(DOM)
     }, [countryInput])
 
+    // Set genre suggestions
     useEffect(() => {
         if (genreInput === undefined || genreInput === '') {
             return
         }
-        setCountrySuggestionsDOM('')
-        let list = autoSuggestionsMap.genre
-        list = list.filter(
-            (genreName) =>
-                genreName.substring(0, genreInput.length) === genreInput
+
+        const genres = autoSuggestionsMap.genre
+        const buffer = autoSuggestionsMap.buffer
+        const recentInputLength = autoSuggestionsMap.recentInputLength
+
+        let list = genreInput.length === 1 ? genres : buffer
+
+        if (genreInput.length < recentInputLength) {
+            list = genres
+        }
+
+        list = getSuggestionsBySequence(genreInput, list)
+
+        setAutoSuggestionsMap({
+            ...autoSuggestionsMap,
+            buffer: list,
+            recentInputLength: countryInput.length,
+        })
+
+        const DOM = createDivFromRetrievedSuggestion(
+            list,
+            'genre',
+            genreInput
         )
-        list = list.slice(0, options.MAX_AUTO_SUGGESTIONS_DISPLAYED)
-        const DOM = createDivFromRetrievedSuggestion(list, 'genre', genreInput)
         setGenreSuggestionsDOM(DOM)
     }, [genreInput])
-
-    function destroySuggestionsPopup(formFieldName) {
-        if (formFieldName === 'country') setCountrySuggestionsDOM(<div />)
-        if (formFieldName === 'genre') setGenreSuggestionsDOM(<div />)
-    }
 
     // *** FORM
 
