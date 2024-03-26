@@ -61,7 +61,11 @@ function FormAddFilm() {
         }
     }, [])
 
-    function createDivFromRetrievedSuggestion(suggestions, formFieldName) {
+    function createDivFromRetrievedSuggestion(
+        suggestions,
+        formFieldName,
+        inputValue
+    ) {
         return suggestions.map((suggestion) => createDOM(suggestion))
 
         function createDOM(suggestion) {
@@ -82,9 +86,18 @@ function FormAddFilm() {
                     }}
                     key={suggestion}
                 >
-                    {suggestion}
+                    {highlightSuggestionMatchedLetters(suggestion)}
                 </button>
             )
+        }
+
+        function highlightSuggestionMatchedLetters(suggestion) {
+            return <>
+                <span className="font-bold">
+                    {suggestion.substring(0, inputValue.length)}
+                </span>
+                {suggestion.substring(inputValue.length, suggestion.length)}
+            </>
         }
 
         function changeInputTextToAutoSuggestion(autoSuggestion) {
@@ -127,7 +140,11 @@ function FormAddFilm() {
             recentInputLength: countryInput.length,
         })
 
-        const DOM = createDivFromRetrievedSuggestion(list, 'country')
+        const DOM = createDivFromRetrievedSuggestion(
+            list,
+            'country',
+            countryInput
+        )
         setCountrySuggestionsDOM(DOM)
     }, [countryInput])
 
@@ -155,7 +172,11 @@ function FormAddFilm() {
             recentInputLength: countryInput.length,
         })
 
-        const DOM = createDivFromRetrievedSuggestion(list, 'genre')
+        const DOM = createDivFromRetrievedSuggestion(
+            list,
+            'genre',
+            mainGenreInput
+        )
         setMainGenreSuggestionsDOM(DOM)
     }, [mainGenreInput])
 
