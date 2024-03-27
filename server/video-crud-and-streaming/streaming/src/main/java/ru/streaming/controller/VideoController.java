@@ -26,4 +26,9 @@ public class VideoController {
         return Mono.just(service.prepareContent(id, range));
     }
 
+    @GetMapping("/get/chunk")
+    public Mono<String> getOneChunk() {
+        return Mono.just(service.getOneChunk());
+    }
+
 }

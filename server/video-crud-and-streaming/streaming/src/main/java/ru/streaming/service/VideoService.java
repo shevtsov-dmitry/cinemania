@@ -1,8 +1,12 @@
 package ru.streaming.service;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.gridfs.model.GridFSFile;
+import org.bson.Document;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.util.Assert;
-import ru.streaming.repo.VideoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,14 +20,19 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Objects;
+import java.util.*;
 
 import static ru.streaming.constants.ApplicationConstants.CHUNK_SIZE;
+import static ru.streaming.constants.ApplicationConstants.BUCKET_NAME;
 
 @Service
 public class VideoService {
     private final GridFsTemplate gridFsTemplate;
+    @Autowired
+    private MongoOperations mongoOperations;
     private final GridFsOperations operations;
+
+    Map<String, byte[]> streamedVideos = new HashMap<>();
 
     @Autowired
     public VideoService(GridFsTemplate gridFsTemplate, GridFsOperations operations) {
@@ -33,13 +42,12 @@ public class VideoService {
 
     public ResponseEntity<byte[]> prepareContent(final String id, final String range) {
         try {
-            // TODO: fix the retrieval of the whole video file from gridfs. Instead need to retrieve small chunks of video.
             byte[] binaryContent = getFileAsBinary(id);
+            System.out.println(binaryContent.length);
             return range == null ?
                     contentFromBeginning(binaryContent) :
                     contentFromRange(binaryContent, range);
-        }
-        catch (IOException | NullPointerException e) {
+        } catch (IOException | NullPointerException e) {
             return ResponseEntity.badRequest().body("Impossible to retrieve video byte range.".getBytes());
         }
     }
@@ -102,4 +110,13 @@ public class VideoService {
         return result;
     }
 
+    public String getOneChunk() {
+        String id = "65ef1bc446b83239f8382e5c";
+        List<Document> file = mongoOperations.find(
+                Query.query(Criteria.where("_id").is(id)),
+                Document.class,
+                "fs.chunks"
+        );
+        return file.toString();
+    }
 }
