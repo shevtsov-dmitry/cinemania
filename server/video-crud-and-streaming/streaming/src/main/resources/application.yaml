@@ -9,7 +9,7 @@ spring:
       #      database: video_storage
       gridfs:
         database: video_storage_gridfs
-      username:
+      username: root
   #uplod size limit
   servlet:
     multipart:
