@@ -23,7 +23,10 @@ import static ru.streaming.constants.ApplicationConstants.VIDEO_STORAGE_PATH;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class VideoService {
@@ -31,22 +34,24 @@ public class VideoService {
     private ReactiveMongoOperations mongoOperations;
     @Autowired
     private ResourceLoader resourceLoader;
-
+    private static final Map<String, Mono<byte[]>> loadedVideos = new ConcurrentHashMap<>();
     private static final Logger log = LoggerFactory.getLogger(VideoController.class);
 
     public Mono<ResponseEntity<byte[]>> prepareContent(final String filename, final String range) {
-//            return range == null ?
-//                    contentFromBeginning(binaryContent) :
-//                    contentFromRange(binaryContent, range);
-        String filepath = "classpath:/videos/sample.mp4";
-        return Mono.fromSupplier(() -> {
-                    try {
-                        return resourceLoader.getResource(filepath).getContentAsByteArray();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .map(byteArray -> range.isEmpty() ? contentFromBeginning(byteArray) : contentFromRange(byteArray, range));
+        String filepath = STR."classpath:/videos/\{filename}.mp4";
+        if (!loadedVideos.containsKey(filename)) {
+            Mono<byte[]> video = Mono.fromSupplier(() -> {
+                        try {
+                            return resourceLoader.getResource(filepath).getContentAsByteArray();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+            loadedVideos.put(filename, video);
+        }
+
+        return loadedVideos.get(filename)
+                .map(byteArray -> contentFromRange(byteArray, range));
     }
 
     private ResponseEntity<byte[]> contentFromRange(byte[] binaryContent, String range) {
@@ -62,19 +67,6 @@ public class VideoService {
 
         byte[] binaryVideoContent = readByteRange(binaryContent, rangeStart, rangeEnd);
         HttpStatus httpStatus = rangeEnd >= fileSize ? HttpStatus.OK : HttpStatus.PARTIAL_CONTENT;
-        return response(httpStatus, headers, binaryVideoContent);
-    }
-
-    private ResponseEntity<byte[]> contentFromBeginning(byte[] binaryContent) {
-        long rangeStart = 1;
-        long rangeEnd = DOWNLOAD_CHUNK_SIZE;
-
-        final long fileSize = binaryContent.length;
-        final String contentRange = "bytes " + rangeStart + "-" + rangeEnd + "/" + fileSize;
-        HttpHeaders headers = composeHeaders(rangeEnd, contentRange);
-        HttpStatus httpStatus = HttpStatus.PARTIAL_CONTENT;
-
-        byte[] binaryVideoContent = readByteRange(binaryContent, rangeStart, rangeEnd);
         return response(httpStatus, headers, binaryVideoContent);
     }
 

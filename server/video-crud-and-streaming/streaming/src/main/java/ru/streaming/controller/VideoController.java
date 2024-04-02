@@ -20,12 +20,12 @@ public class VideoController {
         this.service = service;
     }
 
-    @GetMapping(value = "/stream/{id}", produces = "video/mp4")
-    public Mono<ResponseEntity<byte[]>> streamVideo(
+    @GetMapping(value = "/stream/{filename}", produces = "video/mp4")
+    public Mono<ResponseEntity<byte[]>> streeamVideo(
             @RequestHeader(value = "Range", required = false) String range,
-            @PathVariable String id) {
+            @PathVariable String filename) {
         // return Mono.just(service.prepareContent(id, range));
-        return service.prepareContent("", range);
+        return service.prepareContent(filename, range);
     }
 
     // private static HttpHeaders composeHeaders(long contentLength, String
