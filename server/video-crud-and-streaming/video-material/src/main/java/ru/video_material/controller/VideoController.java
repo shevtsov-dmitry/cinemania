@@ -1,8 +1,5 @@
 package ru.video_material.controller;
 
-import org.bson.codecs.configuration.CodecProvider;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,7 +15,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -32,40 +28,18 @@ public class VideoController {
         this.service = service;
     }
 
-    // ### VIDEO
     @PostMapping("/upload")
     public ResponseEntity<String> saveVideo(@RequestBody MultipartFile file) {
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
         try {
-            final String videoId = service.saveVideo(file);
+            final String videoId = service.uploadVideo(file);
             return new ResponseEntity<>(videoId, httpHeaders, HttpStatus.OK);
         } catch (NullPointerException e) {
             return new ResponseEntity<>(e.getMessage(), httpHeaders, HttpStatus.BAD_REQUEST);
-        } catch (IOException e) {
-            return new ResponseEntity<>("Couldn't read video file.", httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/download/byId/{id}")
-    public ResponseEntity<byte[]> downloadVideoById(@PathVariable String id){
-        try {
-            return ResponseEntity.ok(service.downloadVideoById(id));
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("The file's not found.".getBytes());
-        }
-    }
-
-    @DeleteMapping("/delete/byId/{id}")
-    public ResponseEntity<String> delete(@PathVariable String id) {
-        try {
-            return ResponseEntity.ok(service.deleteVideoById(id));
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
-    }
-
-    // ### METADATA
     @PostMapping("/save/metadata")
     public ResponseEntity<String> saveMetadata(@RequestBody ContentMetadata contentMetadata) {
         return service.saveMetadata(contentMetadata);

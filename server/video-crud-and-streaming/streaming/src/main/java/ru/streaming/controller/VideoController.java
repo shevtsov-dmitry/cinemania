@@ -20,13 +20,18 @@ public class VideoController {
         this.service = service;
     }
 
-    @GetMapping(value = "/stream/{filename}", produces = "video/mp4")
-    public Mono<ResponseEntity<byte[]>> streeamVideo(
+    @GetMapping(value = "/stream/start/{filename}", produces = "video/mp4")
+    public Mono<ResponseEntity<byte[]>> streamVideo(
             @RequestHeader(value = "Range", required = false) String range,
             @PathVariable String filename) {
         // return Mono.just(service.prepareContent(id, range));
         return service.prepareContent(filename, range);
     }
+
+//    @DeleteMapping("/stream/stop/{filename}")
+//    public void stopStreaming(@PathVariable String filename) {
+//        service.stopStreaming(filename);
+//    }
 
     // private static HttpHeaders composeHeaders(long contentLength, String
     // contentRange) {

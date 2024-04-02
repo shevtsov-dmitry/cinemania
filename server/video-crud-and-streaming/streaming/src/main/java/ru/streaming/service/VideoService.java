@@ -91,4 +91,8 @@ public class VideoService {
         return result;
     }
 
+    // ? how can I stop streaming without disabling stream for other stream watchers ?
+//    public void stopStreaming(String filename) {
+//        loadedVideos.remove(filename);
+//    }
 }
