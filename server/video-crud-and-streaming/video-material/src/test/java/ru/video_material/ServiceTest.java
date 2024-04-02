@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.video_material.controller.PosterControllerTest;
-import ru.video_material.controller.VideoControllerTest;
+import ru.video_material.controller.VideoMetadataControllerTest;
 import ru.video_material.model.ContentMetadata;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +33,7 @@ class ServiceTest {
     @Test
     @Order(1)
     void uploadVideo() throws Exception {
-        MockMultipartFile preparedVideo = VideoControllerTest.prepareVideoFileToUpload();
+        MockMultipartFile preparedVideo = VideoMetadataControllerTest.prepareVideoFileToUpload();
         final String url = "/videos/upload";
 
         mockMvc.perform(multipart(url)
