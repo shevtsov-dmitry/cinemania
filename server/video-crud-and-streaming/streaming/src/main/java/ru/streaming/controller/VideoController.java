@@ -28,10 +28,10 @@ public class VideoController {
         return service.prepareContent(filename, range);
     }
 
-//    @DeleteMapping("/stream/stop/{filename}")
-//    public void stopStreaming(@PathVariable String filename) {
-//        service.stopStreaming(filename);
-//    }
+    // @DeleteMapping("/stream/stop/{filename}")
+    // public void stopStreaming(@PathVariable String filename) {
+    // service.stopStreaming(filename);
+    // }
 
     // private static HttpHeaders composeHeaders(long contentLength, String
     // contentRange) {

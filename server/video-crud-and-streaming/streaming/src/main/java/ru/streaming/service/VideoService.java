@@ -1,52 +1,42 @@
 package ru.streaming.service;
 
+import static java.lang.StringTemplate.STR;
+import static ru.streaming.constants.ApplicationConstants.DOWNLOAD_CHUNK_SIZE;
+import static ru.streaming.constants.ApplicationConstants.VIDEO_STORAGE_PATH;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.data.mongodb.core.ReactiveMongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
 import ru.streaming.controller.VideoController;
 
-import static ru.streaming.constants.ApplicationConstants.DOWNLOAD_CHUNK_SIZE;
-import static ru.streaming.constants.ApplicationConstants.VIDEO_STORAGE_PATH;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-
 @Service
 public class VideoService {
-    @Autowired
-    private ReactiveMongoOperations mongoOperations;
-    @Autowired
-    private ResourceLoader resourceLoader;
     private static final Map<String, Mono<byte[]>> loadedVideos = new ConcurrentHashMap<>();
     private static final Logger log = LoggerFactory.getLogger(VideoController.class);
 
     public Mono<ResponseEntity<byte[]>> prepareContent(final String filename, final String range) {
-        String filepath = STR."classpath:/videos/\{filename}.mp4";
+        String filepath = STR."\{VIDEO_STORAGE_PATH}\{filename}.mp4";
+        log.info("{}", filepath);
         if (!loadedVideos.containsKey(filename)) {
             Mono<byte[]> video = Mono.fromSupplier(() -> {
-                        try {
-                            return resourceLoader.getResource(filepath).getContentAsByteArray();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
+                try {
+                    return Files.readAllBytes(Paths.get(filepath));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             loadedVideos.put(filename, video);
         }
 
@@ -91,8 +81,9 @@ public class VideoService {
         return result;
     }
 
-    // ? how can I stop streaming without disabling stream for other stream watchers ?
-//    public void stopStreaming(String filename) {
-//        loadedVideos.remove(filename);
-//    }
+    // ? how can I stop streaming without disabling stream for other stream watchers
+    // ?
+    // public void stopStreaming(String filename) {
+    // loadedVideos.remove(filename);
+    // }
 }

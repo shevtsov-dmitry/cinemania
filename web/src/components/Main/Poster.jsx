@@ -15,7 +15,7 @@ export class PosterClass {
         this._country = fetchedMap == null ? "<Страна>" : fetchedMap.country
         this._releaseDate = fetchedMap == null ? "<Дата релиза>" : fetchedMap.releaseDate
         this._mainGenre = fetchedMap == null ? "<Основной жанр>" : fetchedMap.mainGenre
-        this._subGenres = fetchedMap == null ? "<Основной жанр>" : fetchedMap.subGenres
+        this._subGenres = fetchedMap == null ? "<Дополнительные жанры>" : fetchedMap.subGenres
         this._rating = fetchedMap == null ? "0.00" : fetchedMap.rating
         this._videoId = fetchedMap == null ? "videoId: NULL" : fetchedMap.videoId
         this._age = fetchedMap == null ? "0" : fetchedMap.age

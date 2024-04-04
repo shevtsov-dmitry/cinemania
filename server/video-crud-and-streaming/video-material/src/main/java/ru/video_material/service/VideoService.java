@@ -21,9 +21,6 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
-
 @Service
 public class VideoService {
 
@@ -74,7 +71,7 @@ public class VideoService {
     }
 
     private static String generateId() {
-        final String base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        final String base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         int idLength = 40;
         StringBuilder id = new StringBuilder();
         for (int i = 0; i < idLength; i++) {
