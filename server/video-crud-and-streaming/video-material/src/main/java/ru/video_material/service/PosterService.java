@@ -86,7 +86,7 @@ public class PosterService {
             data.put("metadataId", metadata.getId().getBytes());
             data.put("title", metadata.getTitle().getBytes());
             data.put("mainGenre", metadata.getMainGenre().getBytes());
-            data.put("subGenres", metadata.getSubGenres().toString().getBytes());
+            data.put("subGenres", metadata.getSubGenres().toString().replace("[", "").replace("]", "").getBytes());
             data.put("releaseDate", metadata.getReleaseDate().getBytes());
             data.put("rating", String.valueOf(metadata.getRating()).getBytes());
             data.put("country", metadata.getCountry().getBytes());
