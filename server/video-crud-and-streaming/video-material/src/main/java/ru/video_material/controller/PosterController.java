@@ -37,12 +37,10 @@ public class PosterController {
             return new ResponseEntity<>(savedPosterId, httpHeaders, HttpStatus.OK);
         } catch (NullPointerException | IOException ex) {
             return new ResponseEntity<>(
-                    "Impossible to read video file.", httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR
-            );
+                    "Impossible to read video file.", httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalArgumentException ex) {
             return new ResponseEntity<>(
-                    "Couldn't save video. Video content is empty.", httpHeaders, HttpStatus.BAD_REQUEST
-            );
+                    "Couldn't save video. Video content is empty.", httpHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -65,12 +63,12 @@ public class PosterController {
     }
 
     @GetMapping(value = "/get/metadata/byId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ContentMetadata> getMetadataById(@PathVariable String id){
+    public ResponseEntity<ContentMetadata> getMetadataById(@PathVariable String id) {
         return service.getMetadataById(id);
     }
 
     @GetMapping(value = "/get/recent/ids/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<String>> getRecentSavedPosterIds(@PathVariable int amount){
+    public ResponseEntity<List<String>> getRecentSavedPosterIds(@PathVariable int amount) {
         return ResponseEntity.ok(service.getRecentSavedPosterIds(amount));
     }
 
@@ -83,10 +81,10 @@ public class PosterController {
     public ResponseEntity<String> deletePosterById(@PathVariable String id) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
-        return service.deleteById(id) ?
-                new ResponseEntity<>(STR."poster image with id \{id} successfully deleted.", httpHeaders, HttpStatus.OK) :
-                ResponseEntity.notFound().build();
+        return service.deleteById(id)
+                ? new ResponseEntity<>(STR."poster image with id \{id} successfully deleted.", httpHeaders,
+                        HttpStatus.OK)
+                : ResponseEntity.notFound().build();
     }
-
 
 }

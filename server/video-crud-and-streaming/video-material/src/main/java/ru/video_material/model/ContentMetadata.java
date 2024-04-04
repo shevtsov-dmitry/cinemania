@@ -18,9 +18,9 @@ public class ContentMetadata {
     private String mainGenre;
     private List<String> subGenres;
     private Integer age;
+    private float rating;
     private String posterId;
     private String videoId;
-    private float rating;
     private LocalDateTime createdAt;
 
     public ContentMetadata(String title, String releaseDate,

@@ -59,12 +59,13 @@ public class VideoService {
     }
 
     public String uploadVideo(MultipartFile file) {
+        final String id = generateId();
         String fileName = file.getOriginalFilename();
         Path uploadDirectory = Paths.get(StaticValues.HLS_VIDEO_PACKAGE_PATH);
         try (InputStream inputStream = file.getInputStream()) {
-            Path filePath = uploadDirectory.resolve(fileName);
+            Path filePath = uploadDirectory.resolve(id);
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-            return generateId();
+            return id;
         } catch (IOException e) {
             throw new RuntimeException(STR."Failed to upload file: \{fileName}", e);
         }

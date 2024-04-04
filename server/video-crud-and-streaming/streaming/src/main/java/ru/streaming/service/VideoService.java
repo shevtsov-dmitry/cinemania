@@ -1,6 +1,5 @@
 package ru.streaming.service;
 
-import static java.lang.StringTemplate.STR;
 import static ru.streaming.constants.ApplicationConstants.DOWNLOAD_CHUNK_SIZE;
 import static ru.streaming.constants.ApplicationConstants.VIDEO_STORAGE_PATH;
 
@@ -39,7 +38,7 @@ public class VideoService {
             });
             loadedVideos.put(filename, video);
         }
-
+        log.info("LOADED FILES IN MEMORY: {}", loadedVideos.size());
         return loadedVideos.get(filename)
                 .map(byteArray -> contentFromRange(byteArray, range));
     }
