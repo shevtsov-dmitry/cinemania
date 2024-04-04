@@ -21,7 +21,6 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static java.lang.StringTemplate.STR;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -68,10 +67,20 @@ public class VideoService {
         try (InputStream inputStream = file.getInputStream()) {
             Path filePath = uploadDirectory.resolve(fileName);
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-            return STR."File uploaded successfully: \{fileName}";
+            return generateId();
         } catch (IOException e) {
             throw new RuntimeException(STR."Failed to upload file: \{fileName}", e);
         }
     }
-}
 
+    private static String generateId() {
+        final String base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        int idLength = 40;
+        StringBuilder id = new StringBuilder();
+        for (int i = 0; i < idLength; i++) {
+            int position = (int) (Math.random() * base64Digits.length());
+            id.append(base64Digits.charAt(position));
+        }
+        return id.toString();
+    }
+}

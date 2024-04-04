@@ -1,7 +1,5 @@
 package ru.video_material.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -10,9 +8,7 @@ import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Data
 @Document
-@NoArgsConstructor
 public class ContentMetadata {
     private String id;
     private String title;
@@ -26,8 +22,8 @@ public class ContentMetadata {
     private LocalDateTime createdAt;
 
     public ContentMetadata(String title, String releaseDate,
-                           String country, String genre, Integer age,
-                           String posterId, String videoId, Float rating) {
+            String country, String genre, Integer age,
+            String posterId, String videoId, Float rating) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.country = country;
@@ -39,7 +35,10 @@ public class ContentMetadata {
         this.createdAt = LocalDateTime.now();
     }
 
-//    @PrePersist
+    public ContentMetadata() {
+    }
+
+    // @PrePersist
     public void validateDate() {
         Pattern regexp = Pattern.compile("(19|20)\\d{2}-(0[1-9]|1[1,2])-(0[1-9]|[12][0-9]|3[01])");
         Matcher matcher = regexp.matcher(releaseDate);
@@ -48,4 +47,85 @@ public class ContentMetadata {
                     "Date format is not supported. Expected yyyy-MM-dd.");
         }
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public String getPosterId() {
+        return posterId;
+    }
+
+    public void setPosterId(String posterId) {
+        this.posterId = posterId;
+    }
+
+    public String getVideoId() {
+        return videoId;
+    }
+
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
 }
