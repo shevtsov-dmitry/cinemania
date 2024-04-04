@@ -10,7 +10,7 @@
 #      gridfs:
 #        database: video_storage_gridfs
 
-  #uplod size limit
+#uplod size limit
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -21,6 +21,5 @@ spring:
       max-request-size: 10GB
   datasource:
     url: jdbc:mongodb://localhost:27017/video_storage_gridfs
-
 #spring.servlet.multipart.max-file-size=150MB
 #spring.servlet.multipart.max-request-size=150MB

@@ -92,12 +92,14 @@ function FormAddFilm() {
         }
 
         function highlightSuggestionMatchedLetters(suggestion) {
-            return <>
-                <span className="font-bold">
-                    {suggestion.substring(0, inputValue.length)}
-                </span>
-                {suggestion.substring(inputValue.length, suggestion.length)}
-            </>
+            return (
+                <>
+                    <span className="font-bold">
+                        {suggestion.substring(0, inputValue.length)}
+                    </span>
+                    {suggestion.substring(inputValue.length, suggestion.length)}
+                </>
+            )
         }
 
         function changeInputTextToAutoSuggestion(autoSuggestion) {
@@ -235,12 +237,24 @@ function FormAddFilm() {
                     releaseDate: form.get('releaseDate'),
                     country: form.get('country'),
                     mainGenre: form.get('mainGenre'),
-                    subGenres: form.get('subGenres'),
+                    subGenres: parseSubGenres(form.get('subGenres')),
                     age: form.get('age'),
                     rating: form.get('rating'),
                     posterId: posterId,
                     videoId: videoId,
                 }
+
+                // TODO make additional checks for input
+                function parseSubGenres(subGenresString) {
+                    const splitted = subGenresString.split(',')
+                    let subGenresArray = []
+                    for (const string of splitted) {
+                        if (string.length !== 0)
+                            subGenresArray.push(string.trim())
+                    }
+                    return subGenresArray
+                }
+
                 fetch(`${BINARY_STORAGE_URL}/videos/save/metadata`, {
                     method: 'POST',
                     headers: {
@@ -253,6 +267,12 @@ function FormAddFilm() {
                         resolve(id)
                     })
             })
+
+            function parseSubGenres(subGenresString) {
+                let subGenresArray = subGenresString.split(',')
+                subGenresArray.iterable.map((genre) => genre.trim())
+                return subGenresArray
+            }
         }
 
         let posterId = await savePoster()
@@ -395,6 +415,7 @@ function FormAddFilm() {
                             className="input pl-2"
                             type="search"
                             name="subGenres"
+                            placeholder="разделять запятой"
                             // value={genreInput}
                             onChange={() => {}}
                         />

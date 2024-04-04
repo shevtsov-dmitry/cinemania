@@ -54,6 +54,7 @@ logs
 **/*.backup.*
 **/*.back.*
 .env
+package-lock.json
 
 node_modules
 bower_components

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,8 @@ public class ContentMetadata {
     private String title;
     private String releaseDate;
     private String country;
-    private String genre;
+    private String mainGenre;
+    private List<String> subGenres;
     private Integer age;
     private String posterId;
     private String videoId;
@@ -22,12 +24,13 @@ public class ContentMetadata {
     private LocalDateTime createdAt;
 
     public ContentMetadata(String title, String releaseDate,
-            String country, String genre, Integer age,
+            String country, String mainGenre, List<String> subGenres, Integer age,
             String posterId, String videoId, Float rating) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.country = country;
-        this.genre = genre;
+        this.mainGenre = mainGenre;
+        this.subGenres = subGenres;
         this.age = age;
         this.posterId = posterId;
         this.videoId = videoId;
@@ -80,14 +83,6 @@ public class ContentMetadata {
         this.country = country;
     }
 
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
     public Integer getAge() {
         return age;
     }
@@ -126,6 +121,26 @@ public class ContentMetadata {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getMainGenre() {
+        return mainGenre;
+    }
+
+    public void setMainGenre(String mainGenre) {
+        this.mainGenre = mainGenre;
+    }
+
+    public List<String> subGenres() {
+        return subGenres;
+    }
+
+    public void setSubGenres(List<String> subGenres) {
+        this.subGenres = subGenres;
+    }
+
+    public List<String> getSubGenres() {
+        return subGenres;
     }
 
 }

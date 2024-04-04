@@ -65,7 +65,9 @@ export function Preview() {
             const posterList = []
             for (const map of fetchedMaps) {
                 for (const k in map) {
-                    if (k === 'poster') continue
+                    if (k === 'poster')
+                        continue
+
                     map[k] = atob(map[k])
                 }
                 const poster = new PosterClass(map)

@@ -2,6 +2,8 @@ package ru.video_material.service;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ public class PosterService {
 
     private final PosterRepo posterRepo;
     private final MetadataRepo metadataRepo;
+    private static final Logger log = LoggerFactory.getLogger(PosterService.class);
 
     @Autowired
     public PosterService(PosterRepo posterRepo, MetadataRepo metadataRepo) {
@@ -61,12 +64,12 @@ public class PosterService {
                 .toList();
     }
 
-
-    /* *
+    /*
+     * *
      * list of byte[2]
      * byte[0] - metadata id (mutual, not poster)
      * byte[1] - poster binary image content
-     * */
+     */
     public List<Map<String, byte[]>> getRecentlySavedPosters(int amount) {
         List<String> recentSavedPosterIds = getRecentSavedPosterIds(amount);
         List<Map<String, byte[]>> imagesAndMetadata = new ArrayList<>(amount);
@@ -78,9 +81,12 @@ public class PosterService {
             data.put("poster", poster.getImage().getData());
 
             final ContentMetadata metadata = metadataRepo.getByPosterId(poster.getId());
+            log.info("LOG {}", metadata);
+
             data.put("metadataId", metadata.getId().getBytes());
             data.put("title", metadata.getTitle().getBytes());
-            data.put("genre", metadata.getGenre().getBytes());
+            data.put("mainGenre", metadata.getMainGenre().getBytes());
+            data.put("subGenres", metadata.getSubGenres().toString().getBytes());
             data.put("releaseDate", metadata.getReleaseDate().getBytes());
             data.put("rating", String.valueOf(metadata.getRating()).getBytes());
             data.put("country", metadata.getCountry().getBytes());
@@ -99,7 +105,6 @@ public class PosterService {
         }
         return ResponseEntity.ok(occurrences);
     }
-
 
     public ResponseEntity<ContentMetadata> getMetadataById(String id) {
         ContentMetadata metadata = metadataRepo.getById(id);
