@@ -4,9 +4,7 @@ import { useDispatch } from 'react-redux'
 
 import { useState } from 'react'
 
-
 export class PosterClass {
-
     constructor(fetchedMap) {
         this._metadataId = fetchedMap.metadataId
         this._title = fetchedMap.title
@@ -76,7 +74,9 @@ export function Poster(props) {
                 <p className="select-none text-white">{metadata.age}</p>
                 <p className="select-none text-white">{metadata.country}</p>
                 <p className="select-none text-white">{metadata.mainGenre}</p>
-                <p className="select-none text-white text-xs">{metadata.subGenres}</p>
+                <p className="select-none text-xs text-white">
+                    {metadata.subGenres}
+                </p>
                 <p className="select-none text-white">{metadata.releaseDate}</p>
             </div>
         )
@@ -99,18 +99,20 @@ export function Poster(props) {
                 }}
             >
                 <div className="postersInfo">
-                    {isPosterHovered ?
+                    {isPosterHovered ? (
                         <>
                             <InfoOnPosterHover />
                             <div className="flex w-64 justify-center">
                                 <Link
-                                    className="absolute z-10 bottom-0 mb-10"
+                                    className="absolute bottom-0 z-10 mb-10"
                                     to={`/watch/${metadata.videoId}`}
                                 >
                                     <button
                                         className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"
                                         onClick={() =>
-                                            dispatch(setVideoId(metadata.videoId))
+                                            dispatch(
+                                                setVideoId(metadata.videoId)
+                                            )
                                         }
                                     >
                                         Смотреть
@@ -118,7 +120,9 @@ export function Poster(props) {
                                 </Link>
                             </div>
                         </>
-                        : <div />}
+                    ) : (
+                        <div />
+                    )}
                 </div>
             </li>
         </>

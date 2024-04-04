@@ -1,15 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
 
 export const videoPlayerSlice = createSlice({
-    name: "video",
+    name: 'video',
     initialState: {
-        videoId: "",
+        videoId: '',
     },
     reducers: {
         setVideoId: (state, action) => {
-            state.videoId = action.payload;
-        }
-    }
+            state.videoId = action.payload
+        },
+    },
 })
 
 export const { setVideoId } = videoPlayerSlice.actions

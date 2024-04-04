@@ -2,10 +2,10 @@ import { Header } from './components/Main/Header'
 import { Route, Routes } from 'react-router-dom'
 import Home from './components/Main/Home'
 import { VideoPlayer } from './components/VideoPlayer'
-import {useSelector} from "react-redux";
+import { useSelector } from 'react-redux'
 
 export default function App() {
-    const videoPlayerState = useSelector(state => state.videoPlayer)
+    const videoPlayerState = useSelector((state) => state.videoPlayer)
     const videoId = videoPlayerState.videoId
     // const videoPlayerPath = `/watch/${videoId}`
     return (

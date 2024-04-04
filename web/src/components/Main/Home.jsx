@@ -1,5 +1,5 @@
 import { Preview } from './Preview'
-import {Header} from "./Header";
+import { Header } from './Header'
 
 export default function Home() {
     return (

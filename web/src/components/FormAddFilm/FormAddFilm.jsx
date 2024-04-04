@@ -227,7 +227,7 @@ function FormAddFilm() {
             })
         }
 
-        function highlightPopupElementTextColorWhileTyping(input) { }
+        function highlightPopupElementTextColorWhileTyping(input) {}
 
         async function saveMetadata(posterId, videoId) {
             return new Promise((resolve) => {
@@ -417,7 +417,7 @@ function FormAddFilm() {
                             name="subGenres"
                             placeholder="разделять запятой"
                             // value={genreInput}
-                            onChange={() => { }}
+                            onChange={() => {}}
                         />
                         <div className="typingSuggestions">
                             {subGenresSuggestionsDOM}

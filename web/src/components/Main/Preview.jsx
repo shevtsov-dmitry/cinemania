@@ -54,6 +54,7 @@ export function Preview() {
     let isPlayerOpened = videoPlayerState.isPlayerOpened
 
     const [isPostersLoaded, setIsPostersLoaded] = useState(false)
+    const nonAsciiPattern = /[^\u0000-\u007F]/
 
     useEffect(() => {
         async function constructPosters() {
@@ -66,13 +67,25 @@ export function Preview() {
             for (const map of fetchedMaps) {
                 for (const k in map) {
                     if (k === 'poster') continue
-                    map[k] = atob(map[k])
+                    let parsedBase64 = atob(map[k])
+                    if (nonAsciiPattern.test(parsedBase64)) {
+                        parsedBase64 = base64ToUtf8(parsedBase64)
+                    }
+                    map[k] = parsedBase64
                 }
                 const poster = new PosterClass(map)
                 posterList.push(<Poster posterObject={poster} />)
             }
             setPosters(posterList)
             setIsPostersLoaded(true)
+        }
+
+        function base64ToUtf8(ASCII_parsed_text) {
+            const bytes = new Uint8Array(ASCII_parsed_text.length)
+            for (let i = 0; i < ASCII_parsed_text.length; i++) {
+                bytes[i] = ASCII_parsed_text.charCodeAt(i)
+            }
+            return new TextDecoder('utf-8').decode(bytes)
         }
 
         constructPosters()
