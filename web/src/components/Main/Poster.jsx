@@ -60,7 +60,6 @@ export class PosterClass {
 }
 
 export function Poster(props) {
-    console.log(props.posterObject)
     const dispatch = useDispatch()
     const metadata = props.posterObject
     const [isPosterHovered, setIsPosterHovered] = useState(false)
@@ -85,7 +84,6 @@ export function Poster(props) {
     return (
         <>
             <li
-                key={parseInt(Math.random() * 9999)}
                 // key={metadata.metadatId}
                 className={
                     'z-10 h-96 w-64 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer'

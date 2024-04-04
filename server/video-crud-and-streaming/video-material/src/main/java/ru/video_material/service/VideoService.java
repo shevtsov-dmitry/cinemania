@@ -63,7 +63,7 @@ public class VideoService {
         String fileName = file.getOriginalFilename();
         Path uploadDirectory = Paths.get(StaticValues.HLS_VIDEO_PACKAGE_PATH);
         try (InputStream inputStream = file.getInputStream()) {
-            Path filePath = uploadDirectory.resolve(id);
+            Path filePath = uploadDirectory.resolve(id.concat(".mp4"));
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             return id;
         } catch (IOException e) {

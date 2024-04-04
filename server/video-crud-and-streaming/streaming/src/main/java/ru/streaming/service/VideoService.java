@@ -27,7 +27,6 @@ public class VideoService {
 
     public Mono<ResponseEntity<byte[]>> prepareContent(final String filename, final String range) {
         String filepath = STR."\{VIDEO_STORAGE_PATH}\{filename}.mp4";
-        log.info("{}", filepath);
         if (!loadedVideos.containsKey(filename)) {
             Mono<byte[]> video = Mono.fromSupplier(() -> {
                 try {
