@@ -227,19 +227,19 @@ function FormAddFilm() {
             })
         }
 
-        function highlightPopupElementTextColorWhileTyping(input) {}
+        function highlightPopupElementTextColorWhileTyping(input) { }
 
         async function saveMetadata(posterId, videoId) {
             return new Promise((resolve) => {
                 const form = new FormData(formRef.current)
                 const metadata = {
-                    title: form.get('title'),
+                    title: form.get('title').trim(),
                     releaseDate: form.get('releaseDate'),
-                    country: form.get('country'),
-                    mainGenre: form.get('mainGenre'),
+                    country: form.get('country').trim(),
+                    mainGenre: form.get('mainGenre').trim(),
                     subGenres: parseSubGenres(form.get('subGenres')),
-                    age: form.get('age'),
-                    rating: form.get('rating'),
+                    age: form.get('age').trim(),
+                    rating: form.get('rating').trim(),
                     posterId: posterId,
                     videoId: videoId,
                 }
@@ -417,7 +417,7 @@ function FormAddFilm() {
                             name="subGenres"
                             placeholder="разделять запятой"
                             // value={genreInput}
-                            onChange={() => {}}
+                            onChange={() => { }}
                         />
                         <div className="typingSuggestions">
                             {subGenresSuggestionsDOM}

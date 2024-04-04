@@ -11,9 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +29,6 @@ public class VideoMetadataControllerTest {
     final String ENDPOINT_URL = HOST_AND_PORT + "/videos";
     static String videoId;
 
-
     @Test
     @Order(1)
     void uploadVideo_thenCheckIfWasUploaded() throws Exception {
@@ -40,9 +36,9 @@ public class VideoMetadataControllerTest {
         String url = ENDPOINT_URL + "/upload";
 
         mockMvc.perform(multipart(url)
-                        .file(preparedFile)
-                        .contentType("video/mp4")
-                        .param("title", generateRandomHash().substring(0, 5)))
+                .file(preparedFile)
+                .contentType("video/mp4")
+                .param("title", generateRandomHash().substring(0, 5)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(content().string(not(emptyString())))
@@ -63,11 +59,12 @@ public class VideoMetadataControllerTest {
     @Order(4)
     void tryToDeleteNonExistentVideo() throws Exception {
         String randomId = generateRandomHash();
-        String url = ENDPOINT_URL + "/delete/byId/"  + randomId;
+        String url = ENDPOINT_URL + "/delete/byId/" + randomId;
 
         mockMvc.perform(delete(url))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(equalTo(STR."Deletion failed. The video with id \{randomId} doesn't exist in GridFS.")));
+                .andExpect(content().string(
+                        equalTo(STR."Deletion failed. The video with id \{randomId} doesn't exist in GridFS.")));
     }
 
     public static MockMultipartFile prepareVideoFileToUpload() throws IOException {
@@ -78,6 +75,5 @@ public class VideoMetadataControllerTest {
         byte[] content = Files.readAllBytes(path);
         return new MockMultipartFile("file", filename, contentType, content);
     }
-
 
 }
