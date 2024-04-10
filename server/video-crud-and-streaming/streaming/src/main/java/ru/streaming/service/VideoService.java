@@ -6,6 +6,7 @@ import static ru.streaming.constants.ApplicationConstants.VIDEO_STORAGE_PATH;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,10 +24,12 @@ import ru.streaming.controller.VideoController;
 @Service
 public class VideoService {
     private static final Map<String, Mono<byte[]>> loadedVideos = new ConcurrentHashMap<>();
+    // TODO delete video from loadedVideos if user doesn't watch video no more
+    private static final Map<String, Integer> currentViewersForVideo = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(VideoController.class);
 
     public Mono<ResponseEntity<byte[]>> prepareContent(final String filename, final String range) {
-        String filepath = STR."\{VIDEO_STORAGE_PATH}\{filename}.mp4";
+        String filepath = "%s%s.mp4".formatted(VIDEO_STORAGE_PATH, filename);
         if (!loadedVideos.containsKey(filename)) {
             Mono<byte[]> video = Mono.fromSupplier(() -> {
                 try {

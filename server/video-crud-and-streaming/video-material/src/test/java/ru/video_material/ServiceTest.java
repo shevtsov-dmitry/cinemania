@@ -63,14 +63,7 @@ class ServiceTest {
         assertNotNull(posterId);
 
         var videoMetadata = new ContentMetadata(
-                "Star wars",
-                "2022-10-30",
-                "USA",
-                "SCI-FI",
-                12,
-                posterId,
-                videoId,
-                7.67F
+
         );
         Gson gson = new Gson();
         String json = gson.toJson(videoMetadata);

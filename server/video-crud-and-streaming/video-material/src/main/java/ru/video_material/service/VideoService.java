@@ -53,7 +53,7 @@ public class VideoService {
 
     public ResponseEntity<String> deleteMetadataById(String id) {
         if (!metadataRepo.existsById(id)) {
-            return ResponseEntity.badRequest().body(STR."Couldn't find video with id \{id}.");
+            return ResponseEntity.badRequest().body("Couldn't find video with id %s.".formatted(id));
         }
         return ResponseEntity.ok("");
     }
@@ -67,7 +67,7 @@ public class VideoService {
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             return id;
         } catch (IOException e) {
-            throw new RuntimeException(STR."Failed to upload file: \{fileName}", e);
+            throw new RuntimeException("Failed to upload file: %s".formatted(fileName), e);
         }
     }
 

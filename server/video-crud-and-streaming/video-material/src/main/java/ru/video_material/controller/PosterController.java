@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("/posters")
 public class PosterController {
@@ -67,10 +68,10 @@ public class PosterController {
         return service.getMetadataById(id);
     }
 
-    @GetMapping(value = "/get/recent/ids/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<String>> getRecentSavedPosterIds(@PathVariable int amount) {
-        return ResponseEntity.ok(service.getRecentSavedPosterIds(amount));
-    }
+//    @GetMapping(value = "/get/recent/ids/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<List<String>> getRecentSavedPosterIds(@PathVariable int amount) {
+//        return ResponseEntity.ok(service.getRecentSavedPosterIds(amount));
+//    }
 
     @GetMapping(value = "/get/recent/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Map<String, byte[]>>> getRecentlySavedPosters(@PathVariable int amount) {
@@ -82,8 +83,8 @@ public class PosterController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
         return service.deleteById(id)
-                ? new ResponseEntity<>(STR."poster image with id \{id} successfully deleted.", httpHeaders,
-                        HttpStatus.OK)
+                ? new ResponseEntity<>("poster image with id %s successfully deleted.".formatted(id),
+                httpHeaders, HttpStatus.OK)
                 : ResponseEntity.notFound().build();
     }
 

@@ -36,7 +36,7 @@ public class PosterControllerTest {
     // JPEG
     static String idJPEG;
     String nameJPEG = "sin-city-poster";
-    String filenameJPEG = STR."\{nameJPEG}.jpg";
+    String filenameJPEG = "%s.jpg".formatted(nameJPEG);
     Path pathJPEG = Paths.get(ASSETS_PATH + filenameJPEG);
     byte[] contentJPEG = Files.readAllBytes(pathJPEG);
     public MockMultipartFile fileJPEG = new MockMultipartFile("file", filenameJPEG, contentType, contentJPEG);
@@ -45,7 +45,7 @@ public class PosterControllerTest {
     // PNG
     static String idPNG;
     String namePNG = "png-image";
-    String filenamePNG = STR."\{namePNG}.png";
+    String filenamePNG = "%s.png".formatted(namePNG);
     Path pathPNG = Paths.get(ASSETS_PATH + filenamePNG);
     byte[] contentPNG = Files.readAllBytes(pathPNG);
     MockMultipartFile filePNG = new MockMultipartFile("file", filenamePNG, contentType, contentPNG);
@@ -56,7 +56,7 @@ public class PosterControllerTest {
     @Test
     @Order(1)
     public void uploadJPEGImage() throws Exception {
-        String url = STR."\{ENDPOINT_URL}/upload";
+        String url = "%s/upload".formatted(ENDPOINT_URL);
         mockMvc.perform(multipart(url)
                         .file(this.fileJPEG))
                 .andExpect(status().isOk())
@@ -67,7 +67,7 @@ public class PosterControllerTest {
     @Test
     @Order(2)
     void uploadPNGImage() throws Exception {
-        String url = STR."\{ENDPOINT_URL}/upload";
+        String url = "%s/upload".formatted(ENDPOINT_URL);
         mockMvc.perform(multipart(url)
                         .file(filePNG))
                 .andExpect(status().isOk())
@@ -81,13 +81,13 @@ public class PosterControllerTest {
         assertNotNull(idJPEG);
         assertNotNull(idPNG);
 
-        String url = STR."\{ENDPOINT_URL}/get/byId/\{idJPEG}";
+        String url = "%s/get/byId/%s".formatted(ENDPOINT_URL, idJPEG);
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("image/jpeg"));
 
         // * in case if PNG file was uploaded client gets JPEG file anyway
-        url = STR."\{ENDPOINT_URL}/get/byId/\{idPNG}";
+        url = "%s/get/byId/%s".formatted(ENDPOINT_URL, idPNG);
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("image/jpeg"));
@@ -97,21 +97,21 @@ public class PosterControllerTest {
     @Order(4)
     void cleanDatabaseAfterJPEGFileUpload() throws Exception {
         assertNotNull(idJPEG);
-        String url = STR."\{ENDPOINT_URL}/delete/byId/\{idJPEG}";
+        String url = "%s/delete/byId/%s".formatted(ENDPOINT_URL, idJPEG);
         mockMvc.perform(delete(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(content().string(STR."video file with id \{idJPEG} successfully deleted."));
+                .andExpect(content().string("video file with id %s successfully deleted.".formatted(idJPEG)));
     }
 
     @Test
     @Order(5)
     void cleanDatabaseAfterPNGFileUpload() throws Exception {
         assertNotNull(idPNG);
-        String url = STR."\{ENDPOINT_URL}/delete/byId/\{idPNG}";
+        String url = "%s/delete/byId/%s".formatted(ENDPOINT_URL, idPNG);
         mockMvc.perform(delete(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(content().string(STR."video file with id \{idPNG} successfully deleted."));
+                .andExpect(content().string("video file with id %s successfully deleted.".formatted(idPNG)));
     }
 }

@@ -69,6 +69,7 @@ public abstract class BaseService<T extends Nameable> {
 
         return notAddedEntities.isEmpty() ?
                 ResponseEntity.ok("All requested entities have been deleted successfully.") :
-                ResponseEntity.badRequest().body(STR."\{notAddedEntities.size()} entities were not deleted from the database. \{notAddedEntitiesSJ.toString()}");
+                ResponseEntity.badRequest().body("%s entities were not deleted from the database. %s"
+                        .formatted(notAddedEntities.size(), notAddedEntitiesSJ.toString()));
     }
 }

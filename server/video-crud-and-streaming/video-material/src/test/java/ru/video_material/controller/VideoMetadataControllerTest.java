@@ -64,13 +64,13 @@ public class VideoMetadataControllerTest {
         mockMvc.perform(delete(url))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(
-                        equalTo(STR."Deletion failed. The video with id \{randomId} doesn't exist in GridFS.")));
+                        equalTo("Deletion failed. The video with id %s doesn't exist in GridFS.".formatted(randomId))));
     }
 
     public static MockMultipartFile prepareVideoFileToUpload() throws IOException {
         String contentType = "multipart/form-data";
         String name = "video";
-        String filename = STR."\{name}.mp4";
+        String filename = "%s.mp4".formatted(name);
         Path path = Paths.get(ASSETS_PATH + filename);
         byte[] content = Files.readAllBytes(path);
         return new MockMultipartFile("file", filename, contentType, content);

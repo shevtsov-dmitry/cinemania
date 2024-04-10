@@ -74,7 +74,6 @@
                     <source>21</source>
                     <target>21</target>
                     <fork>true</fork>
-                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
