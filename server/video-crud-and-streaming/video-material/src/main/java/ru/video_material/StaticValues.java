@@ -1,8 +1,6 @@
 package ru.video_material;
 
-import java.net.URI;
-
 public class StaticValues {
-
-    public static final String HLS_VIDEO_PACKAGE_PATH = "/home/shd/Videos";
+    // TODO make it env
+    public static final String VIDEO_STORAGE_PATH = "/run/media/shd/HDD/NginxVideos/";
 }

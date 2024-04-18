@@ -61,6 +61,9 @@ export function Preview() {
             const postersAmountToDisplay = 20
             const url = `${process.env.REACT_APP_SERVER_URL}:8080/posters/get/recent/${postersAmountToDisplay}`
             const response = await fetch(url)
+                .catch(() => {
+                    console.error(`can't fetch ${process.env.REACT_APP_SERVER_URL}:8080/posters/get/recent/${postersAmountToDisplay}`)
+                })
             const fetchedMaps = await response.json()
 
             const posterList = []

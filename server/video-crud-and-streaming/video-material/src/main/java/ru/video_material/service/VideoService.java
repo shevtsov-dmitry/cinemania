@@ -61,7 +61,7 @@ public class VideoService {
     public String uploadVideo(MultipartFile file) {
         final String id = generateId();
         String fileName = file.getOriginalFilename();
-        Path uploadDirectory = Paths.get(StaticValues.HLS_VIDEO_PACKAGE_PATH);
+        Path uploadDirectory = Paths.get(StaticValues.VIDEO_STORAGE_PATH);
         try (InputStream inputStream = file.getInputStream()) {
             Path filePath = uploadDirectory.resolve(id.concat(".mp4"));
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);

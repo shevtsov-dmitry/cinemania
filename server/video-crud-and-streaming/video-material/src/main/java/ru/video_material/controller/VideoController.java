@@ -11,12 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.video_material.model.ContentMetadata;
 import ru.video_material.service.VideoService;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @RestController
 @RequestMapping("/videos")
@@ -61,7 +57,7 @@ public class VideoController {
     }
 
     @GetMapping("/get/metadata/byId/{id}")
-    public ResponseEntity<ContentMetadata> getMetadataById(@PathVariable String id){
+    public ResponseEntity<ContentMetadata> getMetadataById(@PathVariable String id) {
         return service.getMetadataById(id);
     }
 
