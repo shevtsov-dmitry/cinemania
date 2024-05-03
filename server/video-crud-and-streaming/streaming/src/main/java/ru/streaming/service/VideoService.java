@@ -23,7 +23,7 @@ import ru.streaming.controller.VideoController;
 
 @Service
 public class VideoService {
-    private static final Logger log = LoggerFactory.getLogger(VideoController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VideoController.class);
 
     public Mono<ResponseEntity<byte[]>> prepareContent(final String filename, final String range) {
         String filepath = "%s%s.mp4".formatted(VIDEO_STORAGE_PATH, filename);
@@ -40,7 +40,9 @@ public class VideoService {
                     : rangeStart + DOWNLOAD_CHUNK_SIZE * (long) grabber.getVideoFrameRate();
             rangeEnd = Math.min(rangeEnd, fileSize - 1);
 
+            LOG.info("filepath %s".formatted(filepath));
             File tempFile = File.createTempFile("video-clip", ".mp4");
+            LOG.info("tempFile size is: %d".formatted(tempFile.length()));
             FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(tempFile, grabber.getImageWidth(),
                     grabber.getImageHeight(), grabber.getAudioChannels());
             recorder.setVideoCodec(grabber.getVideoCodec());
@@ -48,7 +50,6 @@ public class VideoService {
             recorder.setFrameRate(grabber.getVideoFrameRate());
             recorder.setSampleRate(grabber.getSampleRate());
             recorder.start();
-
             grabber.setFrameNumber((int) rangeStart);
             Frame frame;
             long frameCount = 0;
@@ -66,32 +67,14 @@ public class VideoService {
             final String contentRange = "bytes " + rangeStart + "-" + rangeEnd + "/" + fileSize;
             HttpHeaders headers = composeHeaders(videoClip.length, contentRange);
             HttpStatus httpStatus = rangeEnd >= fileSize ? HttpStatus.OK : HttpStatus.PARTIAL_CONTENT;
-
             return Mono.just(response(httpStatus, headers, videoClip));
         } catch (IOException e) {
             e.printStackTrace();
-            var responce = ResponseEntity.internalServerError().body(e.getMessage().getBytes());
-            return Mono.just(responce);
+            var response = ResponseEntity.internalServerError().body(e.getMessage().getBytes());
+            return Mono.just(response);
         }
     }
 
-    private ResponseEntity<byte[]> contentFromRange(byte[] binaryContent, String range) {
-        final long fileSize = binaryContent.length;
-        String[] ranges = range.split("-");
-        long rangeStart = Long.parseLong(ranges[0].substring(6));
-        long rangeEnd = ranges.length > 1 ? Long.parseLong(ranges[1]) : rangeStart + DOWNLOAD_CHUNK_SIZE;
-        rangeEnd = Math.min(rangeEnd, fileSize - 1);
-
-        long contentLength = (rangeEnd - rangeStart) + 1;
-        final String contentRange = "bytes " + rangeStart + "-" + rangeEnd + "/" + fileSize;
-        HttpHeaders headers = composeHeaders(contentLength, contentRange);
-
-        byte[] binaryVideoContent = readByteRange(binaryContent, rangeStart, rangeEnd);
-        HttpStatus httpStatus = rangeEnd >= fileSize ? HttpStatus.OK : HttpStatus.PARTIAL_CONTENT;
-        return response(httpStatus, headers, binaryVideoContent);
-    }
-
-    //
     private ResponseEntity<byte[]> response(HttpStatus httpStatus, HttpHeaders headers, byte[] binaryVideoContent) {
         return ResponseEntity.status(httpStatus)
                 .headers(headers)
