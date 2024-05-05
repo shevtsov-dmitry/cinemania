@@ -1,13 +1,15 @@
 package ru.streaming.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import reactor.core.publisher.Mono;
 import ru.streaming.service.VideoService;
-
-import java.io.File;
 
 @RestController
 @RequestMapping("/videos")
@@ -20,7 +22,7 @@ public class VideoController {
         this.service = service;
     }
 
-    @GetMapping(value = "/stream/start/{filename}", produces = "video/mp4")
+    @GetMapping(value = "/stream/start/{filename}", produces = "video/mp2t")
     public Mono<ResponseEntity<byte[]>> streamVideo(
             @RequestHeader(value = "Range", required = false) String range,
             @PathVariable String filename) {
