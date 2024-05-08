@@ -1,41 +1,31 @@
 package ru.streaming.config;
 
-import com.mongodb.reactivestreams.client.MongoClient;
-import com.mongodb.reactivestreams.client.MongoClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.mongodb.MongoDatabaseFactory;
-import org.springframework.data.mongodb.ReactiveMongoDatabaseFactory;
-import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
-import org.springframework.data.mongodb.core.convert.MongoConverter;
+import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.data.mongodb.gridfs.ReactiveGridFsTemplate;
-import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
-
-import static ru.streaming.constants.ApplicationConstants.BUCKET_NAME;
 
 @Configuration
-@EnableReactiveMongoRepositories
-public class MongoConfig extends AbstractReactiveMongoConfiguration {
+// @EnableMongoRepositories
+public class MongoConfig extends AbstractMongoClientConfiguration {
 
-    @Bean
-    public MongoClient mongoClient() {
-        return MongoClients.create();
-    }
+    private final MappingMongoConverter mongoConverter;
 
     @Autowired
-    @Lazy
-    MongoConverter mongoConverter;
+    public MongoConfig(@Lazy MappingMongoConverter mongoConverter) {
+        this.mongoConverter = mongoConverter;
+    }
 
     @Bean
-    ReactiveGridFsTemplate reactiveGridFsTemplate(){
-        return  new ReactiveGridFsTemplate(reactiveMongoDbFactory(), mongoConverter);
+    public GridFsTemplate gridFsTemplate() {
+        return new GridFsTemplate(mongoDbFactory(), mongoConverter);
     }
 
     @Override
     protected String getDatabaseName() {
-        return BUCKET_NAME;
+        return "video_storage_gridfs";
     }
 }

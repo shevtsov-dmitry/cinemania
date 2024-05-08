@@ -24,7 +24,7 @@ export function VideoPlayer() {
             >
                 <source
                     src={`${process.env.REACT_APP_SERVER_URL}:8081/videos/stream/start/${videoId}`}
-                    type="video/mp4"
+                    type="video/mp2t"
                 />
                 Your browser does not support the video tag.
             </video>
