@@ -60,10 +60,11 @@ export function Preview() {
         async function constructPosters() {
             const postersAmountToDisplay = 20
             const url = `${process.env.REACT_APP_SERVER_URL}:8080/posters/get/recent/${postersAmountToDisplay}`
-            const response = await fetch(url)
-                .catch(() => {
-                    console.error(`can't fetch ${process.env.REACT_APP_SERVER_URL}:8080/posters/get/recent/${postersAmountToDisplay}`)
-                })
+            const response = await fetch(url).catch(() => {
+                console.error(
+                    `can't fetch ${process.env.REACT_APP_SERVER_URL}:8080/posters/get/recent/${postersAmountToDisplay}`
+                )
+            })
             const fetchedMaps = await response.json()
 
             const posterList = []
@@ -96,7 +97,6 @@ export function Preview() {
 
     return (
         <>
-            <h3 className={'p-2 text-2xl font-bold text-white'}>Новинки</h3>
             <div
                 id="previews-sequence-block"
                 onMouseEnter={() => setIsPostersBlockHovered(true)}
