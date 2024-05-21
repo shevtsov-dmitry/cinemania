@@ -9,7 +9,7 @@ export default function App() {
     const videoId = videoPlayerState.videoId
     // const videoPlayerPath = `/watch/${videoId}`
     return (
-        <div className="min-w-100 h-dvh min-h-20 bg-neutral-800">
+        <div className="min-w-100  h-dvh min-h-20 bg-neutral-800">
             <Header />
             <Routes>
                 <Route path="/" element={<Home />} />
