@@ -42,7 +42,9 @@ function FormAddFilm() {
             let response = await fetch(
                 `${FILLING_ASSISTANT_URL}/filling-assistants/genres/get/all`
             ).catch(() => {
-                console.error(`problem fetching: ${FILLING_ASSISTANT_URL}/filling-assistants/genres/get/all`)
+                console.error(
+                    `problem fetching: ${FILLING_ASSISTANT_URL}/filling-assistants/genres/get/all`
+                )
                 return
             })
             let responseData = await response.json()
@@ -54,7 +56,9 @@ function FormAddFilm() {
             response = await fetch(
                 `${FILLING_ASSISTANT_URL}/filling-assistants/countries/get/all`
             ).catch(() => {
-                console.error(`problem fetching: ${FILLING_ASSISTANT_URL}/filling-assistants/countries/get/all`)
+                console.error(
+                    `problem fetching: ${FILLING_ASSISTANT_URL}/filling-assistants/countries/get/all`
+                )
             })
             responseData = await response.json()
             map = {
@@ -232,7 +236,7 @@ function FormAddFilm() {
             })
         }
 
-        function highlightPopupElementTextColorWhileTyping(input) { }
+        function highlightPopupElementTextColorWhileTyping(input) {}
 
         async function saveMetadata(posterId, videoId) {
             return new Promise((resolve) => {
@@ -422,7 +426,7 @@ function FormAddFilm() {
                             name="subGenres"
                             placeholder="разделять запятой"
                             // value={genreInput}
-                            onChange={() => { }}
+                            onChange={() => {}}
                         />
                         <div className="typingSuggestions">
                             {subGenresSuggestionsDOM}
