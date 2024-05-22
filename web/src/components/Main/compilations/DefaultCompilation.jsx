@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { SideArrows } from '../../common/util/SideArrows'
 
 export function DefaultCompilation(props) {
-    const scrollableBlockRef = useRef()
+    const scrollableDivRef = useRef()
 
     // useEffect(() => {
     //     if (!isPlayerOpened) {
@@ -17,17 +17,17 @@ export function DefaultCompilation(props) {
     }
 
     return (
-        <>
+        <div className="flex flex-col justify-center">
             <div
-                ref={scrollableBlockRef}
+                ref={scrollableDivRef}
                 className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
             >
                 <div className="flex w-fit gap-4 overflow-scroll bg-fuchsia-500">
                     {compilation}
                 </div>
             </div>
-            <SideArrows scrollableBlockRef={scrollableBlockRef} />
-        </>
+            <SideArrows scrollableDivRef={scrollableDivRef} />
+        </div>
     )
 }
 

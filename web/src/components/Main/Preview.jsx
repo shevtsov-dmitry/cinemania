@@ -7,7 +7,7 @@ export function Preview() {
     const [posters, setPosters] = useState([])
 
     // const [isPostersBlockHovered, setIsPostersBlockHovered] = useState(false)
-    const scrollableBlockRef = useRef()
+    const scrollableDivRef = useRef()
     const postersLoadingTextRef = useRef()
 
     // *** PREVIEW PANEL
@@ -75,11 +75,12 @@ export function Preview() {
         <>
             <div
                 id="previews-sequence-block"
+                className="flex flex-col justify-center"
                 // onMouseEnter={() => setIsPostersBlockHovered(true)}
                 // onMouseLeave={() => setIsPostersBlockHovered(false)}
             >
                 <div
-                    ref={scrollableBlockRef}
+                    ref={scrollableDivRef}
                     className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
                 >
                     <ul className="flex w-fit gap-4">
@@ -94,8 +95,9 @@ export function Preview() {
                             </p>
                         )}
                     </ul>
-                    <SideArrows scrollableBlockRef={scrollableBlockRef} />
                 </div>
+
+                <SideArrows scrollableDivRef={scrollableDivRef} />
             </div>
         </>
     )
