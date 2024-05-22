@@ -94,8 +94,9 @@ export function Preview() {
                             </p>
                         )}
                     </ul>
-                    <SideArrows scrollableBlockRef={scrollableBlockRef} />
                 </div>
+
+                <SideArrows scrollableBlockRef={scrollableBlockRef} />
             </div>
         </>
     )
