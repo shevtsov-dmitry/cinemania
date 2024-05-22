@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
  */
 export function SideArrows(props) {
     const [isPostersBlockHovered, setIsPostersBlockHovered] = useState(true)
+    const [isArrowHovered, setIsArrowHovered] = useState(false)
 
     const rightArrowRef = useRef()
     const leftArrowRef = useRef()
@@ -13,20 +14,24 @@ export function SideArrows(props) {
 
     const ARROW_SCROLL_DISTANCE = 800
 
-    let Arrow
+    let Arrows
     if (scrollableDivRef !== undefined) {
-        Arrow = new SideScrollArrows(
+        Arrows = new SideScrollArrows(
             scrollableDivRef,
             leftArrowRef,
             rightArrowRef
         )
     }
 
-    const scrollLeft = () => Arrow.scrollLeft(ARROW_SCROLL_DISTANCE)
-    const scrollRight = () => Arrow.scrollRight(ARROW_SCROLL_DISTANCE)
-    const hideArrowsLeaningScreen = () => Arrow.hideArrowsLeaningScreen()
+    const scrollLeft = () => Arrows.scrollLeft(ARROW_SCROLL_DISTANCE)
+    const scrollRight = () => Arrows.scrollRight(ARROW_SCROLL_DISTANCE)
+    const hideArrowsLeaningScreen = () => Arrows.hideArrowsLeaningScreen()
     const hideShowArrowsOnHover = () =>
-        Arrow.hideShowArrowsOnHover(isPostersBlockHovered, arrowsHolderRef)
+        Arrows.hideShowArrowsOnHover(
+            isPostersBlockHovered,
+            isArrowHovered,
+            arrowsHolderRef
+        )
 
     // useEffect(() => {
     //     if (!isPlayerOpened) {
@@ -37,7 +42,7 @@ export function SideArrows(props) {
 
     useEffect(() => {
         hideShowArrowsOnHover()
-    }, [isPostersBlockHovered])
+    }, [isPostersBlockHovered, isArrowHovered])
 
     useEffect(() => {
         if (scrollableDivRef === undefined) return
@@ -67,6 +72,8 @@ export function SideArrows(props) {
                 src={'icons/left-arrow.png'}
                 className={'arrow absolute left-5 z-20'}
                 onClick={scrollLeft}
+                onMouseEnter={() => setIsArrowHovered(true)}
+                onMouseLeave={() => setIsArrowHovered(false)}
                 alt={'scroll compilation left'}
             />
             <img
@@ -74,6 +81,8 @@ export function SideArrows(props) {
                 src={'icons/right-arrow.png'}
                 className={'arrow absolute right-5 z-20'}
                 onClick={scrollRight}
+                onMouseEnter={() => setIsArrowHovered(true)}
+                onMouseLeave={() => setIsArrowHovered(false)}
                 alt={'scroll compilation right'}
             />
         </div>
@@ -118,9 +127,11 @@ class SideScrollArrows {
         }
     }
 
-    hideShowArrowsOnHover(isBlockHovered, arrowsHolder) {
+    hideShowArrowsOnHover(isBlockHovered, isArrowHovered, arrowsHolder) {
         if (arrowsHolder.current === undefined) return
         const style = arrowsHolder.current.style
-        isBlockHovered ? (style.display = 'flex') : (style.display = 'none')
+        isBlockHovered || (!isBlockHovered && isArrowHovered)
+            ? (style.display = 'flex')
+            : (style.display = 'none')
     }
 }
