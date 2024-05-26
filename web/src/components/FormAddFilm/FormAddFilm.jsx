@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 function FormAddFilm() {
     // *** ASSIGNMENT
     const FILLING_ASSISTANT_URL = `${process.env.REACT_APP_SERVER_URL}:8001`
-    const BINARY_STORAGE_URL = `${process.env.REACT_APP_SERVER_URL}:8080`
+    const VIDEO_MATERIAL_URL = `${process.env.REACT_APP_SERVER_URL}:8080`
 
     const options = {
         MAX_AUTO_SUGGESTIONS_DISPLAYED: 5,
@@ -206,7 +206,7 @@ function FormAddFilm() {
                 }
                 const posterFormData = new FormData()
                 posterFormData.append('file', posterFile)
-                fetch(`${BINARY_STORAGE_URL}/posters/upload`, {
+                fetch(`${VIDEO_MATERIAL_URL}/posters/upload`, {
                     method: 'POST',
                     body: posterFormData,
                 })
@@ -225,7 +225,7 @@ function FormAddFilm() {
                 }
                 const videoFormData = new FormData()
                 videoFormData.append('file', videoFile)
-                fetch(`${BINARY_STORAGE_URL}/videos/upload`, {
+                fetch(`${VIDEO_MATERIAL_URL}/videos/upload`, {
                     method: 'POST',
                     body: videoFormData,
                 })
@@ -235,8 +235,6 @@ function FormAddFilm() {
                     })
             })
         }
-
-        function highlightPopupElementTextColorWhileTyping(input) {}
 
         async function saveMetadata(posterId, videoId) {
             return new Promise((resolve) => {
@@ -264,7 +262,7 @@ function FormAddFilm() {
                     return subGenresArray
                 }
 
-                fetch(`${BINARY_STORAGE_URL}/videos/save/metadata`, {
+                fetch(`${VIDEO_MATERIAL_URL}/videos/save/metadata`, {
                     method: 'POST',
                     headers: {
                         'Content-type': 'application/json',

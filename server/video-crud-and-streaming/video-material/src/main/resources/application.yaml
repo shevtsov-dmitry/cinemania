@@ -6,9 +6,9 @@
 #      #      password: 123
 #      host: localhost
 #      port: 27017
-#      database: video_storage_gridfs
+#      database: preview_images_storage
 #      gridfs:
-#        database: video_storage_gridfs
+#        database: preview_images_storage
 
 #uplod size limit
 spring:
@@ -20,6 +20,6 @@ spring:
       max-file-size: 10GB
       max-request-size: 10GB
   datasource:
-    url: jdbc:mongodb://localhost:27017/video_storage_gridfs
+    url: jdbc:mongodb://localhost:27017/preview_images_storage
 #spring.servlet.multipart.max-file-size=150MB
 #spring.servlet.multipart.max-request-size=150MB

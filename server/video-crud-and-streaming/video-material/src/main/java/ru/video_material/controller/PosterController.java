@@ -17,7 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/posters")
 public class PosterController {
@@ -36,12 +35,18 @@ public class PosterController {
         try {
             String savedPosterId = service.save(file);
             return new ResponseEntity<>(savedPosterId, httpHeaders, HttpStatus.OK);
-        } catch (NullPointerException | IOException ex) {
+        } catch (NullPointerException ex) {
             return new ResponseEntity<>(
-                    "Impossible to read video file.", httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+                    "Impossible to read video file.\n Reason: %s".formatted(ex.getMessage()), httpHeaders,
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalArgumentException ex) {
             return new ResponseEntity<>(
-                    "Couldn't save video. Video content is empty.", httpHeaders, HttpStatus.BAD_REQUEST);
+                    "Couldn't save video. Video content is empty.\n Reason: %s".formatted(ex.getMessage()), httpHeaders,
+                    HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            return new ResponseEntity<>(
+                    "Couldn't save the video on a server. \n Reason: %s".formatted(e.getMessage()), httpHeaders,
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -68,10 +73,12 @@ public class PosterController {
         return service.getMetadataById(id);
     }
 
-//    @GetMapping(value = "/get/recent/ids/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<List<String>> getRecentSavedPosterIds(@PathVariable int amount) {
-//        return ResponseEntity.ok(service.getRecentSavedPosterIds(amount));
-//    }
+    // @GetMapping(value = "/get/recent/ids/{amount}", produces =
+    // MediaType.APPLICATION_JSON_VALUE)
+    // public ResponseEntity<List<String>> getRecentSavedPosterIds(@PathVariable int
+    // amount) {
+    // return ResponseEntity.ok(service.getRecentSavedPosterIds(amount));
+    // }
 
     @GetMapping(value = "/get/recent/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Map<String, byte[]>>> getRecentlySavedPosters(@PathVariable int amount) {
@@ -84,7 +91,7 @@ public class PosterController {
         httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
         return service.deleteById(id)
                 ? new ResponseEntity<>("poster image with id %s successfully deleted.".formatted(id),
-                httpHeaders, HttpStatus.OK)
+                        httpHeaders, HttpStatus.OK)
                 : ResponseEntity.notFound().build();
     }
 

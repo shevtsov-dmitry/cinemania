@@ -26,6 +26,6 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Override
     protected String getDatabaseName() {
-        return "video_storage_gridfs";
+        return "preview_images_storage";
     }
 }
