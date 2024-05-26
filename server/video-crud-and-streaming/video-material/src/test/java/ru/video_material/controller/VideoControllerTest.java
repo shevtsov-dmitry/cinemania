@@ -22,7 +22,7 @@ import static ru.video_material.COMMON.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class VideoMetadataControllerTest {
+public class VideoControllerTest {
 
     @Autowired
     MockMvc mockMvc;
