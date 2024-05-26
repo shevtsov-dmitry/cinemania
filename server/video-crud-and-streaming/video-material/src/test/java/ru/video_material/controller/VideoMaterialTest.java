@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//@Rollback(false)
+// @Rollback(false)
 public class VideoMaterialTest {
 
     @Autowired
@@ -51,15 +51,15 @@ public class VideoMaterialTest {
         metadata.setPosterId(posterId);
         metadata.setVideoId(videoId);
 
-        String url = "/videos/save/metadata";
+        String url = "/videos/metadata/save";
         mockMvc.perform(post(url)
-                        .content(gson.toJson(metadata)))
+                .content(gson.toJson(metadata)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(content().string(not(emptyString())));
     }
 
-   public String randomString(int length) {
+    public String randomString(int length) {
         String someTextChars = "abcdefjhklnopqrstuvwxyz1234567890";
         Random random = new Random();
         var sb = new StringBuilder(length);

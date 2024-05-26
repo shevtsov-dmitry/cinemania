@@ -262,7 +262,7 @@ function FormAddFilm() {
                     return subGenresArray
                 }
 
-                fetch(`${VIDEO_MATERIAL_URL}/videos/save/metadata`, {
+                fetch(`${VIDEO_MATERIAL_URL}/videos/metadata/save`, {
                     method: 'POST',
                     headers: {
                         'Content-type': 'application/json',
@@ -274,12 +274,6 @@ function FormAddFilm() {
                         resolve(id)
                     })
             })
-
-            function parseSubGenres(subGenresString) {
-                let subGenresArray = subGenresString.split(',')
-                subGenresArray.iterable.map((genre) => genre.trim())
-                return subGenresArray
-            }
         }
 
         let posterId = await savePoster()
