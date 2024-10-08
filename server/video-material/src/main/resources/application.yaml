@@ -1,0 +1,25 @@
+#  mongodb://localhost:27017/your-database-name
+#spring:
+#  data:
+#    mongodb:
+#      #      username: admin
+#      #      password: 123
+#      host: localhost
+#      port: 27017
+#      database: preview_images_storage
+#      gridfs:
+#        database: preview_images_storage
+
+#uplod size limit
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10GB
+      max-request-size: 10GB
+  datasource:
+    url: jdbc:mongodb://localhost:27017/preview_images_storage
+#spring.servlet.multipart.max-file-size=150MB
+#spring.servlet.multipart.max-request-size=150MB
