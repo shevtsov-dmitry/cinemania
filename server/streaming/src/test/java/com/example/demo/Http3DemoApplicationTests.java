@@ -1,10 +1,10 @@
-package com.netty_http3;
+package com.example.demo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class NettyHttp3ApplicationTests {
+class Http3DemoApplicationTests {
 
 	@Test
 	void contextLoads() {
