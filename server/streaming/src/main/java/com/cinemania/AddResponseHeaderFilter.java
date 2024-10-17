@@ -10,12 +10,12 @@ import java.io.IOException;
 @Component
 public class AddResponseHeaderFilter implements Filter {
 
-    @Value( "${server.port}" )
+    @Value("${server.port}")
     private Integer serverPort;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
-                         FilterChain chain) throws IOException, ServletException {
+            FilterChain chain) throws IOException, ServletException {
 
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setHeader(
