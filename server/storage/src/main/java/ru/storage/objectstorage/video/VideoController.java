@@ -21,6 +21,11 @@ public class VideoController {
         this.service = service;
     }
 
+    @GetMapping("/")
+    public String hello() {
+        return service.sayHello();
+    }
+
     @PostMapping("/upload")
     public ResponseEntity<String> saveVideo(@RequestBody MultipartFile file) {
         var httpHeaders = new HttpHeaders();
