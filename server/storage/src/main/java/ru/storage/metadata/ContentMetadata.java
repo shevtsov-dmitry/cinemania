@@ -3,20 +3,23 @@ package ru.storage.metadata;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-@Document
 @Data
+@Entity
 @RequiredArgsConstructor
 @NoArgsConstructor
 public class ContentMetadata {
-    @NonNull
-    private String id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @NonNull
     private String title;
     @NonNull
@@ -33,7 +36,9 @@ public class ContentMetadata {
     private Double rating;
     private String posterId;
     private String videoId;
-    private final LocalDateTime createdAt = LocalDateTime.now();
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     // @PrePersist
     // public void validateDate() {

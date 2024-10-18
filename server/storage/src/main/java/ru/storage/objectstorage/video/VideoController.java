@@ -1,4 +1,4 @@
-package ru.storage.video;
+package ru.storage.objectstorage.video;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

@@ -1,6 +1,5 @@
 package ru.storage.controller;
 
-import org.bson.assertions.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.bson.assertions.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -37,7 +36,7 @@ class PosterControllerTest {
     private final String ENDPOINT_URL = HOST_AND_PORT.concat("/posters");
 
     // JPEG
-    static String idJPEG;
+    private static Long idJPEG;
 
     // PNG
     // static String idPNG;
@@ -60,20 +59,20 @@ class PosterControllerTest {
 
     @Test
     @Order(1)
-    public void uploadJPEGImage() throws Exception {
+    void uploadJPEGImage() throws Exception {
 
         String url = "%s/upload".formatted(ENDPOINT_URL);
         mockMvc.perform(multipart(url)
                 .file(fileJPEG))
                 .andExpect(status().isOk())
                 .andExpect(content().string(not(emptyString())))
-                .andDo(res -> idJPEG = res.getResponse().getContentAsString());
+                .andDo(res -> idJPEG = Long.parseLong(res.getResponse().getContentAsString()));
     }
 
     @Test
     @Order(2)
-    public void afterUpload_checkJPEGImageInDatabase() throws Exception {
-        assertNotNull(idJPEG);
+    void afterUpload_checkJPEGImageInDatabase() throws Exception {
+        Assert.notNull(idJPEG, "couldn't retrieve idJPEG");
         String url = "%s/get/recent/1".formatted(ENDPOINT_URL);
 
         List<String> jsonFields = List.of("videoId", "videoId", "poster", "rating", "age", "subGenres",

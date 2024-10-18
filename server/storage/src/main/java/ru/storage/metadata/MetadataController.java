@@ -1,6 +1,7 @@
 package ru.storage.metadata;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,8 @@ public class MetadataController {
 
     @PostMapping("/save")
     public ResponseEntity<ContentMetadata> saveMetadata(@RequestBody ContentMetadata contentMetadata) {
-        return service.saveMetadata(contentMetadata);
+        Optional<ContentMetadata> content = service.saveMetadata(contentMetadata);
+        return content.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.internalServerError().build());
     }
 
     @GetMapping(value = "/get/metadata/byTitle/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,17 +35,13 @@ public class MetadataController {
     }
 
     @GetMapping(value = "/get/metadata/byId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ContentMetadata> getMetadataById(@PathVariable String id) {
+    public ResponseEntity<ContentMetadata> getMetadataById(@PathVariable Long id) {
         return service.getMetadataById(id);
     }
 
     @DeleteMapping("/delete/metadata/byId/{id}")
-    public ResponseEntity<String> deleteMetadataById(@PathVariable String id) {
+    public ResponseEntity<String> deleteMetadataById(@PathVariable Long id) {
         return service.deleteMetadataById(id);
-    }
-
-    public MetadataService getService() {
-        return service;
     }
 
 }
