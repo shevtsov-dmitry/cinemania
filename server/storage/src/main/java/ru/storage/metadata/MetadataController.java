@@ -29,7 +29,7 @@ public class MetadataController {
 		return content.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.internalServerError().build());
 	}
 
-	@GetMapping(value = "/get/metadata/byTitle/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "title/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ContentMetadata>> getMetadataByTitle(@PathVariable String title) {
 		return service.getMetadataByTitle(title);
 	}

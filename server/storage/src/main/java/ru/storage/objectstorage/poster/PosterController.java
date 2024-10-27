@@ -2,6 +2,7 @@ package ru.storage.objectstorage.poster;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,13 @@ public class PosterController {
 		this.service = service;
 	}
 
+	/**
+	 * Saves poster into S3 and its metadata into local db
+	 *
+	 * @param metadataId - id of existing video content metadata
+	 * @param file       - multipart file of image type
+	 * @return
+	 */
 	@PostMapping("/upload")
 	public ResponseEntity<Poster> savePoster(@RequestParam Long metadataId, @RequestParam MultipartFile file) {
 		HttpHeaders headers = new HttpHeaders();
@@ -41,26 +49,41 @@ public class PosterController {
 		}
 	}
 
-	@GetMapping("/")
-	public ResponseEntity<Poster> getPoster() {
-		return null;
+	/**
+	 * Provides poster images from S3 storage.
+	 *
+	 * @param contentMetadataIds - splitted ids by ',' separator.
+	 *                           example: "4,2,592,101,10"
+	 * @return List<byte[]> of matched images
+	 */
+	@GetMapping("/images/{contentMetadataId}")
+	public ResponseEntity<List<byte[]>> getImagesByContentMetadataId(@PathVariable String contentMetadataId) {
+		try {
+			return ResponseEntity.ok(service.getImagesByContentMetadataId(contentMetadataId));
+		} catch (Exception e) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("message", URLEncoder.encode("Ошибка при получении постеров.", StandardCharsets.UTF_8));
+			return new ResponseEntity<>(Collections.EMPTY_LIST, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
-	// @GetMapping(value = "/get/recent/{amount}", produces =
-	// MediaType.APPLICATION_JSON_VALUE)
-	// public ResponseEntity<List<>> getRecentlySavedPosters(@PathVariable int
-	// amount) {
-	// return ResponseEntity.ok(service.getRecentlySavedPosters(amount));
-	// }
-
-	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deletePosterById(@PathVariable String id) {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
-		return service.deleteById(id)
-				? new ResponseEntity<>("poster image with id %s successfully deleted.".formatted(id), httpHeaders,
-						HttpStatus.OK)
-				: ResponseEntity.notFound().build();
+	/**
+	 * Deletes saved poster which matches requested ids from S3 and local db.
+	 *
+	 * @param contentMetadataIds - splitted ids by ',' separator.
+	 *                           example: "4,2,592,101,10"
+	 * @return HttpStatus OK or INTERNAL_SERVER_ERROR
+	 */
+	@DeleteMapping("/ids/{ids}")
+	public ResponseEntity<Void> deletePostersByIds(@PathVariable String ids) {
+		try {
+			service.deleteByIds();
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("message", "Ошибка при удалении постеров по их идентификаторам.");
+			return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

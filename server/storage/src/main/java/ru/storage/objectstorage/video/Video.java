@@ -22,16 +22,16 @@ import ru.storage.metadata.ContentMetadata;
 @RequiredArgsConstructor
 @NoArgsConstructor
 public class Video {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @NonNull
-    private String name;
-    @NonNull
-    private String contentType;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	@NonNull
+	private String name;
+	@NonNull
+	private String contentType;
 
-    @JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "content_metadata_id")
-    private ContentMetadata contentMetadata;
+	@JsonIgnore
+	@OneToOne
+	@JoinColumn(name = "content_metadata_id")
+	private ContentMetadata contentMetadata;
 }

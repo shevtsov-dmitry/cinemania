@@ -1,5 +1,4 @@
 package ru.storage.objectstorage.poster;
-
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
