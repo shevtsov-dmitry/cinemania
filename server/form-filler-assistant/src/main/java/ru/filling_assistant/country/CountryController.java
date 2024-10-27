@@ -38,8 +38,7 @@ public class CountryController extends BaseController<Country> {
         return ResponseEntity.ok(
                 service.getAllCountries().stream()
                         .map(Country::getName)
-                        .toList()
-        );
+                        .toList());
     }
 
     @DeleteMapping("/delete")

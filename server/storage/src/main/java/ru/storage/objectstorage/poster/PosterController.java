@@ -1,10 +1,10 @@
 package ru.storage.objectstorage.poster;
 
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,37 +19,48 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/posters")
+@RequestMapping("/api/v1/posters")
 public class PosterController {
 
-    private final PosterService service;
+	private final PosterService service;
 
-    @Autowired
-    public PosterController(PosterService service) {
-        this.service = service;
-    }
+	public PosterController(PosterService service) {
+		this.service = service;
+	}
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> savePoster(@RequestParam MultipartFile file) {
-        // TODO upload into S3
-        return null;
-    }
+	@PostMapping("/upload")
+	public ResponseEntity<Poster> savePoster(@RequestParam Long metadataId, @RequestParam MultipartFile file) {
+		HttpHeaders headers = new HttpHeaders();
+		try {
+			final Poster savedPopsterMetadata = service.savePoster(metadataId, file);
+			return new ResponseEntity<>(savedPopsterMetadata, HttpStatus.OK);
+		} catch (Exception e) {
+			headers.set("message",
+					URLEncoder.encode("Ошибка при сохранении постера для видео.", StandardCharsets.UTF_8));
+			return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
-    // @GetMapping(value = "/get/recent/{amount}", produces =
-    // MediaType.APPLICATION_JSON_VALUE)
-    // public ResponseEntity<List<Map<String, byte[]>>>
-    // getRecentlySavedPosters(@PathVariable int amount) {
-    // return ResponseEntity.ok(service.getRecentlySavedPosters(amount));
-    // }
+	@GetMapping("/")
+	public ResponseEntity<Poster> getPoster() {
+		return null;
+	}
 
-    @DeleteMapping("/delete/byId/{id}")
-    public ResponseEntity<String> deletePosterById(@PathVariable String id) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
-        return service.deleteById(id)
-                ? new ResponseEntity<>("poster image with id %s successfully deleted.".formatted(id),
-                        httpHeaders, HttpStatus.OK)
-                : ResponseEntity.notFound().build();
-    }
+	// @GetMapping(value = "/get/recent/{amount}", produces =
+	// MediaType.APPLICATION_JSON_VALUE)
+	// public ResponseEntity<List<>> getRecentlySavedPosters(@PathVariable int
+	// amount) {
+	// return ResponseEntity.ok(service.getRecentlySavedPosters(amount));
+	// }
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> deletePosterById(@PathVariable String id) {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
+		return service.deleteById(id)
+				? new ResponseEntity<>("poster image with id %s successfully deleted.".formatted(id), httpHeaders,
+						HttpStatus.OK)
+				: ResponseEntity.notFound().build();
+	}
 
 }

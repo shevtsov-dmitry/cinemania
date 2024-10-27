@@ -1,5 +1,18 @@
 package ru.storage.controller;
 
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.not;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.storage.COMMON.ASSETS_PATH;
+import static ru.storage.COMMON.HOST_AND_PORT;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -9,20 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.Assert;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.storage.COMMON.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -55,6 +54,7 @@ class PosterControllerTest {
     MockMultipartFile fileJPEG = new MockMultipartFile("file", filenameJPEG, imagesContentType, contentJPEG);
 
     PosterControllerTest() throws IOException {
+
     }
 
     @Test
@@ -68,21 +68,4 @@ class PosterControllerTest {
                 .andExpect(content().string(not(emptyString())))
                 .andDo(res -> idJPEG = Long.parseLong(res.getResponse().getContentAsString()));
     }
-
-    @Test
-    @Order(2)
-    void afterUpload_checkJPEGImageInDatabase() throws Exception {
-        Assert.notNull(idJPEG, "couldn't retrieve idJPEG");
-        String url = "%s/get/recent/1".formatted(ENDPOINT_URL);
-
-        List<String> jsonFields = List.of("videoId", "videoId", "poster", "rating", "age", "subGenres",
-                "mainGenre", "country", "releaseDate", "title", "metadataId");
-
-        mockMvc.perform(get(url))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andDo(res -> System.out.println(res.getResponse().getContentAsString()))
-                .andExpect(content().bytes(contentJPEG));
-    }
-
 }
