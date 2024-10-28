@@ -80,7 +80,6 @@ public class PosterController {
 	 *
 	 * @param metadataId - content metadata id
 	 * @param image      - multipart file of image type
-	 * @return
 	 */
 	@PutMapping("/change")
 	public ResponseEntity<Void> updateExistingImage(@RequestParam Long metadataId, @RequestParam MultipartFile image) {
@@ -112,7 +111,7 @@ public class PosterController {
 	public ResponseEntity<Void> deletePostersByIds(@PathVariable String contentMetadataIds) {
 		HttpHeaders headers = new HttpHeaders();
 		try {
-			service.deleteByIds();
+			service.deleteByIds(contentMetadataIds);
 			writeMessageHeader(headers, "Выбранные постеры успешно удалены");
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {

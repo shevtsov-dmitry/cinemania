@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import ru.storage.metadata.MetadataRepo;
-import software.amazon.awssdk.services.s3.S3ClientBuilder;
 
 @Service
 public class PosterService {
@@ -29,29 +29,25 @@ public class PosterService {
 	}
 
 	public Poster savePoster(Long metadataId, MultipartFile file) {
-		try {
-			var savedPoster = posterRepo.save(new Poster(file.getName(), file.getContentType()));
-			return savedPoster;
-			// TODO save in actual S3
-		} catch (IOException e) {
-			log.warn("Не удалось сохранить файл плаката с именем {} из-за {}", file.getName(), e.getMessage());
-			return null;
-		}
+		var savedPoster = posterRepo.save(new Poster(file.getName(), file.getContentType()));
+		return savedPoster;
+		// TODO save in actual S3
+		// log.warn("Не удалось сохранить файл плаката с именем {} из-за {}",
 	}
 
-	public boolean deleteById(String id) {
-		// TODO implement S3 storage
-		return false;
-	}
-
-	public Object getRecentlySavedPosters(int amount) {
+	public List<byte[]> getImagesByContentMetadataId(String contentMetadataIds) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void getPoster() {
+	public void updateExistingImage(Long metadataId, MultipartFile image) {
 		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'updateExistingImage'");
+	}
 
+	public void deleteByIds(String contentMetadataIds) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'deleteByIds'");
 	}
 
 	// public List<ContentMetadata> queryMetadataRepoForIds(int amount) {
