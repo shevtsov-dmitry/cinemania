@@ -1,17 +1,12 @@
 package ru.storage.objectstorage.poster;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import ru.storage.metadata.MetadataRepo;
+
+import java.util.List;
 
 @Service
 public class PosterService {
@@ -35,6 +30,10 @@ public class PosterService {
 		// log.warn("Не удалось сохранить файл плаката с именем {} из-за {}",
 	}
 
+	/**
+	 *
+	 *  @throws SomeExceptionType if there is an error retrieving images from S3
+	 */
 	public List<byte[]> getImagesByContentMetadataId(String contentMetadataIds) {
 		// TODO Auto-generated method stub
 		return null;

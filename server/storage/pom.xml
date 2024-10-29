@@ -79,8 +79,6 @@
 		<!--            <artifactId>aws-java-sdk-sts</artifactId>-->
 		<!--            <version>1.12.774</version>-->
 		<!--        </dependency>-->
-
-
 	</dependencies>
 
 	<build>
