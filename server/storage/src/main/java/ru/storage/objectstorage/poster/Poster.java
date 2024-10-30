@@ -26,6 +26,7 @@ public class Poster {
     private String filename;
     @NonNull
     private String contentType;
+    @NonNull
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "content_metadata_id")

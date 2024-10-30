@@ -1,9 +1,14 @@
 package ru.storage.objectstorage.poster;
 
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
+import ru.storage.metadata.ContentMetadata;
 import ru.storage.metadata.MetadataRepo;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -12,23 +17,20 @@ import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class PosterService {
 
-    private static final String BUCKET_NAME = "videos121212";
-    public static final String FOLDER = "posters/";
-    private static final Logger LOG = LoggerFactory.getLogger(PosterService.class);
+    @Value("${custom.s3.BUCKET_NAME}")
+    private String BUCKET_NAME;
+    private static final String FOLDER = "posters/";
+    private static final Logger log = LoggerFactory.getLogger(PosterService.class);
 
     private final PosterRepo posterRepo;
     private final MetadataRepo metadataRepo;
     private final S3Client s3Client;
-
 
     public PosterService(PosterRepo posterRepo, MetadataRepo metadataRepo, S3Client s3Client) {
         this.posterRepo = posterRepo;
@@ -36,19 +38,34 @@ public class PosterService {
         this.s3Client = s3Client;
     }
 
+    @PostConstruct
+    public void init() {
+        Assert.notNull(BUCKET_NAME, "переменная BUCKET_NAME должна быть указана в конфигурации application.properties.");
+    }
+
     public Poster savePoster(Long metadataId, MultipartFile file) {
-        var savedPoster = posterRepo.save(new Poster(file.getName(), file.getContentType()));
+        final Poster savedPoster;
+        final String contentType = Optional.ofNullable(file.getContentType()).orElseGet(() -> "image/jpeg");
+        try {
+            ContentMetadata contentMetadata = metadataRepo.findById(metadataId).orElseThrow();
+            Poster newPosterInstance = new Poster(file.getName(), contentType, contentMetadata);
+            savedPoster = posterRepo.save(newPosterInstance);
+        } catch (Exception e) {
+            String errMessage = "Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных.";
+            log.error(errMessage);
+            throw new InvalidDataAccessApiUsageException(errMessage);
+        }
         try (InputStream inputStream = file.getInputStream()) {
             final String key = "posters/" + metadataId + "-" + file.getOriginalFilename();
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(BUCKET_NAME)
                     .key(key)
-                    .contentType(file.getContentType())
+                    .contentType(contentType)
                     .build();
 
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
         } catch (IOException e) {
-            LOG.error("Couldn't save poster image in S3 because of {}", e.getMessage());
+            log.error("Couldn't save poster image in S3 because of {}", e.getMessage());
         }
         return savedPoster;
 
@@ -83,7 +100,7 @@ public class PosterService {
             try (ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest)) {
                 images.add(s3Object.readAllBytes());
             } catch (IOException e) {
-                LOG.warn("Couldn't retrieve poster image from S3 storage because of {}", e.getMessage());
+                log.warn("Couldn't retrieve poster image from S3 storage because of {}", e.getMessage());
             }
         });
 

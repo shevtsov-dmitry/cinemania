@@ -113,11 +113,10 @@ class PosterControllerTest {
                 .andExpect(header().string(MESSAGE_HEADER, not(emptyString())));
     }
 
-
     @Test
     void getImagesByMetadataId_getOne_200() throws Exception {
-        when(posterService.savePoster(anyLong(), (MultipartFile) any(MultipartFile.class)))
-                .thenReturn(new Poster("my poster", "image/jpeg"));
+//        when(posterService.savePoster(anyLong(), (MultipartFile) any(MultipartFile.class)))
+//                .thenReturn(new Poster("my poster", "image/jpeg"));
     }
 
 //    @Test
