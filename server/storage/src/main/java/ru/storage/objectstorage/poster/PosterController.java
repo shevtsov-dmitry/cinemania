@@ -8,11 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static ru.storage.utility.HttpHeaderHelpers.writeMessageHeader;
 
 @RestController
-@RequestMapping("/api/v1/posters")
+@RequestMapping("/api/v0/posters")
 public class PosterController {
 
     private final PosterService service;
@@ -36,14 +37,14 @@ public class PosterController {
     @PostMapping("/upload")
     public ResponseEntity<Poster> savePoster(@RequestParam Long metadataId, @RequestParam MultipartFile image) {
         HttpHeaders headers = new HttpHeaders();
-        if (!image.getContentType().startsWith("image")) {
+        if (!Objects.requireNonNull(image.getContentType()).startsWith("image")) {
             writeMessageHeader(headers, "Ошибка при сохранении постера. Файл не является изображением.");
             return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
         }
 
         try {
-            final Poster savedPopsterMetadata = service.savePoster(metadataId, image);
-            return new ResponseEntity<>(savedPopsterMetadata, HttpStatus.CREATED);
+            final Poster savedPosterMetadata = service.savePoster(metadataId, image);
+            return new ResponseEntity<>(savedPosterMetadata, HttpStatus.CREATED);
         } catch (Exception e) {
             writeMessageHeader(headers, "Ошибка при сохранении постера для видео.");
             return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -59,14 +60,15 @@ public class PosterController {
      * @param contentMetadataIds a comma-separated string of content metadata IDs
      * @return Response.
      * <ul>
-     *     <li>200 (OK). A list of byte arrays representing the images if successful . The values are in the same order as requested ids.</li>
+     *     <li>200 (OK). A list of byte arrays representing the images if successful .
+     *     The values are in the same order as requested ids.</li>
      *     <li>500 (INTERNAL_SERVER_ERROR). An empty list with an error message header if an error occurs </li>
      * </ul>
      */
     @GetMapping("/images/{contentMetadataIds}")
-    public ResponseEntity<List<byte[]>> getImagesByContentMetadataId(@PathVariable String contentMetadataIds) {
+    public ResponseEntity<List<byte[]>> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
         try {
-            return ResponseEntity.ok(service.getImagesByContentMetadataId(contentMetadataIds));
+            return ResponseEntity.ok(service.getImagesMatchingMetadataIds(contentMetadataIds));
         } catch (Exception e) {
             HttpHeaders headers = new HttpHeaders();
             writeMessageHeader(headers, "Ошибка при поиске плакатов.");
@@ -82,6 +84,7 @@ public class PosterController {
      * @return Response:
      * <ul>
      *     <li>200 (OK) with the success header "Message"</li>
+     *     <li>400 (BAD_REQUEST) with the success header "Message"</li>
      *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message"</li>
      * </>
      */

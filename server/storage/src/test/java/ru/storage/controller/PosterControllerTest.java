@@ -1,243 +1,153 @@
 package ru.storage.controller;
 
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.objectstorage.poster.Poster;
 import ru.storage.objectstorage.poster.PosterController;
 import ru.storage.objectstorage.poster.PosterService;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestMethodOrder(OrderAnnotation.class)
+@WebMvcTest(PosterController.class)
 @ExtendWith(MockitoExtension.class)
 class PosterControllerTest {
 
+    private static final String MESSAGE_HEADER = "Message";
+
     @Autowired
     private MockMvc mockMvc;
-    @Mock
-    private PosterService service;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private PosterService posterService;
     @InjectMocks
-    private PosterController controller;
+    private PosterController posterController;
 
-    @Value("${SERVER_URL: }")
-    private static String SERVER_URL;
-    private static String ENDPOINT_URL;
+    private static final File IMAGE_FILE = new File("src/test/java/ru/storage/assets/image.jpg");
+    private static final String ENDPOINT_URL = "/api/v0/posters";
+    private static final Random RANDOM = new Random();
 
-    @BeforeAll
-    static void setUp() {
-        assertFalse(SERVER_URL.isBlank(), "Необходимо указать переменную среды SERVER_URL.");
-        ENDPOINT_URL = SERVER_URL + "/api/v1/posters";
+    @Test
+    void savePoster_201() throws Exception {
+        MockMultipartFile testImageMultipartFile = new MockMultipartFile(
+                "image",
+                IMAGE_FILE.getName(),
+                MediaType.IMAGE_JPEG_VALUE,
+                Files.readAllBytes(IMAGE_FILE.toPath())
+        );
+
+        mockMvc.perform(multipart(ENDPOINT_URL + "/upload")
+                        .file(testImageMultipartFile)
+                        .content(MediaType.IMAGE_JPEG_VALUE)
+                        .param("metadataId", String.valueOf(RANDOM.nextLong())))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", isA(Long.class)));
     }
 
-    // Static ID to be used across tests
-    private static Long savedMetadataId;
-    private static final File imageFile = new File("src/test/java/ru/storage/assets/image.jpg");
-    private static String contentMetadataIds = savedMetadataId.toString();
+    @Test
+    void savePoster_400_ParamMetadataIdAbsent() throws Exception {
+        var testImageMultipartFile = new MockMultipartFile(
+                "image",
+                IMAGE_FILE.getName(),
+                MediaType.IMAGE_JPEG_VALUE,
+                Files.readAllBytes(IMAGE_FILE.toPath())
+        );
 
-    private static final MockMultipartFile formDataImage;
-
-    static {
-        try {
-            formDataImage = new MockMultipartFile(
-                    "image", "image.jpg", "image/jpeg", Files.readAllBytes(imageFile.toPath()));
-        } catch (IOException e) {
-            Assert.isTrue(imageFile.exists(), "Ошибка при чтении тестового файла изображения постера.");
-            throw new RuntimeException(e);
-        }
+        mockMvc.perform(multipart(ENDPOINT_URL + "/upload")
+                        .file(testImageMultipartFile)
+                        .contentType(MediaType.IMAGE_JPEG_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(header().exists(MESSAGE_HEADER))
+                .andExpect(header().string(MESSAGE_HEADER, not(emptyString())));
     }
 
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    @Test
+    void savePoster_400_wrongContentType() throws Exception {
+        var textFile = new MockMultipartFile("image", "not image bytes".getBytes());
+        mockMvc.perform(multipart(ENDPOINT_URL + "/upload")
+                        .file(textFile)
+                        .content(MediaType.IMAGE_JPEG_VALUE)
+                        .param("metadataId", String.valueOf(RANDOM.nextLong())))
+                .andExpect(status().isBadRequest())
+                .andExpect(header().exists(MESSAGE_HEADER))
+                .andExpect(header().string(MESSAGE_HEADER, not(emptyString())));
+    }
+
+    @Test
+    void savePoster_500_CorruptedImage() throws Exception {
+        when(posterService.savePoster(1L, new MockMultipartFile("image", "not image bytes".getBytes())))
+                .thenThrow(new RuntimeException());// TODO appropriate exception when happens issue with processing image in service
+
+        MockMultipartFile testImageMultipartFile = new MockMultipartFile(
+                "image",
+                IMAGE_FILE.getName(),
+                MediaType.IMAGE_JPEG_VALUE,
+                Files.readAllBytes(IMAGE_FILE.toPath())
+        );
+
+        mockMvc.perform(multipart(ENDPOINT_URL + "/upload")
+                        .file(testImageMultipartFile)
+                        .param("metadataId", String.valueOf(RANDOM.nextLong())))
+                .andExpect(status().isInternalServerError())
+                .andExpect(header().exists(MESSAGE_HEADER))
+                .andExpect(header().string(MESSAGE_HEADER, not(emptyString())));
+    }
+
+
+    @Test
+    void getImagesByMetadataId_getOne_200() throws Exception {
+        when(posterService.savePoster(anyLong(), (MultipartFile) any(MultipartFile.class)))
+                .thenReturn(new Poster("my poster", "image/jpeg"));
     }
 
 //    @Test
-//    void testImageIsAvailable_Success() {
-//        Assertions.assertTrue(resource.exists());
+//    void getImagesByMetadataId_500() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void updateExistingImage_200() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void updateExistingImage_400() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void updateExistingImage_500() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void deletePostersByIds_200() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void deletePostersByIds_500() throws Exception {
+//
 //    }
 
-    // Ordered Successful Tests
-
-    @Test
-    @Order(1)
-    void testSavePoster_Success() throws Exception {
-        Long metadataId = 100L; // You can set this to any value you prefer
-
-        Poster poster = new Poster();
-        poster.setId(metadataId);
-        when(service.savePoster(eq(metadataId), any(MultipartFile.class))).thenReturn(poster);
-
-        mockMvc.perform(multipart(ENDPOINT_URL + "/upload")
-                        .file(formDataImage)
-                        .param("metadataId", metadataId.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(metadataId));
-
-        // Save the metadataId for use in subsequent tests
-        savedMetadataId = metadataId;
-    }
-
-    @Test
-    @Order(2)
-    void testGetImagesByContentMetadataId_Success() throws Exception {
-        assertThat(savedMetadataId).isNotNull();
-
-        when(service.getImagesByContentMetadataId(contentMetadataIds))
-                .thenReturn();
-
-        mockMvc.perform(get(ENDPOINT_URL + "/images/{contentMetadataIds}", contentMetadataIds))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @Order(3)
-    void testUpdateExistingImage_Success() throws Exception {
-        Long metadataId = savedMetadataId;
-        MockMultipartFile formDataImage = new MockMultipartFile(
-                "image", "updated_image.jpg", "image/jpeg", "updated image content".getBytes());
-
-        doNothing().when(service).updateExistingImage(eq(metadataId), any(MultipartFile.class));
-
-        mockMvc.perform(multipart(ENDPOINT_URL + "/change")
-                        .file(formDataImage)
-                        .param("metadataId", metadataId.toString())
-                        .with(request -> {
-                            request.setMethod("PUT");
-                            return request;
-                        }))
-                .andExpect(status().isOk())
-                .andExpect(header().exists("message"))
-                .andExpect(header().string("message", Matchers.not(Matchers.emptyString())));
-    }
-
-    @Test
-    @Order(4)
-    void testDeletePosterById_Success() throws Exception {
-        doNothing().when(service).deleteByIds(contentMetadataIds);
-
-        mockMvc.perform(delete(ENDPOINT_URL + "/ids/{contentMetadataIds}", contentMetadataIds))
-                .andExpect(status().isOk())
-                .andExpect(header().exists("message"))
-                .andExpect(header().string("message", Matchers.not(Matchers.emptyString())));
-    }
-
-    // Exception Tests (Not Ordered)
-
-    @Test
-    void testSavePoster_InvalidContentType() throws Exception {
-        Long metadataId = 200L;
-        MockMultipartFile textInsteadOfImage = new MockMultipartFile(
-                "image", "file.txt", "text/plain", "test content".getBytes());
-
-        mockMvc.perform(multipart(ENDPOINT_URL + "/upload")
-                        .file(textInsteadOfImage)
-                        .param("metadataId", metadataId.toString()))
-                .andExpect(status().isBadRequest())
-                .andExpect(header().exists("message"))
-                .andExpect(header().string("message", Matchers.not(Matchers.emptyString())));
-    }
-
-    @Test
-    void testSavePoster_Exception() throws Exception {
-        Long metadataId = 300L;
-
-        when(service.savePoster(eq(metadataId), any(MultipartFile.class)))
-                .thenThrow(new RuntimeException("Database error"));
-
-        mockMvc.perform(multipart(ENDPOINT_URL + "/upload")
-                        .file(formDataImage)
-                        .param("metadataId", metadataId.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(header().exists("message"))
-                .andExpect(header().string("message", Matchers.not(Matchers.emptyString())));
-    }
-
-    @Test
-    void testGetImagesByContentMetadataId_Exception() throws Exception {
-
-        when(service.getImagesByContentMetadataId(contentMetadataIds))
-                .thenThrow(new RuntimeException("Database error"));
-
-        mockMvc.perform(get(ENDPOINT_URL + "/images/{contentMetadataIds}", contentMetadataIds))
-                .andExpect(status().isInternalServerError())
-                .andExpect(header().string("message", "Ошибка при получении постеров."));
-    }
-
-    @Test
-    void testUpdateExistingImage_InvalidContentType() throws Exception {
-        Long metadataId = savedMetadataId != null ? savedMetadataId : 700L;
-
-        mockMvc.perform(multipart(ENDPOINT_URL + "/change")
-                        .file(formDataImage)
-                        .param("metadataId", metadataId.toString())
-                        .with(request -> {
-                            request.setMethod("PUT");
-                            return request;
-                        }))
-                .andExpect(status().isBadRequest())
-                .andExpect(header().exists("message"))
-                .andExpect(header().string("message", Matchers.not(Matchers.emptyString())));
-    }
-
-    @Test
-    void testUpdateExistingImage_Exception() throws Exception {
-        Long metadataId = savedMetadataId != null ? savedMetadataId : 800L;
-
-        doThrow(new RuntimeException("Database error"))
-                .when(service).updateExistingImage(eq(metadataId), any(MultipartFile.class));
-
-        mockMvc.perform(multipart(ENDPOINT_URL + "/change")
-                        .file(formDataImage)
-                        .param("metadataId", metadataId.toString())
-                        .with(request -> {
-                            request.setMethod("PUT");
-                            return request;
-                        }))
-                .andExpect(status().isInternalServerError())
-                .andExpect(header().string("message", "Неудалось заменить существующий постер."));
-    }
-
-    @Test
-    void testDeletePostersByIds_InternalServerError() throws Exception {
-        String contentMetadataIds = savedMetadataId != null ? savedMetadataId.toString() : "900,1000";
-
-        doThrow(new RuntimeException("Database error")).when(service).deleteByIds("123,44,201");
-
-        mockMvc.perform(delete(ENDPOINT_URL + "/ids/{contentMetadataIds}", contentMetadataIds))
-                .andExpect(status().isInternalServerError())
-                .andExpect(header().exists("message"))
-                .andExpect(header().string("message", Matchers.not(Matchers.emptyString())));
-    }
 }
