@@ -20,7 +20,7 @@ public class HttpHeaderHelpers {
      * @param headers - headers where message will be saved
      * @param message - UTF-8 message
      */
-    public static void writeMessageHeader(HttpHeaders headers, String message) {
+    public static void writeEncodedMessageHeader(HttpHeaders headers, String message) {
         headers.set("Message", URLEncoder.encode(message, StandardCharsets.UTF_8));
     }
 }

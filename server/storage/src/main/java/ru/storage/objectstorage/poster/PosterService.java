@@ -1,6 +1,7 @@
 package ru.storage.objectstorage.poster;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,7 @@ public class PosterService {
             throw new InvalidDataAccessApiUsageException(errMessage);
         }
         try (InputStream inputStream = file.getInputStream()) {
-            final String key = FOLDER + metadataId + "-" + file.getOriginalFilename();
+            final String key = FOLDER + metadataId;
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -123,22 +124,13 @@ public class PosterService {
             throw new CustomNumberFormatException();
         }
 
-        ListObjectsRequest lsRequest = ListObjectsRequest.builder()
-                .bucket(bucketName)
-                .prefix(FOLDER)
-                .build();
-        ListObjectsResponse lsResponse = s3Client.listObjects(lsRequest);
+        idsSet.forEach(posterRepo::deleteByContentMetadataId);
 
-        List<String> matchedImagesNames = lsResponse.contents().stream()
-                .map(s3Object -> s3Object.key().substring(FOLDER.length()))
-                .filter(name -> idsSet.contains(Long.parseLong(name.split("-")[0])))
-                .map(FOLDER::concat)
-                .toList();
-
-        matchedImagesNames.forEach(imageName -> {
+        List<Long> matchedS3Ids = lsPosterStorageFolder(idsSet);
+        matchedS3Ids.forEach(id -> {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(imageName)
+                    .key(id.toString())
                     .build();
 
             // Retrieve the object and add its contents as a byte array to the list
@@ -152,14 +144,81 @@ public class PosterService {
         return images;
     }
 
-    public void updateExistingImage(Long metadataId, MultipartFile image) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateExistingImage'");
+    /**
+     * Lists all matched images in S3 folder
+     *
+     * @param idsSet - required ids
+     * @return List of matched images names
+     */
+    private List<Long> lsPosterStorageFolder(Set<Long> idsSet) {
+        ListObjectsRequest lsRequest = ListObjectsRequest.builder()
+                .bucket(bucketName)
+                .prefix(FOLDER)
+                .build();
+        ListObjectsResponse lsResponse = s3Client.listObjects(lsRequest);
+
+        return lsResponse.contents().stream()
+                .mapToLong(s3Object -> Long.parseLong(s3Object.key().substring(FOLDER.length())))
+                .filter(idsSet::contains)
+                .boxed()
+                .toList();
     }
 
+    /**
+     * Updates existing poster in S3 storage
+     *
+     * @param metadataId - content metadata id
+     * @param image      - new multipart form data image
+     */
+    @Transactional
+    public void updateExistingImage(Long metadataId, MultipartFile image) {
+        posterRepo.updatePosterByContentMetadataId(metadataId,
+                image.getOriginalFilename(), image.getContentType());
+
+        final Long s3ImageId = lsPosterStorageFolder(Set.of(metadataId)).getFirst();
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(String.valueOf(s3ImageId))
+                .contentType(image.getContentType())
+                .build();
+        try {
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(image.getInputStream(), image.getSize()));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Deletes saved poster which matches requested ids from S3 and local db.
+     *
+     * <p>
+     * Also supports single id instance. example: {@code "4"}.
+     * </p>
+     *
+     * @param contentMetadataIds - ids split by ',' separator. For example: {@code "4,2,592,101,10"}
+     * @throws CustomNumberFormatException - in case of invalid number format defined by api
+     * @throws S3Exception                 - in case image wasn't deleted
+     */
+    @Transactional
     public void deleteByIds(String contentMetadataIds) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteByIds'");
+        Set<Long> idsSet;
+        try {
+            idsSet = Arrays.stream(contentMetadataIds.split(","))
+                    .mapToLong(Long::parseLong)
+                    .boxed()
+                    .collect(Collectors.toSet());
+        } catch (Exception e) {
+            throw new CustomNumberFormatException();
+        }
+
+        List<Long> s3ImageIds = lsPosterStorageFolder(idsSet);
+        s3ImageIds.forEach(id -> {
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(FOLDER + id.toString())
+                    .build();
+            s3Client.deleteObject(deleteObjectRequest);
+        });
     }
 
     // public List<ContentMetadata> queryMetadataRepoForIds(int amount) {
