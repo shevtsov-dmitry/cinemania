@@ -1,15 +1,18 @@
 package ru.storage.objectstorage.poster;
 
 import jakarta.annotation.PostConstruct;
+import net.coobird.thumbnailator.Thumbnailator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.metadata.ContentMetadata;
 import ru.storage.metadata.MetadataRepo;
+import ru.storage.objectstorage.poster.exceptions.CustomNumberFormatException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -17,6 +20,7 @@ import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,7 +28,7 @@ import java.util.stream.Collectors;
 public class PosterService {
 
     @Value("${custom.s3.BUCKET_NAME}")
-    private String BUCKET_NAME;
+    private String bucketName;
     private static final String FOLDER = "posters/";
     private static final Logger log = LoggerFactory.getLogger(PosterService.class);
 
@@ -40,46 +44,87 @@ public class PosterService {
 
     @PostConstruct
     public void init() {
-        Assert.notNull(BUCKET_NAME, "переменная BUCKET_NAME должна быть указана в конфигурации application.properties.");
+        Assert.notNull(bucketName, "переменная BUCKET_NAME должна быть указана в конфигурации application.properties.");
     }
 
-    public Poster savePoster(Long metadataId, MultipartFile file) {
+    /**
+     * Saves poster metadata in database and image into S3 cloud storage
+     *
+     * @param metadataId - id of saved content metadata
+     * @param file       - form data image file
+     * @return saved poster object from db
+     * @throws InvalidDataAccessApiUsageException - in case if method used without saved metadata instance, which retrieved by metadataRepo
+     * @throws UncheckedIOException               - in case if image wasn't saved in S3 for some reason
+     */
+    public Poster savePoster(Long metadataId, MultipartFile file) throws InvalidDataAccessApiUsageException, UncheckedIOException {
         final Poster savedPoster;
-        final String contentType = Optional.ofNullable(file.getContentType()).orElseGet(() -> "image/jpeg");
+        final String contentType = Optional.ofNullable(file.getContentType()).orElse("image/jpeg");
         try {
-            ContentMetadata contentMetadata = metadataRepo.findById(metadataId).orElseThrow();
+            ContentMetadata contentMetadata = metadataRepo.findById(metadataId).orElseThrow(NoSuchElementException::new);
             Poster newPosterInstance = new Poster(file.getName(), contentType, contentMetadata);
             savedPoster = posterRepo.save(newPosterInstance);
-        } catch (Exception e) {
+        } catch (NoSuchElementException e) {
             String errMessage = "Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных.";
             log.error(errMessage);
             throw new InvalidDataAccessApiUsageException(errMessage);
         }
         try (InputStream inputStream = file.getInputStream()) {
-            final String key = "posters/" + metadataId + "-" + file.getOriginalFilename();
+            final String key = FOLDER + metadataId + "-" + file.getOriginalFilename();
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(BUCKET_NAME)
+                    .bucket(bucketName)
                     .key(key)
                     .contentType(contentType)
                     .build();
 
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(compressImage(inputStream), file.getSize()));
         } catch (IOException e) {
-            log.error("Couldn't save poster image in S3 because of {}", e.getMessage());
+            throw new UncheckedIOException("Не удалось сохранить изображение плаката в S3 из-за {}", e);
         }
         return savedPoster;
-
     }
 
+    /**
+     * Util method for savePoster() which compresses the input image under poster standard
+     *
+     * @param inputStream - initial image byte stream
+     * @return compressed image
+     */
+    private InputStream compressImage(InputStream inputStream) {
+        try {
+            var outStream = new FastByteArrayOutputStream();
+            Thumbnailator.createThumbnail(inputStream, outStream, 250, 370);
+            return outStream.getInputStream();
+        } catch (IOException e) {
+            log.error("Ошибка при сжатии файла изображения. Вызвана: {}", e.getMessage());
+            return inputStream;
+        }
+    }
+
+    /**
+     * Retrieves poster images from S3 storage based on specified metadata IDs.
+     *
+     * <p>This method supports both single and multiple content metadata IDs, separated by commas.
+     * For example, {@code "4,2,592,101,10"}.</p>
+     *
+     * @param contentMetadataIds a comma-separated string of content metadata IDs
+     * @return List of matched images from S3.
+     * @throws CustomNumberFormatException - in case of invalid number format defined by api
+     * @throws UncheckedIOException        - in case of image retrieval from S3
+     */
     public List<byte[]> getImagesMatchingMetadataIds(String contentMetadataIds) {
         List<byte[]> images = new ArrayList<>();
-        Set<Long> idsSet = Arrays.stream(contentMetadataIds.split(","))
-                .mapToLong(Long::parseLong)
-                .boxed()
-                .collect(Collectors.toSet());
+        Set<Long> idsSet;
+        try {
+            idsSet = Arrays.stream(contentMetadataIds.split(","))
+                    .mapToLong(Long::parseLong)
+                    .boxed()
+                    .collect(Collectors.toSet());
+        } catch (NumberFormatException e) {
+            throw new CustomNumberFormatException();
+        }
 
         ListObjectsRequest lsRequest = ListObjectsRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .prefix(FOLDER)
                 .build();
         ListObjectsResponse lsResponse = s3Client.listObjects(lsRequest);
@@ -92,7 +137,7 @@ public class PosterService {
 
         matchedImagesNames.forEach(imageName -> {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .bucket(BUCKET_NAME)
+                    .bucket(bucketName)
                     .key(imageName)
                     .build();
 
@@ -100,7 +145,7 @@ public class PosterService {
             try (ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest)) {
                 images.add(s3Object.readAllBytes());
             } catch (IOException e) {
-                log.warn("Couldn't retrieve poster image from S3 storage because of {}", e.getMessage());
+                throw new UncheckedIOException("Ошибка при получении изображений постеров из облачного хранилища", e);
             }
         });
 

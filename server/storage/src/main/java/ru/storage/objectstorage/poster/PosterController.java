@@ -1,20 +1,27 @@
 package ru.storage.objectstorage.poster;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static ru.storage.utility.HttpHeaderHelpers.writeMessageHeader;
 
 @RestController
 @RequestMapping("/api/v0/posters")
 public class PosterController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PosterController.class);
 
     private final PosterService service;
 
@@ -45,8 +52,13 @@ public class PosterController {
         try {
             final Poster savedPosterMetadata = service.savePoster(metadataId, image);
             return new ResponseEntity<>(savedPosterMetadata, HttpStatus.CREATED);
-        } catch (Exception e) {
+        } catch (InvalidDataAccessApiUsageException e) {
+            writeMessageHeader(headers, e.getMessage());
+            LOG.warn(e.getMessage());
+            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+        } catch (UncheckedIOException e) {
             writeMessageHeader(headers, "Ошибка при сохранении постера для видео.");
+            LOG.warn(e.getMessage());
             return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -62,6 +74,7 @@ public class PosterController {
      * <ul>
      *     <li>200 (OK). A list of byte arrays representing the images if successful .
      *     The values are in the same order as requested ids.</li>
+     *     <li>400 (BAD_REQUEST). For inputs that are not string, also if number format is incorrect</li>
      *     <li>500 (INTERNAL_SERVER_ERROR). An empty list with an error message header if an error occurs </li>
      * </ul>
      */
@@ -72,6 +85,7 @@ public class PosterController {
         } catch (Exception e) {
             HttpHeaders headers = new HttpHeaders();
             writeMessageHeader(headers, "Ошибка при поиске плакатов.");
+            LOG.warn(e.getMessage());
             return new ResponseEntity<>(Collections.emptyList(), headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -91,7 +105,8 @@ public class PosterController {
     @PutMapping("/change")
     public ResponseEntity<Void> updateExistingImage(@RequestParam Long metadataId, @RequestParam MultipartFile image) {
         HttpHeaders headers = new HttpHeaders();
-        if (!image.getContentType().startsWith("image")) {
+        final String contentType = Optional.ofNullable(image.getContentType()).orElse("image/jpeg");
+        if (!contentType.startsWith("image/")) {
             writeMessageHeader(headers, "Постер успешно заменён на новый.");
             return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
         }
