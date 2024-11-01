@@ -6,6 +6,7 @@ import net.coobird.thumbnailator.Thumbnailator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -13,7 +14,8 @@ import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.metadata.ContentMetadata;
 import ru.storage.metadata.MetadataRepo;
-import ru.storage.objectstorage.poster.exceptions.CustomNumberFormatException;
+import ru.storage.objectstorage.exceptions.NoMetadataRelationException;
+import ru.storage.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -57,7 +59,7 @@ public class PosterService {
      * @throws InvalidDataAccessApiUsageException - in case if method used without saved metadata instance, which retrieved by metadataRepo
      * @throws UncheckedIOException               - in case if image wasn't saved in S3 for some reason
      */
-    public Poster savePoster(Long metadataId, MultipartFile file) throws InvalidDataAccessApiUsageException, UncheckedIOException {
+    public Poster savePoster(Long metadataId, MultipartFile file) {
         final Poster savedPoster;
         final String contentType = Optional.ofNullable(file.getContentType()).orElse("image/jpeg");
         try {
@@ -65,7 +67,7 @@ public class PosterService {
             Poster newPosterInstance = new Poster(file.getName(), contentType, contentMetadata);
             savedPoster = posterRepo.save(newPosterInstance);
         } catch (NoSuchElementException e) {
-            String errMessage = "Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных.";
+            String errMessage = "Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных, которая осуществляется по ID.";
             log.error(errMessage);
             throw new InvalidDataAccessApiUsageException(errMessage);
         }
@@ -109,8 +111,8 @@ public class PosterService {
      *
      * @param contentMetadataIds a comma-separated string of content metadata IDs
      * @return List of matched images from S3.
-     * @throws CustomNumberFormatException - in case of invalid number format defined by api
-     * @throws UncheckedIOException        - in case of image retrieval from S3
+     * @throws ParseRequestIdException - in case of invalid number format defined by api
+     * @throws UncheckedIOException    - in case of image retrieval from S3
      */
     public List<byte[]> getImagesMatchingMetadataIds(String contentMetadataIds) {
         List<byte[]> images = new ArrayList<>();
@@ -121,7 +123,7 @@ public class PosterService {
                     .boxed()
                     .collect(Collectors.toSet());
         } catch (NumberFormatException e) {
-            throw new CustomNumberFormatException();
+            throw new ParseRequestIdException();
         }
 
         idsSet.forEach(posterRepo::deleteByContentMetadataId);
@@ -169,11 +171,19 @@ public class PosterService {
      *
      * @param metadataId - content metadata id
      * @param image      - new multipart form data image
+     * @throws ParseRequestIdException - in case of invalid number format defined by api
+     * @throws UncheckedIOException    - in case when s3 couldn't save existing image for some reason
      */
     @Transactional
     public void updateExistingImage(Long metadataId, MultipartFile image) {
-        posterRepo.updatePosterByContentMetadataId(metadataId,
-                image.getOriginalFilename(), image.getContentType());
+        ContentMetadata contentMetadata = metadataRepo.findById(metadataId).orElseThrow(NoMetadataRelationException::new);
+
+        try {
+            posterRepo.updatePosterByContentMetadataId(contentMetadata,
+                    image.getOriginalFilename(), image.getContentType());
+        } catch (Exception e) {
+            log.warn("Произошла ошибка при попытке изменить связь постера с одного  ");
+        }
 
         final Long s3ImageId = lsPosterStorageFolder(Set.of(metadataId)).getFirst();
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -196,8 +206,8 @@ public class PosterService {
      * </p>
      *
      * @param contentMetadataIds - ids split by ',' separator. For example: {@code "4,2,592,101,10"}
-     * @throws CustomNumberFormatException - in case of invalid number format defined by api
-     * @throws S3Exception                 - in case image wasn't deleted
+     * @throws ParseRequestIdException - in case of invalid number format defined by api
+     * @throws S3Exception             - in case image wasn't deleted
      */
     @Transactional
     public void deleteByIds(String contentMetadataIds) {
@@ -208,7 +218,7 @@ public class PosterService {
                     .boxed()
                     .collect(Collectors.toSet());
         } catch (Exception e) {
-            throw new CustomNumberFormatException();
+            throw new ParseRequestIdException();
         }
 
         List<Long> s3ImageIds = lsPosterStorageFolder(idsSet);

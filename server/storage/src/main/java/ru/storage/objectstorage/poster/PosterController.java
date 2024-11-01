@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.objectstorage.poster.exceptions.CustomNumberFormatException;
+import ru.storage.objectstorage.exceptions.NoMetadataRelationException;
+import ru.storage.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.UncheckedIOException;
@@ -84,7 +85,7 @@ public class PosterController {
     public ResponseEntity<List<byte[]>> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
         try {
             return ResponseEntity.ok(service.getImagesMatchingMetadataIds(contentMetadataIds));
-        } catch (CustomNumberFormatException e) {
+        } catch (ParseRequestIdException e) {
             HttpHeaders headers = new HttpHeaders();
             writeEncodedMessageHeader(headers, e.getMessage());
             LOG.warn(e.getMessage());
@@ -105,7 +106,7 @@ public class PosterController {
      * @return Response:
      * <ul>
      *     <li>200 (OK) with the success header "Message"</li>
-     *     <li>400 (BAD_REQUEST) with the success header "Message"</li>
+     *     <li>400 (BAD_REQUEST) with the cause header "Message"</li>
      *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message"</li>
      * </>
      */
@@ -122,8 +123,15 @@ public class PosterController {
             service.updateExistingImage(metadataId, image);
             writeEncodedMessageHeader(headers, "Постер успешно заменён на новый.");
             return new ResponseEntity<>(null, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            writeEncodedMessageHeader(headers, "Неудалось заменить существующий постер.");
+        } catch (NoMetadataRelationException e) {
+            String errMes = e.getMessage();
+            LOG.warn(errMes);
+            writeEncodedMessageHeader(headers, errMes);
+            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+        } catch (UncheckedIOException e) {
+            String errMes = "Не удалось заменить существующий постер.";
+            LOG.warn("%s %s".formatted(errMes, e.getMessage()));
+            writeEncodedMessageHeader(headers, errMes);
             return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -148,7 +156,7 @@ public class PosterController {
             service.deleteByIds(contentMetadataIds);
             writeEncodedMessageHeader(headers, "Выбранные постеры успешно удалены");
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (CustomNumberFormatException e) {
+        } catch (ParseRequestIdException e) {
             writeEncodedMessageHeader(headers, e.getMessage());
             LOG.warn(e.getMessage());
             return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
