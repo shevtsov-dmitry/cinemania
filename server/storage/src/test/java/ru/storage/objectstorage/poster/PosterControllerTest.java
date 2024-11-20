@@ -1,4 +1,4 @@
-package ru.storage.controller;
+package ru.storage.objectstorage.poster;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -11,17 +11,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.multipart.MultipartFile;
-import ru.storage.objectstorage.poster.Poster;
-import ru.storage.objectstorage.poster.PosterController;
-import ru.storage.objectstorage.poster.PosterService;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Random;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
