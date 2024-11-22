@@ -1,4 +1,4 @@
-package ru.storage.objectstorage.video;
+package ru.storage.metadata.objectstorage.video;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

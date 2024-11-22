@@ -1,4 +1,4 @@
-package ru.storage.objectstorage.poster;
+package ru.storage.metadata.objectstorage.poster;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.objectstorage.exceptions.NoMetadataRelationException;
-import ru.storage.objectstorage.exceptions.ParseRequestIdException;
+import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
+import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.UncheckedIOException;

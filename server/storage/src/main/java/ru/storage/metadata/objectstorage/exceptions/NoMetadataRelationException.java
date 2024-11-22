@@ -1,4 +1,4 @@
-package ru.storage.objectstorage.exceptions;
+package ru.storage.metadata.objectstorage.exceptions;
 
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 

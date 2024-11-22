@@ -1,4 +1,4 @@
-package ru.storage.objectstorage.poster;
+package ru.storage.metadata.objectstorage.poster;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -6,16 +6,15 @@ import net.coobird.thumbnailator.Thumbnailator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.metadata.ContentMetadata;
+import ru.storage.metadata.Content;
 import ru.storage.metadata.MetadataRepo;
-import ru.storage.objectstorage.exceptions.NoMetadataRelationException;
-import ru.storage.objectstorage.exceptions.ParseRequestIdException;
+import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
+import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -63,8 +62,8 @@ public class PosterService {
         final Poster savedPoster;
         final String contentType = Optional.ofNullable(file.getContentType()).orElse("image/jpeg");
         try {
-            ContentMetadata contentMetadata = metadataRepo.findById(metadataId).orElseThrow(NoSuchElementException::new);
-            Poster newPosterInstance = new Poster(file.getName(), contentType, contentMetadata);
+            Content content = metadataRepo.findById(metadataId).orElseThrow(NoSuchElementException::new);
+            Poster newPosterInstance = new Poster(file.getName(), contentType, content);
             savedPoster = posterRepo.save(newPosterInstance);
         } catch (NoSuchElementException e) {
             String errMessage = "Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных, которая осуществляется по ID.";
@@ -176,11 +175,10 @@ public class PosterService {
      */
     @Transactional
     public void updateExistingImage(Long metadataId, MultipartFile image) {
-        ContentMetadata contentMetadata = metadataRepo.findById(metadataId).orElseThrow(NoMetadataRelationException::new);
+        Content content = metadataRepo.findById(metadataId).orElseThrow(NoMetadataRelationException::new);
 
         try {
-            posterRepo.updatePosterByContentMetadataId(contentMetadata,
-                    image.getOriginalFilename(), image.getContentType());
+            posterRepo.updatePosterByContentMetadata(content, image.getOriginalFilename(), image.getContentType());
         } catch (Exception e) {
             log.warn("Произошла ошибка при попытке изменить связь постера с одного  ");
         }
