@@ -8,10 +8,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.storage.metadata.MetadataController;
-import ru.storage.objectstorage.poster.PosterController;
-import ru.storage.objectstorage.video.VideoController;
 
 import java.io.File;
 
@@ -38,6 +35,7 @@ class GeneralStoreFlowTest {
     @Test
     @Order(1)
     void saveMetadata() throws Exception {
+//        mockMvc.perform()
 //        mockMvc.perform(post("/metadata"))
     }
 }

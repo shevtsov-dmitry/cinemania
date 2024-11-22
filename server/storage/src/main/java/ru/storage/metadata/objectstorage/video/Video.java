@@ -1,11 +1,10 @@
 package ru.storage.metadata.objectstorage.video;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.storage.metadata.Content;
 
 /**
  * Video
@@ -19,14 +18,8 @@ public class Video {
     private Long id;
     private String name;
     private String contentType;
+    @OneToOne
+    @JsonIgnore
+    private Content content;
 
-    public Video(String name, String contentType) {
-        this.name = name;
-        this.contentType = contentType;
-    }
-
-    //    @JsonIgnore
-//    @OneToOne
-//    @JoinColumn(name = "content_metadata_id")
-//    private ContentMetadata contentMetadata;
 }

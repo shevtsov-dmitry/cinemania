@@ -1,8 +1,12 @@
 package ru.storage.metadata.objectstorage.video;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -19,20 +23,28 @@ public class VideoService {
 //    @Value("${cloud.aws.s3.bucketName}")
 //    private String bucketName;
 
-    private final S3Client s3Client;
+    private static final Logger LOG = LoggerFactory.getLogger(VideoService.class);
 
-    public VideoService(S3Client s3Client) {
+    private final S3Client s3Client;
+    private final VideoRepo videoRepo;
+
+    public VideoService(S3Client s3Client, VideoRepo videoRepo) {
         this.s3Client = s3Client;
+        this.videoRepo = videoRepo;
     }
 
+    public Video saveMetadata(Video video) {
+        try {
+            return videoRepo.save(video);
+        } catch (NoMetadataRelationException e) {
+            String errmes = "Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных, которая осуществляется по ID.";
+            LOG.warn(errmes);
+            throw new NoMetadataRelationException(errmes);
+        }
+    }
 
     public String uploadVideo(MultipartFile file) {
-        // TODO implement S3 save
         return null;
-    }
-
-    public String sayHello() {
-        return getFileContent("videos121212", "message.txt");
     }
 
     public String getFileContent(String bucketName, String key) {

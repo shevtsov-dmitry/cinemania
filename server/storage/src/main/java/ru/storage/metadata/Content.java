@@ -37,9 +37,9 @@ public class Content {
     private Integer age;
     @NonNull
     private Double rating;
-    @OneToOne
+    @OneToOne(orphanRemoval = true)
     private Poster poster;
-    @OneToOne
+    @OneToOne(orphanRemoval = true)
     private Video video;
     @CreatedDate
     @Column(updatable = false)
@@ -53,10 +53,6 @@ public class Content {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
         private String name;
-
-        public SubGenre(String name) {
-            this.name = name;
-        }
     }
 
     // @PrePersist

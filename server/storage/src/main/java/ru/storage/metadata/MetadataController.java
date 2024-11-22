@@ -22,6 +22,7 @@ public class MetadataController {
     @PostMapping
     public ResponseEntity<Void> saveFormData(VideoInfoPartsTuple metadataObjects) {
         service.saveMetadata(metadataObjects);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 //    @GetMapping(value = "title/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
