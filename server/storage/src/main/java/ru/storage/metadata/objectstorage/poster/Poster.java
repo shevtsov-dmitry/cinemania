@@ -26,11 +26,6 @@ public class Poster {
     @OneToOne
     private Content content;
 
-    public Poster(String filename, String contentType) {
-        this.filename = filename;
-        this.contentType = contentType;
-    }
-
     //    @NonNull
 //    @JsonIgnore
 //    @OneToOne

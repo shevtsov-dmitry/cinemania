@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ru.storage.metadata.objectstorage.poster.Poster;
 import ru.storage.metadata.objectstorage.poster.PosterService;
+import ru.storage.metadata.objectstorage.video.Video;
 import ru.storage.metadata.objectstorage.video.VideoService;
 
 @Service
@@ -23,10 +24,16 @@ public class MetadataService {
     }
 
     public void saveMetadata(VideoInfoPartsTuple metadataObjects) {
-        Content content = metadataRepo.save(metadataObjects.content());
         Poster poster = metadataObjects.poster();
-        poster.setContent(content);
+        poster.setContent(metadataObjects.content());
         posterService.saveMetadata(poster);
-
+        Video video = metadataObjects.video();
+        video.setContent(metadataObjects.content());
+        videoService.saveMetadata(video);
+        Content content = metadataObjects.content();
+        content.setVideo(video);
+        content.setVideo(video);
+        metadataRepo.save(content);
     }
+
 }

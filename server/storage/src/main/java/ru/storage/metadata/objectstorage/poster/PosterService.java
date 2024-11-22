@@ -14,7 +14,6 @@ import ru.storage.metadata.Content;
 import ru.storage.metadata.MetadataRepo;
 import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
-import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -24,7 +23,10 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +47,20 @@ public class PosterService {
         this.s3Client = s3Client;
     }
 
+    /**
+     * assure image processing by comparing image content type with expected input type
+     *
+     * @param contentType contentType
+     * @throws IllegalArgumentException when non image content used
+     */
+    private void assureImageProcessing(String contentType) throws IllegalArgumentException {
+        if (contentType == null || !contentType.startsWith("image")) {
+            String errmes = "Ошибка при сохранении постера. Файл не является изображением. Был выбран файл типа " + contentType;
+            LOG.warn(errmes);
+            throw new IllegalArgumentException(errmes);
+        }
+    }
+
     @PostConstruct
     public void init() {
         Assert.notNull(bucketName, "переменная BUCKET_NAME должна быть указана в конфигурации application.properties.");
@@ -56,12 +72,7 @@ public class PosterService {
      * @param poster poster object with metadata
      */
     public Poster saveMetadata(Poster poster) {
-        if (!poster.getContentType().startsWith("image")) {
-            String errmes = "Ошибка при сохранении постера. Файл не является изображением. Был выбран файл типа " + poster.getContentType();
-            LOG.warn(errmes);
-            throw new IllegalArgumentException(errmes);
-        }
-
+        assureImageProcessing(poster.getContentType());
         try {
             return posterRepo.save(poster);
         } catch (NoMetadataRelationException e) {
@@ -80,12 +91,7 @@ public class PosterService {
      * @throws S3Exception              when image wasn't saved into S3 cloud storage
      */
     public void uploadImage(Long posterMetadataId, MultipartFile image) {
-        if (image.getContentType() == null || !image.getContentType().startsWith("image")) {
-            String errmes = "Ошибка при сохранении постера. Файл не является изображением. Был выбран файл типа " + image.getContentType();
-            LOG.warn(errmes);
-            throw new IllegalArgumentException(errmes);
-        }
-
+        assureImageProcessing(image.getContentType());
         try (InputStream inputStream = image.getInputStream()) {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
@@ -139,10 +145,9 @@ public class PosterService {
                     .boxed()
                     .collect(Collectors.toSet());
         } catch (NumberFormatException e) {
+            LOG.warn(e.getMessage());
             throw new ParseRequestIdException();
         }
-
-        idsSet.forEach(posterRepo::deleteByContentMetadataId);
 
         List<Long> matchedS3Ids = lsPosterStorageFolder(idsSet);
         matchedS3Ids.forEach(id -> {
@@ -154,8 +159,12 @@ public class PosterService {
             // Retrieve the object and add its contents as a byte array to the list
             try (ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest)) {
                 images.add(s3Object.readAllBytes());
-            } catch (IOException e) {
-                throw new UncheckedIOException("Ошибка при получении изображений постеров из облачного хранилища", e);
+            } catch (Exception e) {
+                String errmes = "Ошибка при получении изображений постеров из облачного хранилища";
+                LOG.warn(errmes);
+                throw S3Exception.builder()
+                        .message(errmes)
+                        .build();
             }
         });
 
@@ -187,11 +196,12 @@ public class PosterService {
      *
      * @param metadataId content metadata id
      * @param image      new multipart form data image
-     * @throws ParseRequestIdException in case of invalid number format defined by api
-     * @throws UncheckedIOException    in case when s3 couldn't save existing image for some reason
+     * @throws ParseRequestIdException when invalid number format defined by api
+     * @throws UncheckedIOException    when s3 couldn't save existing image for some reason
      */
     @Transactional
     public void updateExistingImage(Long metadataId, MultipartFile image) {
+        assureImageProcessing(image.getContentType());
         Content content = metadataRepo.findById(metadataId).orElseThrow(NoMetadataRelationException::new);
 
         try {
@@ -209,7 +219,11 @@ public class PosterService {
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(image.getInputStream(), image.getSize()));
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            String errmes = "Не удалось обновить существующий постер в облачном хранилище.";
+            LOG.warn("{}. {}", errmes, e.getMessage());
+            throw S3Exception.builder()
+                    .message(errmes)
+                    .build();
         }
     }
 
@@ -221,8 +235,8 @@ public class PosterService {
      * </p>
      *
      * @param contentMetadataIds ids split by ',' separator. For example: {@code "4,2,592,101,10"}
-     * @throws ParseRequestIdException in case of invalid number format defined by api
-     * @throws S3Exception             in case image wasn't deleted
+     * @throws ParseRequestIdException when of invalid number format defined by api
+     * @throws S3Exception             when image wasn't deleted
      */
     @Transactional
     public void deleteByIds(String contentMetadataIds) {
@@ -233,8 +247,11 @@ public class PosterService {
                     .boxed()
                     .collect(Collectors.toSet());
         } catch (Exception e) {
+            LOG.warn(e.getMessage());
             throw new ParseRequestIdException();
         }
+
+        idsSet.forEach(posterRepo::deleteByContentMetadataId);
 
         List<Long> s3ImageIds = lsPosterStorageFolder(idsSet);
         s3ImageIds.forEach(id -> {
@@ -242,7 +259,15 @@ public class PosterService {
                     .bucket(bucketName)
                     .key(FOLDER + id.toString())
                     .build();
-            s3Client.deleteObject(deleteObjectRequest);
+            try {
+                s3Client.deleteObject(deleteObjectRequest);
+            } catch (AwsServiceException e) {
+                String errmes = "Ошибка при удалении постеров по их идентификаторам.";
+                LOG.warn("{}. {}", errmes, e.getMessage());
+                throw S3Exception.builder()
+                        .message(errmes)
+                        .build();
+            }
         });
     }
 

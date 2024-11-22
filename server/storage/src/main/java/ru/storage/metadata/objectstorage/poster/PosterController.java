@@ -1,24 +1,17 @@
 package ru.storage.metadata.objectstorage.poster;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
+import ru.storage.utility.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static ru.storage.utility.HttpHeaderHelpers.writeEncodedMessageHeader;
 
 @RestController
 @RequestMapping("/api/v0/posters")
@@ -51,9 +44,9 @@ public class PosterController {
             final Poster savedPosterMetadata = service.saveMetadata(poster);
             return new ResponseEntity<>(savedPosterMetadata, HttpStatus.CREATED);
         } catch (NoMetadataRelationException | IllegalArgumentException e) {
-            HttpHeaders headers = new HttpHeaders();
-            writeEncodedMessageHeader(headers, e.getMessage());
-            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -64,24 +57,24 @@ public class PosterController {
      * @param image            multipart file of image type
      * @return Response
      * <ul>
-     *     <li>201 (CREATED)</li>
+     *     <li>204 (NO_CONTENT)</li>
      *     <li>400 (BAD_REQUEST) when invalid args</li>
      *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when image wasn't saved into S3 cloud storage</li>
      * </ul>
      */
     @PostMapping("/upload")
     public ResponseEntity<Void> uploadImage(@RequestParam Long posterMetadataId, @RequestParam MultipartFile image) {
-        HttpHeaders headers = new HttpHeaders();
-
         try {
             service.uploadImage(posterMetadataId, image);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
-            writeEncodedMessageHeader(headers, e.getMessage());
-            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         } catch (S3Exception e) {
-            writeEncodedMessageHeader(headers, e.getMessage());
-            return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -92,7 +85,7 @@ public class PosterController {
      * For example, {@code "4,2,592,101,10"}.</p>
      *
      * @param contentMetadataIds a comma-separated string of content metadata IDs
-     * @return Response.
+     * @return Response
      * <ul>
      *     <li>200 (OK). A list of byte arrays representing the images if successful .
      *     The values are in the same order as requested ids.</li>
@@ -105,15 +98,13 @@ public class PosterController {
         try {
             return ResponseEntity.ok(service.getImagesMatchingMetadataIds(contentMetadataIds));
         } catch (ParseRequestIdException e) {
-            HttpHeaders headers = new HttpHeaders();
-            writeEncodedMessageHeader(headers, e.getMessage());
-            LOG.warn(e.getMessage());
-            return new ResponseEntity<>(Collections.emptyList(), headers, HttpStatus.BAD_REQUEST);
-        } catch (UncheckedIOException e) {
-            HttpHeaders headers = new HttpHeaders();
-            writeEncodedMessageHeader(headers, "Ошибка при поиске плакатов.");
-            LOG.warn(e.getMessage());
-            return new ResponseEntity<>(Collections.emptyList(), headers, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(Collections.emptyList(),
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        } catch (S3Exception e) {
+            return new ResponseEntity<>(Collections.emptyList(),
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -122,36 +113,33 @@ public class PosterController {
      *
      * @param metadataId content metadata id
      * @param image      multipart file of image type
-     * @return Response:
+     * @return Response
      * <ul>
-     *     <li>200 (OK) with the success header "Message"</li>
-     *     <li>400 (BAD_REQUEST) with the cause header "Message"</li>
-     *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message"</li>
-     * </>
+     *     <li>204 (NO_CONTENT) with the success header "Message"</li>
+     *     <li>400 (BAD_REQUEST) with the cause header "Message"
+     *          <ol>
+     *               <li>when illegal arg of metadataId</li>
+     *               <li>when try to save non image file</li>
+     *          </ol>
+     *     </li>
+     *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when poster image wasn't updated</li>
+     * </ul>
      */
     @PutMapping("/change")
     public ResponseEntity<Void> updateExistingImage(@RequestParam Long metadataId, @RequestParam MultipartFile image) {
-        HttpHeaders headers = new HttpHeaders();
-        final String contentType = Optional.ofNullable(image.getContentType()).orElse("image/jpeg");
-        if (!contentType.startsWith("image/")) {
-            writeEncodedMessageHeader(headers, "Постер успешно заменён на новый.");
-            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
-        }
-
         try {
             service.updateExistingImage(metadataId, image);
-            writeEncodedMessageHeader(headers, "Постер успешно заменён на новый.");
-            return new ResponseEntity<>(null, headers, HttpStatus.OK);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders("Постер успешно заменён на новый."),
+                    HttpStatus.NO_CONTENT);
         } catch (NoMetadataRelationException e) {
-            String errmes = e.getMessage();
-            LOG.warn(errmes);
-            writeEncodedMessageHeader(headers, errmes);
-            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         } catch (UncheckedIOException e) {
-            String errmes = "Не удалось заменить существующий постер.";
-            LOG.warn("%s %s".formatted(errmes, e.getMessage()));
-            writeEncodedMessageHeader(headers, errmes);
-            return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -162,28 +150,27 @@ public class PosterController {
      * </p>
      *
      * @param contentMetadataIds ids split by ',' separator.
-     * @return Response:
+     * @return Response
      * <ul>
-     *      <li>200 (OK)</li>
+     *      <li>204 (NO_CONTENT)</li>
      *      <li>500 (INTERNAL_SERVER_ERROR)</li>
      * </ul>
      */
     @DeleteMapping("/ids/{contentMetadataIds}")
     public ResponseEntity<Void> deletePostersByIds(@PathVariable String contentMetadataIds) {
-        HttpHeaders headers = new HttpHeaders();
         try {
             service.deleteByIds(contentMetadataIds);
-            writeEncodedMessageHeader(headers, "Выбранные постеры успешно удалены");
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders("Выбранные постеры успешно удалены."),
+                    HttpStatus.NO_CONTENT);
         } catch (ParseRequestIdException e) {
-            writeEncodedMessageHeader(headers, e.getMessage());
-            LOG.warn(e.getMessage());
-            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         } catch (S3Exception e) {
-            String errmes = "Ошибка при удалении постеров по их идентификаторам.";
-            writeEncodedMessageHeader(headers, errmes);
-            LOG.warn("%s %s".formatted(errmes, e.getMessage()));
-            return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
