@@ -24,8 +24,6 @@ import static ru.storage.utility.HttpHeaderHelpers.writeEncodedMessageHeader;
 @RequestMapping("/api/v0/posters")
 public class PosterController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PosterController.class);
-
     private final PosterService service;
 
     public PosterController(PosterService service) {
@@ -33,41 +31,62 @@ public class PosterController {
     }
 
     /**
-     * Saves poster into S3 and its metadata into local db
+     * Save poster metadata into db.
      *
-     * @param metadataId - id of existing video content metadata
-     * @param image      - multipart file of image type
-     * @return Response:
+     * @param poster poster instance
+     * @return Response
+     * <ul>
+     *     <li>201 (CREATED) with body of saved Poster instance</li>
+     *     <li>400 (BAD_REQUEST) with the cause header "Message"
+     *          <ol>
+     *              <li>when invalid poster arguments</li>
+     *              <li>when try to save without content metadata relation</li>
+     *          </ol>
+     *     </li>
+     * </ul>
+     */
+    @PostMapping
+    public ResponseEntity<Poster> saveMetadata(@RequestBody Poster poster) {
+        try {
+            final Poster savedPosterMetadata = service.saveMetadata(poster);
+            return new ResponseEntity<>(savedPosterMetadata, HttpStatus.CREATED);
+        } catch (NoMetadataRelationException | IllegalArgumentException e) {
+            HttpHeaders headers = new HttpHeaders();
+            writeEncodedMessageHeader(headers, e.getMessage());
+            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Upload poster into S3 cloud storage
+     *
+     * @param posterMetadataId id of poster metadata from db
+     * @param image            multipart file of image type
+     * @return Response
      * <ul>
      *     <li>201 (CREATED)</li>
-     *     <li>400 (BAD_REQUEST) with the cause header "Message"</li>
-     *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message"</li>
+     *     <li>400 (BAD_REQUEST) when invalid args</li>
+     *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when image wasn't saved into S3 cloud storage</li>
      * </ul>
      */
     @PostMapping("/upload")
-    public ResponseEntity<Poster> savePoster(@RequestParam Long metadataId, @RequestParam MultipartFile image) {
+    public ResponseEntity<Void> uploadImage(@RequestParam Long posterMetadataId, @RequestParam MultipartFile image) {
         HttpHeaders headers = new HttpHeaders();
-        if (!Objects.requireNonNull(image.getContentType()).startsWith("image")) {
-            writeEncodedMessageHeader(headers, "Ошибка при сохранении постера. Файл не является изображением.");
-            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
-        }
 
         try {
-            final Poster savedPosterMetadata = service.savePoster(metadataId, image);
-            return new ResponseEntity<>(savedPosterMetadata, HttpStatus.CREATED);
-        } catch (InvalidDataAccessApiUsageException e) {
+            service.uploadImage(posterMetadataId, image);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
             writeEncodedMessageHeader(headers, e.getMessage());
-            LOG.warn(e.getMessage());
             return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
-        } catch (UncheckedIOException e) {
-            writeEncodedMessageHeader(headers, "Ошибка при сохранении постера для видео.");
-            LOG.warn(e.getMessage());
+        } catch (S3Exception e) {
+            writeEncodedMessageHeader(headers, e.getMessage());
             return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Retrieves poster images from S3 storage based on specified metadata IDs.
+     * Retrieve poster images from S3 cloud storage based on specified metadata IDs.
      *
      * <p>This method supports both single and multiple content metadata IDs, separated by commas.
      * For example, {@code "4,2,592,101,10"}.</p>
@@ -99,10 +118,10 @@ public class PosterController {
     }
 
     /**
-     * Replaces existing poster with a new one.
+     * Replace existing poster with a new one.
      *
-     * @param metadataId - content metadata id
-     * @param image      - multipart file of image type
+     * @param metadataId content metadata id
+     * @param image      multipart file of image type
      * @return Response:
      * <ul>
      *     <li>200 (OK) with the success header "Message"</li>
@@ -124,25 +143,25 @@ public class PosterController {
             writeEncodedMessageHeader(headers, "Постер успешно заменён на новый.");
             return new ResponseEntity<>(null, headers, HttpStatus.OK);
         } catch (NoMetadataRelationException e) {
-            String errMes = e.getMessage();
-            LOG.warn(errMes);
-            writeEncodedMessageHeader(headers, errMes);
+            String errmes = e.getMessage();
+            LOG.warn(errmes);
+            writeEncodedMessageHeader(headers, errmes);
             return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
         } catch (UncheckedIOException e) {
-            String errMes = "Не удалось заменить существующий постер.";
-            LOG.warn("%s %s".formatted(errMes, e.getMessage()));
-            writeEncodedMessageHeader(headers, errMes);
+            String errmes = "Не удалось заменить существующий постер.";
+            LOG.warn("%s %s".formatted(errmes, e.getMessage()));
+            writeEncodedMessageHeader(headers, errmes);
             return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Deletes saved poster which matches requested ids from S3 and local db.
+     * Delete saved poster which matches requested ids from S3 cloud storage and local db.
      * <p>
      * Also supports single id instance. example: {@code "4,2,592,101,10"}.
      * </p>
      *
-     * @param contentMetadataIds - ids split by ',' separator.
+     * @param contentMetadataIds ids split by ',' separator.
      * @return Response:
      * <ul>
      *      <li>200 (OK)</li>
@@ -161,9 +180,9 @@ public class PosterController {
             LOG.warn(e.getMessage());
             return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
         } catch (S3Exception e) {
-            String errMessage = "Ошибка при удалении постеров по их идентификаторам.";
-            writeEncodedMessageHeader(headers, errMessage);
-            LOG.warn("%s %s".formatted(errMessage, e.getMessage()));
+            String errmes = "Ошибка при удалении постеров по их идентификаторам.";
+            writeEncodedMessageHeader(headers, errmes);
+            LOG.warn("%s %s".formatted(errmes, e.getMessage()));
             return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
