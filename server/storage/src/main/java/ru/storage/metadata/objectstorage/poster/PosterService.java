@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.metadata.Content;
-import ru.storage.metadata.MetadataRepo;
+import ru.storage.metadata.ContentMetadata;
+import ru.storage.metadata.ContentMetadataRepo;
 import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -38,17 +38,17 @@ public class PosterService {
     private static final Logger LOG = LoggerFactory.getLogger(PosterService.class);
 
     private final PosterRepo posterRepo;
-    private final MetadataRepo metadataRepo;
+    private final ContentMetadataRepo contentMetadataRepo;
     private final S3Client s3Client;
 
-    public PosterService(PosterRepo posterRepo, MetadataRepo metadataRepo, S3Client s3Client) {
+    public PosterService(PosterRepo posterRepo, ContentMetadataRepo contentMetadataRepo, S3Client s3Client) {
         this.posterRepo = posterRepo;
-        this.metadataRepo = metadataRepo;
+        this.contentMetadataRepo = contentMetadataRepo;
         this.s3Client = s3Client;
     }
 
     /**
-     * assure image processing by comparing image content type with expected input type
+     * Assure an image processing by comparing input content type with expected.
      *
      * @param contentType contentType
      * @throws IllegalArgumentException when non image content used
@@ -70,25 +70,26 @@ public class PosterService {
      * Save poster metadata in database
      *
      * @param poster poster object with metadata
+     * @throws NoMetadataRelationException when poster doesn't have field {@code content} field
+     * @throws IllegalArgumentException    when content type if not an image
      */
     public Poster saveMetadata(Poster poster) {
         assureImageProcessing(poster.getContentType());
         try {
             return posterRepo.save(poster);
         } catch (NoMetadataRelationException e) {
-            String errmes = "Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных, которая осуществляется по ID.";
-            LOG.warn(errmes);
-            throw new NoMetadataRelationException(errmes);
+            LOG.warn(NoMetadataRelationException.ERROR_MESSAGE);
+            throw new NoMetadataRelationException();
         }
     }
 
     /**
-     * Upload image into S3 cloud storage
+     * Upload image to S3 cloud storage
      *
      * @param posterMetadataId poster metadata id which required to define key in the S3 cloud storage
      * @param image            form data image
-     * @throws IllegalArgumentException when multipart is not an image
-     * @throws S3Exception              when image wasn't saved into S3 cloud storage
+     * @throws IllegalArgumentException when multipart file is not an image
+     * @throws S3Exception              when image wasn't saved to S3 cloud storage
      */
     public void uploadImage(Long posterMetadataId, MultipartFile image) {
         assureImageProcessing(image.getContentType());
@@ -133,8 +134,8 @@ public class PosterService {
      *
      * @param contentMetadataIds a comma-separated string of content metadata IDs
      * @return List of matched images from S3.
-     * @throws ParseRequestIdException in case of invalid number format defined by api
-     * @throws UncheckedIOException    in case of image retrieval from S3
+     * @throws ParseRequestIdException when invalid number format defined by api
+     * @throws UncheckedIOException    when image retrieval from S3
      */
     public List<byte[]> getImagesMatchingMetadataIds(String contentMetadataIds) {
         List<byte[]> images = new ArrayList<>();
@@ -202,10 +203,10 @@ public class PosterService {
     @Transactional
     public void updateExistingImage(Long metadataId, MultipartFile image) {
         assureImageProcessing(image.getContentType());
-        Content content = metadataRepo.findById(metadataId).orElseThrow(NoMetadataRelationException::new);
+        ContentMetadata contentMetadata = contentMetadataRepo.findById(metadataId).orElseThrow(NoMetadataRelationException::new);
 
         try {
-            posterRepo.updatePosterByContentMetadata(content, image.getOriginalFilename(), image.getContentType());
+            posterRepo.updatePosterByContentMetadata(contentMetadata, image.getOriginalFilename(), image.getContentType());
         } catch (Exception e) {
             LOG.warn("Произошла ошибка при попытке изменить связь постера с одного  ");
         }

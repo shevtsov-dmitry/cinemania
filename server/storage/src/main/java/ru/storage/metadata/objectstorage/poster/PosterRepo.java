@@ -4,16 +4,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.storage.metadata.Content;
+import ru.storage.metadata.ContentMetadata;
+
+import java.util.Optional;
 
 @Repository
 public interface PosterRepo extends JpaRepository<Poster, Long> {
 
     @Modifying
-    @Query("delete from Poster e where e.contentMetadata.id = :contentMetadataId")
-    void deleteByContentMetadataId(Long contentMetadataId);
+    @Query("update Poster p set p.contentMetadata = :contentMetadata, p.filename =:filename, p.contentType = :contentType")
+    void updatePosterByContentMetadata(ContentMetadata contentMetadata, String filename, String contentType);
 
     @Modifying
-    @Query("update Poster p set p.filename = :filename, p.contentType = :contentType where p.contentMetadata = :metadata")
-    int updatePosterByContentMetadata(Content metadata, String filename, String contentType);
+    @Query("delete from Poster p where p.contentMetadata.id = :metadataId")
+    void deleteByContentMetadataId(Long metadataId);
+
+    Optional<Poster> findByContentMetadataId(Long contentId);
+
 }

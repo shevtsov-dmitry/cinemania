@@ -17,7 +17,7 @@ import ru.storage.metadata.objectstorage.video.Video;
 @Entity
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class Content {
+public class ContentMetadata {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,14 +2,12 @@ package ru.storage.metadata;
 
 import io.github.benas.randombeans.EnhancedRandomBuilder;
 import io.github.benas.randombeans.api.EnhancedRandom;
-import jakarta.persistence.SqlResultSetMapping;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
 import org.springframework.transaction.annotation.Transactional;
 import ru.storage.metadata.objectstorage.poster.Poster;
 import ru.storage.metadata.objectstorage.poster.PosterRepo;
@@ -24,16 +22,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MetadataServiceTest {
-    @Autowired
-    private MetadataService metadataService;
 
     private static VideoInfoPartsTuple testMetadata;
+
+    @Autowired
+    private MetadataService metadataService;
     @Autowired
     private VideoRepo videoRepo;
     @Autowired
     private PosterRepo posterRepo;
     @Autowired
-    private MetadataRepo metadataRepo;
+    private ContentMetadataRepo contentMetadataRepo;
 
     @BeforeAll
     static void setUp() {
@@ -41,24 +40,32 @@ class MetadataServiceTest {
                 .excludeField(field -> field.getName().equals("id"))
                 .collectionSizeRange(1, 5)
                 .build();
-        testMetadata = randomData.nextObject(VideoInfoPartsTuple.class);
+
+        testMetadata = new VideoInfoPartsTuple(
+                randomData.nextObject(ContentMetadata.class, "video", "poster", "createdAt"),
+                randomData.nextObject(Video.class, "content"),
+                randomData.nextObject(Poster.class, "content")
+        );
+        testMetadata.video().setContentType("video/mp4");
+        testMetadata.poster().setContentType("image/jpeg");
     }
 
     @Test
     void save_ok() {
-        metadataService.saveMetadata(testMetadata);
-        Optional<Video> savedVideo = videoRepo.findOne(Example.of(testMetadata.video()));
-        Optional<Poster> savedPoster = posterRepo.findOne(Example.of(testMetadata.poster()));
-        Optional<Content> savedContentMetadata = metadataRepo.findOne(Example.of(testMetadata.content()));
+
+        long metadataId = metadataService.saveMetadata(testMetadata);
+
+        Optional<Video> savedVideo = videoRepo.findByContentMetadataId(metadataId);
+        Optional<Poster> savedPoster = posterRepo.findByContentMetadataId(metadataId);
+        Optional<ContentMetadata> savedContentMetadata = contentMetadataRepo.findContentMetadataById(metadataId);
 
         assertTrue(savedVideo.isPresent());
         assertTrue(savedPoster.isPresent());
         assertTrue(savedContentMetadata.isPresent());
 
-        assertNotNull(savedVideo.get().getContent());
-        assertNotNull(savedPoster.get().getContent());
+        assertNotNull(savedVideo.get().getContentMetadata());
+        assertNotNull(savedPoster.get().getContentMetadata());
         assertNotNull(savedContentMetadata.get().getPoster());
         assertNotNull(savedContentMetadata.get().getVideo());
-
     }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.storage.metadata.Content;
+import ru.storage.metadata.ContentMetadata;
 
 /**
  * Video
@@ -20,6 +20,6 @@ public class Video {
     private String contentType;
     @OneToOne
     @JsonIgnore
-    private Content content;
+    private ContentMetadata contentMetadata;
 
 }

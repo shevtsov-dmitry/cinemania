@@ -7,8 +7,10 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
  */
 public class NoMetadataRelationException extends InvalidDataAccessApiUsageException {
 
+    public static final String ERROR_MESSAGE ="Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных.";
+
     public NoMetadataRelationException() {
-        super("Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных, которая осуществляется по ID.");
+        super(ERROR_MESSAGE);
     }
 
     public NoMetadataRelationException(String msg) {

@@ -32,7 +32,7 @@ public class PosterController {
      *     <li>201 (CREATED) with body of saved Poster instance</li>
      *     <li>400 (BAD_REQUEST) with the cause header "Message"
      *          <ol>
-     *              <li>when invalid poster arguments</li>
+     *              <li>when invalid arguments</li>
      *              <li>when try to save without content metadata relation</li>
      *          </ol>
      *     </li>

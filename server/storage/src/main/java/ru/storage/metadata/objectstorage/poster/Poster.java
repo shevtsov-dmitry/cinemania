@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import ru.storage.metadata.Content;
+import ru.storage.metadata.ContentMetadata;
 
 @Entity
 @Data
@@ -24,12 +24,6 @@ public class Poster {
     private String contentType;
     @JsonIgnore
     @OneToOne
-    private Content content;
-
-    //    @NonNull
-//    @JsonIgnore
-//    @OneToOne
-//    @JoinColumn(name = "content_metadata_id")
-//    private ContentMetadata contentMetadata;
+    private ContentMetadata contentMetadata;
 
 }

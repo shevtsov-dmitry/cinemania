@@ -7,6 +7,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
+import ru.storage.metadata.objectstorage.poster.Poster;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -33,13 +34,34 @@ public class VideoService {
         this.videoRepo = videoRepo;
     }
 
+    /**
+     * Assure a video processing by comparing input content type with expected.
+     *
+     * @param contentType contentType
+     * @throws IllegalArgumentException when non image content used
+     */
+    private void assureVideoProcessing(String contentType) throws IllegalArgumentException {
+        if (contentType == null || !contentType.startsWith("video")) {
+            String errmes = "Ошибка при сохранении видео. Файл не является видеороликом. Был выбран файл типа " + contentType;
+            LOG.warn(errmes);
+            throw new IllegalArgumentException(errmes);
+        }
+    }
+
+    /**
+     * Save video metadata to a database.
+     *
+     * @param video video object metadata
+     * @throws NoMetadataRelationException when poster doesn't have field {@code content} field
+     * @throws IllegalArgumentException    when content type if not an image
+     */
     public Video saveMetadata(Video video) {
+        assureVideoProcessing(video.getContentType());
         try {
             return videoRepo.save(video);
         } catch (NoMetadataRelationException e) {
-            String errmes = "Метод сохранения плаката не предназначен для работы без ссылки на таблицу метаданных, которая осуществляется по ID.";
-            LOG.warn(errmes);
-            throw new NoMetadataRelationException(errmes);
+            LOG.warn(NoMetadataRelationException.ERROR_MESSAGE);
+            throw new NoMetadataRelationException();
         }
     }
 

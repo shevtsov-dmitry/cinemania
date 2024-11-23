@@ -1,10 +1,7 @@
 package ru.storage.metadata;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import ru.storage.metadata.objectstorage.poster.Poster;
 import ru.storage.metadata.objectstorage.poster.PosterService;
 import ru.storage.metadata.objectstorage.video.Video;
@@ -13,27 +10,35 @@ import ru.storage.metadata.objectstorage.video.VideoService;
 @Service
 public class MetadataService {
 
-    private final MetadataRepo metadataRepo;
+    private final ContentMetadataRepo contentMetadataRepo;
     private final VideoService videoService;
     private final PosterService posterService;
 
-    public MetadataService(MetadataRepo metadataRepo, VideoService videoService, PosterService posterService) {
-        this.metadataRepo = metadataRepo;
+    public MetadataService(ContentMetadataRepo contentMetadataRepo, VideoService videoService, PosterService posterService) {
+        this.contentMetadataRepo = contentMetadataRepo;
         this.videoService = videoService;
         this.posterService = posterService;
     }
 
-    public void saveMetadata(VideoInfoPartsTuple metadataObjects) {
+    /**
+     * @param metadataObjects metadata record of {@code Video}, {@code Poster} and {@code ContentMetadata}
+     * @return {@code id} of saved content metadata
+     * @throws NoMetadataRelationException when some of the instances doesn't have field related jpa field
+     * @throws IllegalArgumentException    when content type is wrong
+     */
+    public long saveMetadata(VideoInfoPartsTuple metadataObjects) {
         Poster poster = metadataObjects.poster();
-        poster.setContent(metadataObjects.content());
+        poster.setContentMetadata(metadataObjects.contentMetadata());
         posterService.saveMetadata(poster);
+
         Video video = metadataObjects.video();
-        video.setContent(metadataObjects.content());
+        video.setContentMetadata(metadataObjects.contentMetadata());
         videoService.saveMetadata(video);
-        Content content = metadataObjects.content();
-        content.setVideo(video);
-        content.setVideo(video);
-        metadataRepo.save(content);
+
+        ContentMetadata contentMetadata = metadataObjects.contentMetadata();
+        contentMetadata.setPoster(poster);
+        contentMetadata.setVideo(video);
+        return contentMetadataRepo.save(contentMetadata).getId();
     }
 
 }
