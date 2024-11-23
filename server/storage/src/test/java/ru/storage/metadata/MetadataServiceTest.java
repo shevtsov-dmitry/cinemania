@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MetadataServiceTest {
 
-    private static VideoInfoPartsTuple testMetadata;
+    private static VideoInfoParts testMetadata;
 
     @Autowired
     private MetadataService metadataService;
@@ -41,7 +41,7 @@ class MetadataServiceTest {
                 .collectionSizeRange(1, 5)
                 .build();
 
-        testMetadata = new VideoInfoPartsTuple(
+        testMetadata = new VideoInfoParts(
                 randomData.nextObject(ContentMetadata.class, "video", "poster", "createdAt"),
                 randomData.nextObject(Video.class, "content"),
                 randomData.nextObject(Poster.class, "content")

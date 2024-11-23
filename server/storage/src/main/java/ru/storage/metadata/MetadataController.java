@@ -29,7 +29,7 @@ public class MetadataController {
      * </ul>
      */
     @PostMapping
-    public ResponseEntity<Void> saveFormData(VideoInfoPartsTuple metadataObjects) {
+    public ResponseEntity<Void> saveFormData(VideoInfoParts metadataObjects) {
         try {
             service.saveMetadata(metadataObjects);
             return new ResponseEntity<>(HttpStatus.CREATED);

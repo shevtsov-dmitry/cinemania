@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,6 +64,10 @@ public class VideoService {
             LOG.warn(NoMetadataRelationException.ERROR_MESSAGE);
             throw new NoMetadataRelationException();
         }
+    }
+
+    public Optional<Video> findByContentMetadataId(long id) {
+        return videoRepo.findByContentMetadataId(id);
     }
 
     public String uploadVideo(MultipartFile file) {

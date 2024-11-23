@@ -14,6 +14,7 @@ import ru.storage.metadata.ContentMetadata;
 import ru.storage.metadata.ContentMetadataRepo;
 import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
+import ru.storage.metadata.objectstorage.video.Video;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -23,10 +24,7 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,6 +79,10 @@ public class PosterService {
             LOG.warn(NoMetadataRelationException.ERROR_MESSAGE);
             throw new NoMetadataRelationException();
         }
+    }
+
+    public Optional<Poster> findByContentMetadataId(long id) {
+        return posterRepo.findByContentMetadataId(id);
     }
 
     /**
@@ -272,37 +274,5 @@ public class PosterService {
         });
     }
 
-    // public List<ContentMetadata> queryMetadataRepoForIds(int amount) {
-    // final Pageable requestedAmountRestriction = PageRequest.of(0, amount);
-    // return metadataRepo.findRecentlyAdded(requestedAmountRestriction).stream()
-    // .map(ContentMetadata::getPosterId)
-    // .toList();
-    // }
-    //
-    // public List<Map<String, byte[]>> getRecentlySavedPosters(int amount) {
-    // List<String> recentSavedPosterIds = queryMetadataRepoForIds(amount);
-    // List<Map<String, byte[]>> imagesAndMetadata = new ArrayList<>(amount);
-    //
-    // for (String id : recentSavedPosterIds) {
-    // Map<String, byte[]> data = new HashMap<>();
-    //
-    // Poster poster = posterRepo.findById(id);
-    // final ContentMetadata metadata = metadataRepo.getByPosterId(poster.getId());
-    // data.put("metadataId", metadata.getId().getBytes());
-    // data.put("title", metadata.getTitle().getBytes());
-    // data.put("releaseDate", metadata.getReleaseDate().getBytes());
-    // data.put("country", metadata.getCountry().getBytes());
-    // data.put("mainGenre", metadata.getMainGenre().getBytes());
-    // data.put("subGenres", metadata.getSubGenres().toString().replace("[",
-    // "").replace("]", "").getBytes());
-    // data.put("age", metadata.getAge().toString().getBytes());
-    // data.put("rating", String.valueOf(metadata.getRating()).getBytes());
-    // data.put("poster", poster.getImage().getData());
-    // data.put("videoId", metadata.getVideoId().getBytes());
-    //
-    // imagesAndMetadata.add(data);
-    // }
-    // return imagesAndMetadata;
-    // }
 
 }
