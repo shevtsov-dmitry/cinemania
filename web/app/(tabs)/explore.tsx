@@ -1,9 +1,8 @@
-import { StyleSheet, Image, Platform } from 'react-native';
-
+import {StyleSheet, Image, Platform} from 'react-native';
 
 export default function TabTwoScreen() {
-  return (
-    <h1>in active dev</h1> 
-  );
+    return (
+        <h1>in active dev</h1>
+    );
 }
 

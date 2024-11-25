@@ -11,8 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.storage.metadata.objectstorage.poster.PosterController;
 import ru.storage.metadata.objectstorage.poster.PosterService;
+import ru.storage.metadata.objectstorage.poster.PosterController;
 
 import java.io.File;
 import java.nio.file.Files;

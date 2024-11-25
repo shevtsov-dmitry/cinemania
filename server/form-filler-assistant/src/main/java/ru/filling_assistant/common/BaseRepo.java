@@ -7,6 +7,9 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
 
+/**
+*
+*/
 @NoRepositoryBean
 public interface BaseRepo<T> extends JpaRepository<T, Long> {
     int deleteByName(String name);

@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom';
-import { setVideoId } from '../../store/videoPlayerSlice';
-import { useDispatch } from 'react-redux';
-
-import React, { useState } from 'react';
+// TODO use expo router instead
+// import { Link } from 'react-router-dom';
+// import { setVideoId } from '../../store/videoPlayerSlice';
+import { useState } from 'react';
 
 export class PosterClass {
     constructor(fetchedMap) {
@@ -60,7 +59,6 @@ export class PosterClass {
 }
 
 export function Poster(props) {
-    const dispatch = useDispatch();
     const metadata = props.posterObject;
     const [isPosterHovered, setIsPosterHovered] = useState(false);
 
@@ -95,21 +93,20 @@ export function Poster(props) {
                     <div>
                         <InfoOnPosterHover />
                         <div className="flex w-64 justify-center">
-                            <Link
-                                className="absolute bottom-0 z-10 mb-10"
-                                to={`/watch/${metadata.videoId}`}
+                            {/* <Link */}
+                            {/*     className="absolute bottom-0 z-10 mb-10" */}
+                            {/*     to={`/watch/${metadata.videoId}`} */}
+                            {/* > */}
+                            <button
+                                className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"
+                                // onClick={() => {};
+                                //     // TODO rewrite to Zustand
+                                //     // dispatch(setVideoId(metadata.videoId))
+                                // }
                             >
-                                <button
-                                    className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"
-                                    onClick={() =>
-                                        dispatch(
-                                            setVideoId(metadata.videoId)
-                                        )
-                                    }
-                                >
-                                    Смотреть
-                                </button>
-                            </Link>
+                                Смотреть
+                            </button>
+                            {/* </Link> */}
                         </div>
                     </div>
                 )}

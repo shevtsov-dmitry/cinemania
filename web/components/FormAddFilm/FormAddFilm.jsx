@@ -1,103 +1,102 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from 'react';
+// TODO use expo router instead
+// import { Link } from 'react-router-dom';
 
-function FormAddFilm() {
-    // *** ASSIGNMENT
-    const FILLING_ASSISTANT_URL = `${process.env.REACT_APP_SERVER_URL}:8001`
-    const VIDEO_MATERIAL_URL = `${process.env.REACT_APP_SERVER_URL}:8080`
+export default function FormAddFilm() {
+    const FILLING_ASSISTANT_URL = `http://localhost:8001`;
+    const STORAGE_URL = 'http://localhost:8080';
 
     const options = {
-        MAX_AUTO_SUGGESTIONS_DISPLAYED: 5,
-    }
+        MAX_AUTO_SUGGESTIONS_DISPLAYED: 5
+    };
 
-    const [suggestionsDOM, setSuggestionsDOM] = useState([])
+    const [suggestionsDOM, setSuggestionsDOM] = useState([]);
 
-    const [countryInput, setCountryInput] = useState('')
-    const [mainGenreInput, setMainGenreInput] = useState('')
-    const [subGenresInput, setSubGenresInput] = useState('')
+    const [countryInput, setCountryInput] = useState('');
+    const [mainGenreInput, setMainGenreInput] = useState('');
+    const [subGenresInput, setSubGenresInput] = useState('');
 
-    const [countrySuggestionsDOM, setCountrySuggestionsDOM] = useState(<div />)
+    const [countrySuggestionsDOM, setCountrySuggestionsDOM] = useState(<div />);
     const [mainGenreSuggestionsDOM, setMainGenreSuggestionsDOM] = useState(
         <div />
-    )
+    );
     const [subGenresSuggestionsDOM, setSubGenresSuggestionsDOM] = useState(
         <div />
-    )
+    );
 
-    const posterInputRef = useRef()
-    const videoInputRef = useRef()
+    const posterInputRef = useRef();
+    const videoInputRef = useRef();
 
-    const [autoSuggestionsMap, setAutoSuggestionsMap] = useState({})
+    const [autoSuggestionsMap, setAutoSuggestionsMap] = useState({});
 
     // *** AUTO SUGGESTIONS
 
     useEffect(() => {
-        fetchAutosuggestions()
+        fetchAutosuggestions();
 
         async function fetchAutosuggestions() {
             let map = {
                 buffer: [],
-                recentInputLength: 0,
-            }
+                recentInputLength: 0
+            };
             let response = await fetch(
                 `${FILLING_ASSISTANT_URL}/filling-assistants/genres/get/all`
             ).catch(() => {
                 console.error(
                     `problem fetching: ${FILLING_ASSISTANT_URL}/filling-assistants/genres/get/all`
-                )
-                return
-            })
-            let responseData = await response.json()
+                );
+                return;
+            });
+            let responseData = await response.json();
             map = {
                 ...map,
-                genre: responseData,
-            }
+                genre: responseData
+            };
 
             response = await fetch(
                 `${FILLING_ASSISTANT_URL}/filling-assistants/countries/get/all`
             ).catch(() => {
                 console.error(
                     `problem fetching: ${FILLING_ASSISTANT_URL}/filling-assistants/countries/get/all`
-                )
-            })
-            responseData = await response.json()
+                );
+            });
+            responseData = await response.json();
             map = {
                 ...map,
-                country: responseData,
-            }
+                country: responseData
+            };
 
-            setAutoSuggestionsMap(map)
+            setAutoSuggestionsMap(map);
         }
-    }, [])
+    }, []);
 
     function createDivFromRetrievedSuggestion(
         suggestions,
         formFieldName,
         inputValue
     ) {
-        return suggestions.map((suggestion) => createDOM(suggestion))
+        return suggestions.map((suggestion) => createDOM(suggestion));
 
         function createDOM(suggestion) {
             return (
                 <button
-                    className={`bg-white px-2 text-left first:rounded-t last:rounded-b 
-                    dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700 dark:focus:text-teal-300`}
+                    className={`bg-white px-2 text-left first:rounded-t last:rounded-b dark:bg-slate-900 dark:text-white dark:focus:bg-slate-700 dark:focus:text-teal-300`}
                     type="submit"
                     onClick={(ev) => {
-                        ev.preventDefault()
-                        const autoSuggestion = ev.currentTarget.textContent
-                        changeInputTextToAutoSuggestion(autoSuggestion)
+                        ev.preventDefault();
+                        const autoSuggestion = ev.currentTarget.textContent;
+                        changeInputTextToAutoSuggestion(autoSuggestion);
                         setAutoSuggestionsMap({
                             ...autoSuggestionsMap,
                             buffer: [],
-                            recentInputLength: 0,
-                        })
+                            recentInputLength: 0
+                        });
                     }}
                     key={suggestion}
                 >
                     {highlightSuggestionMatchedLetters(suggestion)}
                 </button>
-            )
+            );
         }
 
         function highlightSuggestionMatchedLetters(suggestion) {
@@ -108,137 +107,137 @@ function FormAddFilm() {
                     </span>
                     {suggestion.substring(inputValue.length, suggestion.length)}
                 </>
-            )
+            );
         }
 
         function changeInputTextToAutoSuggestion(autoSuggestion) {
-            if (formFieldName === 'country') setCountryInput(autoSuggestion)
-            if (formFieldName === 'genre') setMainGenreInput(autoSuggestion)
+            if (formFieldName === 'country') setCountryInput(autoSuggestion);
+            if (formFieldName === 'genre') setMainGenreInput(autoSuggestion);
         }
     }
 
     function getSuggestionsBySequence(input, list) {
         list = list.filter(
             (string) => string.substring(0, input.length) === input
-        )
-        return list.slice(0, options.MAX_AUTO_SUGGESTIONS_DISPLAYED)
+        );
+        return list.slice(0, options.MAX_AUTO_SUGGESTIONS_DISPLAYED);
     }
 
     // Set country suggestions
     useEffect(() => {
         if (countryInput === undefined || countryInput === '') {
-            return
+            return;
         }
 
-        const countries = autoSuggestionsMap.country
-        const buffer = autoSuggestionsMap.buffer
-        const recentInputLength = autoSuggestionsMap.recentInputLength
+        const countries = autoSuggestionsMap.country;
+        const buffer = autoSuggestionsMap.buffer;
+        const recentInputLength = autoSuggestionsMap.recentInputLength;
         const firstCharUpCaseInput =
             countryInput[0].toUpperCase() +
-            countryInput.substring(1, countryInput.length)
+            countryInput.substring(1, countryInput.length);
 
-        let list = countryInput.length === 1 ? countries : buffer
+        let list = countryInput.length === 1 ? countries : buffer;
 
         if (countryInput.length < recentInputLength) {
-            list = countries
+            list = countries;
         }
 
-        list = getSuggestionsBySequence(firstCharUpCaseInput, list)
+        list = getSuggestionsBySequence(firstCharUpCaseInput, list);
 
         setAutoSuggestionsMap({
             ...autoSuggestionsMap,
             buffer: list,
-            recentInputLength: countryInput.length,
-        })
+            recentInputLength: countryInput.length
+        });
 
         const DOM = createDivFromRetrievedSuggestion(
             list,
             'country',
             countryInput
-        )
-        setCountrySuggestionsDOM(DOM)
-    }, [countryInput])
+        );
+        setCountrySuggestionsDOM(DOM);
+    }, [countryInput]);
 
     // Set genre suggestions
     useEffect(() => {
         if (mainGenreInput === undefined || mainGenreInput === '') {
-            return
+            return;
         }
 
-        const genres = autoSuggestionsMap.genre
-        const buffer = autoSuggestionsMap.buffer
-        const recentInputLength = autoSuggestionsMap.recentInputLength
+        const genres = autoSuggestionsMap.genre;
+        const buffer = autoSuggestionsMap.buffer;
+        const recentInputLength = autoSuggestionsMap.recentInputLength;
 
-        let list = mainGenreInput.length === 1 ? genres : buffer
+        let list = mainGenreInput.length === 1 ? genres : buffer;
 
         if (mainGenreInput.length < recentInputLength) {
-            list = genres
+            list = genres;
         }
 
-        list = getSuggestionsBySequence(mainGenreInput, list)
+        list = getSuggestionsBySequence(mainGenreInput, list);
 
         setAutoSuggestionsMap({
             ...autoSuggestionsMap,
             buffer: list,
-            recentInputLength: countryInput.length,
-        })
+            recentInputLength: countryInput.length
+        });
 
         const DOM = createDivFromRetrievedSuggestion(
             list,
             'genre',
             mainGenreInput
-        )
-        setMainGenreSuggestionsDOM(DOM)
-    }, [mainGenreInput])
+        );
+        setMainGenreSuggestionsDOM(DOM);
+    }, [mainGenreInput]);
 
     // *** FORM
 
-    const formRef = useRef()
-    const formSaveStatus = useRef()
-    const loadingRef = useRef()
+    const formRef = useRef();
+    const formSaveStatus = useRef();
+    const loadingRef = useRef();
 
     async function prepareFormDataToSend() {
         async function savePoster() {
             return new Promise((resolve) => {
-                const posterFile = posterInputRef.current.files[0]
+                const posterFile = posterInputRef.current.files[0];
                 if (posterFile == null) {
-                    return
+                    return;
                 }
-                const posterFormData = new FormData()
-                posterFormData.append('file', posterFile)
-                fetch(`${VIDEO_MATERIAL_URL}/posters/upload`, {
+                const posterFormData = new FormData();
+                posterFormData.append('file', posterFile);
+                fetch(`${STORAGE_URL}/posters/upload`, {
                     method: 'POST',
-                    body: posterFormData,
+                    body: posterFormData
                 })
                     .then((res) => res.text())
                     .then((id) => {
-                        return resolve(id)
-                    })
-            })
+                        return resolve(id);
+                    });
+            });
         }
 
         async function saveVideo() {
             return new Promise((resolve) => {
-                const videoFile = videoInputRef.current.files[0]
+                const videoFile = videoInputRef.current.files[0];
                 if (videoFile == null) {
-                    return
+                    return;
                 }
-                const videoFormData = new FormData()
-                videoFormData.append('file', videoFile)
-                fetch(`${VIDEO_MATERIAL_URL}/videos/upload`, {
+                const videoFormData = new FormData();
+                videoFormData.append('file', videoFile);
+                fetch(`${STORAGE_URL}/videos/upload`, {
                     method: 'POST',
-                    body: videoFormData,
+                    body: videoFormData
                 })
                     .then((res) => res.text())
                     .then((id) => {
-                        return resolve(id)
-                    })
-            })
+                        return resolve(id);
+                    });
+            });
         }
 
         async function saveMetadata(posterId, videoId) {
             return new Promise((resolve) => {
-                const form = new FormData(formRef.current)
+                const form = new FormData(formRef.current);
                 const metadata = {
                     title: form.get('title').trim(),
                     releaseDate: form.get('releaseDate'),
@@ -248,40 +247,40 @@ function FormAddFilm() {
                     age: form.get('age').trim(),
                     rating: form.get('rating').trim(),
                     posterId: posterId,
-                    videoId: videoId,
-                }
+                    videoId: videoId
+                };
 
                 // TODO make additional checks for input
                 function parseSubGenres(subGenresString) {
-                    const splitted = subGenresString.split(',')
-                    let subGenresArray = []
+                    const splitted = subGenresString.split(',');
+                    let subGenresArray = [];
                     for (const string of splitted) {
                         if (string.length !== 0)
-                            subGenresArray.push(string.trim())
+                            subGenresArray.push(string.trim());
                     }
-                    return subGenresArray
+                    return subGenresArray;
                 }
 
-                fetch(`${VIDEO_MATERIAL_URL}/videos/metadata/save`, {
+                fetch(`${STORAGE_URL}/videos/metadata/save`, {
                     method: 'POST',
                     headers: {
-                        'Content-type': 'application/json',
+                        'Content-type': 'application/json'
                     },
-                    body: JSON.stringify(metadata),
+                    body: JSON.stringify(metadata)
                 })
                     .then((res) => res.text())
                     .then((id) => {
-                        resolve(id)
-                    })
-            })
+                        resolve(id);
+                    });
+            });
         }
 
-        let posterId = await savePoster()
-        const videoId = await saveVideo()
-        const metadataId = await saveMetadata(posterId, videoId)
-        const statusBar = formSaveStatus.current
+        let posterId = await savePoster();
+        const videoId = await saveVideo();
+        const metadataId = await saveMetadata(posterId, videoId);
+        const statusBar = formSaveStatus.current;
 
-        loadingRef.current.style.display = 'none'
+        loadingRef.current.style.display = 'none';
         // posterId = undefined
         if (
             posterId === undefined ||
@@ -292,22 +291,22 @@ function FormAddFilm() {
             metadataId === ''
         ) {
             // TODO make option to read log if something gone wrong was not uploaded
-            statusBar.innerHTML = 'Ошибка при сохранении. <u>Подробнее</u>'
-            statusBar.style.color = 'red'
-            return
+            statusBar.innerHTML = 'Ошибка при сохранении. <u>Подробнее</u>';
+            statusBar.style.color = 'red';
+            return;
         }
 
-        displaySuccessSaveMessage()
+        displaySuccessSaveMessage();
 
         function displaySuccessSaveMessage() {
-            statusBar.textContent = 'Сохранено ✅'
-            statusBar.style.fontSize = '0.8em'
-            statusBar.style.color = 'green'
-            statusBar.style.marginTop = '-6px'
+            statusBar.textContent = 'Сохранено ✅';
+            statusBar.style.fontSize = '0.8em';
+            statusBar.style.color = 'green';
+            statusBar.style.marginTop = '-6px';
             setTimeout(() => {
-                statusBar.textContent = ''
-                statusBar.style.fontSize = '0.7em'
-            }, 1500)
+                statusBar.textContent = '';
+                statusBar.style.fontSize = '0.7em';
+            }, 1500);
         }
     }
 
@@ -326,7 +325,7 @@ function FormAddFilm() {
                     {age}+
                 </label>
             </>
-        )
+        );
     }
 
     return (
@@ -341,11 +340,11 @@ function FormAddFilm() {
                         className="relative mt-[-10px] flex justify-between p-0"
                     >
                         <div className="w-[95%]"></div>
-                        <Link to={'/'}>
-                            <p className="w-[5%] select-none text-2xl font-bold hover:cursor-pointer ">
-                                X
-                            </p>
-                        </Link>
+                        {/* <Link to={'/'}> */}
+                        <p className="w-[5%] select-none text-2xl font-bold hover:cursor-pointer">
+                            X
+                        </p>
+                        {/* </Link> */}
                     </li>
                     <li className="mb-2 mt-[-10px] text-center text-3xl font-bold">
                         Добавить фильм
@@ -488,23 +487,23 @@ function FormAddFilm() {
                         className="rounded-2xl bg-red-600 p-1.5 font-bold text-white transition-transform"
                         id="add-film-button"
                         onClick={(event) => {
-                            event.preventDefault()
-                            prepareFormDataToSend()
-                            animateButtonPress()
-                            showLoadingIcon()
+                            event.preventDefault();
+                            prepareFormDataToSend();
+                            animateButtonPress();
+                            showLoadingIcon();
 
                             function animateButtonPress() {
-                                const el = event.currentTarget
-                                el.style.transform = 'scale(0.95)'
-                                el.classList.add('bg-green-600')
+                                const el = event.currentTarget;
+                                el.style.transform = 'scale(0.95)';
+                                el.classList.add('bg-green-600');
                                 setTimeout(() => {
-                                    el.style.transform = 'scale(1)'
-                                    el.classList.remove('bg-green-600')
-                                }, 230)
+                                    el.style.transform = 'scale(1)';
+                                    el.classList.remove('bg-green-600');
+                                }, 230);
                             }
 
                             function showLoadingIcon() {
-                                loadingRef.current.style.display = 'block'
+                                loadingRef.current.style.display = 'block';
                             }
                         }}
                     >
@@ -518,7 +517,5 @@ function FormAddFilm() {
                 </div>
             </form>
         </div>
-    )
+    );
 }
-
-export default FormAddFilm

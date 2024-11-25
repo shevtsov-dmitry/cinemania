@@ -1,42 +1,45 @@
-import {useEffect, useRef, useState} from 'react'
-import FormAddFilm from '../FormAddFilm/FormAddFilm'
-import {Link, Route, Routes} from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react';
+import FormAddFilm from '../FormAddFilm/FormAddFilm';
+
+// TODO use expo router instead
+// import { Link, Route, Routes } from 'react-router-dom';
 
 export function Header() {
-    const generalTopicsRef = useRef()
-    const newShowsAndCollectionsRef = useRef()
-    const loginImageRef = useRef()
-    const searchImageRef = useRef()
-    const burgerImageRef = useRef()
-    const closeImageRef = useRef()
-    const [burgerActive, setBurgerActive] = useState(false)
+    const generalTopicsRef = useRef();
+    const newShowsAndCollectionsRef = useRef();
+    const loginImageRef = useRef();
+    const searchImageRef = useRef();
+    const burgerImageRef = useRef();
+    const closeImageRef = useRef();
+
+    const [burgerActive, setBurgerActive] = useState(false);
+
+    useEffect(() => {
+        showAndHideBurgerMenu();
+    }, []);
 
     function showAndHideBurgerMenu() {
         burgerImageRef.current.addEventListener('click', () => {
-            burgerImageRef.current.style.display = 'none'
-            closeImageRef.current.style.display = 'block'
-            setBurgerActive(true)
-        })
+            burgerImageRef.current.style.display = 'none';
+            closeImageRef.current.style.display = 'block';
+            setBurgerActive(true);
+        });
         closeImageRef.current.addEventListener('click', () => {
-            burgerImageRef.current.style.display = 'block'
-            closeImageRef.current.style.display = 'none'
-            setBurgerActive(false)
-        })
+            burgerImageRef.current.style.display = 'block';
+            closeImageRef.current.style.display = 'none';
+            setBurgerActive(false);
+        });
     }
-
-    useEffect(() => {
-        showAndHideBurgerMenu()
-    }, [])
 
     const showOpenedBurgerPanel = () => {
         if (!burgerActive) {
-            return null
+            return null;
         } else {
             return (
                 <>
                     <main
                         id="burger-popup"
-                        className="fixed z-20 h-lvh w-lvw bg-neutral-800 transition-all"
+                        className="h-lvh w-lvw fixed z-20 bg-neutral-800 transition-all"
                     >
                         <div className="ml-5 mt-2 text-[1.25em] uppercase leading-9 text-white">
                             <ul className="">{generalTopicsLiContent()}</ul>
@@ -47,13 +50,13 @@ export function Header() {
                         © 2024 ООО «Bē commerce»
                     </footer>
                 </>
-            )
+            );
         }
-    }
+    };
 
     function generalTopicsLiContent() {
         // signs variants: ▼ᐁ
-        const topics = ['Фильмы', 'Сериалы', 'Мультфильмы', 'Аниме']
+        const topics = ['Фильмы', 'Сериалы', 'Мультфильмы', 'Аниме'];
         return burgerActive ? (
             <>
                 {topics.map((string, index) => (
@@ -66,16 +69,16 @@ export function Header() {
                     <li key={index}>{string}</li>
                 ))}
             </>
-        )
+        );
     }
 
     function newsAndCollectionContent() {
         return (
-            <>
+            <div>
                 <p id="new-shows">Новинки</p>
                 <p id="collections">Подборки</p>
-            </>
-        )
+            </div>
+        );
     }
 
     return (
@@ -84,14 +87,14 @@ export function Header() {
                 id="upper-header"
                 className="text-amber-whiteflex ml-[3.5%] mr-[3.5%] flex items-center justify-between text-white"
             >
-                <Link to="/">
-                    <img
-                        className="mt-2 w-16 hover:cursor-pointer"
-                        id="company-logo"
-                        src="icons/company_logo.png"
-                        alt="company logo"
-                    />
-                </Link>
+                {/* <Link to="/"> */}
+                <img
+                    className="mt-2 w-16 hover:cursor-pointer"
+                    id="company-logo"
+                    src="icons/company_logo.png"
+                    alt="company logo"
+                />
+                {/* </Link> */}
                 <ul
                     ref={generalTopicsRef}
                     id="general-topics"
@@ -107,11 +110,11 @@ export function Header() {
                     {newsAndCollectionContent()}
                 </div>
 
-                <Link to="/add-new-film">
-                    <p className="transition-colors hover:cursor-pointer hover:text-orange-400 hover:underline">
-                        Добавить новый фильм
-                    </p>
-                </Link>
+                {/* <Link to="/add-new-film"> */}
+                <p className="transition-colors hover:cursor-pointer hover:text-orange-400 hover:underline">
+                    Добавить новый фильм
+                </p>
+                {/* </Link> */}
 
                 <div className="flex w-fit items-center justify-end gap-5">
                     <div
@@ -161,20 +164,19 @@ export function Header() {
             </header>
             {showOpenedBurgerPanel()}
 
-            <Routes>
-                <Route
-                    path="/add-new-film"
-                    element={
-                        <div className="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center">
-                            <div
-                                className="absolute h-full w-full bg-gray-800 opacity-85 backdrop-blur-md dark:backdrop-blur-lg"></div>
-                            <div className="z-50">
-                                <FormAddFilm/>
-                            </div>
-                        </div>
-                    }
-                />
-            </Routes>
+            {/* <Routes> */}
+            {/*     <Route */}
+            {/*         path="/add-new-film" */}
+            {/*         element={ */}
+            {/*             <div className="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center"> */}
+            {/*                 <div className="absolute h-full w-full bg-gray-800 opacity-85 backdrop-blur-md dark:backdrop-blur-lg"></div> */}
+            {/*                 <div className="z-50"> */}
+            {/*                     <FormAddFilm /> */}
+            {/*                 </div> */}
+            {/*             </div> */}
+            {/*         } */}
+            {/*     /> */}
+            {/* </Routes> */}
         </>
-    )
+    );
 }

@@ -1,8 +1,8 @@
-import { useRef } from 'react'
-import { SideArrows } from '../../common/util/SideArrows'
+import { useRef } from 'react';
+import { SideArrows } from '../../common/util/SideArrows';
 
 export function DefaultCompilation(props) {
-    const scrollableDivRef = useRef()
+    const scrollableDivRef = useRef();
 
     // useEffect(() => {
     //     if (!isPlayerOpened) {
@@ -10,10 +10,10 @@ export function DefaultCompilation(props) {
     //     }
     // }, [])
 
-    const initSize = 30 // get it from props or other way like fetch
-    const compilation = new Array(initSize)
+    const initSize = 30; // get it from props or other way like fetch
+    const compilation = new Array(initSize);
     for (let i = 0; i < initSize; i++) {
-        compilation.push(<Element key={Math.random()} />)
+        compilation.push(<Element key={Math.random()} />);
     }
 
     return (
@@ -28,9 +28,9 @@ export function DefaultCompilation(props) {
             </div>
             <SideArrows scrollableDivRef={scrollableDivRef} />
         </div>
-    )
+    );
 }
 
 function Element() {
-    return <div className="h-44 w-72 overflow-hidden rounded bg-sky-100"></div>
+    return <div className="h-44 w-72 overflow-hidden rounded bg-sky-100"></div>;
 }
