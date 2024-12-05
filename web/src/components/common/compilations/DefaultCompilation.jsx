@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-export function DefaultCompilation(props) {
+export default function DefaultCompilation(props) {
   const scrollableDivRef = useRef();
 
   // useEffect(() => {

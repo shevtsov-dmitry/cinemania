@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Poster, PosterClass } from "./Poster";
+import { PosterClass } from "@/src/components/common/Poster";
+import Poster from "@/src/components/common/Poster";
 
-export function Preview() {
+export default function Preview() {
   const STORAGE_URL = "http://localhost:8080";
 
   const [posters, setPosters] = useState([]);
