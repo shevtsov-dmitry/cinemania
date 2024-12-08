@@ -1,58 +1,50 @@
 package ru.storage.metadata;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import ru.storage.metadata.objectstorage.poster.Poster;
 import ru.storage.metadata.objectstorage.video.Video;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 @Data
-@Entity
-@RequiredArgsConstructor
 @NoArgsConstructor
+@Document
 public class ContentMetadata {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NonNull
+    @NotNull(message = "Необходимо указать название")
     private String title;
-    @NonNull
-    private String releaseDate;
-    @NonNull
+    @NotNull(message = "Необходимо указать дату выпуска")
+    private Date releaseDate;
+    @NotNull(message = "Необходимо указать страну")
     private String country;
-    @NonNull
+    @NotNull(message = "Необходимо указать главный жанр")
     private String mainGenre;
-    @NonNull
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubGenre> subGenres;
-    @NonNull
+    @Min(0)
+    @Max(21)
+    @NotNull(message = "Необходимо указать возрастное ограничение")
     private Integer age;
-    @NonNull
     private Double rating;
-    @OneToOne(orphanRemoval = true)
+    @DBRef
     private Poster poster;
-    @OneToOne(orphanRemoval = true)
+    @DBRef
     private Video video;
     @CreatedDate
-    @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Entity
-    @Data
-    @NoArgsConstructor
-    public class SubGenre {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-        private String name;
+    public record SubGenre(Long id, String name) {
     }
 
     // @PrePersist

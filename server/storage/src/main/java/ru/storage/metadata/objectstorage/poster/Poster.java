@@ -1,29 +1,22 @@
 package ru.storage.metadata.objectstorage.poster;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import ru.storage.metadata.ContentMetadata;
 
-@Entity
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
+@Document
 public class Poster {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @NonNull
-    @Column(nullable = false)
+    private String id;
     private String filename;
-    @NonNull
-    @Column(nullable = false)
     private String contentType;
+    @DBRef
     @JsonIgnore
-    @OneToOne
     private ContentMetadata contentMetadata;
-
 }

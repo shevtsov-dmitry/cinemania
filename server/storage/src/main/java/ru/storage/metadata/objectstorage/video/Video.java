@@ -1,25 +1,23 @@
 package ru.storage.metadata.objectstorage.video;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import ru.storage.metadata.ContentMetadata;
 
-/**
- * Video
- */
-@Entity
+
 @Data
 @NoArgsConstructor
+@Document
 public class Video {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
     private String name;
     private String contentType;
-    @OneToOne
+    @DBRef
     @JsonIgnore
     private ContentMetadata contentMetadata;
-
 }
