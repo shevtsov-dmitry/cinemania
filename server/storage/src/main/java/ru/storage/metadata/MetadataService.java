@@ -27,76 +27,38 @@ public class MetadataService {
     }
 
     /**
-     * @param metadataObjects metadata record of {@code Video}, {@code Poster} and {@code ContentMetadata}
-     * @return {@code id} of saved content metadata
+     * @param metadataObjects metadata record of {@link Video}, {@link Poster} and {@link ContentMetadata}
+     * @return {@link VideoInfoParts} object
      * @throws NoMetadataRelationException when some of the instances doesn't have field related jpa field
      * @throws IllegalArgumentException    when content type is wrong
      */
-    public long saveMetadata(VideoInfoParts metadataObjects) {
-        Poster poster = metadataObjects.poster();
-        poster.setContentMetadata(metadataObjects.contentMetadata());
-        posterService.saveMetadata(poster);
-
-        Video video = metadataObjects.video();
-        video.setContentMetadata(metadataObjects.contentMetadata());
-        videoService.saveMetadata(video);
-
-        ContentMetadata contentMetadata = metadataObjects.contentMetadata();
-        contentMetadata.setPoster(poster);
-        contentMetadata.setVideo(video);
-        return contentMetadataRepo.save(contentMetadata).getId();
+    public VideoInfoParts saveMetadata(VideoInfoParts metadataObjects) {
+        Video savedVideoMetadata = videoService.saveMetadata(metadataObjects.video());
+        Poster savedPosterMetadata = posterService.saveMetadata(metadataObjects.poster());
+        ContentMetadata savedContentMetadata = metadataObjects.contentMetadata();
+        savedContentMetadata.setVideo(savedVideoMetadata);
+        savedContentMetadata.setPoster(savedPosterMetadata);
+        savedContentMetadata = contentMetadataRepo.save(savedContentMetadata);
+        return new VideoInfoParts(savedContentMetadata, savedVideoMetadata, savedPosterMetadata);
     }
 
-    /**
-     * Retrieve recently added video info parts bundle
-     *
-     * @param amount how many instances need to be searched
-     * @return recently added {@code VideoInfoParts} bundle
-     */
-    public List<VideoInfoParts> getRecentlyAdded(int amount) {
-        List<ContentMetadata> recentlyAdded = contentMetadataRepo.findRecentlyAdded(Pageable.ofSize(amount));
-        return recentlyAdded.stream()
-                .map(contentMetadata -> {
-                    long id = contentMetadata.getId();
-                    return new VideoInfoParts(
-                            contentMetadata,
-                            videoService.findByContentMetadataId(id).orElse(new Video()),
-                            posterService.findByContentMetadataId(id).orElse(new Poster())
-                    );
-                }).toList();
-    }
-
-    // public List<ContentMetadata> queryMetadataRepoForIds(int amount) {
-    // final Pageable requestedAmountRestriction = PageRequest.of(0, amount);
-    // return metadataRepo.findRecentlyAdded(requestedAmountRestriction).stream()
-    // .map(ContentMetadata::getPosterId)
-    // .toList();
-    // }
-    //
-    // public List<Map<String, byte[]>> getRecentlySavedPosters(int amount) {
-    // List<String> recentSavedPosterIds = queryMetadataRepoForIds(amount);
-    // List<Map<String, byte[]>> imagesAndMetadata = new ArrayList<>(amount);
-    //
-    // for (String id : recentSavedPosterIds) {
-    // Map<String, byte[]> data = new HashMap<>();
-    //
-    // Poster poster = posterRepo.findById(id);
-    // final ContentMetadata metadata = metadataRepo.getByPosterId(poster.getId());
-    // data.put("metadataId", metadata.getId().getBytes());
-    // data.put("title", metadata.getTitle().getBytes());
-    // data.put("releaseDate", metadata.getReleaseDate().getBytes());
-    // data.put("country", metadata.getCountry().getBytes());
-    // data.put("mainGenre", metadata.getMainGenre().getBytes());
-    // data.put("subGenres", metadata.getSubGenres().toString().replace("[",
-    // "").replace("]", "").getBytes());
-    // data.put("age", metadata.getAge().toString().getBytes());
-    // data.put("rating", String.valueOf(metadata.getRating()).getBytes());
-    // data.put("poster", poster.getImage().getData());
-    // data.put("videoId", metadata.getVideoId().getBytes());
-    //
-    // imagesAndMetadata.add(data);
-    // }
-    // return imagesAndMetadata;
-    // }
+//    /**
+//     * Retrieve recently added video info parts bundle
+//     *
+//     * @param amount how many instances need to be searched
+//     * @return recently added {@code VideoInfoParts} bundle
+//     */
+//    public List<VideoInfoParts> getRecentlyAdded(int amount) {
+//        List<ContentMetadata> recentlyAdded = contentMetadataRepo.findRecentlyAdded(Pageable.ofSize(amount));
+//        return recentlyAdded.stream()
+//                .map(contentMetadata -> {
+//                    long id = contentMetadata.getId();
+//                    return new VideoInfoParts(
+//                            contentMetadata,
+//                            videoService.findByContentMetadataId(id).orElse(new Video()),
+//                            posterService.findByContentMetadataId(id).orElse(new Poster())
+//                    );
+//                }).toList();
+//    }
 
 }

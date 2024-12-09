@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.storage.metadata.objectstorage.poster.Poster;
@@ -22,7 +23,8 @@ import javax.validation.constraints.NotNull;
 @Document
 public class ContentMetadata {
 
-    private Long id;
+    @Id
+    private String id;
     @NotNull(message = "Необходимо указать название")
     private String title;
     @NotNull(message = "Необходимо указать дату выпуска")
@@ -44,18 +46,9 @@ public class ContentMetadata {
     @CreatedDate
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public record SubGenre(Long id, String name) {
+    @Data
+    public class SubGenre {
+        private Long id;
+        private String name;
     }
-
-    // @PrePersist
-    // public void validateDate() {
-    // Pattern regexp =
-    // Pattern.compile("(19|20)\\d{2}-(0[1-9]|1[1,2])-(0[1-9]|[12][0-9]|3[01])");
-    // Matcher matcher = regexp.matcher(releaseDate);
-    // if (!matcher.find()) {
-    // throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-    // "Date format is not supported. Expected yyyy-MM-dd.");
-    // }
-    // }
-
 }

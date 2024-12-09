@@ -50,7 +50,7 @@ class MetadataControllerTest {
 
     @Test
     void saveFormData_ok() throws Exception {
-        when(metadataService.saveMetadata(testMetadata)).thenReturn(1L);
+        when(metadataService.saveMetadata(testMetadata)).thenReturn(any(VideoInfoParts.class));
         String json = objectMapper.writeValueAsString(testMetadata);
         mockMvc.perform(post("/api/v0/metadata")
                         .content(json)

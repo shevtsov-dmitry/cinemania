@@ -9,7 +9,6 @@ import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
 import ru.storage.utility.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,7 +52,7 @@ public class PosterController {
     /**
      * Upload poster into S3 cloud storage
      *
-     * @param posterMetadataId id of poster metadata from db
+     * @param id poster metadata id from mongodb db
      * @param image            multipart file of image type
      * @return Response
      * <ul>
@@ -63,9 +62,9 @@ public class PosterController {
      * </ul>
      */
     @PostMapping("/upload")
-    public ResponseEntity<Void> uploadImage(@RequestParam Long posterMetadataId, @RequestParam MultipartFile image) {
+    public ResponseEntity<Void> uploadImage(@RequestParam String id, @RequestParam MultipartFile image) {
         try {
-            service.uploadImage(posterMetadataId, image);
+            service.uploadImage(id, image);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null,
@@ -125,23 +124,23 @@ public class PosterController {
      *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when poster image wasn't updated</li>
      * </ul>
      */
-    @PutMapping("/change")
-    public ResponseEntity<Void> updateExistingImage(@RequestParam Long metadataId, @RequestParam MultipartFile image) {
-        try {
-            service.updateExistingImage(metadataId, image);
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders("Постер успешно заменён на новый."),
-                    HttpStatus.NO_CONTENT);
-        } catch (NoMetadataRelationException e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        } catch (UncheckedIOException e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PutMapping("/change")
+//    public ResponseEntity<Void> updateExistingImage(@RequestParam Long metadataId, @RequestParam MultipartFile image) {
+//        try {
+//            service.updateExistingImage(metadataId, image);
+//            return new ResponseEntity<>(null,
+//                    new EncodedHttpHeaders("Постер успешно заменён на новый."),
+//                    HttpStatus.NO_CONTENT);
+//        } catch (NoMetadataRelationException e) {
+//            return new ResponseEntity<>(null,
+//                    new EncodedHttpHeaders(e.getMessage()),
+//                    HttpStatus.BAD_REQUEST);
+//        } catch (UncheckedIOException e) {
+//            return new ResponseEntity<>(null,
+//                    new EncodedHttpHeaders(e.getMessage()),
+//                    HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     /**
      * Delete saved poster which matches requested ids from S3 cloud storage and local db.
@@ -156,22 +155,22 @@ public class PosterController {
      *      <li>500 (INTERNAL_SERVER_ERROR)</li>
      * </ul>
      */
-    @DeleteMapping("/ids/{contentMetadataIds}")
-    public ResponseEntity<Void> deletePostersByIds(@PathVariable String contentMetadataIds) {
-        try {
-            service.deleteByIds(contentMetadataIds);
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders("Выбранные постеры успешно удалены."),
-                    HttpStatus.NO_CONTENT);
-        } catch (ParseRequestIdException e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        } catch (S3Exception e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @DeleteMapping("/ids/{contentMetadataIds}")
+//    public ResponseEntity<Void> deletePostersByIds(@PathVariable String contentMetadataIds) {
+//        try {
+//            service.deleteByIds(contentMetadataIds);
+//            return new ResponseEntity<>(null,
+//                    new EncodedHttpHeaders("Выбранные постеры успешно удалены."),
+//                    HttpStatus.NO_CONTENT);
+//        } catch (ParseRequestIdException e) {
+//            return new ResponseEntity<>(null,
+//                    new EncodedHttpHeaders(e.getMessage()),
+//                    HttpStatus.BAD_REQUEST);
+//        } catch (S3Exception e) {
+//            return new ResponseEntity<>(null,
+//                    new EncodedHttpHeaders(e.getMessage()),
+//                    HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 }

@@ -2,12 +2,9 @@ package ru.storage.metadata.objectstorage.video;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
-import ru.storage.metadata.objectstorage.poster.Poster;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -64,10 +61,6 @@ public class VideoService {
             LOG.warn(NoMetadataRelationException.ERROR_MESSAGE);
             throw new NoMetadataRelationException();
         }
-    }
-
-    public Optional<Video> findByContentMetadataId(long id) {
-        return videoRepo.findByContentMetadataId(id);
     }
 
     public String uploadVideo(MultipartFile file) {

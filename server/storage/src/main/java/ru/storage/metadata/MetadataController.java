@@ -16,13 +16,13 @@ public class MetadataController {
     }
 
     /**
-     * @param metadataObjects
+     * @param metadataObjects {@link VideoInfoParts} record of required metadata
      * @return Response
      * <ul>
      *     <li>201 (CREATED)</li>
      *     <li>400 (BAD REQUEST)
      *         <ol>
-     *             <li>when some of the instances doesn't have field related jpa field</li>
+     *             <li>when some of the instances doesn't have linked field</li>
      *             <li>when content type is wrong</li>
      *         </ol>
      *     </li>

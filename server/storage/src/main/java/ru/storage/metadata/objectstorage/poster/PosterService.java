@@ -1,7 +1,6 @@
 package ru.storage.metadata.objectstorage.poster;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,11 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.metadata.ContentMetadata;
 import ru.storage.metadata.ContentMetadataRepo;
 import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
-import ru.storage.metadata.objectstorage.video.Video;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -81,24 +78,20 @@ public class PosterService {
         }
     }
 
-    public Optional<Poster> findByContentMetadataId(long id) {
-        return posterRepo.findByContentMetadataId(id);
-    }
-
     /**
-     * Upload image to S3 cloud storage
+     * Upload image to S3 cloud storage.
      *
-     * @param posterMetadataId poster metadata id which required to define key in the S3 cloud storage
-     * @param image            form data image
+     * @param id    poster metadata id from mongodb db
+     * @param image form data image
      * @throws IllegalArgumentException when multipart file is not an image
      * @throws S3Exception              when image wasn't saved to S3 cloud storage
      */
-    public void uploadImage(Long posterMetadataId, MultipartFile image) {
+    public void uploadImage(String id, MultipartFile image) {
         assureImageProcessing(image.getContentType());
         try (InputStream inputStream = image.getInputStream()) {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(FOLDER + posterMetadataId)
+                    .key(FOLDER + id)
                     .contentType(image.getContentType())
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(compressImage(inputStream), image.getSize()));
@@ -108,23 +101,6 @@ public class PosterService {
             throw S3Exception.builder()
                     .message(errmes)
                     .build();
-        }
-    }
-
-    /**
-     * Util method for savePoster() which compresses the input image under poster standard
-     *
-     * @param inputStream - initial image byte stream
-     * @return compressed image
-     */
-    private InputStream compressImage(InputStream inputStream) {
-        try {
-            var outStream = new FastByteArrayOutputStream();
-            Thumbnailator.createThumbnail(inputStream, outStream, 250, 370);
-            return outStream.getInputStream();
-        } catch (IOException e) {
-            LOG.error("Ошибка при сжатии файла изображения. Вызвана: {}", e.getMessage());
-            return inputStream;
         }
     }
 
@@ -175,7 +151,25 @@ public class PosterService {
     }
 
     /**
-     * List all matched images in S3 folder
+     * Util method for savePoster() which compresses the input image under poster standard.
+     *
+     * @param inputStream - initial image byte stream
+     * @return compressed image
+     */
+    private InputStream compressImage(InputStream inputStream) {
+        try {
+            var outStream = new FastByteArrayOutputStream();
+            Thumbnailator.createThumbnail(inputStream, outStream, 250, 370);
+            return outStream.getInputStream();
+        } catch (IOException e) {
+            LOG.error("Ошибка при сжатии файла изображения. Вызвана: {}", e.getMessage());
+            return inputStream;
+        }
+    }
+
+
+    /**
+     * List all matched images in S3 folder.
      *
      * @param idsSet required ids
      * @return List of matched images names
@@ -202,33 +196,33 @@ public class PosterService {
      * @throws ParseRequestIdException when invalid number format defined by api
      * @throws UncheckedIOException    when s3 couldn't save existing image for some reason
      */
-    @Transactional
-    public void updateExistingImage(Long metadataId, MultipartFile image) {
-        assureImageProcessing(image.getContentType());
-        ContentMetadata contentMetadata = contentMetadataRepo.findById(metadataId).orElseThrow(NoMetadataRelationException::new);
-
-        try {
-            posterRepo.updatePosterByContentMetadata(contentMetadata, image.getOriginalFilename(), image.getContentType());
-        } catch (Exception e) {
-            LOG.warn("Произошла ошибка при попытке изменить связь постера с одного  ");
-        }
-
-        final Long s3ImageId = lsPosterStorageFolder(Set.of(metadataId)).getFirst();
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(String.valueOf(s3ImageId))
-                .contentType(image.getContentType())
-                .build();
-        try {
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(image.getInputStream(), image.getSize()));
-        } catch (IOException e) {
-            String errmes = "Не удалось обновить существующий постер в облачном хранилище.";
-            LOG.warn("{}. {}", errmes, e.getMessage());
-            throw S3Exception.builder()
-                    .message(errmes)
-                    .build();
-        }
-    }
+//    @Transactional
+//    public void updateExistingImage(Long metadataId, MultipartFile image) {
+//        assureImageProcessing(image.getContentType());
+//        ContentMetadata contentMetadata = contentMetadataRepo.findById(metadataId).orElseThrow(NoMetadataRelationException::new);
+//
+//        try {
+//            posterRepo.updatePosterByContentMetadata(contentMetadata, image.getOriginalFilename(), image.getContentType());
+//        } catch (Exception e) {
+//            LOG.warn("Произошла ошибка при попытке изменить связь постера с одного  ");
+//        }
+//
+//        final Long s3ImageId = lsPosterStorageFolder(Set.of(metadataId)).getFirst();
+//        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+//                .bucket(bucketName)
+//                .key(String.valueOf(s3ImageId))
+//                .contentType(image.getContentType())
+//                .build();
+//        try {
+//            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(image.getInputStream(), image.getSize()));
+//        } catch (IOException e) {
+//            String errmes = "Не удалось обновить существующий постер в облачном хранилище.";
+//            LOG.warn("{}. {}", errmes, e.getMessage());
+//            throw S3Exception.builder()
+//                    .message(errmes)
+//                    .build();
+//        }
+//    }
 
     /**
      * Deletes saved poster which matches requested ids from S3 and local db.
@@ -241,38 +235,38 @@ public class PosterService {
      * @throws ParseRequestIdException when of invalid number format defined by api
      * @throws S3Exception             when image wasn't deleted
      */
-    @Transactional
-    public void deleteByIds(String contentMetadataIds) {
-        Set<Long> idsSet;
-        try {
-            idsSet = Arrays.stream(contentMetadataIds.split(","))
-                    .mapToLong(Long::parseLong)
-                    .boxed()
-                    .collect(Collectors.toSet());
-        } catch (Exception e) {
-            LOG.warn(e.getMessage());
-            throw new ParseRequestIdException();
-        }
-
-        idsSet.forEach(posterRepo::deleteByContentMetadataId);
-
-        List<Long> s3ImageIds = lsPosterStorageFolder(idsSet);
-        s3ImageIds.forEach(id -> {
-            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(FOLDER + id.toString())
-                    .build();
-            try {
-                s3Client.deleteObject(deleteObjectRequest);
-            } catch (AwsServiceException e) {
-                String errmes = "Ошибка при удалении постеров по их идентификаторам.";
-                LOG.warn("{}. {}", errmes, e.getMessage());
-                throw S3Exception.builder()
-                        .message(errmes)
-                        .build();
-            }
-        });
-    }
+//    @Transactional
+//    public void deleteByIds(String contentMetadataIds) {
+//        Set<Long> idsSet;
+//        try {
+//            idsSet = Arrays.stream(contentMetadataIds.split(","))
+//                    .mapToLong(Long::parseLong)
+//                    .boxed()
+//                    .collect(Collectors.toSet());
+//        } catch (Exception e) {
+//            LOG.warn(e.getMessage());
+//            throw new ParseRequestIdException();
+//        }
+//
+//        idsSet.forEach(posterRepo::deleteByContentMetadataId);
+//
+//        List<Long> s3ImageIds = lsPosterStorageFolder(idsSet);
+//        s3ImageIds.forEach(id -> {
+//            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+//                    .bucket(bucketName)
+//                    .key(FOLDER + id.toString())
+//                    .build();
+//            try {
+//                s3Client.deleteObject(deleteObjectRequest);
+//            } catch (AwsServiceException e) {
+//                String errmes = "Ошибка при удалении постеров по их идентификаторам.";
+//                LOG.warn("{}. {}", errmes, e.getMessage());
+//                throw S3Exception.builder()
+//                        .message(errmes)
+//                        .build();
+//            }
+//        });
+//    }
 
 
 }
