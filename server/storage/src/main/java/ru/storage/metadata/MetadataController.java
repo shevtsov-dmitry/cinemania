@@ -29,10 +29,10 @@ public class MetadataController {
      * </ul>
      */
     @PostMapping
-    public ResponseEntity<Void> saveFormData(VideoInfoParts metadataObjects) {
+    public ResponseEntity<VideoInfoParts> saveFormData(VideoInfoParts metadataObjects) {
         try {
-            service.saveMetadata(metadataObjects);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            final var savedVideoInfoParts = service.saveMetadata(metadataObjects);
+            return new ResponseEntity<>(savedVideoInfoParts, HttpStatus.CREATED);
         } catch (NoMetadataRelationException | IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

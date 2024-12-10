@@ -11,23 +11,16 @@ export default function FormAddFilm() {
     };
 
     const [suggestionsDOM, setSuggestionsDOM] = useState([]);
-
     const [countryInput, setCountryInput] = useState("");
     const [mainGenreInput, setMainGenreInput] = useState("");
     const [subGenresInput, setSubGenresInput] = useState("");
-
     const [countrySuggestionsDOM, setCountrySuggestionsDOM] = useState(<div/>);
-    const [mainGenreSuggestionsDOM, setMainGenreSuggestionsDOM] = useState(
-        <div/>,
-    );
-    const [subGenresSuggestionsDOM, setSubGenresSuggestionsDOM] = useState(
-        <div/>,
-    );
+    const [mainGenreSuggestionsDOM, setMainGenreSuggestionsDOM] = useState(<div/>);
+    const [autoSuggestionsMap, setAutoSuggestionsMap] = useState({});
+    const [subGenresSuggestionsDOM, setSubGenresSuggestionsDOM] = useState(<div/>);
 
     const posterInputRef = useRef();
     const videoInputRef = useRef();
-
-    const [autoSuggestionsMap, setAutoSuggestionsMap] = useState({});
 
     // *** AUTO SUGGESTIONS
 
@@ -71,11 +64,14 @@ export default function FormAddFilm() {
         }
     }, []);
 
-    function createDivFromRetrievedSuggestion(
-        suggestions,
-        formFieldName,
-        inputValue,
-    ) {
+    /**
+     *
+     * @param suggestions {string[]}
+     * @param formFieldName {string}
+     * @param inputValue {string}
+     * @returns {Element} <button>
+     */
+    function createDivFromRetrievedSuggestion(suggestions, formFieldName, inputValue) {
         return suggestions.map((suggestion) => createDOM(suggestion));
 
         function createDOM(suggestion) {
@@ -187,9 +183,30 @@ export default function FormAddFilm() {
     const formSaveStatus = useRef();
     const loadingRef = useRef();
 
-    async function prepareFormDataToSend() {
-        async function savePoster() {
-            return new Promise((resolve) => {
+    async function saveFormData() {
+
+        const OPERATION_STATUS = {
+            SUCCESS: "SUCCESS",
+            ERROR: "ERROR"
+        }
+
+        try {
+            const videoInfoParts = await saveMetadata();
+            await uploadPoster(videoInfoParts.poster.id);
+            await uploadVideo(videoInfoParts.video.id);
+            displayStatusMessage(OPERATION_STATUS.SUCCESS);
+        } catch (e) {
+            displayStatusMessage(OPERATION_STATUS.ERROR, e.message)
+        }
+
+        loadingRef.current.style.display = "none";
+
+        /**
+         * @param id {string}
+         * @returns {Promise<string>}
+         */
+        async function uploadPoster(id) {
+            return new Promise((resolve, reject) => {
                 const posterFile = posterInputRef.current.files[0];
                 if (posterFile == null) {
                     return;
@@ -203,12 +220,17 @@ export default function FormAddFilm() {
                     .then((res) => res.text())
                     .then((id) => {
                         return resolve(id);
-                    });
+                    })
+                    .catch(err => reject("Ошибка при загрузке постера."));
             });
         }
 
-        async function saveVideo() {
-            return new Promise((resolve) => {
+        /**
+         * @param id {string}
+         * @returns {Promise<string>}
+         */
+        async function uploadVideo(id) {
+            return new Promise((resolve, reject) => {
                 const videoFile = videoInputRef.current.files[0];
                 if (videoFile == null) {
                     return;
@@ -220,28 +242,39 @@ export default function FormAddFilm() {
                     body: videoFormData,
                 })
                     .then((res) => res.text())
-                    .then((id) => {
-                        return resolve(id);
-                    });
+                    .then((id) => resolve(id))
+                    .catch(() => reject("Ошибка при загрузке видео."));
             });
         }
 
-        async function saveMetadata(posterId, videoId) {
-            return new Promise((resolve) => {
+        async function saveMetadata() {
+            return new Promise((resolve, reject) => {
                 const form = new FormData(formRef.current);
                 const metadata = {
-                    title: form.get("title").trim(),
-                    releaseDate: form.get("releaseDate"),
-                    country: form.get("country").trim(),
-                    mainGenre: form.get("mainGenre").trim(),
-                    subGenres: parseSubGenres(form.get("subGenres")),
-                    age: form.get("age").trim(),
-                    rating: form.get("rating").trim(),
-                    posterId: posterId,
-                    videoId: videoId,
+                    content: {
+                        title: form.get("title").trim(),
+                        releaseDate: form.get("releaseDate"),
+                        country: form.get("country").trim(),
+                        mainGenre: form.get("mainGenre").trim(),
+                        subGenres: parseSubGenres(form.get("subGenres")),
+                        age: form.get("age").trim(),
+                        rating: form.get("rating").trim(),
+                    },
+                    poster: {
+                        filename: posterInputRef.current.files[0].name,
+                        contentType: posterInputRef.current.files[0].type
+                    },
+                    video: {
+                        filename: videoInputRef.current.files[0].name,
+                        contentType: videoInputRef.current.files[0].type
+                    }
                 };
 
                 // TODO make additional checks for input
+                /**
+                 * @param subGenresString {string[]}
+                 * @returns {string[]}
+                 */
                 function parseSubGenres(subGenresString) {
                     const splitted = subGenresString.split(",");
                     let subGenresArray = [];
@@ -251,7 +284,7 @@ export default function FormAddFilm() {
                     return subGenresArray;
                 }
 
-                fetch(`${STORAGE_URL}/videos/metadata/save`, {
+                fetch(`${STORAGE_URL}/api/v0/metadata`, {
                     method: "POST",
                     headers: {
                         "Content-type": "application/json",
@@ -259,48 +292,56 @@ export default function FormAddFilm() {
                     body: JSON.stringify(metadata),
                 })
                     .then((res) => res.text())
-                    .then((id) => resolve(id));
+                    .then((id) => resolve(id))
+                    .catch((err) => {
+                        const errmes = "Ошибка при попытке сохранения метаданных."
+                        console.error("Ошибка при попытке сохранения метаданных.", err)
+                        reject(errmes)
+                    });
             });
         }
 
-        let posterId = await savePoster();
-        const videoId = await saveVideo();
-        const metadataId = await saveMetadata(posterId, videoId);
-        const statusBar = formSaveStatus.current;
 
-        loadingRef.current.style.display = "none";
-        // posterId = undefined
-        if (
-            posterId === undefined ||
-            posterId === "" ||
-            videoId === undefined ||
-            videoId === "" ||
-            metadataId === undefined ||
-            metadataId === ""
-        ) {
-            // TODO make option to read log if something gone wrong was not uploaded
-            statusBar.innerHTML = "Ошибка при сохранении. <u>Подробнее</u>";
-            statusBar.style.color = "red";
-            return;
-        }
-
-        displaySuccessSaveMessage();
-
-        function displaySuccessSaveMessage() {
-            statusBar.textContent = "Сохранено ✅";
-            statusBar.style.fontSize = "0.8em";
-            statusBar.style.color = "green";
-            statusBar.style.marginTop = "-6px";
+        /**
+         * @param operationStatus {enum}
+         * @param errmes {string | null}
+         */
+        function displayStatusMessage(operationStatus, errmes) {
+            const statusBar = formSaveStatus.current;
+            switch (operationStatus) {
+                case OPERATION_STATUS.SUCCESS: {
+                    statusBar.textContent = "Сохранено ✅";
+                    statusBar.style.fontSize = "0.8em";
+                    statusBar.style.color = "green";
+                    statusBar.style.marginTop = "-6px";
+                    break
+                }
+                case OPERATION_STATUS.ERROR: {
+                    statusBar.textContent = `${errmes}`;
+                    statusBar.style.fontSize = "0.8em";
+                    statusBar.style.color = "red";
+                    statusBar.style.marginTop = "-6px";
+                    break
+                }
+                default:
+                    break
+            }
             setTimeout(() => {
                 statusBar.textContent = "";
                 statusBar.style.fontSize = "0.7em";
             }, 1500);
         }
+
     }
 
+    /**
+     *
+     * @param age {number}
+     * @returns {Element}
+     */
     function createAgeRadioInput(age) {
         return (
-            <>
+            <div>
                 <input
                     onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
                     type="radio"
@@ -310,15 +351,17 @@ export default function FormAddFilm() {
                 <label htmlFor="" className="ml-0.5">
                     {age}+
                 </label>
-            </>
+            </div>
         );
     }
 
     function handleSubmitButton(event) {
         event.preventDefault();
-        prepareFormDataToSend();
         animateButtonPress();
         showLoadingIcon();
+
+
+        // saveFormData();
 
         function animateButtonPress() {
             const el = event.currentTarget;
@@ -378,8 +421,9 @@ export default function FormAddFilm() {
                             className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
                             type="search"
                             name="country"
-                            value={countryInput}
-                            onChange={(ev) => setCountryInput(ev.target.value)}
+                            // TODO restore autosuggesstion in the future
+                            // value={countryInput}
+                            // onChange={(ev) => setCountryInput(ev.target.value)}
                         />
                         <div className="relative mt-1">
                             <div className="absolute z-10 w-full bg-white shadow-lg dark:bg-neutral-700">
@@ -409,8 +453,9 @@ export default function FormAddFilm() {
                             className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
                             type="search"
                             name="mainGenre"
-                            value={mainGenreInput}
-                            onChange={(ev) => setMainGenreInput(ev.target.value)}
+                            // TODO restore autosuggesstion in the future
+                            // value={mainGenreInput}
+                            // onChange={(ev) => setMainGenreInput(ev.target.value)}
                         />
                         <div className="relative mt-1">
                             <div className="absolute z-10 w-full bg-white shadow-lg dark:bg-neutral-700">
@@ -510,7 +555,7 @@ export default function FormAddFilm() {
                         id="add-film-button"
                         onClick={handleSubmitButton}
                     >
-                        Принять
+                        Загрузить
                     </button>
                     {/* Clear Form */}
                     <div className="absolute right-0">
