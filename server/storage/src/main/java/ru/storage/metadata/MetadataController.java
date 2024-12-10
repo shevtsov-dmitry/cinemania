@@ -3,7 +3,6 @@ package ru.storage.metadata;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 
 @RestController
 @RequestMapping("/api/v0/metadata")
@@ -20,12 +19,7 @@ public class MetadataController {
      * @return Response
      * <ul>
      *     <li>201 (CREATED)</li>
-     *     <li>400 (BAD REQUEST)
-     *         <ol>
-     *             <li>when some of the instances doesn't have linked field</li>
-     *             <li>when content type is wrong</li>
-     *         </ol>
-     *     </li>
+     *     <li>400 (BAD REQUEST) when content type is wrong </li>
      * </ul>
      */
     @PostMapping
@@ -33,7 +27,7 @@ public class MetadataController {
         try {
             final var savedVideoInfoParts = service.saveMetadata(metadataObjects);
             return new ResponseEntity<>(savedVideoInfoParts, HttpStatus.CREATED);
-        } catch (NoMetadataRelationException | IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

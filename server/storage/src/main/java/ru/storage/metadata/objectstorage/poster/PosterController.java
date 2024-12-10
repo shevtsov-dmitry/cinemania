@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
 import ru.storage.utility.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -29,12 +28,7 @@ public class PosterController {
      * @return Response
      * <ul>
      *     <li>201 (CREATED) with body of saved Poster instance</li>
-     *     <li>400 (BAD_REQUEST) with the cause header "Message"
-     *          <ol>
-     *              <li>when invalid arguments</li>
-     *              <li>when try to save without content metadata relation</li>
-     *          </ol>
-     *     </li>
+     *     <li>400 (BAD_REQUEST) with the cause header "Message" when invalid arguments</li>
      * </ul>
      */
     @PostMapping
@@ -42,7 +36,7 @@ public class PosterController {
         try {
             final Poster savedPosterMetadata = service.saveMetadata(poster);
             return new ResponseEntity<>(savedPosterMetadata, HttpStatus.CREATED);
-        } catch (NoMetadataRelationException | IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null,
                     new EncodedHttpHeaders(e.getMessage()),
                     HttpStatus.BAD_REQUEST);
@@ -52,12 +46,12 @@ public class PosterController {
     /**
      * Upload poster into S3 cloud storage
      *
-     * @param id poster metadata id from mongodb db
-     * @param image            multipart file of image type
+     * @param id    poster metadata id from mongodb db
+     * @param image multipart file of image type
      * @return Response
      * <ul>
-     *     <li>204 (NO_CONTENT)</li>
-     *     <li>400 (BAD_REQUEST) when invalid args</li>
+     *     <li>201 (CREATED)</li>
+     *     <li>400 (BAD_REQUEST) with the cause header "Message" when invalid args</li>
      *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when image wasn't saved into S3 cloud storage</li>
      * </ul>
      */
@@ -65,7 +59,7 @@ public class PosterController {
     public ResponseEntity<Void> uploadImage(@RequestParam String id, @RequestParam MultipartFile image) {
         try {
             service.uploadImage(id, image);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null,
                     new EncodedHttpHeaders(e.getMessage()),

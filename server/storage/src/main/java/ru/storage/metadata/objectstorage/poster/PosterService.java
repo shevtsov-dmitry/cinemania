@@ -10,7 +10,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.metadata.ContentMetadataRepo;
-import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -65,17 +64,11 @@ public class PosterService {
      * Save poster metadata in database
      *
      * @param poster poster object with metadata
-     * @throws NoMetadataRelationException when poster doesn't have field {@code content} field
-     * @throws IllegalArgumentException    when content type if not an image
+     * @throws IllegalArgumentException when content type if not an image
      */
     public Poster saveMetadata(Poster poster) {
         assureImageProcessing(poster.getContentType());
-        try {
-            return posterRepo.save(poster);
-        } catch (NoMetadataRelationException e) {
-            LOG.warn(NoMetadataRelationException.ERROR_MESSAGE);
-            throw new NoMetadataRelationException();
-        }
+        return posterRepo.save(poster);
     }
 
     /**

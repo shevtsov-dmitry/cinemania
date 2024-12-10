@@ -1,16 +1,11 @@
 package ru.storage.metadata;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.storage.metadata.objectstorage.exceptions.NoMetadataRelationException;
 import ru.storage.metadata.objectstorage.poster.Poster;
 import ru.storage.metadata.objectstorage.poster.PosterService;
 import ru.storage.metadata.objectstorage.video.Video;
 import ru.storage.metadata.objectstorage.video.VideoService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
