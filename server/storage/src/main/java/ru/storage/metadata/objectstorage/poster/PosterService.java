@@ -67,6 +67,10 @@ public class PosterService {
      * @throws IllegalArgumentException when content type if not an image
      */
     public Poster saveMetadata(Poster poster) {
+        if (poster == null) {
+            LOG.warn("Error saving poster object from request, because it is null.");
+            throw new IllegalArgumentException("Метаданные постера отсутсвуют.");
+        }
         assureImageProcessing(poster.getContentType());
         return posterRepo.save(poster);
     }

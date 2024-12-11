@@ -3,6 +3,9 @@ package ru.storage.metadata;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.storage.utility.EncodedHttpHeaders;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v0/metadata")
@@ -15,7 +18,7 @@ public class MetadataController {
     }
 
     /**
-     * @param metadataObjects {@link VideoInfoParts} record of required metadata
+     * @param metadataObjects {@link VideoInfoParts} objects record
      * @return Response
      * <ul>
      *     <li>201 (CREATED)</li>
@@ -23,13 +26,27 @@ public class MetadataController {
      * </ul>
      */
     @PostMapping
-    public ResponseEntity<VideoInfoParts> saveFormData(VideoInfoParts metadataObjects) {
+    public ResponseEntity<ContentMetadata> saveFormData(VideoInfoParts metadataObjects) {
         try {
-            final var savedVideoInfoParts = service.saveMetadata(metadataObjects);
-            return new ResponseEntity<>(savedVideoInfoParts, HttpStatus.CREATED);
+            final var savedContentMetadata = service.saveMetadata(metadataObjects);
+            return new ResponseEntity<>(savedContentMetadata, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    /**
+     * Get recently added list of metadata {@link ContentMetadata}.
+     *
+     * @param amount requested amount
+     * @return Response
+     * <ul>
+     *     <li>200 (OK)</li>
+     * </ul>
+     */
+    @GetMapping("/recent/{amount}")
+    public ResponseEntity<List<ContentMetadata>> getRecentlyAdded(@PathVariable int amount) {
+        return ResponseEntity.ok(service.getRecentlyAdded(amount));
     }
 
 //    @GetMapping(value = "title/{title}", produces = MediaType.APPLICATION_JSON_VALUE)

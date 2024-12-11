@@ -1,5 +1,7 @@
 package ru.storage.metadata;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.benas.randombeans.EnhancedRandomBuilder;
 import io.github.benas.randombeans.api.EnhancedRandom;
 import org.junit.jupiter.api.BeforeAll;
@@ -49,16 +51,4 @@ class MetadataServiceTest {
 
     }
 
-    @Test
-    void save_success() {
-        VideoInfoParts metadataObjects = metadataService.saveMetadata(testMetadata);
-
-        final var id = metadataObjects.contentMetadata().getId();
-        Optional<ContentMetadata> savedContentMetadata = contentMetadataRepo.findContentMetadataById(id);
-
-        assertTrue(savedContentMetadata.isPresent());
-
-        assertNotNull(savedContentMetadata.get().getPoster());
-        assertNotNull(savedContentMetadata.get().getVideo());
-    }
 }

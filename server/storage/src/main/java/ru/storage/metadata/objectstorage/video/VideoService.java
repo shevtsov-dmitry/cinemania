@@ -55,6 +55,10 @@ public class VideoService {
      * @throws IllegalArgumentException when content type if not an image
      */
     public Video saveMetadata(Video video) {
+        if (video == null) {
+            LOG.warn("Error saving video object from request, because it is null.");
+            throw new IllegalArgumentException("Метаданные видеофайла отсутствуют.");
+        }
         assureVideoProcessing(video.getContentType());
         return videoRepo.save(video);
     }

@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${custom.CLIENT_URL:http://localhost:5173}")
+    @Value("${custom.CLIENT_URL:http://localhost:8081}")
     private String CLIENT_URL;
 
     @Override

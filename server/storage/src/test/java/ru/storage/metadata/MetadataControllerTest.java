@@ -49,7 +49,7 @@ class MetadataControllerTest {
 
     @Test
     void saveFormData_ok() throws Exception {
-        when(metadataService.saveMetadata(testMetadata)).thenReturn(any(VideoInfoParts.class));
+        when(metadataService.saveMetadata(testMetadata)).thenReturn(any(ContentMetadata.class));
         String json = objectMapper.writeValueAsString(testMetadata);
         mockMvc.perform(post("/api/v0/metadata")
                         .content(json)
@@ -65,11 +65,5 @@ class MetadataControllerTest {
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-
-//        when(metadataService.saveMetadata(testMetadata)).thenThrow(NoMetadataRelationException.class);
-//        mockMvc.perform(post("/api/v0/metadata")
-//                        .content(json)
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest());
     }
 }

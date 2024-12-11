@@ -1,13 +1,14 @@
 package ru.storage.metadata;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.storage.metadata.objectstorage.poster.Poster;
 import ru.storage.metadata.objectstorage.poster.PosterService;
 import ru.storage.metadata.objectstorage.video.Video;
 import ru.storage.metadata.objectstorage.video.VideoService;
 
-@Slf4j
+import java.util.List;
+
 @Service
 public class MetadataService {
 
@@ -22,19 +23,32 @@ public class MetadataService {
     }
 
     /**
-     * @param metadataObjects metadata record of {@link Video}, {@link Poster} and {@link ContentMetadata}
+     * @param metadataObjects {@link VideoInfoParts} metadata record of {@link Video}, {@link Poster} and {@link ContentMetadata}
      * @return {@link VideoInfoParts} object
-     * @throws NoMetadataRelationException when some of the instances doesn't have field related jpa field
-     * @throws IllegalArgumentException    when content type is wrong
+     * @throws IllegalArgumentException when content type is wrong
      */
-    public VideoInfoParts saveMetadata(VideoInfoParts metadataObjects) {
+    public ContentMetadata saveMetadata(VideoInfoParts metadataObjects) {
         Video savedVideoMetadata = videoService.saveMetadata(metadataObjects.video());
         Poster savedPosterMetadata = posterService.saveMetadata(metadataObjects.poster());
-        ContentMetadata savedContentMetadata = metadataObjects.contentMetadata();
-        savedContentMetadata.setVideo(savedVideoMetadata);
-        savedContentMetadata.setPoster(savedPosterMetadata);
-        savedContentMetadata = contentMetadataRepo.save(savedContentMetadata);
-        return new VideoInfoParts(savedContentMetadata, savedVideoMetadata, savedPosterMetadata);
+        ContentMetadata contentDetails = metadataObjects.contentMetadata();
+        if (contentDetails == null)
+            throw new IllegalArgumentException("Необходимые сведения о загружаемом видео-проекте отсутствуют");
+
+        contentDetails.setVideo(savedVideoMetadata);
+        contentDetails.setPoster(savedPosterMetadata);
+        return contentMetadataRepo.save(contentDetails);
+    }
+
+    // TODO Probably need to add exception handling if requested more than existed.
+
+    /**
+     * Get recently added list of metadata {@link ContentMetadata}.
+     *
+     * @param amount requested amount
+     * @return list of metadata objects
+     */
+    public List<ContentMetadata> getRecentlyAdded(int amount) {
+        return contentMetadataRepo.findByOrderByCreatedAtDesc(Pageable.ofSize(amount));
     }
 
 //    /**

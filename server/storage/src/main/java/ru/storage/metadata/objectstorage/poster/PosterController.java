@@ -86,7 +86,7 @@ public class PosterController {
      *     <li>500 (INTERNAL_SERVER_ERROR). An empty list with an error message header if an error occurs </li>
      * </ul>
      */
-    @GetMapping("/images/{contentMetadataIds}")
+    @GetMapping("/{contentMetadataIds}")
     public ResponseEntity<List<byte[]>> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
         try {
             return ResponseEntity.ok(service.getImagesMatchingMetadataIds(contentMetadataIds));

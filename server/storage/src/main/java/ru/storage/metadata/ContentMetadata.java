@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 
 import lombok.Data;
@@ -43,6 +44,7 @@ public class ContentMetadata {
     private Poster poster;
     @DBRef
     private Video video;
+    @JsonIgnore
     @CreatedDate
     private LocalDateTime createdAt = LocalDateTime.now();
 
