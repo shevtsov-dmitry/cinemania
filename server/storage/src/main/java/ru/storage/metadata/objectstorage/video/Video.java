@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Video {
     @Id
     private String id;
-    @JsonIgnore
     private String filename;
     private String contentType;
 }

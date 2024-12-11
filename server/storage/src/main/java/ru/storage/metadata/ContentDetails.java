@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @Document
-public class ContentMetadata {
+public class ContentDetails {
 
     @Id
     private String id;

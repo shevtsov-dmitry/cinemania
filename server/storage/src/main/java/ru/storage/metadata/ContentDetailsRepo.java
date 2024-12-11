@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ContentMetadataRepo extends MongoRepository<ContentMetadata, String> {
+public interface ContentDetailsRepo extends MongoRepository<ContentDetails, String> {
 
 //    @Query("SELECT e FROM ContentMetadata e ORDER BY e.createdAt DESC")
 //    List<ContentMetadata> findRecentlyAdded(Pageable requestedAmountRestriction);
 
 //    List<ContentMetadata> getByTitle(String title);
 
-    Optional<ContentMetadata> findContentMetadataById(String id);
+    Optional<ContentDetails> findContentMetadataById(String id);
 
-    List<ContentMetadata> findByOrderByCreatedAtDesc(Pageable pageable);
+    List<ContentDetails> findByOrderByCreatedAtDesc(Pageable pageable);
 }

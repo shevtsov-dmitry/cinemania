@@ -191,9 +191,9 @@ export default function FormAddFilm() {
         }
 
         try {
-            const videoInfoParts = await saveMetadata();
-            await uploadPoster(videoInfoParts.poster.id);
-            await uploadVideo(videoInfoParts.video.id);
+            const videoInfo = await saveMetadata();
+            await uploadPoster(videoInfo.poster.id);
+            await uploadVideo(videoInfo.video.id);
             displayStatusMessage(OPERATION_STATUS.SUCCESS);
         } catch (e) {
             displayStatusMessage(OPERATION_STATUS.ERROR, e.message)
@@ -221,7 +221,7 @@ export default function FormAddFilm() {
             })
 
             if (res.status !== 201) {
-                const errmes = atob(res.headers.get("Message"))
+                const errmes = decodeURI(res.headers.get("Message")).replaceAll("+", " ")
                 console.error(errmes)
                 return Promise.reject(errmes)
             }
@@ -248,7 +248,7 @@ export default function FormAddFilm() {
             })
 
             if (res.status !== 201) {
-                const errmes = atob(res.headers.get("Message"))
+                const errmes = decodeURI(res.headers.get("Message")).replaceAll("+", " ")
                 console.error(errmes)
                 return Promise.reject(errmes)
             }
@@ -258,7 +258,7 @@ export default function FormAddFilm() {
         async function saveMetadata() {
             const form = new FormData(formRef.current);
             const metadata = {
-                content: {
+                contentDetails: {
                     title: form.get("title").trim(),
                     releaseDate: form.get("releaseDate"),
                     country: form.get("country").trim(),
@@ -286,7 +286,7 @@ export default function FormAddFilm() {
             })
 
             if (res.status !== 201) {
-                const errmes = atob(res.headers.get("Message"))
+                const errmes = decodeURI(res.headers.get("Message")).replaceAll("+", " ")
                 console.error(errmes)
                 return Promise.reject(errmes)
             }

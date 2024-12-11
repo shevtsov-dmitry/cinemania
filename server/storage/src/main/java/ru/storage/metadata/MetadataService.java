@@ -1,5 +1,7 @@
 package ru.storage.metadata;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.storage.metadata.objectstorage.poster.Poster;
@@ -12,43 +14,46 @@ import java.util.List;
 @Service
 public class MetadataService {
 
-    private final ContentMetadataRepo contentMetadataRepo;
+    private static final Logger log = LoggerFactory.getLogger(MetadataService.class);
+    private final ContentDetailsRepo contentDetailsRepo;
     private final VideoService videoService;
     private final PosterService posterService;
 
-    public MetadataService(ContentMetadataRepo contentMetadataRepo, VideoService videoService, PosterService posterService) {
-        this.contentMetadataRepo = contentMetadataRepo;
+    public MetadataService(ContentDetailsRepo contentDetailsRepo, VideoService videoService, PosterService posterService) {
+        this.contentDetailsRepo = contentDetailsRepo;
         this.videoService = videoService;
         this.posterService = posterService;
     }
 
     /**
-     * @param metadataObjects {@link VideoInfoParts} metadata record of {@link Video}, {@link Poster} and {@link ContentMetadata}
+     * @param metadataObjects {@link VideoInfoParts} metadata record of {@link Video}, {@link Poster} and {@link ContentDetails}
      * @return {@link VideoInfoParts} object
      * @throws IllegalArgumentException when content type is wrong
      */
-    public ContentMetadata saveMetadata(VideoInfoParts metadataObjects) {
+    public ContentDetails saveMetadata(VideoInfoParts metadataObjects) {
         Video savedVideoMetadata = videoService.saveMetadata(metadataObjects.video());
         Poster savedPosterMetadata = posterService.saveMetadata(metadataObjects.poster());
-        ContentMetadata contentDetails = metadataObjects.contentMetadata();
-        if (contentDetails == null)
+        ContentDetails contentDetails = metadataObjects.contentDetails();
+        if (contentDetails == null) {
+            log.warn("Error saving contentDetails object from request, because it is null.");
             throw new IllegalArgumentException("Необходимые сведения о загружаемом видео-проекте отсутствуют");
+        }
 
         contentDetails.setVideo(savedVideoMetadata);
         contentDetails.setPoster(savedPosterMetadata);
-        return contentMetadataRepo.save(contentDetails);
+        return contentDetailsRepo.save(contentDetails);
     }
 
     // TODO Probably need to add exception handling if requested more than existed.
 
     /**
-     * Get recently added list of metadata {@link ContentMetadata}.
+     * Get recently added list of metadata {@link ContentDetails}.
      *
      * @param amount requested amount
      * @return list of metadata objects
      */
-    public List<ContentMetadata> getRecentlyAdded(int amount) {
-        return contentMetadataRepo.findByOrderByCreatedAtDesc(Pageable.ofSize(amount));
+    public List<ContentDetails> getRecentlyAdded(int amount) {
+        return contentDetailsRepo.findByOrderByCreatedAtDesc(Pageable.ofSize(amount));
     }
 
 //    /**

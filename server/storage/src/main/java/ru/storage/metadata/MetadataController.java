@@ -1,5 +1,6 @@
 package ru.storage.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +8,7 @@ import ru.storage.utility.EncodedHttpHeaders;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v0/metadata")
 public class MetadataController {
@@ -26,7 +28,7 @@ public class MetadataController {
      * </ul>
      */
     @PostMapping
-    public ResponseEntity<ContentMetadata> saveFormData(VideoInfoParts metadataObjects) {
+    public ResponseEntity<ContentDetails> saveFormData(@RequestBody VideoInfoParts metadataObjects) {
         try {
             final var savedContentMetadata = service.saveMetadata(metadataObjects);
             return new ResponseEntity<>(savedContentMetadata, HttpStatus.CREATED);
@@ -36,7 +38,7 @@ public class MetadataController {
     }
 
     /**
-     * Get recently added list of metadata {@link ContentMetadata}.
+     * Get recently added list of metadata {@link ContentDetails}.
      *
      * @param amount requested amount
      * @return Response
@@ -45,7 +47,7 @@ public class MetadataController {
      * </ul>
      */
     @GetMapping("/recent/{amount}")
-    public ResponseEntity<List<ContentMetadata>> getRecentlyAdded(@PathVariable int amount) {
+    public ResponseEntity<List<ContentDetails>> getRecentlyAdded(@PathVariable int amount) {
         return ResponseEntity.ok(service.getRecentlyAdded(amount));
     }
 

@@ -14,7 +14,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Poster {
     @Id
     private String id;
-    @JsonIgnore
     private String filename;
     private String contentType;
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.metadata.ContentMetadataRepo;
+import ru.storage.metadata.ContentDetailsRepo;
 import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -32,12 +32,12 @@ public class PosterService {
     private static final Logger LOG = LoggerFactory.getLogger(PosterService.class);
 
     private final PosterRepo posterRepo;
-    private final ContentMetadataRepo contentMetadataRepo;
+    private final ContentDetailsRepo contentDetailsRepo;
     private final S3Client s3Client;
 
-    public PosterService(PosterRepo posterRepo, ContentMetadataRepo contentMetadataRepo, S3Client s3Client) {
+    public PosterService(PosterRepo posterRepo, ContentDetailsRepo contentDetailsRepo, S3Client s3Client) {
         this.posterRepo = posterRepo;
-        this.contentMetadataRepo = contentMetadataRepo;
+        this.contentDetailsRepo = contentDetailsRepo;
         this.s3Client = s3Client;
     }
 

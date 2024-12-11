@@ -39,7 +39,7 @@ class MetadataControllerTest {
                 .build();
 
         testMetadata = new VideoInfoParts(
-                randomData.nextObject(ContentMetadata.class, "video", "poster", "createdAt"),
+                randomData.nextObject(ContentDetails.class, "video", "poster", "createdAt"),
                 randomData.nextObject(Video.class, "contentMetadata"),
                 randomData.nextObject(Poster.class, "contentMetadata")
         );
@@ -49,7 +49,7 @@ class MetadataControllerTest {
 
     @Test
     void saveFormData_ok() throws Exception {
-        when(metadataService.saveMetadata(testMetadata)).thenReturn(any(ContentMetadata.class));
+        when(metadataService.saveMetadata(testMetadata)).thenReturn(any(ContentDetails.class));
         String json = objectMapper.writeValueAsString(testMetadata);
         mockMvc.perform(post("/api/v0/metadata")
                         .content(json)
