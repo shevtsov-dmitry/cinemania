@@ -12,16 +12,14 @@ import java.nio.charset.StandardCharsets;
 @EqualsAndHashCode(callSuper = true)
 public class EncodedHttpHeaders extends HttpHeaders {
 
-    private final HttpHeaders headers;
-
     /**
      * Constructor with "Message" header.
      *
-     * @param message text content which will be encoded with URLEncoder class on UTF-8 charset
+     * @param message text content which will be encoded with URLEncoder class in UTF-8 charset
      */
     public EncodedHttpHeaders(String message) {
-        this.headers = new HttpHeaders();
-        writeEncodedMessageHeader(headers, message);
+        super();
+        writeEncodedMessageHeader(this, message);
     }
 
     /**
