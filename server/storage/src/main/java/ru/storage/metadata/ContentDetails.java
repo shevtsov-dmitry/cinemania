@@ -34,7 +34,7 @@ public class ContentDetails {
     private String country;
     @NotNull(message = "Необходимо указать главный жанр")
     private String mainGenre;
-    private List<SubGenre> subGenres;
+    private List<String> subGenres;
     @Min(0)
     @Max(21)
     @NotNull(message = "Необходимо указать возрастное ограничение")
@@ -48,9 +48,4 @@ public class ContentDetails {
     @CreatedDate
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Data
-    public class SubGenre {
-        private Long id;
-        private String name;
-    }
 }

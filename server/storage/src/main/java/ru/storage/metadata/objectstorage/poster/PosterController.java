@@ -75,7 +75,6 @@ public class PosterController {
      * Retrieve poster images from S3 cloud storage based on specified metadata IDs.
      *
      * <p>This method supports both single and multiple content metadata IDs, separated by commas.
-     * For example, {@code "4,2,592,101,10"}.</p>
      *
      * @param contentMetadataIds a comma-separated string of content metadata IDs
      * @return Response

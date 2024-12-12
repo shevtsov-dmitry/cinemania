@@ -30,7 +30,6 @@ public class PosterService {
     private String bucketName;
     private static final String FOLDER = "posters/";
     private static final Logger LOG = LoggerFactory.getLogger(PosterService.class);
-
     private final PosterRepo posterRepo;
     private final ContentDetailsRepo contentDetailsRepo;
     private final S3Client s3Client;
@@ -40,6 +39,7 @@ public class PosterService {
         this.contentDetailsRepo = contentDetailsRepo;
         this.s3Client = s3Client;
     }
+
 
     /**
      * Assure an image processing by comparing input content type with expected.
@@ -114,22 +114,20 @@ public class PosterService {
      */
     public List<byte[]> getImagesMatchingMetadataIds(String contentMetadataIds) {
         List<byte[]> images = new ArrayList<>();
-        Set<Long> idsSet;
+        Set<String> idsSet;
         try {
             idsSet = Arrays.stream(contentMetadataIds.split(","))
-                    .mapToLong(Long::parseLong)
-                    .boxed()
                     .collect(Collectors.toSet());
         } catch (NumberFormatException e) {
             LOG.warn(e.getMessage());
             throw new ParseRequestIdException();
         }
 
-        List<Long> matchedS3Ids = lsPosterStorageFolder(idsSet);
+        List<String> matchedS3Ids = lsPosterStorageFolder(idsSet);
         matchedS3Ids.forEach(id -> {
-            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+            var getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(id.toString())
+                    .key(id)
                     .build();
 
             // Retrieve the object and add its contents as a byte array to the list
@@ -137,7 +135,7 @@ public class PosterService {
                 images.add(s3Object.readAllBytes());
             } catch (Exception e) {
                 String errmes = "Ошибка при получении изображений постеров из облачного хранилища";
-                LOG.warn(errmes);
+                LOG.warn("{}. {}", errmes, e.getMessage());
                 throw S3Exception.builder()
                         .message(errmes)
                         .build();
@@ -171,17 +169,19 @@ public class PosterService {
      * @param idsSet required ids
      * @return List of matched images names
      */
-    private List<Long> lsPosterStorageFolder(Set<Long> idsSet) {
+    private List<String> lsPosterStorageFolder(Set<String> idsSet) {
         ListObjectsRequest lsRequest = ListObjectsRequest.builder()
                 .bucket(bucketName)
                 .prefix(FOLDER)
                 .build();
-        ListObjectsResponse lsResponse = s3Client.listObjects(lsRequest);
 
-        return lsResponse.contents().stream()
-                .mapToLong(s3Object -> Long.parseLong(s3Object.key().substring(FOLDER.length())))
+        return s3Client.listObjects(lsRequest).contents().stream()
+                .skip(1) // skip folder name
+                .map(s3Object -> {
+                    String[] pathSplit = s3Object.key().split("/");
+                    return pathSplit[pathSplit.length - 1].split("\\.")[0];
+                })
                 .filter(idsSet::contains)
-                .boxed()
                 .toList();
     }
 
