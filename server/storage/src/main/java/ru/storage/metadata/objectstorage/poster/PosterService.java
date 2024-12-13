@@ -28,7 +28,7 @@ public class PosterService {
 
     @Value("${custom.s3.BUCKET_NAME}")
     private String bucketName;
-    private static final String FOLDER = "posters/";
+    private static final String S3_FOLDER = "posters";
     private static final Logger LOG = LoggerFactory.getLogger(PosterService.class);
     private final PosterRepo posterRepo;
     private final ContentDetailsRepo contentDetailsRepo;
@@ -86,9 +86,9 @@ public class PosterService {
     public void uploadImage(String id, MultipartFile image) {
         assureImageProcessing(image.getContentType());
         try (InputStream inputStream = image.getInputStream()) {
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+            var putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(FOLDER + id)
+                    .key(S3_FOLDER + "/" + id)
                     .contentType(image.getContentType())
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(compressImage(inputStream), image.getSize()));
@@ -161,7 +161,6 @@ public class PosterService {
         }
     }
 
-
     /**
      * Find all matched images in S3 folder.
      *
@@ -171,7 +170,7 @@ public class PosterService {
     private List<String> findMatchedS3Keys(Set<String> idsSet) {
         ListObjectsRequest lsRequest = ListObjectsRequest.builder()
                 .bucket(bucketName)
-                .prefix(FOLDER)
+                .prefix(S3_FOLDER)
                 .build();
 
         return s3Client.listObjects(lsRequest).contents().stream()
