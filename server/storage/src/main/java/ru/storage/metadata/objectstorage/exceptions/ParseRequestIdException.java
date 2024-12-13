@@ -6,7 +6,7 @@ package ru.storage.metadata.objectstorage.exceptions;
 public class ParseRequestIdException extends NumberFormatException {
 
     private static final String DEFAULT_MESSAGE =
-            "Входные данные содержат неверный формат чисел. Следует указать как в примере: \"4,2,592,101,10\".";
+            "Произошла попытка использования неверного формата идентификатора.";
 
     public ParseRequestIdException() {
         super(DEFAULT_MESSAGE);

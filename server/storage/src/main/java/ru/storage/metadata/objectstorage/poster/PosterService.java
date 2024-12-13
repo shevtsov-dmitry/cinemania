@@ -105,7 +105,6 @@ public class PosterService {
      * Retrieve poster images from S3 storage based on specified metadata IDs.
      *
      * <p>This method supports both single and multiple content metadata IDs, separated by commas.
-     * For example, {@code "4,2,592,101,10"}.</p>
      *
      * @param contentMetadataIds a comma-separated string of content metadata IDs
      * @return List of matched images from S3.
@@ -123,11 +122,11 @@ public class PosterService {
             throw new ParseRequestIdException();
         }
 
-        List<String> matchedS3Ids = lsPosterStorageFolder(idsSet);
-        matchedS3Ids.forEach(id -> {
+        List<String> matchedS3Keys = findMatchedS3Keys(idsSet);
+        matchedS3Keys.forEach(key -> {
             var getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(id)
+                    .key(key)
                     .build();
 
             // Retrieve the object and add its contents as a byte array to the list
@@ -164,24 +163,26 @@ public class PosterService {
 
 
     /**
-     * List all matched images in S3 folder.
+     * Find all matched images in S3 folder.
      *
-     * @param idsSet required ids
-     * @return List of matched images names
+     * @param idsSet required ids; using Set because ids cannot have duplicates
+     * @return list of matched images names
      */
-    private List<String> lsPosterStorageFolder(Set<String> idsSet) {
+    private List<String> findMatchedS3Keys(Set<String> idsSet) {
         ListObjectsRequest lsRequest = ListObjectsRequest.builder()
                 .bucket(bucketName)
                 .prefix(FOLDER)
                 .build();
 
         return s3Client.listObjects(lsRequest).contents().stream()
-                .skip(1) // skip folder name
-                .map(s3Object -> {
-                    String[] pathSplit = s3Object.key().split("/");
-                    return pathSplit[pathSplit.length - 1].split("\\.")[0];
+                .skip(1)
+                .map(S3Object::key)
+                .filter(filepath -> {
+                    String[] splitFilename = filepath.split("/");
+                    String filename = splitFilename[splitFilename.length - 1];
+                    String nameWithoutExtension = filename.substring(0, filename.lastIndexOf("."));
+                    return idsSet.contains(nameWithoutExtension);
                 })
-                .filter(idsSet::contains)
                 .toList();
     }
 
