@@ -108,16 +108,16 @@ public class PosterService {
      *
      * <p>This method supports both single and multiple content metadata IDs, separated by commas.
      *
-     * @param contentMetadataIds a comma-separated string of content metadata IDs
+     * @param posterIds a comma-separated string of content metadata IDs
      * @return List of matched images from S3.
      * @throws ParseRequestIdException when invalid number format defined by api
      * @throws UncheckedIOException    when image retrieval from S3
      */
-    public List<byte[]> getImagesMatchingMetadataIds(String contentMetadataIds) {
+    public List<byte[]> getImagesMatchingMetadataIds(String posterIds) {
         List<byte[]> images = new ArrayList<>();
         Set<String> idsSet;
         try {
-            idsSet = Arrays.stream(contentMetadataIds.split(","))
+            idsSet = Arrays.stream(posterIds.split(","))
                     .collect(Collectors.toSet());
         } catch (NumberFormatException e) {
             LOG.warn(e.getMessage());
@@ -190,23 +190,21 @@ public class PosterService {
     /**
      * Deletes saved poster which matches requested ids from S3 and local db.
      *
-     * @param contentMetadataIds ids split by ',' separator (can be single id)
+     * @param posterIds ids split by ',' separator (can be single id)
      * @throws ParseRequestIdException when of invalid number format defined by api
      * @throws S3Exception             when image wasn't deleted
      */
-
-
-    public void deleteByIds(String contentMetadataIds) {
+    public void deleteByIds(String posterIds) {
         Set<String> idsSet;
         try {
-            idsSet = Arrays.stream(contentMetadataIds.split(","))
+            idsSet = Arrays.stream(posterIds.split(","))
                     .collect(Collectors.toSet());
         } catch (NumberFormatException e) {
             LOG.warn(e.getMessage());
             throw new ParseRequestIdException();
         }
 
-        idsSet.forEach(contentDetailsRepo::deleteById);
+        idsSet.forEach(posterRepo::deleteById);
 
         List<String> s3ImageIds = findMatchedS3Ids(idsSet);
         s3ImageIds.forEach(id -> {
@@ -217,7 +215,7 @@ public class PosterService {
             try {
                 s3Client.deleteObject(deleteObjectRequest);
             } catch (AwsServiceException e) {
-                String errmes = "Ошибка при удалении постеров по их идентификаторам.";
+                String errmes = "Ошибка при удалении постеров из облачного хранилища S3 по их идентификаторам.";
                 LOG.warn("{}. {}", errmes, e.getMessage());
                 throw S3Exception.builder()
                         .message(errmes)

@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
 import ru.storage.utility.EncodedHttpHeaders;
-import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @RestController
@@ -53,12 +53,43 @@ public class VideoController {
      *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when video wasn't saved into S3 cloud storage</li>
      * </ul>
      */
-    @PostMapping("/upload")
+    @PostMapping("upload")
     public ResponseEntity<Void> upload(@RequestParam String id, @RequestParam MultipartFile video) {
         try {
             service.uploadVideo(id, video);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        } catch (S3Exception e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Delete saved poster which matches requested ids from S3 cloud storage and local db.
+     * <p>
+     * Also supports single id instance.
+     * </p>
+     *
+     * @param videoIds ids split by ',' separator.
+     * @return Response
+     * <ul>
+     *      <li>204 (NO_CONTENT)</li>
+     *      <li>500 (INTERNAL_SERVER_ERROR)</li>
+     * </ul>
+     */
+    @DeleteMapping("{videoIds}")
+    public ResponseEntity<Void> delete(@PathVariable String videoIds) {
+        try {
+            service.deleteByIds(videoIds);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders("Выбранные постеры успешно удалены."),
+                    HttpStatus.NO_CONTENT);
+        } catch (ParseRequestIdException e) {
             return new ResponseEntity<>(null,
                     new EncodedHttpHeaders(e.getMessage()),
                     HttpStatus.BAD_REQUEST);

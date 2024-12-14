@@ -5,33 +5,36 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.storage.metadata.ContentDetailsRepo;
+import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class VideoService {
 
+    private final ContentDetailsRepo contentDetailsRepo;
     @Value("${custom.s3.BUCKET_NAME}")
     private String bucketName;
-    private static final String FOLDER = "videos/";
+    private static final String S3_FOLDER = "videos";
     private static final Logger LOG = LoggerFactory.getLogger(VideoService.class);
 
     private final S3Client s3Client;
     private final VideoRepo videoRepo;
 
-    public VideoService(S3Client s3Client, VideoRepo videoRepo) {
+    public VideoService(S3Client s3Client, VideoRepo videoRepo, ContentDetailsRepo contentDetailsRepo) {
         this.s3Client = s3Client;
         this.videoRepo = videoRepo;
+        this.contentDetailsRepo = contentDetailsRepo;
     }
 
     /**
@@ -74,7 +77,7 @@ public class VideoService {
         try (InputStream inputStream = video.getInputStream()) {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(FOLDER + id)
+                    .key(S3_FOLDER + "/" + id)
                     .contentType(video.getContentType())
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, video.getSize()));
@@ -87,20 +90,65 @@ public class VideoService {
         }
     }
 
-    public String getFileContent(String bucketName, String key) {
-        try {
-            GetObjectRequest request = GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .build();
+    // TODO refactor into new component called CommonS3Operations
 
-            InputStream inputStream = s3Client.getObject(request);
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                return reader.lines().collect(Collectors.joining("\n"));
-            }
-        } catch (S3Exception | IOException e) {
-            e.printStackTrace();
-            return "Failed to retrieve file: " + e.getMessage();
+    /**
+     * Find all matched images in S3 folder.
+     *
+     * @param idsSet required ids; using Set because ids cannot have duplicates
+     * @return list of matched images names
+     */
+    private List<String> findMatchedS3Ids(Set<String> idsSet) {
+        ListObjectsRequest lsRequest = ListObjectsRequest.builder()
+                .bucket(bucketName)
+                .prefix(S3_FOLDER)
+                .build();
+
+        return s3Client.listObjects(lsRequest).contents().stream()
+                .skip(1)
+                .map(S3Object::key)
+                .filter(filepath -> {
+                    String[] splitFilename = filepath.split("/");
+                    String filename = splitFilename[splitFilename.length - 1];
+                    return idsSet.contains(filename);
+                })
+                .toList();
+    }
+
+    /**
+     * Deletes saved videos which matches requested ids from S3 and local db.
+     *
+     * @param videoIds ids split by ',' separator (can be single id)
+     * @throws ParseRequestIdException when of invalid number format defined by api
+     * @throws S3Exception             when image wasn't deleted
+     */
+    public void deleteByIds(String videoIds) {
+        Set<String> idsSet;
+        try {
+            idsSet = Arrays.stream(videoIds.split(","))
+                    .collect(Collectors.toSet());
+        } catch (NumberFormatException e) {
+            LOG.warn(e.getMessage());
+            throw new ParseRequestIdException();
         }
+
+        idsSet.forEach(contentDetailsRepo::deleteById);
+
+        List<String> s3ImageIds = findMatchedS3Ids(idsSet);
+        s3ImageIds.forEach(id -> {
+            var deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(id)
+                    .build();
+            try {
+                s3Client.deleteObject(deleteObjectRequest);
+            } catch (AwsServiceException e) {
+                String errmes = "Ошибка при удалении видео из облачного хранилища S3 по их идентификаторам.";
+                LOG.warn("{}. {}", errmes, e.getMessage());
+                throw S3Exception.builder()
+                        .message(errmes)
+                        .build();
+            }
+        });
     }
 }

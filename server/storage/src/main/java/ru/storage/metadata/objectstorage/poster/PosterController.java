@@ -76,7 +76,7 @@ public class PosterController {
      *
      * <p>This method supports both single and multiple content metadata IDs, separated by commas.
      *
-     * @param contentMetadataIds a comma-separated string of content metadata IDs
+     * @param posterIds a comma-separated string of content metadata IDs
      * @return Response
      * <ul>
      *     <li>200 (OK). A list of byte arrays representing the images if successful .
@@ -85,10 +85,10 @@ public class PosterController {
      *     <li>500 (INTERNAL_SERVER_ERROR). An empty list with an error message header if an error occurs </li>
      * </ul>
      */
-    @GetMapping("{contentMetadataIds}")
-    public ResponseEntity<List<byte[]>> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
+    @GetMapping("{posterIds}")
+    public ResponseEntity<List<byte[]>> getImagesByMetadataId(@PathVariable String posterIds) {
         try {
-            return ResponseEntity.ok(service.getImagesMatchingMetadataIds(contentMetadataIds));
+            return ResponseEntity.ok(service.getImagesMatchingMetadataIds(posterIds));
         } catch (ParseRequestIdException e) {
             return new ResponseEntity<>(Collections.emptyList(),
                     new EncodedHttpHeaders(e.getMessage()),
@@ -106,17 +106,17 @@ public class PosterController {
      * Also supports single id instance.
      * </p>
      *
-     * @param contentMetadataIds ids split by ',' separator.
+     * @param posterIds ids split by ',' separator.
      * @return Response
      * <ul>
      *      <li>204 (NO_CONTENT)</li>
      *      <li>500 (INTERNAL_SERVER_ERROR)</li>
      * </ul>
      */
-    @DeleteMapping("{contentMetadataIds}")
-    public ResponseEntity<Void> deletePostersByIds(@PathVariable String contentMetadataIds) {
+    @DeleteMapping("{posterIds}")
+    public ResponseEntity<Void> deletePostersByIds(@PathVariable String posterIds) {
         try {
-            service.deleteByIds(contentMetadataIds);
+            service.deleteByIds(posterIds);
             return new ResponseEntity<>(null,
                     new EncodedHttpHeaders("Выбранные постеры успешно удалены."),
                     HttpStatus.NO_CONTENT);
