@@ -124,8 +124,8 @@ public class PosterService {
             throw new ParseRequestIdException();
         }
 
-        List<String> matchedS3Keys = findMatchedS3Keys(idsSet);
-        matchedS3Keys.forEach(key -> {
+        List<String> matchedS3Ids = findMatchedS3Ids(idsSet);
+        matchedS3Ids.forEach(key -> {
             var getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -169,7 +169,7 @@ public class PosterService {
      * @param idsSet required ids; using Set because ids cannot have duplicates
      * @return list of matched images names
      */
-    private List<String> findMatchedS3Keys(Set<String> idsSet) {
+    private List<String> findMatchedS3Ids(Set<String> idsSet) {
         ListObjectsRequest lsRequest = ListObjectsRequest.builder()
                 .bucket(bucketName)
                 .prefix(S3_FOLDER)
@@ -186,85 +186,45 @@ public class PosterService {
                 .toList();
     }
 
-    /**
-     * Updates existing poster in S3 storage
-     *
-     * @param metadataId content metadata id
-     * @param image      new multipart form data image
-     * @throws ParseRequestIdException when invalid number format defined by api
-     * @throws UncheckedIOException    when s3 couldn't save existing image for some reason
-     */
-//    @Transactional
-//    public void updateExistingImage(Long metadataId, MultipartFile image) {
-//        assureImageProcessing(image.getContentType());
-//        ContentMetadata contentMetadata = contentMetadataRepo.findById(metadataId).orElseThrow(NoMetadataRelationException::new);
-//
-//        try {
-//            posterRepo.updatePosterByContentMetadata(contentMetadata, image.getOriginalFilename(), image.getContentType());
-//        } catch (Exception e) {
-//            LOG.warn("Произошла ошибка при попытке изменить связь постера с одного  ");
-//        }
-//
-//        final Long s3ImageId = lsPosterStorageFolder(Set.of(metadataId)).getFirst();
-//        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-//                .bucket(bucketName)
-//                .key(String.valueOf(s3ImageId))
-//                .contentType(image.getContentType())
-//                .build();
-//        try {
-//            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(image.getInputStream(), image.getSize()));
-//        } catch (IOException e) {
-//            String errmes = "Не удалось обновить существующий постер в облачном хранилище.";
-//            LOG.warn("{}. {}", errmes, e.getMessage());
-//            throw S3Exception.builder()
-//                    .message(errmes)
-//                    .build();
-//        }
-//    }
 
     /**
      * Deletes saved poster which matches requested ids from S3 and local db.
      *
-     * <p>
-     * Also supports single id instance. example: {@code "4"}.
-     * </p>
-     *
-     * @param contentMetadataIds ids split by ',' separator. For example: {@code "4,2,592,101,10"}
+     * @param contentMetadataIds ids split by ',' separator (can be single id)
      * @throws ParseRequestIdException when of invalid number format defined by api
      * @throws S3Exception             when image wasn't deleted
      */
-//    @Transactional
-//    public void deleteByIds(String contentMetadataIds) {
-//        Set<Long> idsSet;
-//        try {
-//            idsSet = Arrays.stream(contentMetadataIds.split(","))
-//                    .mapToLong(Long::parseLong)
-//                    .boxed()
-//                    .collect(Collectors.toSet());
-//        } catch (Exception e) {
-//            LOG.warn(e.getMessage());
-//            throw new ParseRequestIdException();
-//        }
-//
-//        idsSet.forEach(posterRepo::deleteByContentMetadataId);
-//
-//        List<Long> s3ImageIds = lsPosterStorageFolder(idsSet);
-//        s3ImageIds.forEach(id -> {
-//            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-//                    .bucket(bucketName)
-//                    .key(FOLDER + id.toString())
-//                    .build();
-//            try {
-//                s3Client.deleteObject(deleteObjectRequest);
-//            } catch (AwsServiceException e) {
-//                String errmes = "Ошибка при удалении постеров по их идентификаторам.";
-//                LOG.warn("{}. {}", errmes, e.getMessage());
-//                throw S3Exception.builder()
-//                        .message(errmes)
-//                        .build();
-//            }
-//        });
-//    }
+
+
+    public void deleteByIds(String contentMetadataIds) {
+        Set<String> idsSet;
+        try {
+            idsSet = Arrays.stream(contentMetadataIds.split(","))
+                    .collect(Collectors.toSet());
+        } catch (NumberFormatException e) {
+            LOG.warn(e.getMessage());
+            throw new ParseRequestIdException();
+        }
+
+        idsSet.forEach(contentDetailsRepo::deleteById);
+
+        List<String> s3ImageIds = findMatchedS3Ids(idsSet);
+        s3ImageIds.forEach(id -> {
+            var deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(id)
+                    .build();
+            try {
+                s3Client.deleteObject(deleteObjectRequest);
+            } catch (AwsServiceException e) {
+                String errmes = "Ошибка при удалении постеров по их идентификаторам.";
+                LOG.warn("{}. {}", errmes, e.getMessage());
+                throw S3Exception.builder()
+                        .message(errmes)
+                        .build();
+            }
+        });
+    }
 
 
 }

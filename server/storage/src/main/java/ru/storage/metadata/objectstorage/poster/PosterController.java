@@ -55,7 +55,7 @@ public class PosterController {
      *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when image wasn't saved into S3 cloud storage</li>
      * </ul>
      */
-    @PostMapping("/upload")
+    @PostMapping("upload")
     public ResponseEntity<Void> uploadImage(@RequestParam String id, @RequestParam MultipartFile image) {
         try {
             service.uploadImage(id, image);
@@ -85,7 +85,7 @@ public class PosterController {
      *     <li>500 (INTERNAL_SERVER_ERROR). An empty list with an error message header if an error occurs </li>
      * </ul>
      */
-    @GetMapping("/{contentMetadataIds}")
+    @GetMapping("{contentMetadataIds}")
     public ResponseEntity<List<byte[]>> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
         try {
             return ResponseEntity.ok(service.getImagesMatchingMetadataIds(contentMetadataIds));
@@ -101,44 +101,9 @@ public class PosterController {
     }
 
     /**
-     * Replace existing poster with a new one.
-     *
-     * @param metadataId content metadata id
-     * @param image      multipart file of image type
-     * @return Response
-     * <ul>
-     *     <li>204 (NO_CONTENT) with the success header "Message"</li>
-     *     <li>400 (BAD_REQUEST) with the cause header "Message"
-     *          <ol>
-     *               <li>when illegal arg of metadataId</li>
-     *               <li>when try to save non image file</li>
-     *          </ol>
-     *     </li>
-     *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when poster image wasn't updated</li>
-     * </ul>
-     */
-//    @PutMapping("/change")
-//    public ResponseEntity<Void> updateExistingImage(@RequestParam Long metadataId, @RequestParam MultipartFile image) {
-//        try {
-//            service.updateExistingImage(metadataId, image);
-//            return new ResponseEntity<>(null,
-//                    new EncodedHttpHeaders("Постер успешно заменён на новый."),
-//                    HttpStatus.NO_CONTENT);
-//        } catch (NoMetadataRelationException e) {
-//            return new ResponseEntity<>(null,
-//                    new EncodedHttpHeaders(e.getMessage()),
-//                    HttpStatus.BAD_REQUEST);
-//        } catch (UncheckedIOException e) {
-//            return new ResponseEntity<>(null,
-//                    new EncodedHttpHeaders(e.getMessage()),
-//                    HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-    /**
      * Delete saved poster which matches requested ids from S3 cloud storage and local db.
      * <p>
-     * Also supports single id instance. example: {@code "4,2,592,101,10"}.
+     * Also supports single id instance.
      * </p>
      *
      * @param contentMetadataIds ids split by ',' separator.
@@ -148,22 +113,22 @@ public class PosterController {
      *      <li>500 (INTERNAL_SERVER_ERROR)</li>
      * </ul>
      */
-//    @DeleteMapping("/ids/{contentMetadataIds}")
-//    public ResponseEntity<Void> deletePostersByIds(@PathVariable String contentMetadataIds) {
-//        try {
-//            service.deleteByIds(contentMetadataIds);
-//            return new ResponseEntity<>(null,
-//                    new EncodedHttpHeaders("Выбранные постеры успешно удалены."),
-//                    HttpStatus.NO_CONTENT);
-//        } catch (ParseRequestIdException e) {
-//            return new ResponseEntity<>(null,
-//                    new EncodedHttpHeaders(e.getMessage()),
-//                    HttpStatus.BAD_REQUEST);
-//        } catch (S3Exception e) {
-//            return new ResponseEntity<>(null,
-//                    new EncodedHttpHeaders(e.getMessage()),
-//                    HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    @DeleteMapping("{contentMetadataIds}")
+    public ResponseEntity<Void> deletePostersByIds(@PathVariable String contentMetadataIds) {
+        try {
+            service.deleteByIds(contentMetadataIds);
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders("Выбранные постеры успешно удалены."),
+                    HttpStatus.NO_CONTENT);
+        } catch (ParseRequestIdException e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        } catch (S3Exception e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
