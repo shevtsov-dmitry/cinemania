@@ -1,4 +1,4 @@
-package ru.storage.metadata;
+package ru.storage.content;
 
 import io.github.benas.randombeans.EnhancedRandomBuilder;
 import io.github.benas.randombeans.api.EnhancedRandom;
@@ -7,10 +7,10 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.storage.metadata.objectstorage.poster.Poster;
-import ru.storage.metadata.objectstorage.poster.PosterRepo;
-import ru.storage.metadata.objectstorage.video.Video;
-import ru.storage.metadata.objectstorage.video.VideoRepo;
+import ru.storage.content.objectstorage.poster.Poster;
+import ru.storage.content.objectstorage.poster.PosterRepo;
+import ru.storage.content.objectstorage.video.Video;
+import ru.storage.content.objectstorage.video.VideoRepo;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -23,7 +23,7 @@ class MetadataServiceTest {
     @Autowired
     private PosterRepo posterRepo;
     @Autowired
-    private MetadataService metadataService;
+    private ContentService contentService;
     @Autowired
     private ContentDetailsRepo contentDetailsRepo;
 

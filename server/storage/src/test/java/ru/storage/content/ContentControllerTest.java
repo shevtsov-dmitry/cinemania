@@ -1,4 +1,4 @@
-package ru.storage.metadata;
+package ru.storage.content;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.benas.randombeans.EnhancedRandomBuilder;
@@ -9,22 +9,22 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.storage.metadata.objectstorage.poster.Poster;
-import ru.storage.metadata.objectstorage.video.Video;
+import ru.storage.content.objectstorage.poster.Poster;
+import ru.storage.content.objectstorage.video.Video;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(MetadataController.class)
+@WebMvcTest(ContentController.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class MetadataControllerTest {
+class ContentControllerTest {
 
     public static final String API_PATH = "/api/v0/metadata";
     private static VideoInfoParts testMetadata;
 
     @MockBean
-    private MetadataService metadataService;
+    private ContentService contentService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,7 +49,7 @@ class MetadataControllerTest {
 
     @Test
     void saveFormData_ok() throws Exception {
-        when(metadataService.saveMetadata(testMetadata)).thenReturn(any(ContentDetails.class));
+        when(contentService.saveMetadata(testMetadata)).thenReturn(any(ContentDetails.class));
         String json = objectMapper.writeValueAsString(testMetadata);
         mockMvc.perform(post("/api/v0/metadata")
                         .content(json)
@@ -59,7 +59,7 @@ class MetadataControllerTest {
 
     @Test
     void saveFormData_badRequest() throws Exception {
-        when(metadataService.saveMetadata(testMetadata)).thenThrow(IllegalArgumentException.class);
+        when(contentService.saveMetadata(testMetadata)).thenThrow(IllegalArgumentException.class);
         String json = objectMapper.writeValueAsString(testMetadata);
         mockMvc.perform(post(API_PATH)
                         .content(json)

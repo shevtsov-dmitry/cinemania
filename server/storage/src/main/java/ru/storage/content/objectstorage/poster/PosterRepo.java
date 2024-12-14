@@ -1,4 +1,4 @@
-package ru.storage.metadata.objectstorage.poster;
+package ru.storage.content.objectstorage.poster;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

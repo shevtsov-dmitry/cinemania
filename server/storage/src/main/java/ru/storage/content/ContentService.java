@@ -1,25 +1,25 @@
-package ru.storage.metadata;
+package ru.storage.content;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.storage.metadata.objectstorage.poster.Poster;
-import ru.storage.metadata.objectstorage.poster.PosterService;
-import ru.storage.metadata.objectstorage.video.Video;
-import ru.storage.metadata.objectstorage.video.VideoService;
+import ru.storage.content.objectstorage.poster.Poster;
+import ru.storage.content.objectstorage.poster.PosterService;
+import ru.storage.content.objectstorage.video.Video;
+import ru.storage.content.objectstorage.video.VideoService;
 
 import java.util.List;
 
 @Service
-public class MetadataService {
+public class ContentService {
 
-    private static final Logger log = LoggerFactory.getLogger(MetadataService.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentService.class);
     private final ContentDetailsRepo contentDetailsRepo;
     private final VideoService videoService;
     private final PosterService posterService;
 
-    public MetadataService(ContentDetailsRepo contentDetailsRepo, VideoService videoService, PosterService posterService) {
+    public ContentService(ContentDetailsRepo contentDetailsRepo, VideoService videoService, PosterService posterService) {
         this.contentDetailsRepo = contentDetailsRepo;
         this.videoService = videoService;
         this.posterService = posterService;

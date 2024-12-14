@@ -1,4 +1,4 @@
-package ru.storage.metadata.objectstorage.poster;
+package ru.storage.content.objectstorage.poster;
 
 import jakarta.annotation.PostConstruct;
 import net.coobird.thumbnailator.Thumbnailator;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.metadata.ContentDetailsRepo;
-import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
+import ru.storage.content.ContentDetailsRepo;
+import ru.storage.content.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;

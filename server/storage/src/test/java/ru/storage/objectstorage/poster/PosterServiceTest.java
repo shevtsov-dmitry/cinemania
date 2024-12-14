@@ -7,10 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.storage.metadata.ContentDetailsRepo;
-import ru.storage.metadata.objectstorage.poster.PosterController;
-import ru.storage.metadata.objectstorage.poster.PosterRepo;
-import ru.storage.metadata.objectstorage.poster.PosterService;
+import ru.storage.content.ContentDetailsRepo;
+import ru.storage.content.objectstorage.poster.PosterController;
+import ru.storage.content.objectstorage.poster.PosterRepo;
+import ru.storage.content.objectstorage.poster.PosterService;
 
 @ExtendWith(MockitoExtension.class)
 class PosterServiceTest {

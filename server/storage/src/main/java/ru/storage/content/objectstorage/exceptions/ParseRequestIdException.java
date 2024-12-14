@@ -1,4 +1,4 @@
-package ru.storage.metadata.objectstorage.exceptions;
+package ru.storage.content.objectstorage.exceptions;
 
 /**
  * Indicates invalid usage of predefined request content format

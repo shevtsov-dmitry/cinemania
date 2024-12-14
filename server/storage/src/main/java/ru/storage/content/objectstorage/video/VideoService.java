@@ -1,12 +1,12 @@
-package ru.storage.metadata.objectstorage.video;
+package ru.storage.content.objectstorage.video;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.metadata.ContentDetailsRepo;
-import ru.storage.metadata.objectstorage.exceptions.ParseRequestIdException;
+import ru.storage.content.ContentDetailsRepo;
+import ru.storage.content.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;

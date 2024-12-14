@@ -1,6 +1,5 @@
-package ru.storage.metadata;
+package ru.storage.content;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,14 +7,13 @@ import ru.storage.utility.EncodedHttpHeaders;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v0/metadata")
-public class MetadataController {
+public class ContentController {
 
-    private final MetadataService service;
+    private final ContentService service;
 
-    public MetadataController(MetadataService service) {
+    public ContentController(ContentService service) {
         this.service = service;
     }
 
@@ -46,7 +44,7 @@ public class MetadataController {
      *     <li>200 (OK)</li>
      * </ul>
      */
-    @GetMapping("/recent/{amount}")
+    @GetMapping("recent/{amount}")
     public ResponseEntity<List<ContentDetails>> getRecentlyAdded(@PathVariable int amount) {
         return ResponseEntity.ok(service.getRecentlyAdded(amount));
     }

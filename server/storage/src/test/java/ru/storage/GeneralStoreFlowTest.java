@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import ru.storage.metadata.MetadataController;
+import ru.storage.content.ContentController;
 
 import java.io.File;
 
@@ -21,7 +21,7 @@ import java.io.File;
  * <li>save video into S3 by chunks</li>
  * </ol>
  */
-@WebMvcTest(controllers = {MetadataController.class})
+@WebMvcTest(controllers = {ContentController.class})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 class GeneralStoreFlowTest {

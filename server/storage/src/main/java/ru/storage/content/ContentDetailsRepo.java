@@ -1,4 +1,4 @@
-package ru.storage.metadata;
+package ru.storage.content;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;

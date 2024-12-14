@@ -1,4 +1,4 @@
-package ru.storage.metadata;
+package ru.storage.content;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import ru.storage.metadata.objectstorage.poster.Poster;
-import ru.storage.metadata.objectstorage.video.Video;
+import ru.storage.content.objectstorage.poster.Poster;
+import ru.storage.content.objectstorage.video.Video;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
