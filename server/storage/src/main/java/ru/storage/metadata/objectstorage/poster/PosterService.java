@@ -91,7 +91,9 @@ public class PosterService {
                     .key(S3_FOLDER + "/" + id)
                     .contentType(image.getContentType())
                     .build();
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(compressImage(inputStream), image.getSize()));
+            InputStream compressedImage = compressImage(inputStream);
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(compressedImage, compressedImage.available()));
+            compressedImage.close();
         } catch (IOException | AwsServiceException e) {
             String errmes = "Ошибка при сохранении постера для видео.";
             LOG.warn("{}. {}", errmes, e.getMessage());
@@ -153,7 +155,7 @@ public class PosterService {
     private InputStream compressImage(InputStream inputStream) {
         try {
             var outStream = new FastByteArrayOutputStream();
-            Thumbnailator.createThumbnail(inputStream, outStream, 250, 370);
+            Thumbnailator.createThumbnail(inputStream, outStream, 500, 370);
             return outStream.getInputStream();
         } catch (IOException e) {
             LOG.error("Ошибка при сжатии файла изображения. Вызвана: {}", e.getMessage());
@@ -179,8 +181,7 @@ public class PosterService {
                 .filter(filepath -> {
                     String[] splitFilename = filepath.split("/");
                     String filename = splitFilename[splitFilename.length - 1];
-                    String nameWithoutExtension = filename.substring(0, filename.lastIndexOf("."));
-                    return idsSet.contains(nameWithoutExtension);
+                    return idsSet.contains(filename);
                 })
                 .toList();
     }
