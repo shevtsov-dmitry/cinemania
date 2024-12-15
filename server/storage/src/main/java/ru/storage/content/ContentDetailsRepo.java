@@ -10,12 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ContentDetailsRepo extends MongoRepository<ContentDetails, String> {
 
-//    @Query("SELECT e FROM ContentMetadata e ORDER BY e.createdAt DESC")
-//    List<ContentMetadata> findRecentlyAdded(Pageable requestedAmountRestriction);
-
-//    List<ContentMetadata> getByTitle(String title);
-
-    Optional<ContentDetails> findContentMetadataById(String id);
-
     List<ContentDetails> findByOrderByCreatedAtDesc(Pageable pageable);
 }

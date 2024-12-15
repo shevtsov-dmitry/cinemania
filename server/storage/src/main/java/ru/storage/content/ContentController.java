@@ -4,8 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.storage.utility.EncodedHttpHeaders;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v0/metadata")
@@ -49,9 +51,36 @@ public class ContentController {
         return ResponseEntity.ok(service.getRecentlyAdded(amount));
     }
 
-//    @GetMapping(value = "title/{title}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<List<ContentMetadata>> getMetadataByTitle(@PathVariable String title) {
-//        return service.getMetadataByTitle(title);
-//    }
+    /**
+     * Delete all content related instances from local metadata db and also from S3 storage.
+     *
+     * @param contentId contentId from local db
+     * @return Response
+     * <ul>
+     *     <li>204 (NO_CONTENT) on success</li>
+     *     <li>400 (BAD_REQUEST) when error on parsing or passed illegal arguments</li>
+     *     <li>404 (NOT_FOUND) when there is no such element related to requested id</li>
+     *     <li>500 (INTERNAL_SERVER_ERROR) when S3 couldn't remove content for some reason</li>
+     * <ul/>
+     */
+    @DeleteMapping("{contentId}")
+    public ResponseEntity<ContentDetails> remove(@PathVariable String contentId) {
+        try {
+            service.removeContent(contentId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.NOT_FOUND);
+        } catch (S3Exception e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

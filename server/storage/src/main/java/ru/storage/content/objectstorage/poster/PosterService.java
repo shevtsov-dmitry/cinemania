@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.content.ContentDetailsRepo;
 import ru.storage.content.objectstorage.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -31,15 +30,12 @@ public class PosterService {
     private static final String S3_FOLDER = "posters";
     private static final Logger LOG = LoggerFactory.getLogger(PosterService.class);
     private final PosterRepo posterRepo;
-    private final ContentDetailsRepo contentDetailsRepo;
     private final S3Client s3Client;
 
-    public PosterService(PosterRepo posterRepo, ContentDetailsRepo contentDetailsRepo, S3Client s3Client) {
+    public PosterService(PosterRepo posterRepo, S3Client s3Client) {
         this.posterRepo = posterRepo;
-        this.contentDetailsRepo = contentDetailsRepo;
         this.s3Client = s3Client;
     }
-
 
     /**
      * Assure an image processing by comparing input content type with expected.
@@ -69,7 +65,7 @@ public class PosterService {
     public Poster saveMetadata(Poster poster) {
         if (poster == null) {
             LOG.warn("Error saving poster object from request, because it is null.");
-            throw new IllegalArgumentException("Метаданные постера отсутсвуют.");
+            throw new IllegalArgumentException("Метаданные постера отсутствуют.");
         }
         assureImageProcessing(poster.getContentType());
         return posterRepo.save(poster);
@@ -192,7 +188,7 @@ public class PosterService {
      *
      * @param posterIds ids split by ',' separator (can be single id)
      * @throws ParseRequestIdException when of invalid number format defined by api
-     * @throws S3Exception             when image wasn't deleted
+     * @throws S3Exception             when the fail happen on delete operation
      */
     public void deleteByIds(String posterIds) {
         Set<String> idsSet;
@@ -204,9 +200,21 @@ public class PosterService {
             throw new ParseRequestIdException();
         }
 
-        idsSet.forEach(posterRepo::deleteById);
+        deleteFromLocalDb(idsSet);
+        deleteFromS3(findMatchedS3Ids(idsSet));
+    }
 
-        List<String> s3ImageIds = findMatchedS3Ids(idsSet);
+    private void deleteFromLocalDb(Set<String> idsSet) {
+        idsSet.forEach(posterRepo::deleteById);
+    }
+
+    /**
+     * Delete poster image from S3 cloud storage.
+     *
+     * @param s3ImageIds ids
+     * @throws S3Exception when the fail happen on delete operation
+     */
+    private void deleteFromS3(List<String> s3ImageIds) {
         s3ImageIds.forEach(id -> {
             var deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)

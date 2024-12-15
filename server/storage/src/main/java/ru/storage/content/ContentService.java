@@ -4,12 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.storage.content.objectstorage.exceptions.ParseRequestIdException;
 import ru.storage.content.objectstorage.poster.Poster;
+import ru.storage.content.objectstorage.poster.PosterRepo;
 import ru.storage.content.objectstorage.poster.PosterService;
 import ru.storage.content.objectstorage.video.Video;
+import ru.storage.content.objectstorage.video.VideoRepo;
 import ru.storage.content.objectstorage.video.VideoService;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ContentService {
@@ -19,10 +24,12 @@ public class ContentService {
     private final VideoService videoService;
     private final PosterService posterService;
 
+
     public ContentService(ContentDetailsRepo contentDetailsRepo, VideoService videoService, PosterService posterService) {
         this.contentDetailsRepo = contentDetailsRepo;
         this.videoService = videoService;
         this.posterService = posterService;
+
     }
 
     /**
@@ -54,6 +61,22 @@ public class ContentService {
      */
     public List<ContentDetails> getRecentlyAdded(int amount) {
         return contentDetailsRepo.findByOrderByCreatedAtDesc(Pageable.ofSize(amount));
+    }
+
+    /**
+     * Delete all content related instances from local metadata db and also from S3 storage.
+     *
+     * @param contentId contentId from local db
+     * @throws NoSuchElementException  when element not found
+     * @throws ParseRequestIdException when of invalid number format defined by api
+     * @throws S3Exception             when image wasn't deleted
+     */
+    public void removeContent(String contentId) {
+        var contentDetails = contentDetailsRepo.findById(contentId)
+                .orElseThrow(() -> new NoSuchElementException("Не удалось найти запрашиваемый материал по идентификатору."));
+        contentDetailsRepo.delete(contentDetails);
+        posterService.deleteByIds(contentDetails.getVideo().getId());
+        videoService.deleteByIds(contentDetails.getPoster().getId());
     }
 
 //    /**

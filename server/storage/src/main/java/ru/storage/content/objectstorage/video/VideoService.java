@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
 @Service
 public class VideoService {
 
@@ -50,6 +51,9 @@ public class VideoService {
             throw new IllegalArgumentException(errmes);
         }
     }
+
+
+    // TODO create upload method by hls chunks
 
     /**
      * Save video metadata to a database.
@@ -89,8 +93,6 @@ public class VideoService {
                     .build();
         }
     }
-
-    // TODO refactor into new component called CommonS3Operations
 
     /**
      * Find all matched images in S3 folder.
@@ -132,9 +134,15 @@ public class VideoService {
             throw new ParseRequestIdException();
         }
 
-        idsSet.forEach(contentDetailsRepo::deleteById);
+        deleteFromLocalDb(idsSet);
+        deleteFromS3(findMatchedS3Ids(idsSet));
+    }
 
-        List<String> s3ImageIds = findMatchedS3Ids(idsSet);
+    private void deleteFromLocalDb(Set<String> idsSet) {
+        idsSet.forEach(videoRepo::deleteById);
+    }
+
+    private void deleteFromS3(List<String> s3ImageIds) {
         s3ImageIds.forEach(id -> {
             var deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)
@@ -151,4 +159,5 @@ public class VideoService {
             }
         });
     }
+
 }

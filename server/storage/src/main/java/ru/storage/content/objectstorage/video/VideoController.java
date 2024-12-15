@@ -20,28 +20,6 @@ public class VideoController {
     }
 
     /**
-     * Save video metadata into db.
-     *
-     * @param video video instance
-     * @return Response
-     * <ul>
-     *     <li>201 (CREATED) with body of saved video instance</li>
-     *     <li>400 (BAD_REQUEST) with the cause header "Message" when invalid arguments </li>
-     * </ul>
-     */
-    @PostMapping
-    public ResponseEntity<Video> saveMetadata(@RequestBody Video video) {
-        try {
-            final Video savedPosterMetadata = service.saveMetadata(video);
-            return new ResponseEntity<>(savedPosterMetadata, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    /**
      * Upload video into S3 cloud storage by chunks
      *
      * @param id    video metadata id from mongodb
@@ -59,37 +37,6 @@ public class VideoController {
             service.uploadVideo(id, video);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        } catch (S3Exception e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Delete saved poster which matches requested ids from S3 cloud storage and local db.
-     * <p>
-     * Also supports single id instance.
-     * </p>
-     *
-     * @param videoIds ids split by ',' separator.
-     * @return Response
-     * <ul>
-     *      <li>204 (NO_CONTENT)</li>
-     *      <li>500 (INTERNAL_SERVER_ERROR)</li>
-     * </ul>
-     */
-    @DeleteMapping("{videoIds}")
-    public ResponseEntity<Void> delete(@PathVariable String videoIds) {
-        try {
-            service.deleteByIds(videoIds);
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders("Выбранные постеры успешно удалены."),
-                    HttpStatus.NO_CONTENT);
-        } catch (ParseRequestIdException e) {
             return new ResponseEntity<>(null,
                     new EncodedHttpHeaders(e.getMessage()),
                     HttpStatus.BAD_REQUEST);

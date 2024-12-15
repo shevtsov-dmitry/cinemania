@@ -22,29 +22,7 @@ public class PosterController {
     }
 
     /**
-     * Save poster metadata into db.
-     *
-     * @param poster poster instance
-     * @return Response
-     * <ul>
-     *     <li>201 (CREATED) with body of saved Poster instance</li>
-     *     <li>400 (BAD_REQUEST) with the cause header "Message" when invalid arguments</li>
-     * </ul>
-     */
-    @PostMapping
-    public ResponseEntity<Poster> saveMetadata(@RequestBody Poster poster) {
-        try {
-            final Poster savedPosterMetadata = service.saveMetadata(poster);
-            return new ResponseEntity<>(savedPosterMetadata, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    /**
-     * Upload poster into S3 cloud storage
+     * Upload poster into S3 cloud storage.
      *
      * @param id    poster metadata id from mongodb db
      * @param image multipart file of image type
@@ -79,7 +57,7 @@ public class PosterController {
      * @param posterIds a comma-separated string of content metadata IDs
      * @return Response
      * <ul>
-     *     <li>200 (OK). A list of byte arrays representing the images if successful .
+     *     <li>200 (OK). A list of byte arrays representing the images if successful.
      *     The values are in the same order as requested ids.</li>
      *     <li>400 (BAD_REQUEST). For inputs that are not string, also if number format is incorrect</li>
      *     <li>500 (INTERNAL_SERVER_ERROR). An empty list with an error message header if an error occurs </li>
@@ -95,37 +73,6 @@ public class PosterController {
                     HttpStatus.BAD_REQUEST);
         } catch (S3Exception e) {
             return new ResponseEntity<>(Collections.emptyList(),
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Delete saved poster which matches requested ids from S3 cloud storage and local db.
-     * <p>
-     * Also supports single id instance.
-     * </p>
-     *
-     * @param posterIds ids split by ',' separator.
-     * @return Response
-     * <ul>
-     *      <li>204 (NO_CONTENT)</li>
-     *      <li>500 (INTERNAL_SERVER_ERROR)</li>
-     * </ul>
-     */
-    @DeleteMapping("{posterIds}")
-    public ResponseEntity<Void> deletePostersByIds(@PathVariable String posterIds) {
-        try {
-            service.deleteByIds(posterIds);
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders("Выбранные постеры успешно удалены."),
-                    HttpStatus.NO_CONTENT);
-        } catch (ParseRequestIdException e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        } catch (S3Exception e) {
-            return new ResponseEntity<>(null,
                     new EncodedHttpHeaders(e.getMessage()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
