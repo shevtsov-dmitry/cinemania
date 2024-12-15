@@ -14,19 +14,23 @@ import java.net.URI;
 @Configuration
 public class S3Config {
 
-    @Value("${AWS_ACCESS_KEY_ID}")
+    @Value("${cloud.aws.credentials.access-key}")
     private String AWS_ACCESS_KEY_ID;
-    @Value("${AWS_SECRET_ACCESS_KEY}")
+    @Value("${cloud.aws.credentials.secret-key}")
     private String AWS_SECRET_ACCESS_KEY;
+    @Value("${cloud.aws.s3.endpoint}")
+    private String S3_ENDPOINT;
+    @Value("${cloud.aws.region}")
+    private String REGION;
 
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
-                .region(Region.AWS_GLOBAL)
+                .region(Region.of(REGION))
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
                 ))
-                .endpointOverride(URI.create("https://storage.yandexcloud.net"))
+                .endpointOverride(URI.create(S3_ENDPOINT))
                 .serviceConfiguration(S3Configuration.builder()
                         .pathStyleAccessEnabled(true) // Yandex requires path-style access
                         .build())
