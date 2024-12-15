@@ -32,7 +32,7 @@ public class S3Config {
                 ))
                 .endpointOverride(URI.create(S3_ENDPOINT))
                 .serviceConfiguration(S3Configuration.builder()
-                        .pathStyleAccessEnabled(true) // Yandex requires path-style access
+                        .pathStyleAccessEnabled(true) // Yandex requires path-style access as well as MinIO local S3 for dev
                         .build())
                 .build();
     }
