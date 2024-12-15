@@ -78,4 +78,6 @@ public class PosterController {
         }
     }
 
+    //TODO create method to replace poster
+
 }

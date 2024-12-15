@@ -74,9 +74,9 @@ public class ContentService {
     public void removeContent(String contentId) {
         var contentDetails = contentDetailsRepo.findById(contentId)
                 .orElseThrow(() -> new NoSuchElementException("Не удалось найти запрашиваемый материал по идентификатору."));
+        posterService.deleteByIds(contentDetails.getPoster().getId());
+        videoService.deleteByIds(contentDetails.getVideo().getId());
         contentDetailsRepo.delete(contentDetails);
-        posterService.deleteByIds(contentDetails.getVideo().getId());
-        videoService.deleteByIds(contentDetails.getPoster().getId());
     }
 
 //    /**
