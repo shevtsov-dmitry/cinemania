@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import ru.storage.content.objectstorage.poster.Poster;
-import ru.storage.content.objectstorage.video.Video;
+import ru.storage.content.poster.PosterMetadata;
+import ru.storage.content.video.VideoMetadata;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -41,9 +41,9 @@ public class ContentDetails {
     private Integer age;
     private Double rating;
     @DBRef
-    private Poster poster;
+    private PosterMetadata posterMetadata;
     @DBRef
-    private Video video;
+    private VideoMetadata videoMetadata;
     @JsonIgnore
     @CreatedDate
     private LocalDateTime createdAt = LocalDateTime.now();

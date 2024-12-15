@@ -21,10 +21,10 @@ export function VideoPlayer() {
 
   return (
     <div className="flex h-fit w-dvw flex-col justify-center">
-      <video className="h-fit w-fit" controls autoPlay={true} muted={true}>
-        <source src={`${videoUrl}`} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      <videoMetadata className="h-fit w-fit" controls autoPlay={true} muted={true}>
+        <source src={`${videoUrl}`} type="videoMetadata/mp4" />
+        Your browser does not support the videoMetadata tag.
+      </videoMetadata>
     </div>
   );
 }

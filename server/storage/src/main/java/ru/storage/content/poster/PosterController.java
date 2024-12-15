@@ -1,10 +1,10 @@
-package ru.storage.content.objectstorage.poster;
+package ru.storage.content.poster;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.content.objectstorage.exceptions.ParseRequestIdException;
+import ru.storage.content.exceptions.ParseRequestIdException;
 import ru.storage.utility.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 

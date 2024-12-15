@@ -1,4 +1,4 @@
-package ru.storage.content.objectstorage.poster;
+package ru.storage.content.poster;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document
-public class Poster {
+public class PosterMetadata {
     @Id
     private String id;
     private String filename;

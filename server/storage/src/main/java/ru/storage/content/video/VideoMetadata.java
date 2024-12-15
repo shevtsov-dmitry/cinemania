@@ -1,4 +1,4 @@
-package ru.storage.content.objectstorage.video;
+package ru.storage.content.video;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document
-public class Video {
+public class VideoMetadata {
     @Id
     private String id;
     private String filename;

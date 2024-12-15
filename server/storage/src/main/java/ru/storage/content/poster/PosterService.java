@@ -1,4 +1,4 @@
-package ru.storage.content.objectstorage.poster;
+package ru.storage.content.poster;
 
 import jakarta.annotation.PostConstruct;
 import net.coobird.thumbnailator.Thumbnailator;
@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.content.objectstorage.exceptions.ParseRequestIdException;
+import ru.storage.content.common.S3GeneralOperations;
+import ru.storage.content.exceptions.ParseRequestIdException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class PosterService {
 
+    private final S3GeneralOperations s3GeneralOperations;
     @Value("${custom.s3.BUCKET_NAME}")
     private String bucketName;
     private static final String S3_FOLDER = "posters";
@@ -32,9 +34,10 @@ public class PosterService {
     private final PosterRepo posterRepo;
     private final S3Client s3Client;
 
-    public PosterService(PosterRepo posterRepo, S3Client s3Client) {
+    public PosterService(PosterRepo posterRepo, S3Client s3Client, S3GeneralOperations s3GeneralOperations) {
         this.posterRepo = posterRepo;
         this.s3Client = s3Client;
+        this.s3GeneralOperations = s3GeneralOperations;
     }
 
     /**
@@ -59,16 +62,16 @@ public class PosterService {
     /**
      * Save poster metadata in database
      *
-     * @param poster poster object with metadata
+     * @param posterMetadata poster object with metadata
      * @throws IllegalArgumentException when content type if not an image
      */
-    public Poster saveMetadata(Poster poster) {
-        if (poster == null) {
+    public PosterMetadata saveMetadata(PosterMetadata posterMetadata) {
+        if (posterMetadata == null) {
             LOG.warn("Error saving poster object from request, because it is null.");
             throw new IllegalArgumentException("Метаданные постера отсутствуют.");
         }
-        assureImageProcessing(poster.getContentType());
-        return posterRepo.save(poster);
+        assureImageProcessing(posterMetadata.getContentType());
+        return posterRepo.save(posterMetadata);
     }
 
     /**
@@ -100,27 +103,25 @@ public class PosterService {
     }
 
     /**
-     * Retrieve poster images from S3 storage based on specified metadata IDs.
+     * Retrieve poster images from S3 storage based on specified metadata IDs .
      *
-     * <p>This method supports both single and multiple content metadata IDs, separated by commas.
-     *
-     * @param posterIds a comma-separated string of content metadata IDs
+     * @param unparsedIds a comma-separated string of content metadata IDs
      * @return List of matched images from S3.
      * @throws ParseRequestIdException when invalid number format defined by api
      * @throws UncheckedIOException    when image retrieval from S3
      */
-    public List<byte[]> getImagesMatchingMetadataIds(String posterIds) {
+    public List<byte[]> getImagesMatchingMetadataIds(String unparsedIds) {
         List<byte[]> images = new ArrayList<>();
         Set<String> idsSet;
         try {
-            idsSet = Arrays.stream(posterIds.split(","))
+            idsSet = Arrays.stream(unparsedIds.split(","))
                     .collect(Collectors.toSet());
         } catch (NumberFormatException e) {
             LOG.warn(e.getMessage());
             throw new ParseRequestIdException();
         }
 
-        List<String> matchedS3Ids = findMatchedS3Ids(idsSet);
+        List<String> matchedS3Ids = s3GeneralOperations.findMatchedIds(S3_FOLDER, idsSet);
         matchedS3Ids.forEach(key -> {
             var getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
@@ -143,9 +144,9 @@ public class PosterService {
     }
 
     /**
-     * Util method for savePoster() which compresses the input image under poster standard.
+     * Util method which compresses the input image on poster standard.
      *
-     * @param inputStream - initial image byte stream
+     * @param inputStream initial image byte stream
      * @return compressed image
      */
     private InputStream compressImage(InputStream inputStream) {
@@ -160,76 +161,19 @@ public class PosterService {
     }
 
     /**
-     * Find all matched images in S3 folder.
+     * Delete related content instances from local metadata db and also from S3 storage.
      *
-     * @param idsSet required ids; using Set because ids cannot have duplicates
-     * @return list of matched images names
-     */
-    private List<String> findMatchedS3Ids(Set<String> idsSet) {
-        ListObjectsRequest lsRequest = ListObjectsRequest.builder()
-                .bucket(bucketName)
-                .prefix(S3_FOLDER)
-                .build();
-
-        return s3Client.listObjects(lsRequest).contents().stream()
-                .skip(1)
-                .map(S3Object::key)
-                .filter(filepath -> {
-                    String[] splitFilename = filepath.split("/");
-                    String filename = splitFilename[splitFilename.length - 1];
-                    return idsSet.contains(filename);
-                })
-                .toList();
-    }
-
-
-    /**
-     * Deletes saved poster which matches requested ids from S3 and local db.
-     *
-     * @param posterIds ids split by ',' separator (can be single id)
+     * @param unparsedIds a comma-separated string of content metadata IDs
      * @throws ParseRequestIdException when of invalid number format defined by api
-     * @throws S3Exception             when the fail happen on delete operation
+     * @throws S3Exception             when image wasn't deleted
      */
-    public void deleteByIds(String posterIds) {
-        Set<String> idsSet;
-        try {
-            idsSet = Arrays.stream(posterIds.split(","))
-                    .collect(Collectors.toSet());
-        } catch (NumberFormatException e) {
-            LOG.warn(e.getMessage());
+    public void deleteByIds(String unparsedIds) {
+        List<String> ids = Arrays.asList(unparsedIds.split(","));
+        if (ids.isEmpty()) {
             throw new ParseRequestIdException();
         }
-
-        deleteFromLocalDb(idsSet);
-        deleteFromS3(findMatchedS3Ids(idsSet));
-    }
-
-    private void deleteFromLocalDb(Set<String> idsSet) {
-        idsSet.forEach(posterRepo::deleteById);
-    }
-
-    /**
-     * Delete poster image from S3 cloud storage.
-     *
-     * @param s3ImageIds ids
-     * @throws S3Exception when the fail happen on delete operation
-     */
-    private void deleteFromS3(List<String> s3ImageIds) {
-        s3ImageIds.forEach(id -> {
-            var deleteObjectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(id)
-                    .build();
-            try {
-                s3Client.deleteObject(deleteObjectRequest);
-            } catch (AwsServiceException e) {
-                String errmes = "Ошибка при удалении постеров из облачного хранилища S3 по их идентификаторам.";
-                LOG.warn("{}. {}", errmes, e.getMessage());
-                throw S3Exception.builder()
-                        .message(errmes)
-                        .build();
-            }
-        });
+        ids.forEach(posterRepo::deleteById);
+        s3GeneralOperations.deleteFromS3(S3_FOLDER, ids);
     }
 
 

@@ -1,7 +1,7 @@
 package ru.storage.content;
 
-import ru.storage.content.objectstorage.poster.Poster;
-import ru.storage.content.objectstorage.video.Video;
+import ru.storage.content.poster.PosterMetadata;
+import ru.storage.content.video.VideoMetadata;
 
-public record VideoInfoParts(ContentDetails contentDetails, Video video, Poster poster) {
+public record VideoInfoParts(ContentDetails contentDetails, VideoMetadata videoMetadata, PosterMetadata posterMetadata) {
 }

@@ -1,4 +1,4 @@
-package ru.storage.content.objectstorage.video;
+package ru.storage.content.video;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -22,24 +22,24 @@ class VideoServiceTest {
     @Autowired
     private VideoRepo videoRepo;
 
-    private static final Video testVideoMetadata = new Video(null, "video.mp4", "video/mp4");
+    private static final VideoMetadata TEST_VIDEO_METADATA_METADATA = new VideoMetadata(null, "video.mp4", "video/mp4");
 
     @Test
     @Order(1)
     void saveMetadata() throws Exception {
-        var savedPoster = videoService.saveMetadata(testVideoMetadata);
+        var savedPoster = videoService.saveMetadata(TEST_VIDEO_METADATA_METADATA);
         assertNotNull(savedPoster);
         assertFalse(savedPoster.getId().isBlank());
-        testVideoMetadata.setId(testVideoMetadata.getId());
+        TEST_VIDEO_METADATA_METADATA.setId(TEST_VIDEO_METADATA_METADATA.getId());
     }
 
     @Test
     @Order(2)
     void getSavedMetadata() throws Exception {
-        assertNotNull(testVideoMetadata.getId());
-        var optionalVideo = videoRepo.findById(testVideoMetadata.getId());
+        assertNotNull(TEST_VIDEO_METADATA_METADATA.getId());
+        var optionalVideo = videoRepo.findById(TEST_VIDEO_METADATA_METADATA.getId());
         assertNotNull(optionalVideo.orElse(null));
-        assertEquals(testVideoMetadata, optionalVideo.get());
+        assertEquals(TEST_VIDEO_METADATA_METADATA, optionalVideo.get());
     }
 
     @Test
@@ -47,9 +47,9 @@ class VideoServiceTest {
     void deleteMetadata() throws Exception {
         Method method = VideoService.class.getDeclaredMethod("deleteFromLocalDb", Set.class);
         method.setAccessible(true);
-        method.invoke(videoService, Set.of(testVideoMetadata.getId()));
+        method.invoke(videoService, Set.of(TEST_VIDEO_METADATA_METADATA.getId()));
         method.setAccessible(false);
-        var optionalVideo = videoRepo.findById(testVideoMetadata.getId());
+        var optionalVideo = videoRepo.findById(TEST_VIDEO_METADATA_METADATA.getId());
         assertNull(optionalVideo.orElse(null));
     }
 

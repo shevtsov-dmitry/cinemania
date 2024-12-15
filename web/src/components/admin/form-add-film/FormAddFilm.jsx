@@ -192,8 +192,8 @@ export default function FormAddFilm() {
 
         try {
             const videoInfo = await saveMetadata();
-            await uploadPoster(videoInfo.poster.id);
-            await uploadVideo(videoInfo.video.id);
+            await uploadPoster(videoInfo.posterMetadata.id);
+            await uploadVideo(videoInfo.videoMetadata.id);
             displayStatusMessage(OPERATION_STATUS.SUCCESS);
         } catch (e) {
             displayStatusMessage(OPERATION_STATUS.ERROR, e.message)
@@ -239,7 +239,7 @@ export default function FormAddFilm() {
             }
 
             const videoFormData = new FormData();
-            videoFormData.append("video", videoFile);
+            videoFormData.append("videoMetadata", videoFile);
             videoFormData.append("id", id);
 
             const res = fetch(`${STORAGE_URL}/api/v0/videos/upload`, {
@@ -267,11 +267,11 @@ export default function FormAddFilm() {
                     age: form.get("age").trim(),
                     rating: form.get("rating").trim(),
                 },
-                poster: {
+                posterMetadata: {
                     filename: posterInputRef.current.files[0].name,
                     contentType: posterInputRef.current.files[0].type
                 },
-                video: {
+                videoMetadata: {
                     filename: videoInputRef.current.files[0].name,
                     contentType: videoInputRef.current.files[0].type
                 }
@@ -503,7 +503,7 @@ export default function FormAddFilm() {
                         </div>
                     </li>
 
-                    <li id="poster">
+                    <li id="posterMetadata">
                         <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
                             Постер
                         </label>
@@ -515,7 +515,7 @@ export default function FormAddFilm() {
                         />
                     </li>
 
-                    <li id="video">
+                    <li id="videoMetadata">
                         <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
                             Видео
                         </label>

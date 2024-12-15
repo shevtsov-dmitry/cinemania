@@ -4,13 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.storage.content.objectstorage.exceptions.ParseRequestIdException;
-import ru.storage.content.objectstorage.poster.Poster;
-import ru.storage.content.objectstorage.poster.PosterRepo;
-import ru.storage.content.objectstorage.poster.PosterService;
-import ru.storage.content.objectstorage.video.Video;
-import ru.storage.content.objectstorage.video.VideoRepo;
-import ru.storage.content.objectstorage.video.VideoService;
+import ru.storage.content.exceptions.ParseRequestIdException;
+import ru.storage.content.poster.PosterMetadata;
+import ru.storage.content.poster.PosterService;
+import ru.storage.content.video.VideoMetadata;
+import ru.storage.content.video.VideoService;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.util.List;
@@ -33,21 +31,21 @@ public class ContentService {
     }
 
     /**
-     * @param metadataObjects {@link VideoInfoParts} metadata record of {@link Video}, {@link Poster} and {@link ContentDetails}
+     * @param metadataObjects {@link VideoInfoParts} metadata record of {@link VideoMetadata}, {@link PosterMetadata} and {@link ContentDetails}
      * @return {@link VideoInfoParts} object
      * @throws IllegalArgumentException when content type is wrong
      */
     public ContentDetails saveMetadata(VideoInfoParts metadataObjects) {
-        Video savedVideoMetadata = videoService.saveMetadata(metadataObjects.video());
-        Poster savedPosterMetadata = posterService.saveMetadata(metadataObjects.poster());
+        VideoMetadata savedVideoMetadataMetadata = videoService.saveMetadata(metadataObjects.videoMetadata());
+        PosterMetadata savedPosterMetadataMetadata = posterService.saveMetadata(metadataObjects.posterMetadata());
         ContentDetails contentDetails = metadataObjects.contentDetails();
         if (contentDetails == null) {
             log.warn("Error saving contentDetails object from request, because it is null.");
             throw new IllegalArgumentException("Необходимые сведения о загружаемом видео-проекте отсутствуют");
         }
 
-        contentDetails.setVideo(savedVideoMetadata);
-        contentDetails.setPoster(savedPosterMetadata);
+        contentDetails.setVideoMetadata(savedVideoMetadataMetadata);
+        contentDetails.setPosterMetadata(savedPosterMetadataMetadata);
         return contentDetailsRepo.save(contentDetails);
     }
 
@@ -74,8 +72,8 @@ public class ContentService {
     public void removeContent(String contentId) {
         var contentDetails = contentDetailsRepo.findById(contentId)
                 .orElseThrow(() -> new NoSuchElementException("Не удалось найти запрашиваемый материал по идентификатору."));
-        posterService.deleteByIds(contentDetails.getPoster().getId());
-        videoService.deleteByIds(contentDetails.getVideo().getId());
+        posterService.deleteByIds(contentDetails.getPosterMetadata().getId());
+        videoService.deleteByIds(contentDetails.getVideoMetadata().getId());
         contentDetailsRepo.delete(contentDetails);
     }
 

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.storage.content.objectstorage.poster.PosterService;
-import ru.storage.content.objectstorage.poster.PosterController;
+import ru.storage.content.poster.PosterService;
+import ru.storage.content.poster.PosterController;
 
 import java.io.File;
 import java.util.Random;
@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebMvcTest(PosterController.class)
 @ExtendWith(MockitoExtension.class)
-class PosterControllerTest {
+class PosterMetadataControllerTest {
 
     private static final String MESSAGE_HEADER = "Message";
 
