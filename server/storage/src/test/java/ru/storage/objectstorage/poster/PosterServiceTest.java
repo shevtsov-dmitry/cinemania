@@ -1,53 +1,56 @@
 package ru.storage.objectstorage.poster;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import ru.storage.content.ContentDetailsRepo;
-import ru.storage.content.objectstorage.poster.PosterController;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import ru.storage.content.objectstorage.poster.Poster;
 import ru.storage.content.objectstorage.poster.PosterRepo;
 import ru.storage.content.objectstorage.poster.PosterService;
 
-@ExtendWith(MockitoExtension.class)
+import java.lang.reflect.Method;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest
 class PosterServiceTest {
 
-    @Mock
-    private ContentDetailsRepo contentDetailsRepo;
-    @Mock
-    private PosterRepo posterRepo;
-    @Mock
-    private PosterController posterController;
-    @InjectMocks
+    @Autowired
     private PosterService posterService;
+    @Autowired
+    private PosterRepo posterRepo;
 
-    private static Long metadataId;
+    private static final Poster testPosterMetadata = new Poster(null, "filename.jpg", "image/jpeg");
 
-    @BeforeAll
-    static void setUp() {
-
-    }
-
-    @AfterAll
-    static void tearDown() {
+    @Test
+    @Order(1)
+    void saveMetadata() throws Exception {
+        var savedPoster = posterService.saveMetadata(testPosterMetadata);
+        assertNotNull(savedPoster);
+        assertFalse(savedPoster.getId().isBlank());
+        testPosterMetadata.setId(testPosterMetadata.getId());
     }
 
     @Test
-    void savePoster_Image_success() {
+    @Order(2)
+    void getSavedMetadata() throws Exception {
+        assertNotNull(testPosterMetadata.getId());
+        Optional<Poster> optionalPoster = posterRepo.findById(testPosterMetadata.getId());
+        assertNotNull(optionalPoster.orElse(null));
+        assertEquals(testPosterMetadata, optionalPoster.get());
     }
 
     @Test
-    void getImagesMatchingMetadataIds_success() {
+    @Order(3)
+    void deleteMetadata() throws Exception {
+        Method method = PosterService.class.getDeclaredMethod("deleteFromLocalDb", Set.class);
+        method.setAccessible(true);
+        method.invoke(posterService, Set.of(testPosterMetadata.getId()));
+        method.setAccessible(false);
+        Optional<Poster> optionalPoster = posterRepo.findById(testPosterMetadata.getId());
+        assertNull(optionalPoster.orElse(null));
     }
 
-    @Test
-    void updateExistingImage_success() {
-    }
-
-    @Test
-    void deleteByIds_success() {
-    }
 }
