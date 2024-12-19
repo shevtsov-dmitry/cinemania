@@ -78,6 +78,31 @@ public class PosterController {
         }
     }
 
-    //TODO create method to replace poster
+    /**
+     * Delete image from S3 cloud storage.
+     *
+     * @param id id
+     * @returns Response
+     * <ul>
+     *     <li>204 (NO_CONTENT) when success on delete</li>
+     *     <li>401 (BAD_REQUEST) when param format is not like mongodb id standard</li>
+     *     <li>500 (INTERNAL_SERVER_ERROR) when error performing operation in S3</li>
+     * </ul>
+     */
+    @DeleteMapping
+    public ResponseEntity<Void> deleteImage(@RequestParam String id) {
+        try {
+            service.deleteByIds(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (ParseRequestIdException e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        } catch (S3Exception e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
