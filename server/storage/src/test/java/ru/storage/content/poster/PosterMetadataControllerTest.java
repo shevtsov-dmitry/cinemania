@@ -1,4 +1,4 @@
-package ru.storage.objectstorage.poster;
+package ru.storage.content.poster;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.extension.ExtendWith;

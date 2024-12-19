@@ -89,8 +89,8 @@ public class PosterController {
      *     <li>500 (INTERNAL_SERVER_ERROR) when error performing operation in S3</li>
      * </ul>
      */
-    @DeleteMapping
-    public ResponseEntity<Void> deleteImage(@RequestParam String id) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteImage(@PathVariable String id) {
         try {
             service.deleteByIds(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -1,4 +1,4 @@
-package ru.storage.objectstorage.poster;
+package ru.storage.content.poster;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
