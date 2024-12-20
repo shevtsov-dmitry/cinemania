@@ -3,26 +3,9 @@ import { StyleSheet, Text, View } from "react-native";
 import Header from "@/src/components/header/Header";
 import Home from "@/src/components/home/Home";
 import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
-// import { VideoPlayer } from "@/src/components/VideoPlayer";
+import VideoPlayer from "@/src/components/video-player/VideoPlayer";
 
 let error = false;
-
-function VideoPlayer() {
-  const videoSrc =
-    "http://localhost:8443/stream/SampleVideo_1280x720_30mb_1.mp4";
-
-  return (
-    <div>
-      <h1 className="text-white text-xl">
-        NO ONE TREAT TO READ MY LIES NO ONE BUT YOU WISH YOU WEREN'T TRUE
-      </h1>
-      <video controls width="640" height="360" muted>
-        <source src={videoSrc} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    </div>
-  );
-}
 
 export default function App() {
   return (
@@ -32,12 +15,11 @@ export default function App() {
           "w-dvw h-dvh flex items-center justify-center fixed z-50 bottom-0"
         }
       >
-        <VideoPlayer />
         {/* <FormAddFilm /> */}
       </div>
       <Header />
       <Home />
-      {/*<VideoPlayer/>*/}
+      <VideoPlayer />
       {/*TODO use zustand instead*/}
       {/*<Routes>*/}
       {/*    <Route path="/" element={<Home />} />*/}
