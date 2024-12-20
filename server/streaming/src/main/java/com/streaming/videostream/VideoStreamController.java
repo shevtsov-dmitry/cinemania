@@ -64,7 +64,6 @@ public class VideoStreamController {
         try {
             // Construct the S3 object key
             String objectKey = S3_FOLDER + "/%s".formatted(filename).repeat(2);
-            System.out.println(objectKey);
 
             // Get file metadata
             var headRequest = HeadObjectRequest.builder()

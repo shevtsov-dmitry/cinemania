@@ -203,6 +203,7 @@ export default function FormAddFilm() {
       await uploadVideo(videoInfo.videoMetadata.id);
       displayStatusMessage(OPERATION_STATUS.SUCCESS);
     } catch (e) {
+      console.error(e);
       displayStatusMessage(OPERATION_STATUS.ERROR, e.message);
     }
 
@@ -251,7 +252,7 @@ export default function FormAddFilm() {
       videoFormData.append("id", id);
       videoFormData.append("video", videoFile);
 
-      const res = fetch(`${STORAGE_URL}/api/v0/videos/upload`, {
+      const res = await fetch(`${STORAGE_URL}/api/v0/videos/upload`, {
         method: "POST",
         body: videoFormData,
       });
@@ -268,6 +269,7 @@ export default function FormAddFilm() {
 
     async function saveMetadata() {
       const form = new FormData(formRef.current);
+      validateFormInputs(form); // throws error if not satisfied
       const metadata = {
         contentDetails: {
           title: form.get("title").trim(),
@@ -314,12 +316,81 @@ export default function FormAddFilm() {
        */
       function parseSubGenres(subGenresString) {
         const splitted = subGenresString.split(",");
+        if (splitted.length === 0) {
+          return [];
+        }
         let subGenresArray = [];
         for (const string of splitted) {
           if (string.length !== 0) subGenresArray.push(string.trim());
         }
         return subGenresArray;
       }
+    }
+    /**
+     *
+     * @param {FormData} form
+     * @throws Error when input is not satisfied
+     */
+    function validateFormInputs(form) {
+      if (!form.get("title") || isBlank(form.get("title")))
+        throw new Error("Необходимо указать название");
+      else if (!form.get("country") || isBlank(form.get("country")))
+        throw new Error("Необходимо указать страну");
+      else if (!form.get("releaseDate"))
+        throw new Error("Необходимо указать дату релиза");
+      else if (!form.get("mainGenre") || isBlank(form.get("mainGenre")))
+        throw new Error("Необходимо указать основной жанр");
+      else if (!form.get("age"))
+        throw new Error("Необходимо указать возрастное ограничение");
+      else if (!form.get("rating") || isBlank(form.get("rating")))
+        throw new Error("Необходимо указать рейтинг");
+      else if (
+        isNaN(form.get("rating")) ||
+        Number(form.get("rating")) < 0 ||
+        Number(form.get("rating")) > 10
+      ) {
+        throw new Error("Рейтинг должен быть числом от 0 до 10");
+      }
+
+      // Validate Poster File
+      const posterFiles = posterInputRef.current.files;
+      if (!posterFiles || posterFiles.length === 0) {
+        throw new Error("Необходимо загрузить постер");
+      } else {
+        const posterFile = posterFiles[0];
+        const allowedPosterTypes = ["image/jpeg", "image/png", "image/gif"];
+        if (!allowedPosterTypes.includes(posterFile.type))
+          throw new Error("Неподдерживаемый тип файла для постера");
+        const maxPosterSize = 5 * 1024 * 1024; // 5MB
+        if (posterFile.size > maxPosterSize)
+          throw new Error("Размер файла постера не должен превышать 5MB");
+      }
+
+      // Validate Video File
+      const videoFiles = videoInputRef.current.files;
+      if (!videoFiles || videoFiles.length === 0) {
+        throw new Error("Необходимо загрузить видео");
+      } else {
+        const videoFile = videoFiles[0];
+        // Optional: Validate file type and size
+        const allowedVideoTypes = ["video/mp4", "video/avi", "video/mov"];
+        if (!allowedVideoTypes.includes(videoFile.type)) {
+          throw new Error("Неподдерживаемый тип файла для видео");
+        }
+        const maxVideoSize = 20 * 1024 * 1024 * 1024;
+        if (videoFile.size > maxVideoSize) {
+          throw new Error("Размер файла видео не должен превышать 20GB");
+        }
+      }
+    }
+
+    /**
+     * Check if string is blank.
+     * @param {string} str
+     * @returns
+     */
+    function isBlank(str) {
+      return !str || str.trim() === "";
     }
 
     /**
@@ -358,7 +429,7 @@ export default function FormAddFilm() {
    * @param age {number}
    * @returns {Element}
    */
-  function createAgeRadioInput(age) {
+  function AgeRadioInput({ age }) {
     return (
       <div>
         <input
@@ -515,11 +586,11 @@ export default function FormAddFilm() {
               Возраст
             </p>
             <div className="flex w-full justify-between gap-2">
-              {createAgeRadioInput(0)}
-              {createAgeRadioInput(6)}
-              {createAgeRadioInput(12)}
-              {createAgeRadioInput(16)}
-              {createAgeRadioInput(18)}
+              <AgeRadioInput age={0} />
+              <AgeRadioInput age={6} />
+              <AgeRadioInput age={12} />
+              <AgeRadioInput age={16} />
+              <AgeRadioInput age={18} />
             </div>
           </li>
 
@@ -572,7 +643,7 @@ export default function FormAddFilm() {
             ></p>
             <img
               ref={loadingRef}
-              src="assets/loading.gif"
+              src="assets/images/icons/loading.gif"
               className="hidden w-7"
             />
           </div>

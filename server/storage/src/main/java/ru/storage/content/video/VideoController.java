@@ -25,7 +25,7 @@ public class VideoController {
      * @param video multipart file of image type
      * @return Response
      * <ul>
-     *     <li>204 (NO_CONTENT)</li>
+     *     <li>201 (CREATED)</li>
      *     <li>400 (BAD_REQUEST) when invalid args</li>
      *     <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when video wasn't saved into S3 cloud storage</li>
      * </ul>
