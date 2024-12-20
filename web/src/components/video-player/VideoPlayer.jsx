@@ -6,7 +6,6 @@ import { useState } from "react";
 
 export default function VideoPlayer() {
   // const [videoname, setVideoname] = useState(null);
-  // setVideoname()
   // const videoname = "likeid731893";
   const videoname = "SampleVideo_1280x720_30mb_1.mp4";
   const videoSrc = "http://localhost:8443/stream/" + videoname;

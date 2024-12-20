@@ -248,8 +248,8 @@ export default function FormAddFilm() {
       }
 
       const videoFormData = new FormData();
-      videoFormData.append("videoMetadata", videoFile);
       videoFormData.append("id", id);
+      videoFormData.append("video", videoFile);
 
       const res = fetch(`${STORAGE_URL}/api/v0/videos/upload`, {
         method: "POST",

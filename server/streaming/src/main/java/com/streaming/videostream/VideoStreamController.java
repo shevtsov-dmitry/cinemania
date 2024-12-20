@@ -54,6 +54,7 @@ public class VideoStreamController {
         }
     }
 
+    // TODO use approach with streaming chunks to upload instead of temporary files on local storage
     // TODO refactor business logic to service function
     @GetMapping("{filename:.+}")
     public void streamVideo(
