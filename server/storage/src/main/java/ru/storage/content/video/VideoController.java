@@ -1,10 +1,17 @@
 package ru.storage.content.video;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Locale;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import ru.storage.utility.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
@@ -13,9 +20,17 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 public class VideoController {
     private final VideoService service;
 
-    @Autowired
     public VideoController(VideoService service) {
         this.service = service;
+    }
+
+    @GetMapping("mytempo")
+    public ResponseEntity<Void> mytempo() {
+        var headers = new HttpHeaders();
+        headers.setContentLanguage(Locale.ITALY);
+        headers.set("Message", "My message is this one.");
+        return new ResponseEntity<Void>(null, headers, HttpStatus.BAD_REQUEST);
+
     }
 
     /**
@@ -32,6 +47,7 @@ public class VideoController {
      */
     @PostMapping("upload")
     public ResponseEntity<Void> upload(@RequestParam String id, @RequestParam MultipartFile video) {
+
         try {
             service.uploadVideo(id, video);
             return new ResponseEntity<>(HttpStatus.CREATED);

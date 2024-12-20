@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Utility class needed to create transferable non ASCII text on http headers
@@ -19,6 +20,7 @@ public class EncodedHttpHeaders extends HttpHeaders {
      */
     public EncodedHttpHeaders(String message) {
         super();
+        this.setAccessControlExposeHeaders(List.of("Message"));
         writeEncodedMessageHeader(this, message);
     }
 

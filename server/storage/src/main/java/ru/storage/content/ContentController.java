@@ -30,8 +30,9 @@ public class ContentController {
     @PostMapping
     public ResponseEntity<ContentDetails> saveFormData(@RequestBody VideoInfoParts metadataObjects) {
         try {
-            final var savedContentMetadata = service.saveMetadata(metadataObjects);
-            return new ResponseEntity<>(savedContentMetadata, HttpStatus.CREATED);
+            return new ResponseEntity<>(null, new EncodedHttpHeaders("приветствую на первом совещании связанном с развитием союзного государства"), HttpStatus.BAD_REQUEST);
+            // final var savedContentMetadata = service.saveMetadata(metadataObjects);
+            // return new ResponseEntity<>(savedContentMetadata, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
         }

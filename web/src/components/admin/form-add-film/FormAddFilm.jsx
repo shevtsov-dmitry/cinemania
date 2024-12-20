@@ -191,6 +191,9 @@ export default function FormAddFilm() {
   const formSaveStatus = useRef();
   const loadingRef = useRef();
 
+  const [recentFormErrorMessage, setRecentFormErrorMessage] = useState("");
+  const [isInfoSignActive, setIsInfoSignActive] = useState(false);
+
   async function saveFormData() {
     const OPERATION_STATUS = {
       SUCCESS: "SUCCESS",
@@ -203,6 +206,7 @@ export default function FormAddFilm() {
       await uploadVideo(videoInfo.videoMetadata.id);
       displayStatusMessage(OPERATION_STATUS.SUCCESS);
     } catch (e) {
+      setRecentFormErrorMessage(e.message);
       console.error(e);
       displayStatusMessage(OPERATION_STATUS.ERROR, e.message);
     }
@@ -216,7 +220,7 @@ export default function FormAddFilm() {
     async function uploadPoster(id) {
       const posterFile = posterInputRef.current.files[0];
       if (posterFile == null) {
-        return Promise.reject("Необходимо выбрать постер для видео.");
+        throw new Error("Необходимо выбрать постер для видео.");
       }
 
       const posterFormData = new FormData();
@@ -229,12 +233,9 @@ export default function FormAddFilm() {
       });
 
       if (res.status !== 201) {
-        const errmes = decodeURI(res.headers.get("Message")).replaceAll(
-          "+",
-          " ",
+        throw new Error(
+          decodeURI(res.headers.get("Message")).replaceAll("+", " "),
         );
-        console.error(errmes);
-        return Promise.reject(errmes);
       }
     }
 
@@ -245,7 +246,7 @@ export default function FormAddFilm() {
     async function uploadVideo(id) {
       const videoFile = videoInputRef.current.files[0];
       if (videoFile == null) {
-        return Promise.reject("Необходимо выбрать видеофайл.");
+        throw new Error("Необходимо выбрать видеофайл.");
       }
 
       const videoFormData = new FormData();
@@ -258,12 +259,9 @@ export default function FormAddFilm() {
       });
 
       if (res.status !== 201) {
-        const errmes = decodeURI(res.headers.get("Message")).replaceAll(
-          "+",
-          " ",
+        throw new Error(
+          decodeURI(res.headers.get("Message")).replaceAll("+", " "),
         );
-        console.error(errmes);
-        return Promise.reject(errmes);
       }
     }
 
@@ -299,12 +297,9 @@ export default function FormAddFilm() {
       });
 
       if (res.status !== 201) {
-        const errmes = decodeURI(res.headers.get("Message")).replaceAll(
-          "+",
-          " ",
+        throw new Error(
+          decodeURI(res.headers.get("Message")).replaceAll("+", " "),
         );
-        console.error(errmes);
-        return Promise.reject(errmes);
       }
 
       return (await res).json();
@@ -398,6 +393,7 @@ export default function FormAddFilm() {
      * @param errmes {string | null}
      */
     function displayStatusMessage(operationStatus, errmes) {
+      setIsInfoSignActive(false);
       const statusBar = formSaveStatus.current;
       statusBar.style.fontSize = "0.8em";
       statusBar.style.marginTop = "-6px";
@@ -418,6 +414,7 @@ export default function FormAddFilm() {
       }
 
       setTimeout(() => {
+        setIsInfoSignActive(true);
         statusBar.textContent = "";
         statusBar.style.fontSize = "0.7em";
       }, 2000);
@@ -640,7 +637,14 @@ export default function FormAddFilm() {
             <p
               className="m-0 p-0 text-center text-xs font-medium text-gray-700 dark:text-blue-100"
               ref={formSaveStatus}
-            ></p>
+            />
+            {isInfoSignActive && (
+              <img
+                src="assets/images/icons/info-sign.svg"
+                // TODO better use popup than alert
+                onClick={() => alert(recentFormErrorMessage)}
+              />
+            )}
             <img
               ref={loadingRef}
               src="assets/images/icons/loading.gif"
