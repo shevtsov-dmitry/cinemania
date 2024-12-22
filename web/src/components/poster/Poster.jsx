@@ -1,68 +1,15 @@
-// TODO use expo router instead
-// import { Link } from 'react-router-dom';
-// import { setVideoId } from '../../store/videoPlayerSlice';
 import { useState } from "react";
+import { ContentMetadata } from "../types/ContentMetadata";
 
-export class PosterClass {
-  constructor(fetchedMap) {
-    this._metadataId = fetchedMap.metadataId;
-    this._title = fetchedMap.title;
-    this._poster = `data:image/jpeg;base64,${fetchedMap.poster}`;
-    this._country = fetchedMap.country;
-    this._releaseDate = fetchedMap.releaseDate;
-    this._mainGenre = fetchedMap.mainGenre;
-    this._subGenres = fetchedMap.subGenres;
-    this._rating = fetchedMap.rating;
-    this._videoId = fetchedMap.videoId;
-    this._age = fetchedMap.age;
-  }
-
-  get metadataId() {
-    return this._metadataId;
-  }
-
-  get title() {
-    return this._title;
-  }
-
-  get poster() {
-    return this._poster;
-  }
-
-  get country() {
-    return this._country;
-  }
-
-  get age() {
-    return this._age;
-  }
-
-  get releaseDate() {
-    return this._releaseDate;
-  }
-
-  get mainGenre() {
-    return this._mainGenre;
-  }
-
-  get subGenres() {
-    return this._subGenres;
-  }
-
-  get rating() {
-    return this._rating;
-  }
-
-  get videoId() {
-    return this._videoId;
-  }
-}
-
-export default function Poster(props) {
-  const metadata = props.posterObject;
+/**
+ *
+ * @param {ContentMetadata} metadata
+ * @returns
+ */
+export default function Poster({ metadata }) {
   const [isPosterHovered, setIsPosterHovered] = useState(false);
 
-  function InfoOnPosterHover() {
+  const ContentInformation = () => {
     return (
       <div className="absolute h-96 w-64 rounded-3xl bg-black p-4 opacity-70 content-['']">
         <h3 className="bg-inherit text-3xl font-bold text-white">
@@ -75,7 +22,7 @@ export default function Poster(props) {
         <p className="select-none text-white">{metadata.releaseDate}</p>
       </div>
     );
-  }
+  };
 
   return (
     <div
@@ -89,7 +36,7 @@ export default function Poster(props) {
       <div className="postersInfo">
         {isPosterHovered && (
           <div>
-            <InfoOnPosterHover />
+            <ContentInformation />
             <div className="flex w-64 justify-center">
               {/* <Link */}
               {/*     className="absolute bottom-0 z-10 mb-10" */}
