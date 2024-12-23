@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import useStore from "@/src/state/useStore";
 // TODO use expo router instead
 // import { Link } from 'react-router-dom';
 
@@ -9,6 +10,8 @@ export default function FormAddFilm() {
   const options = {
     MAX_AUTO_SUGGESTIONS_DISPLAYED: 5,
   };
+  const isFormAddFilmVisible = useStore((state) => state.isFormAddFilmVisible);
+  const closeForm = useStore((state) => state.hideFormAddFilm);
 
   const [suggestionsDOM, setSuggestionsDOM] = useState([]);
   const [countryInput, setCountryInput] = useState("");
@@ -463,20 +466,24 @@ export default function FormAddFilm() {
     }
   }
 
+  if (!isFormAddFilmVisible) {
+    return <div />;
+  }
+
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
       <form
         ref={formRef}
         className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:text-blue-100"
       >
-        {/* Close Button */}
         <div className="absolute top-4 right-4">
-          <p
-            id="close-form-sign"
+          <button
+            id="form-close-sign"
             className="cursor-pointer select-none text-xl font-bold text-gray-500 hover:text-gray-700 dark:text-blue-200 dark:hover:text-blue-300"
+            onClick={closeForm}
           >
             X
-          </p>
+          </button>
         </div>
 
         <h2 className="mb-6 text-center text-3xl font-bold text-gray-900 dark:text-blue-100">

@@ -1,10 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
+import useStore from "@/src/state/useStore";
 
 // TODO use expo router instead
 // import { Link, Route, Routes } from 'react-router-dom';
 
+/**
+ *
+ * @returns {JSX.Element}
+ */
 export default function Header() {
+  const topics = ["Фильмы", "Сериалы", "Мультфильмы", "Аниме"];
+
   const generalTopicsRef = useRef();
   const newShowsAndCollectionsRef = useRef();
   const loginImageRef = useRef();
@@ -12,7 +19,10 @@ export default function Header() {
   const burgerImageRef = useRef();
   const closeImageRef = useRef();
 
-  const [burgerActive, setBurgerActive] = useState(false);
+  const [isBurgerActive, setIsBurgerActive] = useState(false);
+
+  const isFormAddFilmVisible = useStore((state) => state.isFormAddFilmVisible);
+  const toggleFormAddFilm = useStore((state) => state.showFormAddFilm);
 
   useEffect(() => {
     showAndHideBurgerMenu();
@@ -22,64 +32,40 @@ export default function Header() {
     burgerImageRef.current.addEventListener("click", () => {
       burgerImageRef.current.style.display = "none";
       closeImageRef.current.style.display = "block";
-      setBurgerActive(true);
+      setIsBurgerActive(true);
     });
     closeImageRef.current.addEventListener("click", () => {
       burgerImageRef.current.style.display = "block";
       closeImageRef.current.style.display = "none";
-      setBurgerActive(false);
+      setIsBurgerActive(false);
     });
   }
 
-  const showOpenedBurgerPanel = () => {
-    if (!burgerActive) {
-      return null;
-    } else {
-      return (
-        <>
-          <main
-            id="burger-popup"
-            className="h-lvh w-lvw fixed z-20 bg-neutral-800 transition-all"
-          >
-            <div className="ml-5 mt-2 text-[1.25em] uppercase leading-9 text-white">
-              <ul className="">{generalTopicsLiContent()}</ul>
-              <div>{newsAndCollectionContent()}</div>
-            </div>
-          </main>
-          <footer className="fixed bottom-2 left-3 z-20 text-sm text-white opacity-75">
-            © 2024 ООО «Bē commerce»
-          </footer>
-        </>
-      );
-    }
-  };
+  const BurgerPanel = () => (
+    <>
+      <main
+        id="burger-popup"
+        className="fixed z-20 h-lvh w-lvw bg-neutral-800 transition-all"
+      >
+        <div className="ml-5 mt-2 text-[1.25em] uppercase leading-9 text-white">
+          <ul className="">{generalTopicsLiContent()}</ul>
+          <div>{newsAndCollectionContent()}</div>
+        </div>
+      </main>
+      <footer className="fixed bottom-2 left-3 z-20 text-sm text-white opacity-75">
+        © 2024 ООО «Bē commerce»
+      </footer>
+    </>
+  );
 
-  function generalTopicsLiContent() {
-    // signs variants: ▼ᐁ
-    const topics = ["Фильмы", "Сериалы", "Мультфильмы", "Аниме"];
-    return burgerActive ? (
-      <>
-        {topics.map((string, index) => (
-          <li key={index}>{string.concat(" ▼")}</li>
-        ))}
-      </>
-    ) : (
-      <>
-        {topics.map((string, index) => (
-          <li key={index}>{string}</li>
-        ))}
-      </>
-    );
-  }
-
-  function newsAndCollectionContent() {
-    return (
-      <div>
-        <p id="new-shows">Новинки</p>
-        <p id="collections">Подборки</p>
-      </div>
-    );
-  }
+  /**
+   * @param {Object} props
+   * @param {string} props.topicName
+   * @returns {JSX.Element}
+   */
+  const GeneralTopic = ({ topicName }) =>
+    isBurgerActive ? <li>{topicName + " ▼"}</li> : <li>{topicName}</li>;
+  // signs variants: ▼ᐁ
 
   return (
     <>
@@ -100,20 +86,28 @@ export default function Header() {
           id="general-topics"
           className="flex gap-5 max-[1024px]:hidden"
         >
-          {generalTopicsLiContent()}
+          {topics.map((topicName, idx) => (
+            <GeneralTopic key={idx} topicName={topicName} />
+          ))}
         </ul>
         <div
           ref={newShowsAndCollectionsRef}
           id="new-shows-and-collections"
           className="flex gap-5 max-[1024px]:hidden"
         >
-          {newsAndCollectionContent()}
+          <div>
+            <p id="new-shows">Новинки</p>
+            <p id="collections">Подборки</p>
+          </div>
         </div>
 
         {/* <Link to="/add-new-film"> */}
-        <p className="transition-colors hover:cursor-pointer hover:text-orange-400 hover:underline">
+        <button
+          className="transition-colors hover:cursor-pointer hover:text-orange-400 hover:underline"
+          onClick={toggleFormAddFilm}
+        >
           Добавить новый фильм
-        </p>
+        </button>
         {/* </Link> */}
 
         <div className="flex w-fit items-center justify-end gap-5">
@@ -128,7 +122,7 @@ export default function Header() {
             <span
               className={"text-base underline opacity-70 max-[1024px]:hidden"}
             >
-              Искать...
+              Искать... {isFormAddFilmVisible ? "yes" : "no"}
             </span>
           </div>
           <div id="login-block" className="flex items-center gap-2">
@@ -157,7 +151,7 @@ export default function Header() {
           />
         </div>
       </header>
-      {showOpenedBurgerPanel()}
+      {isBurgerActive && <BurgerPanel />}
 
       {/* <Routes> */}
       {/*     <Route */}
