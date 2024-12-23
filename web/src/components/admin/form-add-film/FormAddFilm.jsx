@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import useStore from "@/src/state/useStore";
+import Constants from "@/src/constants/Constants";
 // TODO use expo router instead
 // import { Link } from 'react-router-dom';
 
 export default function FormAddFilm() {
-  const FILLING_ASSISTANT_URL = `http://localhost:8001`;
-  const STORAGE_URL = "http://localhost:8080";
+  const FILLING_ASSISTANT_URL = Constants.FILLING_ASSISTANT_URL;
+  const STORAGE_URL = Constants.STORAGE_URL;
 
   const options = {
     MAX_AUTO_SUGGESTIONS_DISPLAYED: 5,
@@ -30,8 +31,9 @@ export default function FormAddFilm() {
   const videoInputRef = useRef();
 
   // *** AUTO SUGGESTIONS
-
+  // TODO restore autosuggestions functionallity and refactor it into different class. It is better to inject it here with composition.
   useEffect(() => {
+    console.log(FILLING_ASSISTANT_URL);
     // fetchAutosuggestions();
 
     async function fetchAutosuggestions() {
@@ -309,7 +311,7 @@ export default function FormAddFilm() {
 
       // TODO make additional checks for input
       /**
-       * @param subGenresString {string[]}
+       * @param {string[]} subGenresString
        * @returns {string[]}
        */
       function parseSubGenres(subGenresString) {
@@ -425,25 +427,23 @@ export default function FormAddFilm() {
   }
 
   /**
-   *
-   * @param age {number}
+   * @param {Object} props
+   * @param {number} props.age
    * @returns {Element}
    */
-  function AgeRadioInput({ age }) {
-    return (
-      <div>
-        <input
-          onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
-          type="radio"
-          name="age"
-          value={age}
-        />
-        <label htmlFor="" className="ml-0.5">
-          {age}+
-        </label>
-      </div>
-    );
-  }
+  const AgeRadioInput = ({ age }) => (
+    <div>
+      <input
+        onKeyDown={(event) => event.keyCode === 13 && event.preventDefault()}
+        type="radio"
+        name="age"
+        value={age}
+      />
+      <label htmlFor="" className="ml-0.5">
+        {age}+
+      </label>
+    </div>
+  );
 
   function handleSubmitButton(event) {
     event.preventDefault();

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { PosterClass } from "@/src/components/poster/Poster";
 import Poster from "@/src/components/poster/Poster";
+import Constants from "@/src/constants/Constants";
 
 export default function Preview() {
-  const STORAGE_URL = "http://localhost:8080";
+  const STORAGE_URL = Constants.STORAGE_URL;
 
   const [posters, setPosters] = useState([]);
 

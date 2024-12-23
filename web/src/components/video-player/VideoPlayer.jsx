@@ -2,13 +2,15 @@
 // import { Link } from 'react-router-dom';
 // import { setVideoId } from '../store/videoPlayerSlice';
 
+import Constants from "@/src/constants/Constants";
 import { useState } from "react";
 
 export default function VideoPlayer() {
+  const STREAMING_SERVER_URL = Constants.STREAMING_SERVER_URL;
   // const [videoname, setVideoname] = useState(null);
   // const videoname = "likeid731893";
   const videoname = "SampleVideo_1280x720_30mb_1.mp4";
-  const videoSrc = "http://localhost:8443/stream/" + videoname;
+  const videoSrc = `${STREAMING_SERVER_URL}/stream/${videoname}`;
 
   return (
     <div>
