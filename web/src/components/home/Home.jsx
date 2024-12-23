@@ -1,5 +1,5 @@
 import Preview from "@/src/components/home/Preview";
-import DefaultCompilation from "@/src/components/common/compilations/DefaultCompilation";
+import DefaultCompilation from "@/src/components/compilations/DefaultCompilation";
 import { useState } from "react";
 
 export default function Home() {
@@ -11,7 +11,7 @@ export default function Home() {
         Вам может понравится
       </h3>
       <div id="preview-posters-holder"></div>
-      <DefaultCompilation metadataList={null} />
+      <DefaultCompilation metadataList={[]} />
     </div>
   );
 }

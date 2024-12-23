@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 /**
- * Display film posters compilation with related metadata.
+ * Film posters compilation with related metadata.
  * @param {Object} props
  * @param {ContentMetadata[]} props.metadataList - list of content metadata for each poster fetched from server
  * @returns {JSX.Element}

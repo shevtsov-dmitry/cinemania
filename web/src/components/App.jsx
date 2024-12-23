@@ -15,7 +15,7 @@ export default function App() {
           "w-dvw h-dvh flex items-center justify-center fixed z-50 bottom-0"
         }
       >
-        {/* <FormAddFilm /> */}
+        <FormAddFilm />
       </div>
       <Header />
       <Home />

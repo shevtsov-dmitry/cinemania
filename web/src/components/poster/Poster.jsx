@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { ContentMetadata } from "../types/ContentMetadata";
+
+import ContentMetadata from "@/src/types/ContentMetadata";
+import PosterType from "./PosterType";
 
 /**
  *
- * @param {ContentMetadata} metadata
- * @returns
+ * @param {Object} props
+ * @param {PosterType} props.posterType - predefined PosterType (enum)
+ * @param {ContentMetadata} props.metadata - list of content metadata for each poster fetched from server
+ * @returns {JSX.Element}
  */
-export default function Poster({ metadata }) {
+export default function Poster({ posterType = PosterType.DEFAULT, metadata }) {
   const [isPosterHovered, setIsPosterHovered] = useState(false);
 
   const ContentInformation = () => {
@@ -15,10 +19,10 @@ export default function Poster({ metadata }) {
         <h3 className="bg-inherit text-3xl font-bold text-white">
           {metadata.title}
         </h3>
-        <p className="select-none text-white">{metadata.age}</p>
+        <p className="select-none text-white">{}</p>
         <p className="select-none text-white">{metadata.country}</p>
         <p className="select-none text-white">{metadata.mainGenre}</p>
-        <p className="select-none text-xs text-white">{metadata.subGenres}</p>
+        <p className="select-none text-white text-xs">{metadata.subGenres}</p>
         <p className="select-none text-white">{metadata.releaseDate}</p>
       </div>
     );
@@ -27,7 +31,9 @@ export default function Poster({ metadata }) {
   return (
     <div
       className={
-        "z-10 h-96 w-64 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer"
+        `${posterType.PREVIEW && "h-[200px] w-[150px]"} ` +
+        `${posterType.DEFAULT && "h-96 w-64"} ` +
+        ` z-10 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer`
       }
       style={{ backgroundImage: `url(${metadata.poster})` }}
       onMouseEnter={() => setIsPosterHovered(true)}
