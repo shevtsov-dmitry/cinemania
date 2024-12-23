@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ContentMetadata from "@/src/types/ContentMetadata";
 import PosterType from "./PosterType";
@@ -8,25 +8,34 @@ import PosterType from "./PosterType";
  * @param {Object} props
  * @param {PosterType} props.posterType - predefined PosterType (enum)
  * @param {ContentMetadata} props.metadata - list of content metadata for each poster fetched from server
+ * @param {string} props.base64 - encoded image in basic base 64 jpeg format
  * @returns {JSX.Element}
  */
-export default function Poster({ posterType = PosterType.DEFAULT, metadata }) {
+export default function Poster({
+  posterType = PosterType.DEFAULT,
+  metadata,
+  base64,
+}) {
   const [isPosterHovered, setIsPosterHovered] = useState(false);
 
-  const ContentInformation = () => {
-    return (
-      <div className="absolute h-96 w-64 rounded-3xl bg-black p-4 opacity-70 content-['']">
-        <h3 className="bg-inherit text-3xl font-bold text-white">
-          {metadata.title}
-        </h3>
-        <p className="select-none text-white">{}</p>
-        <p className="select-none text-white">{metadata.country}</p>
-        <p className="select-none text-white">{metadata.mainGenre}</p>
-        <p className="select-none text-white text-xs">{metadata.subGenres}</p>
-        <p className="select-none text-white">{metadata.releaseDate}</p>
-      </div>
-    );
-  };
+  /**
+   *
+   * @returns {JSX.Element}
+   */
+  const ContentInformation = () => (
+    <>
+      <h3 className="bg-inherit text-3xl font-bold text-white">
+        {metadata.title}
+      </h3>
+      <p className="select-none text-white">{}</p>
+      <p className="select-none text-white">{metadata.country}</p>
+      <p className="select-none text-white">{metadata.mainGenre}</p>
+      <p className="select-none text-white text-xs">{metadata.subGenres}</p>
+      <p className="select-none text-white">{metadata.releaseDate}</p>
+    </>
+  );
+
+  useEffect(() => console.log(base64), []);
 
   return (
     <div
@@ -35,7 +44,7 @@ export default function Poster({ posterType = PosterType.DEFAULT, metadata }) {
         `${posterType.DEFAULT && "h-96 w-64"} ` +
         ` z-10 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer`
       }
-      style={{ backgroundImage: `url(${metadata.poster})` }}
+      style={{ backgroundImage: `url(${`data:image/jpeg;base64,/${base64}`})` }}
       onMouseEnter={() => setIsPosterHovered(true)}
       onMouseLeave={() => setIsPosterHovered(false)}
     >
