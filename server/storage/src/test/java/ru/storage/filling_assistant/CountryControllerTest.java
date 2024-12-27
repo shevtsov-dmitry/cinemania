@@ -1,4 +1,4 @@
-package ru.filling_assistant.genre.controller;
+package ru.storage.filling_assistant;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -7,16 +7,13 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class GenreControllerTest extends AbstractControllerTestApi {
+public class CountryControllerTest extends AbstractControllerTestApi {
 
     {
-        super.CONTROLLER_REQUEST_MAPPING = "/genres";
+        super.CONTROLLER_REQUEST_MAPPING = "/countries";
     }
 
     @Test

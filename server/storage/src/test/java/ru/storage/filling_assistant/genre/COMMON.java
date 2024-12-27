@@ -1,4 +1,4 @@
-package ru.filling_assistant.genre;
+package ru.storage.filling_assistant.genre;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
