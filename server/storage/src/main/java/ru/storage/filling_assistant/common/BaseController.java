@@ -1,4 +1,4 @@
-package ru.filling_assistant.common;
+package ru.storage.filling_assistant.common;
 
 import org.springframework.http.ResponseEntity;
 

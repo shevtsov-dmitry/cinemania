@@ -1,10 +1,9 @@
-package ru.filling_assistant.country;
+package ru.storage.filling_assistant.country;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.filling_assistant.common.BaseService;
+import ru.storage.filling_assistant.common.BaseService;
 
 import java.util.List;
 
@@ -33,7 +32,6 @@ public class CountryService extends BaseService<Country> {
         return super.getAllEntities();
     }
 
-    @Transactional
     public ResponseEntity<String> deleteCountries(List<String> countryNamesToDelete) {
         return super.deleteEntitiesByName(countryNamesToDelete);
     }

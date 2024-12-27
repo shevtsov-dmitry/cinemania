@@ -1,16 +1,16 @@
-package ru.filling_assistant.country;
+package ru.storage.filling_assistant.country;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.filling_assistant.common.BaseController;
+import ru.storage.filling_assistant.common.BaseController;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/filling-assistants/countries")
+@RequestMapping("api/v0/filling-assistants/countries")
 public class CountryController extends BaseController<Country> {
 
     private final CountryService service;
@@ -33,7 +33,7 @@ public class CountryController extends BaseController<Country> {
         return super.tryToSaveListOfEntities(countries);
     }
 
-    @GetMapping(value = "/get/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> getAllCountries() {
         return ResponseEntity.ok(
                 service.getAllCountries().stream()

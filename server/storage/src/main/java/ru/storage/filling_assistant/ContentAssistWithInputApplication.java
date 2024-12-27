@@ -1,4 +1,4 @@
-package ru.filling_assistant;
+package ru.storage.filling_assistant;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

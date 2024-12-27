@@ -1,16 +1,16 @@
-package ru.filling_assistant.genre;
+package ru.storage.filling_assistant.genre;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.filling_assistant.common.BaseController;
+import ru.storage.filling_assistant.common.BaseController;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/filling-assistants/genres")
+@RequestMapping("api/v0/filling-assistants/genres")
 public class GenreController extends BaseController<Genre> {
 
     private final GenreService service;
@@ -33,7 +33,7 @@ public class GenreController extends BaseController<Genre> {
         return super.tryToSaveListOfEntities(genres);
     }
 
-    @GetMapping("/get/all")
+    @GetMapping(value = "all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> getAllGenres() {
         return ResponseEntity.ok(
                 service.getAllGenres().stream()

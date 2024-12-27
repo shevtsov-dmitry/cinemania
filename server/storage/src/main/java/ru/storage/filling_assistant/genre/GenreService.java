@@ -1,12 +1,9 @@
-package ru.filling_assistant.genre;
+package ru.storage.filling_assistant.genre;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.filling_assistant.common.BaseService;
+import ru.storage.filling_assistant.common.BaseService;
 
 import java.util.List;
 
@@ -30,7 +27,6 @@ public class GenreService extends BaseService<Genre> {
         return super.getAllEntities();
     }
 
-    @Transactional
     public ResponseEntity<String> deleteGenres(List<String> genreNamesToDelete) {
         return super.deleteEntitiesByName(genreNamesToDelete);
     }

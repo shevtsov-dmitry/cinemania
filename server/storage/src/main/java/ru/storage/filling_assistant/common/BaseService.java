@@ -1,4 +1,4 @@
-package ru.filling_assistant.common;
+package ru.storage.filling_assistant.common;
 
 import org.springframework.http.ResponseEntity;
 
@@ -7,7 +7,7 @@ import java.util.*;
 public abstract class BaseService<T extends Nameable> {
     private final BaseRepo<T> repo;
 
-    public BaseService(BaseRepo<T> repo) {
+    protected BaseService(BaseRepo<T> repo) {
         this.repo = repo;
     }
 
@@ -30,7 +30,7 @@ public abstract class BaseService<T extends Nameable> {
         List<T> filteredEntities = new ArrayList<>(receivedEntities.size());
         Set<String> set = new HashSet<>(receivedEntities.size());
         for (T receivedEntity : receivedEntities) {
-            if(!set.contains(receivedEntity.getName())) {
+            if (!set.contains(receivedEntity.getName())) {
                 filteredEntities.add(receivedEntity);
             }
             set.add(receivedEntity.getName());
@@ -50,7 +50,7 @@ public abstract class BaseService<T extends Nameable> {
         return savedEntities;
     }
 
-    public T save(T entity)  {
+    public T save(T entity) {
         return repo.save(entity);
     }
 

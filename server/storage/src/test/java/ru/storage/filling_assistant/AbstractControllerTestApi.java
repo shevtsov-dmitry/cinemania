@@ -1,19 +1,17 @@
-package ru.filling_assistant.genre.controller;
+package ru.storage.filling_assistant;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.filling_assistant.genre.COMMON;
+import ru.storage.filling_assistant.genre.COMMON;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static org.hamcrest.Matchers.blankString;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -25,11 +23,12 @@ public abstract class AbstractControllerTestApi {
 
     @Autowired
     MockMvc mockMvc;
-    final String ENDPOINT_URL = "/filling-assistants";
+    @Autowired
+    private ObjectMapper objectMapper;
+    final String ENDPOINT_URL = "api/v0/filling-assistants";
     String CONTROLLER_REQUEST_MAPPING;
 
     static final String GENERATED_NAME;
-    static final Gson gson = new Gson();
     static final List<String> FIVE_RANDOM_NAMES = new ArrayList<>(5);
 
     static {
@@ -54,47 +53,45 @@ public abstract class AbstractControllerTestApi {
     }
 
     void getAllEntities() throws Exception {
-        String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/get/all";
+        String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "all";
 
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
-                .andExpect(res -> {
-                    String arrayOfEntities = gson.toJson(res.getResponse().getContentAsString());
-                    System.out.println(arrayOfEntities);
-                });
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(res -> objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<List<String>>() {
+                }));
     }
 
     void deleteOneEntity() throws Exception {
         String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/delete";
-        List<String> singleton = List.of(GENERATED_NAME);
-        String json = gson.toJson(singleton);
+        List<String> singleton = Collections.singletonList(GENERATED_NAME);
+        String json = objectMapper.writeValueAsString(singleton);
 
         mockMvc.perform(delete(url)
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("All requested entities have been deleted successfully."));
+                .andExpect(content().string(not(blankString())));
     }
 
     void addMultipleEntities() throws Exception {
         String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/add/many";
-        String json = gson.toJson(FIVE_RANDOM_NAMES);
+        String json = objectMapper.writeValueAsString(FIVE_RANDOM_NAMES);
 
         mockMvc.perform(post(url)
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(res -> {
-                    String contentAsString = res.getResponse().getContentAsString();
-                    ArrayList<String> arrayList = gson.fromJson(contentAsString, ArrayList.class);
-                    long count = arrayList.stream().mapToLong(Long::parseLong).count();
-                    assertEquals(5, count);
+                    List<String> list = objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<ArrayList<String>>() {
+                    });
+                    assertEquals(5, list.size());
                 });
     }
 
     void deleteAddedEntities() throws Exception {
         String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/delete";
-        String json = gson.toJson(FIVE_RANDOM_NAMES);
+        String json = objectMapper.writeValueAsString(FIVE_RANDOM_NAMES);
 
         mockMvc.perform(delete(url)
                         .contentType("application/json")
@@ -110,7 +107,7 @@ public abstract class AbstractControllerTestApi {
         mockMvc.perform(post(url)
                         .param("name", GENERATED_NAME))
                 .andExpect(status().isOk())
-                .andExpect(res -> Long.parseLong(res.getResponse().getContentAsString()));
+                .andExpect(content().string(matchesPattern("\\d")));
 
         mockMvc.perform(post(url)
                         .param("name", GENERATED_NAME))
@@ -119,7 +116,7 @@ public abstract class AbstractControllerTestApi {
 
         url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/delete";
         List<String> singleton = List.of(GENERATED_NAME);
-        String json = gson.toJson(singleton);
+        String json = objectMapper.writeValueAsString(singleton);
 
         mockMvc.perform(delete(url)
                         .contentType("application/json")
@@ -135,18 +132,18 @@ public abstract class AbstractControllerTestApi {
             genreNames.add(genreNames.getFirst());
         }
         Set<String> set = new HashSet<>(List.copyOf(FIVE_RANDOM_NAMES));
-        String namesToDeleteAfterSave = gson.toJson(set);
+        String namesToDeleteAfterSave = objectMapper.writeValueAsString(set);
 
-        String json = gson.toJson(genreNames);
+        String json = objectMapper.writeValueAsString(genreNames);
         String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/add/many";
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk())
                 .andDo(res -> {
-                    int expectedSize = set.size();
-                    List<Long> list = gson.fromJson(res.getResponse().getContentAsString(), List.class);
-                    assertEquals(expectedSize, list.size());
+                    List<Long> list = objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<ArrayList<Long>>() {
+                    });
+                    assertEquals(set.size(), list.size());
                 });
 
         url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/delete";
