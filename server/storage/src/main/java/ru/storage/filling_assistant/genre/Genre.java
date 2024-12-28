@@ -12,8 +12,8 @@ import ru.storage.filling_assistant.common.Nameable;
 @NoArgsConstructor
 public class Genre implements Nameable {
     @Id
-    private Long id;
-    @Indexed(unique=true)
+    private String id;
+    @Indexed(unique = true)
     private String name;
 
     public Genre(String name) {

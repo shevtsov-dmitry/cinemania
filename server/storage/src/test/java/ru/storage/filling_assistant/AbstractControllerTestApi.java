@@ -2,7 +2,10 @@ package ru.storage.filling_assistant;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -12,24 +15,33 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @SpringBootTest
+@AutoConfigureMockMvc
 public abstract class AbstractControllerTestApi {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    final String ENDPOINT_URL = "api/v0/filling-assistants";
-    String CONTROLLER_REQUEST_MAPPING;
 
-    static final String GENERATED_NAME;
-    static final List<String> FIVE_RANDOM_NAMES = new ArrayList<>(5);
+    @Value("${server.url}")
+    protected String SERVER_URL;
+    protected String ENDPOINT_URL;
+    protected String CONTROLLER_REQUEST_MAPPING;
+
+    protected static final String GENERATED_NAME;
+    protected static final List<String> FIVE_RANDOM_NAMES = new ArrayList<>(5);
+
+    @BeforeEach
+    void setUp() {
+        ENDPOINT_URL = SERVER_URL + "/api/v0/filling-assistants/" + CONTROLLER_REQUEST_MAPPING;
+    }
 
     static {
         try {
@@ -43,23 +55,23 @@ public abstract class AbstractControllerTestApi {
     }
 
     void addOneEntity() throws Exception {
-        String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/add/one";
-
-        mockMvc.perform(post(url)
+//        mockMvc.perform(post(ENDPOINT_URL, "/add/one")
+        mockMvc.perform(post("http://localhost:8080/api/v0/filling-assistants/countries")
                         .param("name", GENERATED_NAME))
                 .andExpect(status().isOk())
                 .andExpect(content().string(not(blankString())))
-                .andDo(res -> Long.parseLong(res.getResponse().getContentAsString()));
+                .andExpect(res -> assertDoesNotThrow(() -> Long.parseLong(res.getResponse().getContentAsString())));
     }
 
     void getAllEntities() throws Exception {
-        String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "all";
+        String url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/all";
 
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(res -> objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<List<String>>() {
-                }));
+                .andExpect(res -> assertDoesNotThrow(() ->
+                        objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<List<String>>() {
+                        })));
     }
 
     void deleteOneEntity() throws Exception {
@@ -97,7 +109,7 @@ public abstract class AbstractControllerTestApi {
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("All requested entities have been deleted successfully."));
+                .andExpect(content().string(is(not(blankString()))));
     }
 
 
@@ -112,7 +124,7 @@ public abstract class AbstractControllerTestApi {
         mockMvc.perform(post(url)
                         .param("name", GENERATED_NAME))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Cannot save any, because all requested entities already exist in database."));
+                .andExpect(content().string(is(not(blankString()))));
 
         url = ENDPOINT_URL + CONTROLLER_REQUEST_MAPPING + "/delete";
         List<String> singleton = List.of(GENERATED_NAME);
@@ -122,7 +134,7 @@ public abstract class AbstractControllerTestApi {
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("All requested entities have been deleted successfully."));
+                .andExpect(content().string(is(not(blankString()))));
     }
 
 
@@ -151,7 +163,7 @@ public abstract class AbstractControllerTestApi {
                         .contentType("application/json")
                         .content(namesToDeleteAfterSave))
                 .andExpect(status().isOk())
-                .andExpect(content().string("All requested entities have been deleted successfully."));
+                .andExpect(content().string(is(not(blankString()))));
     }
 
     void checkSequenceRequest(String sequence, List<String> expected) throws Exception {

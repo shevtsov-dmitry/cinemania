@@ -21,12 +21,12 @@ public class GenreController extends BaseController<Genre> {
         this.service = service;
     }
 
-    @PostMapping("/add/one")
+    @PostMapping
     public ResponseEntity<String> addNewGenre(@RequestParam String name) {
         return super.tryToSaveOneEntity(new Genre(name));
     }
 
-    @PostMapping("/add/many")
+    @PostMapping("multiple")
     public ResponseEntity<List<Long>> saveNewGenres(@RequestBody List<String> genreNames) {
         List<Genre> genres = new ArrayList<>(genreNames.size());
         genreNames.forEach(name -> genres.add(new Genre(name)));
@@ -42,7 +42,7 @@ public class GenreController extends BaseController<Genre> {
         );
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<String> deleteRequestedGenres(@RequestBody List<String> genreNames) {
         return service.deleteGenres(genreNames);
     }

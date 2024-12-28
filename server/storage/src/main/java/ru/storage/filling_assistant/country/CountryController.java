@@ -21,12 +21,12 @@ public class CountryController extends BaseController<Country> {
         this.service = service;
     }
 
-    @PostMapping("/add/one")
-    public ResponseEntity<String> addNewCountry(@RequestParam String name) {
+    @PostMapping
+    public ResponseEntity<Void> addNewCountry(@RequestParam String name) {
         return super.tryToSaveOneEntity(new Country(name));
     }
 
-    @PostMapping("/add/many")
+    @PostMapping("multiple")
     public ResponseEntity<List<Long>> addNewCountries(@RequestBody List<String> countryNames) {
         List<Country> countries = new ArrayList<>(countryNames.size());
         countryNames.forEach(name -> countries.add(new Country(name)));
@@ -41,7 +41,7 @@ public class CountryController extends BaseController<Country> {
                         .toList());
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<String> deleteRequestedCountries(@RequestBody List<String> countryNames) {
         return service.deleteCountries(countryNames);
     }

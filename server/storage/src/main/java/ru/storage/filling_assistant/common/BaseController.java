@@ -2,9 +2,7 @@ package ru.storage.filling_assistant.common;
 
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class BaseController<T extends Nameable> {
 
@@ -19,32 +17,20 @@ public abstract class BaseController<T extends Nameable> {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
-            return ResponseEntity.ok(service.save(entity).getId().toString());
-        } catch (Exception e) {
-            return attemptToRemoveDuplicatesThenSave(new ArrayList<>(List.of(entity)));
-        }
+        return ResponseEntity.ok(service.save(entity).getId());
     }
 
-    private ResponseEntity<String> attemptToRemoveDuplicatesThenSave(List<T> singletonEntityList) {
-        try {
-            return ResponseEntity.badRequest().body(service.saveWithoutDuplicates(singletonEntityList).getFirst().getId().toString());
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body("Cannot save any, because all requested entities already exist in database.");
-        }
-    }
 
-    public ResponseEntity<List<Long>> tryToSaveListOfEntities(List<T> entities) {
+    public ResponseEntity<List<String>> tryToSaveListOfEntities(List<T> entities) {
         entities.removeIf(element -> element.getName().isBlank());
         try {
             return ResponseEntity.ok(service.saveNewEntities(entities).stream()
                     .map(Nameable::getId)
-                    .collect(Collectors.toList()));
+                    .toList());
         } catch (Exception e) {
-
             return ResponseEntity.ok(service.saveWithoutDuplicates(entities).stream()
                     .map(Nameable::getId)
-                    .collect(Collectors.toList()));
+                    .toList());
         }
     }
 }
