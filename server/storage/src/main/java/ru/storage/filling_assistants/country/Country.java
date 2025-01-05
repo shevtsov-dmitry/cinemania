@@ -1,23 +1,17 @@
-package ru.storage.filling_assistant.genre;
+package ru.storage.filling_assistants.country;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import ru.storage.filling_assistant.common.Nameable;
 
-@Document
 @Data
 @NoArgsConstructor
-public class Genre implements Nameable {
+@Document
+public class Country {
     @Id
     private String id;
     @Indexed(unique = true)
     private String name;
-
-    public Genre(String name) {
-        this.name = name;
-    }
-
 }
