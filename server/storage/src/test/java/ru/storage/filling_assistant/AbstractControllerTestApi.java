@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.storage.filling_assistant.genre.COMMON;
+import ru.storage.filling_assistant.genre.CustomTestUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -45,9 +45,9 @@ public abstract class AbstractControllerTestApi {
 
     static {
         try {
-            GENERATED_NAME = COMMON.generateRandomHash().substring(0, 8);
+            GENERATED_NAME = CustomTestUtils.generateRandomHash().substring(0, 8);
             for (int i = 0; i < 5; i++) {
-                FIVE_RANDOM_NAMES.add(COMMON.generateRandomHash().substring(0, 10));
+                FIVE_RANDOM_NAMES.add(CustomTestUtils.generateRandomHash().substring(0, 10));
             }
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

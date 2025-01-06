@@ -1,11 +1,30 @@
 package ru.storage.filling_assistants.base;
 
-public class BaseService<T> {
+import org.springframework.stereotype.Component;
 
-    public void save(T t) {
+import java.util.List;
 
+@Component
+public class BaseService<T extends Nameable> {
+
+    private final BaseRepo<T, String> baseRepo;
+
+    public BaseService(BaseRepo<T, String> baseRepo) {
+        this.baseRepo = baseRepo;
     }
 
-    public T getByName(String name) {
+    void save(T entity) {
+        baseRepo.save(entity);
     }
+
+    List<String> getAll() {
+        return baseRepo.findAll().stream()
+                .map(T::getName)
+                .toList();
+    }
+
+    void deleteByName(String name) {
+        baseRepo.deleteByName(name);
+    }
+
 }
