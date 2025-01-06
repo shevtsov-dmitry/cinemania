@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CountryControllerTest extends AbstractControllerTestApi {
+public class CountryControllerTest extends AbstractControllerTest {
 
     {
         super.CONTROLLER_REQUEST_MAPPING = "/countries";
@@ -18,43 +18,25 @@ public class CountryControllerTest extends AbstractControllerTestApi {
 
     @Test
     @Order(1)
-    void addOneEntity() throws Exception {
-        super.addOneEntity();
+    void saveSingle() throws Exception {
+        super.saveSingle();
     }
 
     @Test
     @Order(2)
-    void getAllEntities() throws Exception {
-        super.getAllEntities();
+    void saveMultiple() throws Exception {
+        super.saveMultiple();
     }
 
     @Test
     @Order(3)
-    void deleteOneEntity() throws Exception {
-        super.deleteOneEntity();
+    void getAll() throws Exception {
+        super.getAll();
     }
 
     @Test
     @Order(4)
-    void addMultipleEntities() throws Exception {
-        super.addMultipleEntities();
+    void deleteAllSaved() throws Exception {
+        super.deleteAllSaved();
     }
-
-    @Test
-    @Order(5)
-    void deleteAddedEntities() throws Exception {
-        super.deleteAddedEntities();
-    }
-
-    @Test
-    void addOneEntityMoreThanOnce_thenDelete() throws Exception {
-        super.addOneEntityMoreThanOnce_thenDelete();
-    }
-
-    @Test
-    void addEntitiesWithDups_thenCleanup() throws Exception {
-        super.addEntitiesWithDups_thenCleanup();
-    }
-
-
 }
