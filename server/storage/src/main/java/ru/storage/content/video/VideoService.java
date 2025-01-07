@@ -113,6 +113,7 @@ public class VideoService {
 
          } catch (IOException | RuntimeException e) {
              String errmes = "Error processing video.";
+             e.printStackTrace();
              LOG.warn("{}. {}", errmes, e.getMessage());
              throw S3Exception.builder().message(errmes).build();
          }
