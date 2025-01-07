@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v0/posters")
+@RequestMapping("api/v0/posters")
 public class PosterController {
 
     private final PosterService service;
@@ -54,7 +54,7 @@ public class PosterController {
      *
      * <p>This method supports both single and multiple content metadata IDs, separated by commas.
      *
-     * @param posterIds a comma-separated string of content metadata IDs
+     * @param contentMetadataIds a comma-separated string of content metadata IDs
      * @return Response
      * <ul>
      *     <li>200 (OK). A list of byte arrays representing the images if successful.
@@ -63,10 +63,10 @@ public class PosterController {
      *     <li>500 (INTERNAL_SERVER_ERROR). An empty list with an error message header if an error occurs </li>
      * </ul>
      */
-    @GetMapping("{posterIds}")
-    public ResponseEntity<List<byte[]>> getImagesByMetadataId(@PathVariable String posterIds) {
+    @GetMapping("{contentMetadataIds}")
+    public ResponseEntity<List<byte[]>> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
         try {
-            return ResponseEntity.ok(service.getImagesMatchingMetadataIds(posterIds));
+            return ResponseEntity.ok(service.getImagesMatchingMetadataIds(contentMetadataIds));
         } catch (ParseRequestIdException e) {
             return new ResponseEntity<>(Collections.emptyList(),
                     new EncodedHttpHeaders(e.getMessage()),
