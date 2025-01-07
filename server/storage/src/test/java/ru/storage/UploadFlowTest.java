@@ -25,10 +25,10 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Tests behavior:
@@ -102,12 +102,13 @@ class UploadFlowTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(result -> {
-                        List<ContentDetails> recentMetadataList = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<ContentDetails>>() {  });
-                        var saved = recentMetadataList.getFirst();
-                        assertFalse(saved.getTitle().isBlank());
-                        assertNotNull(saved.getPosterMetadata());
-                        assertNotNull(saved.getVideoMetadata());
-                        savedContentDetails = saved;
+                    List<ContentDetails> recentMetadataList = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<ContentDetails>>() {
+                    });
+                    var saved = recentMetadataList.getFirst();
+                    assertFalse(saved.getTitle().isBlank());
+                    assertNotNull(saved.getPosterMetadata());
+                    assertNotNull(saved.getVideoMetadata());
+                    savedContentDetails = saved;
                 });
     }
 
@@ -125,29 +126,45 @@ class UploadFlowTest {
         assertNotNull(savedContentDetails.getPosterMetadata());
 
         mockMvc.perform(multipart(endpointUrl + "/api/v0/posters/upload")
-                .file(imageMultipartFile)
-                .param("id", savedContentDetails.getPosterMetadata().getId())
-                .contentType(MediaType.MULTIPART_FORM_DATA))
-        .andExpect(status().isCreated());
+                        .file(imageMultipartFile)
+                        .param("id", posterId)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isCreated());
     }
 
     @Test
     @Order(4)
     void getSavedPoster() throws Exception {
         final var posterId = savedContentDetails.getPosterMetadata().getId();
-            mockMvc.perform(get(endpointUrl + "/api/v0/posters/" + posterId))
+        mockMvc.perform(get(endpointUrl + "/api/v0/posters/" + posterId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> {
                     List<String> postersList = objectMapper.readValue(result.getResponse().getContentAsString(), List.class);
+                    assertThat(postersList).isNotEmpty();
                     byte[] receivedImage = Base64.getDecoder().decode(postersList.getFirst());
-                    System.out.printf("%s and %s LOVELY", receivedImage.length, IMAGE_FILE.length());
                     assertTrue(receivedImage.length > 0);
                 });
     }
 
     // ------------- VIDEO -------------
 
+    @Test
+    @Order(11)
+    void saveVideo() throws Exception {
+        final var videoId = savedContentDetails.getVideoMetadata().getId();
+        final var videoMultipartFile =
+                new MockMultipartFile("video",
+                        videoId,
+                        "video/mp4",
+                        Files.readAllBytes(VIDEO_FILE.toPath()));
+        assertNotNull(savedContentDetails.getPosterMetadata());
+
+        mockMvc.perform(multipart(endpointUrl + "/api/v0/videos/upload")
+                        .file(videoMultipartFile)
+                        .param("id", videoId))
+                .andExpect(status().isCreated());
+    }
 
     // ------------- CLEAN UP -------------
     @Test
@@ -163,6 +180,14 @@ class UploadFlowTest {
     void deletePoster() throws Exception {
         assertFalse(savedContentDetails.getId().isBlank());
         mockMvc.perform(delete(endpointUrl + "/api/v0/posters/" + savedContentDetails.getPosterMetadata().getId()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @Order(102)
+    void deleteVideo() throws Exception {
+        assertFalse(savedContentDetails.getId().isBlank());
+        mockMvc.perform(delete(endpointUrl + "/api/v0/videos/" + savedContentDetails.getVideoMetadata().getId()))
                 .andExpect(status().isNoContent());
     }
 }
