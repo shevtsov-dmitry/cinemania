@@ -1,9 +1,9 @@
 package ru.storage.filling_assistants.country;
 
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import ru.storage.filling_assistants.base.BaseRepo;
 
 @Repository
-public interface CountryRepo extends BaseRepo<Country, String> {
+public interface CountryRepo extends MongoRepository<Country, String> {
     void deleteByName(String name);
 }

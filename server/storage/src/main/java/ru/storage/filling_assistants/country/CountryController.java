@@ -1,9 +1,11 @@
 package ru.storage.filling_assistants.country;
 
+import com.mongodb.MongoException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.storage.filling_assistants.base.BaseController;
+import ru.storage.utility.EncodedHttpHeaders;
 
 import java.util.List;
 
@@ -11,25 +13,45 @@ import java.util.List;
 @RequestMapping("api/v0/filling-assistants/countries")
 public class CountryController {
 
-    private final BaseController<Country> baseController;
+    private final CountryService countryService;
 
-    public CountryController(BaseController<Country> baseController) {
-        this.baseController = baseController;
+    public CountryController(CountryService countryService) {
+        this.countryService = countryService;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> save(@RequestBody Country country) {
-        return baseController.save(country);
+        try {
+            countryService.save(country);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (MongoException e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "multiple", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> save(@RequestBody List<Country> countries) {
+        try {
+            countryService.save(countries);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (MongoException e) {
+            return new ResponseEntity<>(null,
+                    new EncodedHttpHeaders(e.getMessage()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> getAllNames() {
-        return baseController.getAll();
+        return new ResponseEntity<>(countryService.getAll(), HttpStatus.OK);
     }
 
     @DeleteMapping("{name}")
     public ResponseEntity<Void> deleteByName(@PathVariable String name) {
-        return baseController.deleteByName(name);
+        countryService.deleteByName(name);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

@@ -1,8 +1,10 @@
 package ru.storage.filling_assistants.genre;
 
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import ru.storage.filling_assistants.base.BaseRepo;
 
 @Repository
-public interface GenreRepo extends BaseRepo<Genre, String> {
+public interface GenreRepo extends MongoRepository<Genre, String> {
+
+    void deleteByName(String name);
 }

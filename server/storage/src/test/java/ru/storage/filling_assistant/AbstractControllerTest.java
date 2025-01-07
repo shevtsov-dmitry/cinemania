@@ -38,6 +38,9 @@ public abstract class AbstractControllerTest {
     protected static final String GENERATED_NAME;
     protected static final List<String> MULTIPLE_RANDOM_NAMES = new ArrayList<>(5);
 
+    private record ExpectedJson(String name) {
+    }
+
     @BeforeEach
     void setUp() {
         ENDPOINT_URL = SERVER_URL + "/api/v0/filling-assistants" + CONTROLLER_REQUEST_MAPPING;
@@ -57,15 +60,18 @@ public abstract class AbstractControllerTest {
     void saveSingle() throws Exception {
         mockMvc.perform(post(ENDPOINT_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(GENERATED_NAME)))
+                        .content(objectMapper.writeValueAsString(new ExpectedJson(GENERATED_NAME))))
                 .andExpect(status().isCreated());
     }
 
 
     void saveMultiple() throws Exception {
-        mockMvc.perform(post(ENDPOINT_URL)
+        List<ExpectedJson> multiple = MULTIPLE_RANDOM_NAMES.stream()
+                .map(ExpectedJson::new)
+                .toList();
+        mockMvc.perform(post(ENDPOINT_URL + "/multiple")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(MULTIPLE_RANDOM_NAMES)))
+                        .content(objectMapper.writeValueAsString(multiple)))
                 .andExpect(status().isCreated());
     }
 
@@ -85,7 +91,7 @@ public abstract class AbstractControllerTest {
     void deleteAllSaved() throws Exception {
         MULTIPLE_RANDOM_NAMES.add(GENERATED_NAME);
         for (var name : MULTIPLE_RANDOM_NAMES) {
-            mockMvc.perform(delete(ENDPOINT_URL, name))
+            mockMvc.perform(delete(ENDPOINT_URL + "/" + name))
                     .andExpect(status().isNoContent());
         }
     }

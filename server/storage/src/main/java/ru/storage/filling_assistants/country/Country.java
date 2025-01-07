@@ -5,19 +5,14 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import ru.storage.filling_assistants.base.Nameable;
 
 @Data
 @NoArgsConstructor
 @Document
-public class Country implements Nameable {
+public class Country {
     @Id
     private String id;
     @Indexed(unique = true)
     private String name;
 
-    @Override
-    public String getName() {
-        return name;
-    }
 }
