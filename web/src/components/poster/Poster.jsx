@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 
 import ContentMetadata from "@/src/types/ContentMetadata";
 import PosterType from "./PosterType";
+import {View} from "react-native";
 
 /**
  *
@@ -36,15 +37,17 @@ export default function Poster({
     );
 
     return (
-        <div
+        <View
             className={
-                `${posterType.PREVIEW && "h-[200px] w-[150px]"} ` +
-                `${posterType.DEFAULT && "h-96 w-64"} ` +
-                ` z-10 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer`
+               `${posterType === PosterType.PREVIEW && "h-[200px] w-[150px]"} ` +
+                 `${posterType === PosterType.DEFAULT && "h-96 w-64"} ` +
+               ` z-10 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer `
             }
-            style={{backgroundImage: `url(${`data:image/jpeg;base64,${base64}`})`}}
-            onMouseEnter={() => setIsPosterHovered(true)}
-            onMouseLeave={() => setIsPosterHovered(false)}
+            style={{
+                backgroundImage: `url(data:image/jpeg;base64,${base64})`,
+            }}
+            /*    onMouseEnter={() => setIsPosterHovered(true)}
+                onMouseLeave={() => setIsPosterHovered(false)}*/
         >
             {/*<div className="postersInfo">*/}
             {/*    {isPosterHovered && (*/}
@@ -69,6 +72,6 @@ export default function Poster({
             {/*        </div>*/}
             {/*    )}*/}
             {/*</div>*/}
-        </div>
+        </View>
     );
 }
