@@ -11,7 +11,7 @@ export default function App() {
   return (
     <div className="min-w-100 h-dvh min-h-20 bg-neutral-800">
       <Header />
-      <FormAddFilm />
+      {/* <FormAddFilm /> */}
       <Home />
       {/* <VideoPlayer /> */}
       {/*TODO use zustand instead*/}

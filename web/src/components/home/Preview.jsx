@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native-web";
-
 import { PosterClass } from "@/src/components/poster/Poster";
 import Poster from "@/src/components/poster/Poster";
 import Constants from "@/src/constants/Constants";
@@ -15,7 +14,7 @@ export default function Preview() {
   const POSTERS_AMOUNT = 20;
 
   const [postersLoadingMessage, setPostersLoadingMessage] = useState(
-    "Постеры загружаются..."
+    "Постеры загружаются...",
   );
   const [metadataList, setMetadataList] = useState([]);
   const [postersBase64List, setPostersBase64List] = useState([]);
@@ -28,20 +27,20 @@ export default function Preview() {
     fetchRecentlyAdded();
 
     async function fetchRecentlyAdded() {
-      let res;
-      try {
-        const url = `${STORAGE_URL}/api/v0/metadata/recent/${POSTERS_AMOUNT}`;
-        res = await fetch(url);
-        const fetchedMetadata = await res.json();
-        setMetadataList(fetchedMetadata);
-      } catch (e) {
-        const errmes = decodeURI(res.headers.get("Message")).replaceAll(
-          "+",
-          " "
-        );
-        console.error(errmes, e.message());
-        setPostersLoadingMessage(errmes);
-      }
+      fetch(`${STORAGE_URL}/api/v0/metadata/recent/${POSTERS_AMOUNT}`)
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            const errmes = decodeURI(res.headers.get("Message")).replaceAll(
+              "+",
+              " ",
+            );
+            console.error(errmes);
+            setPostersLoadingMessage(errmes);
+          }
+        })
+        .then((fetchedMetadata) => setMetadataList(fetchedMetadata));
     }
   }, []);
 
@@ -49,22 +48,27 @@ export default function Preview() {
     fetchPosters();
 
     async function fetchPosters() {
+      if (metadataList.length === 0) return;
       const joinedIds = metadataList
         .map((item) => item.posterMetadata.id)
         .join(",");
-      let res;
-      try {
-        res = await fetch(`${STORAGE_URL}/api/v0/posters/${joinedIds}`);
-        const fetchedBase64Array = await res.json();
-        setPostersBase64List(fetchedBase64Array);
-      } catch (e) {
-        const errmes = decodeURI(res.headers.get("Message")).replaceAll(
-          "+",
-          " "
-        );
-        console.error(errmes, e.message());
-        setPostersLoadingMessage(errmes);
-      }
+      fetch(`${STORAGE_URL}/api/v0/posters/${joinedIds}`)
+        .then((res) => {
+          if (res.ok) {
+            // res.json().then((data) => {
+            //   console.log("love");
+            // });
+            return res.json();
+          } else {
+            const errmes = decodeURI(res.headers.get("Message")).replaceAll(
+              "+",
+              " ",
+            );
+            console.error(errmes);
+            setPostersLoadingMessage(errmes);
+          }
+        })
+        .then((fetchedBase64Array) => setPostersBase64List(fetchedBase64Array));
     }
   }, [metadataList]);
 
@@ -100,7 +104,12 @@ export default function Preview() {
                 base64={postersBase64List[index]}
               />
             )}
-            contentContainerStyle={{ flexDirection: 'row', gap: 16, padding: 12, backgroundColor: 'white' }}
+            contentContainerStyle={{
+              flexDirection: "row",
+              gap: 16,
+              padding: 12,
+              backgroundColor: "white",
+            }}
           />
         ) : (
           <Text className={"text-1xl font-bold text-white opacity-20"}>
