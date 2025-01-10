@@ -14,9 +14,6 @@ export default function VideoPlayer() {
 
   return (
     <div>
-      <h1 className="text-white text-xl">
-        NO ONE TREAT TO READ MY LIES NO ONE BUT YOU WISH YOU WEREN'T TRUE
-      </h1>
       <video controls width="640" height="360" muted autoPlay>
         <source src={videoSrc} type="video/mp4" />
         Your browser does not support the video tag. <br />

@@ -1,7 +1,4 @@
-import { View, Text } from '@/src/components/Themed'
-
-import EditScreenInfo from '@/src/components/EditScreenInfo'
-
+import { View, Text } from 'react-native'
 import App from '@/src/components/App'
 
 //    <View className="flex flex-1 items-center justify-center">

@@ -1,7 +1,4 @@
-const PosterType = {
+export default {
   PREVIEW: "PREVIEW",
   DEFAULT: "DEFAULT",
 };
-
-export default PosterType
-

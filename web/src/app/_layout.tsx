@@ -9,10 +9,12 @@ import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 
-import { useColorScheme } from '@/src/components/useColorScheme'
+import { useColorScheme } from 'react-native'
 
 // Import your global CSS file
 import '../../global.css'
+import { View } from 'react-native'
+import App from '../components/App'
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -48,23 +50,10 @@ export default function RootLayout() {
         return null
     }
 
-    return <RootLayoutNav />
-}
-
-function RootLayoutNav() {
-    const colorScheme = useColorScheme()
-
     return (
-        <ThemeProvider
-            value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-        >
-            <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                    name="modal"
-                    options={{ presentation: 'modal' }}
-                />
-            </Stack>
-        </ThemeProvider>
+        <View>
+            <App />
+        </View>
     )
+    // return <RootLayoutNav />
 }
