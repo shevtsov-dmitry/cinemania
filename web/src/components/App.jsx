@@ -5,8 +5,8 @@ import Home from "@/src/components/home/Home";
 import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
 import VideoPlayer from "@/src/components/video-player/VideoPlayer";
 import PosterType from "./poster/PosterType";
-
-let error = false;
+import { useEffect, useState } from "react";
+import Constants from "../constants/Constants";
 
 export default function App() {
   return (
@@ -27,8 +27,9 @@ export default function App() {
           <Text className="mb-4 text-center text-4xl font-bold text-white">
             Сообщение с сервера
           </Text>
-          {error ? (
-            <Text className="text-xl text-red-500">{error}</Text>
+          {false ? (
+            // TODO restore fetch from HTTP/3 server
+            <Text className="text-xl text-red-500">Ошибка при загрузке</Text>
           ) : (
             <Text className="text-center text-2xl leading-relaxed text-white">
               {"Загрузка..."}

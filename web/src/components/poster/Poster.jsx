@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import ContentMetadata from "@/src/types/ContentMetadata";
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import PosterType from "./PosterType";
 
 /**
@@ -37,41 +37,41 @@ export default function Poster({
   );
 
   return (
-    <View
+    <Image
       className={
         `${posterType === PosterType.PREVIEW && "h-[200px] w-[150px]"} ` +
         `${posterType === PosterType.DEFAULT && "h-96 w-64"} ` +
         ` z-10 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer `
       }
-      style={{
-        backgroundImage: `url(data:image/jpeg;base64,${base64})`,
+      source={{
+        uri: `data:image/jpeg;base64,${base64}`,
       }}
       /*    onMouseEnter={() => setIsPosterHovered(true)}
                 onMouseLeave={() => setIsPosterHovered(false)}*/
-    >
-      {/*<div className="postersInfo">*/}
-      {/*    {isPosterHovered && (*/}
-      {/*        <div>*/}
-      {/*            <ContentInformation/>*/}
-      {/*            <div className="flex w-64 justify-center">*/}
-      {/*                /!* <Link *!/*/}
-      {/*                /!*     className="absolute bottom-0 z-10 mb-10" *!/*/}
-      {/*                /!*     to={`/watch/${metadata.videoId}`} *!/*/}
-      {/*                /!* > *!/*/}
-      {/*                <button*/}
-      {/*                    className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"*/}
-      {/*                    // onClick={() => {};*/}
-      {/*                    //     // TODO rewrite to Zustand*/}
-      {/*                    //     // dispatch(setVideoId(metadata.videoId))*/}
-      {/*                    // }*/}
-      {/*                >*/}
-      {/*                    Смотреть*/}
-      {/*                </button>*/}
-      {/*                /!* </Link> *!/*/}
-      {/*            </div>*/}
-      {/*        </div>*/}
-      {/*    )}*/}
-      {/*</div>*/}
-    </View>
+    />
+    //   {/*<div className="postersInfo">*/}
+    //   {/*    {isPosterHovered && (*/}
+    //   {/*        <div>*/}
+    //   {/*            <ContentInformation/>*/}
+    //   {/*            <div className="flex w-64 justify-center">*/}
+    //   {/*                /!* <Link *!/*/}
+    //   {/*                /!*     className="absolute bottom-0 z-10 mb-10" *!/*/}
+    //   {/*                /!*     to={`/watch/${metadata.videoId}`} *!/*/}
+    //   {/*                /!* > *!/*/}
+    //   {/*                <button*/}
+    //   {/*                    className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"*/}
+    //   {/*                    // onClick={() => {};*/}
+    //   {/*                    //     // TODO rewrite to Zustand*/}
+    //   {/*                    //     // dispatch(setVideoId(metadata.videoId))*/}
+    //   {/*                    // }*/}
+    //   {/*                >*/}
+    //   {/*                    Смотреть*/}
+    //   {/*                </button>*/}
+    //   {/*                /!* </Link> *!/*/}
+    //   {/*            </div>*/}
+    //   {/*        </div>*/}
+    //   {/*    )}*/}
+    //   {/*</div>*/}
+    // {/* </Image> */}
   );
 }

@@ -1,7 +1,8 @@
 import Preview from "@/src/components/home/Preview";
 import DefaultCompilation from "@/src/components/compilations/DefaultCompilation";
-import { useState } from "react";
-import { Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Text, View, Image } from "react-native";
+import Constants from "@/src/constants/Constants";
 
 /**
  *
