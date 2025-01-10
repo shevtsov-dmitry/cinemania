@@ -1,4 +1,6 @@
 import { useRef } from "react";
+import { SectionList, Text, View } from "react-native";
+import Poster from "@/src/components/poster/Poster";
 
 /**
  * Film posters compilation with related metadata.
@@ -15,24 +17,29 @@ export default function DefaultCompilation({ metadataList }) {
   //     }
   // }, [])
 
+  // <SectionList
+  //   className="flex w-fit gap-4 overflow-scroll bg-fuchsia-500"
+  //   horizontal
+  //   data={metadataList}
+  //   renderItem={({ metadata, idx }) => (
+  //     <Poster key={idx} metadata={metadata} />
+  //   )}
+  // />
   return (
-    <div className="flex flex-col justify-center">
-      <div
+    <View className="flex flex-col justify-center">
+      <View
         ref={scrollableDivRef}
         className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
       >
-        {metadataList.length === 0 ? (
-          <p>Постеры загружаются</p>
+        {metadataList.length !== 0 ? (
+          // TODO insert here Section List for posters display
+          <View />
         ) : (
-          <div className="flex w-fit gap-4 overflow-scroll bg-fuchsia-500">
-            {metadataList.map((metadata, idx) => (
-              <Poster key={idx} metadata={metadata} />
-            ))}
-          </div>
+          <Text>Постеры загружаются...</Text>
         )}
-      </div>
-      {/* TODO use scrollable div for mobile compatible devices */}
+      </View>
+      {/* TODO use scrollable View for mobile compatible devices */}
       {/* <SideArrows scrollableDivRef={scrollableDivRef} /> */}
-    </div>
+    </View>
   );
 }

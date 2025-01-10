@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
 import useStore from "@/src/state/useStore";
+import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
 
 // TODO use expo router instead
 // import { Link, Route, Routes } from 'react-router-dom';
@@ -10,8 +11,6 @@ import useStore from "@/src/state/useStore";
  * @returns {JSX.Element}
  */
 export default function Header() {
-  const topics = ["Фильмы", "Сериалы", "Мультфильмы", "Аниме"];
-
   const generalTopicsRef = useRef();
   const newShowsAndCollectionsRef = useRef();
   const loginImageRef = useRef();
@@ -24,37 +23,40 @@ export default function Header() {
   const isFormAddFilmVisible = useStore((state) => state.isFormAddFilmVisible);
   const toggleFormAddFilm = useStore((state) => state.showFormAddFilm);
 
-  useEffect(() => {
-    showAndHideBurgerMenu();
-  }, []);
+  const topics = ["Фильмы", "Сериалы", "Мультфильмы", "Аниме"];
 
-  function showAndHideBurgerMenu() {
-    burgerImageRef.current.addEventListener("click", () => {
-      burgerImageRef.current.style.display = "none";
-      closeImageRef.current.style.display = "block";
-      setIsBurgerActive(true);
-    });
-    closeImageRef.current.addEventListener("click", () => {
-      burgerImageRef.current.style.display = "block";
-      closeImageRef.current.style.display = "none";
-      setIsBurgerActive(false);
-    });
-  }
+  /*   useEffect(() => {
+                                                  showAndHideBurgerMenu();
+                                                }, []) */
+  // function showAndHideBurgerMenu() {
+  //   burgerImageRef.current.addEventListener("click", () => {
+  //     burgerImageRef.current.style.display = "none";
+  //     closeImageRef.current.style.display = "block";
+  //     setIsBurgerActive(true);
+  //   });
+  //   closeImageRef.current.addEventListener("click", () => {
+  //     burgerImageRef.current.style.display = "block";
+  //     closeImageRef.current.style.display = "none";
+  //     setIsBurgerActive(false);
+  //   });
+  // }
 
+  // TODO restore commented parts
   const BurgerPanel = () => (
     <>
-      <main
-        id="burger-popup"
-        className="fixed z-20 h-lvh w-lvw bg-neutral-800 transition-all"
-      >
-        <div className="ml-5 mt-2 text-[1.25em] uppercase leading-9 text-white">
-          <ul className="">{generalTopicsLiContent()}</ul>
-          <div>{newsAndCollectionContent()}</div>
-        </div>
-      </main>
-      <footer className="fixed bottom-2 left-3 z-20 text-sm text-white opacity-75">
-        © 2024 ООО «Bē commerce»
-      </footer>
+      <View className="fixed z-20 h-full w-full bg-gray-800 transition-all duration-300 ease-in-out">
+        <View className="ml-5 mt-2.5">
+          <Text className="text-lg text-white uppercase">
+            {/*{generalTopicsLiContent()}*/}
+          </Text>
+          {/*<View>{newsAndCollectionContent()}</View>*/}
+        </View>
+      </View>
+      <View className="fixed bottom-2.5 left-2.5 z-20">
+        <Text className="text-xs text-white opacity-75">
+          © 2024 ООО «Bē commerce»
+        </Text>
+      </View>
     </>
   );
 
@@ -64,108 +66,87 @@ export default function Header() {
    * @returns {JSX.Element}
    */
   const GeneralTopic = ({ topicName }) =>
-    isBurgerActive ? <li>{topicName + " ▼"}</li> : <li>{topicName}</li>;
+    isBurgerActive ? <Text>{topicName + " ▼"}</Text> : <Text>{topicName}</Text>;
   // signs variants: ▼ᐁ
 
   return (
-    <>
-      <header
-        id="upper-header"
-        className="text-amber-whiteflex ml-[3.5%] mr-[3.5%] flex items-center justify-between text-white"
-      >
-        {/* <Link to="/"> */}
-        <img
-          className="mt-2 w-16 hover:cursor-pointer"
-          id="company-logo"
-          src="assets/images/icons/company_logo.png"
-          alt="company logo"
-        />
-        {/* </Link> */}
-        <ul
+    <View>
+      <View className="flex-row justify-between items-center mx-[3.5%] text-white">
+        <TouchableOpacity>
+          <Image
+            className="mt-2.5 w-16 h-16"
+            source={require("@/images/icons/company_logo.png")}
+            alt="company logo"
+          />
+        </TouchableOpacity>
+        <FlatList
           ref={generalTopicsRef}
-          id="general-topics"
-          className="flex gap-5 max-[1024px]:hidden"
-        >
-          {topics.map((topicName, idx) => (
-            <GeneralTopic key={idx} topicName={topicName} />
-          ))}
-        </ul>
-        <div
-          ref={newShowsAndCollectionsRef}
-          id="new-shows-and-collections"
-          className="flex gap-5 max-[1024px]:hidden"
-        >
-          <div>
-            <p id="new-shows">Новинки</p>
-            <p id="collections">Подборки</p>
-          </div>
-        </div>
-
-        {/* <Link to="/add-new-film"> */}
-        <button
-          className="transition-colors hover:cursor-pointer hover:text-orange-400 hover:underline"
-          onClick={toggleFormAddFilm}
-        >
-          Добавить новый фильм
-        </button>
-        {/* </Link> */}
-
-        <div className="flex w-fit items-center justify-end gap-5">
-          <div id="search" className="flex items-center gap-1 text-2xl">
-            <img
-              ref={searchImageRef}
-              id="search-icon"
-              className={`w-[23px]`}
-              src={"assets/images/icons/search.svg"}
-              alt=""
-            />
-            <span
-              className={"text-base underline opacity-70 max-[1024px]:hidden"}
-            >
-              Искать... {isFormAddFilmVisible ? "yes" : "no"}
-            </span>
-          </div>
-          <div id="login-block" className="flex items-center gap-2">
-            <img
-              ref={loginImageRef}
-              id="login-icon"
-              className={`w-[23px] hover:cursor-pointer`}
-              src={"assets/images/icons/login.svg"}
-              alt="login"
-            />
-            <p className="cursor-pointer select-none text-white max-[1024px]:hidden">
-              Войти
-            </p>
-          </div>
-          <img
+          className="flex-row gap-1.25"
+          horizontal
+          data={topics}
+          renderItem={({ item, idx }) => (
+            <GeneralTopic key={idx} topicName={item} />
+          )}
+        />
+        <View ref={newShowsAndCollectionsRef} className="flex-row gap-1.25">
+          <View>
+            <Text>Новинки</Text>
+            <Text>Подборки</Text>
+          </View>
+        </View>
+        <TouchableOpacity onPress={toggleFormAddFilm}>
+          <Text className="text-orange-500">Добавить новый фильм</Text>
+        </TouchableOpacity>
+        <View className="flex-row gap-1.25"></View>
+        <View className="flex-row items-center gap-0.25">
+          <Image
+            ref={searchImageRef}
+            className="w-5.75 h-5.75"
+            source={require("@/images/icons/search.svg")}
+            alt=""
+          />
+          <Text className="opacity-70">Искать...</Text>
+        </View>
+        <View className="flex-row items-center gap-0.5">
+          <Image
+            ref={loginImageRef}
+            className="w-5.75 h-5.75"
+            source={require("@/images/icons/login.svg")}
+            alt="login"
+          />
+          <Text className="text-white">Войти</Text>
+        </View>
+        <TouchableOpacity onPress={() => setIsBurgerActive(true)}>
+          <Image
             ref={burgerImageRef}
-            className={`hidden w-[23px] scale-125 hover:cursor-pointer max-[1024px]:block`}
-            src={"assets/images/icons/burger.svg"}
+            className="w-5.75 h-5.75"
+            source={require("@/images/icons/burger.svg")}
             alt=""
           />
-          <img
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setIsBurgerActive(false)}>
+          <Image
             ref={closeImageRef}
-            className={`hidden w-[23px] scale-75 hover:cursor-pointer min-[1024px]:hidden`}
-            src={"assets/images/icons/close-sign.svg"}
+            className="w-5.75 h-5.75"
+            source={require("@/images/icons/close-sign.svg")}
             alt=""
           />
-        </div>
-      </header>
+        </TouchableOpacity>
+      </View>
       {isBurgerActive && <BurgerPanel />}
-
-      {/* <Routes> */}
-      {/*     <Route */}
-      {/*         path="/add-new-film" */}
-      {/*         element={ */}
-      {/*             <div className="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center"> */}
-      {/*                 <div className="absolute h-full w-full bg-gray-800 opacity-85 backdrop-blur-md dark:backdrop-blur-lg"></div> */}
-      {/*                 <div className="z-50"> */}
-      {/*                     <FormAddFilm /> */}
-      {/*                 </div> */}
-      {/*             </div> */}
-      {/*         } */}
-      {/*     /> */}
-      {/* </Routes> */}
-    </>
+    </View>
   );
 }
+
+/*     <Route */
+/*         path="/add-new-film" */
+/*         element={ */
+/*             <div className="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center"> */
+/*                 <div className="absolute h-full w-full bg-gray-800 opacity-85 backdrop-blur-md dark:backdrop-blur-lg"></div> */
+/*                 <div className="z-50"> */
+/*                     <FormAddFilm /> */
+/*                 </div> */
+/*             </div> */
+/*         } */
+/*     /> */
+/* </Routes> */

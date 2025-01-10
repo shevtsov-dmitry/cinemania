@@ -11,9 +11,9 @@ let error = false;
 export default function App() {
   return (
     <View className="min-w-100 h-dvh min-h-20 bg-neutral-800">
-      {/* <Header /> */}
+      <Header />
       {/* <FormAddFilm /> */}
-      {/* <Home /> */}
+      <Home />
       {/* <VideoPlayer /> */}
       {/*TODO use zustand instead*/}
       {/*<Routes>*/}

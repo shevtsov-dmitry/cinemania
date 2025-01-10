@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, Text, View } from "react-native-web";
+import { ScrollView, Text, View } from "react-native";
 import { PosterClass } from "@/src/components/poster/Poster";
 import Poster from "@/src/components/poster/Poster";
 import Constants from "@/src/constants/Constants";
@@ -7,19 +7,21 @@ import { ContentMetadata } from "@/src/types/ContentMetadata";
 import PosterType from "@/src/components/poster/PosterType";
 import { parsePathFromExpoGoLink } from "expo-router/build/fork/extractPathFromURL";
 import { FlatList } from "react-native";
+import PreviewCompilation from "@/src/components/compilations/PreviewCompilation";
 
+/**
+ *
+ * @returns {JSX.Element}
+ */
 export default function Preview() {
   const STORAGE_URL = Constants.STORAGE_URL;
   const NON_ASCII_PATTERN = /[^\u0000-\u007F]/;
   const POSTERS_AMOUNT = 20;
 
-  const [postersLoadingMessage, setPostersLoadingMessage] = useState(
-    "Постеры загружаются...",
-  );
+  const [postersLoadingMessage, setPostersLoadingMessage] = useState("");
   const [metadataList, setMetadataList] = useState([]);
   const [postersBase64List, setPostersBase64List] = useState([]);
 
-  const scrollableDivRef = useRef();
   // const videoPlayerState = useSelector((state) => state.videoPlayer);
   // let isPlayerOpened = videoPlayerState.isPlayerOpened; // ?
 
@@ -88,34 +90,12 @@ export default function Preview() {
 
   return (
     <View id="previews-sequence-block" className="flex flex-col justify-center">
-      <View
-        ref={scrollableDivRef}
-        className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
-      >
-        {metadataList.length !== 0 ? (
-          <FlatList
-            data={metadataList}
-            horizontal
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index }) => (
-              <Poster
-                posterType={PosterType.PREVIEW}
-                metadata={item}
-                base64={postersBase64List[index]}
-              />
-            )}
-            contentContainerStyle={{
-              flexDirection: "row",
-              gap: 16,
-              padding: 12,
-              backgroundColor: "white",
-            }}
-          />
-        ) : (
-          <Text className={"text-1xl font-bold text-white opacity-20"}>
-            {postersLoadingMessage}
-          </Text>
-        )}{" "}
+      <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
+        <PreviewCompilation
+          posters={postersBase64List}
+          metadataList={metadataList}
+          errmes={postersLoadingMessage}
+        />
       </View>
     </View>
   );
