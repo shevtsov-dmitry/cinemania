@@ -1,5 +1,3 @@
-'use dom'
-
 import { View, Text } from '@/src/components/Themed'
 
 import EditScreenInfo from '@/src/components/EditScreenInfo'
@@ -12,10 +10,10 @@ import App from '@/src/components/App'
 //      <EditScreenInfo path="src/app/(tabs)/index.tsx" />
 //    </View>
 export default function TabOneScreen() {
-    // return <div className="bg-red-500 text-white">Tab One</div>
+    // return <View className="bg-red-500 text-white">Tab One</View>
     return (
-        <div>
+        <View>
             <App />
-        </div>
+        </View>
     )
 }

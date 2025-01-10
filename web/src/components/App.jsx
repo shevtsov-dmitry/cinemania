@@ -9,10 +9,10 @@ let error = false;
 
 export default function App() {
   return (
-    <div className="min-w-100 h-dvh min-h-20 bg-neutral-800">
-      <Header />
+    <View className="min-w-100 h-dvh min-h-20 bg-neutral-800">
+      {/* <Header /> */}
       {/* <FormAddFilm /> */}
-      <Home />
+      {/* <Home /> */}
       {/* <VideoPlayer /> */}
       {/*TODO use zustand instead*/}
       {/*<Routes>*/}
@@ -21,21 +21,21 @@ export default function App() {
       {/*</Routes>*/}
 
       {/*TODO use different component for this */}
-      <div className="flex min-h-screen items-center justify-center bg-gray-900">
-        <div className="max-w-2xl rounded-lg bg-gray-800 p-8 shadow-lg">
-          <h1 className="mb-4 text-center text-4xl font-bold text-white">
+      <View className="flex min-h-screen items-center justify-center bg-gray-900">
+        <View className="max-w-2xl rounded-lg bg-gray-800 p-8 shadow-lg">
+          <Text className="mb-4 text-center text-4xl font-bold text-white">
             Сообщение с сервера
-          </h1>
+          </Text>
           {error ? (
-            <p className="text-xl text-red-500">{error}</p>
+            <Text className="text-xl text-red-500">{error}</Text>
           ) : (
-            <p className="text-center text-2xl leading-relaxed text-white">
+            <Text className="text-center text-2xl leading-relaxed text-white">
               {"Загрузка..."}
-            </p>
+            </Text>
           )}
-        </div>
-      </div>
-    </div>
+        </View>
+      </View>
+    </View>
   );
 }
 
