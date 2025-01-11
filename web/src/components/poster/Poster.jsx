@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import ContentMetadata from "@/src/types/ContentMetadata";
-import { View, Image } from "react-native";
+import { View, Image, Pressable } from "react-native";
 import PosterType from "./PosterType";
 
 /**
@@ -17,61 +17,44 @@ export default function Poster({
   metadata,
   base64,
 }) {
-  const [isPosterHovered, setIsPosterHovered] = useState(false);
-
-  /**
-   *
-   * @returns {JSX.Element}
-   */
-  const ContentInformation = () => (
-    <>
-      <h3 className="bg-inherit text-3xl font-bold text-white">
-        {metadata.title}
-      </h3>
-      <p className="select-none text-white">{metadata.title}</p>
-      <p className="select-none text-white">{metadata.country}</p>
-      <p className="select-none text-white">{metadata.mainGenre}</p>
-      <p className="select-none text-white text-xs">{metadata.subGenres}</p>
-      <p className="select-none text-white">{metadata.releaseDate}</p>
-    </>
-  );
-
   return (
-    <Image
-      className={
-        `${posterType === PosterType.PREVIEW && "h-[200px] w-[150px]"} ` +
-        `${posterType === PosterType.DEFAULT && "h-96 w-64"} ` +
-        ` z-10 rounded-3xl bg-indigo-900 bg-cover bg-center transition-all hover:scale-105 hover:cursor-pointer `
-      }
-      source={{
-        uri: `data:image/jpeg;base64,${base64}`,
-      }}
-      /*    onMouseEnter={() => setIsPosterHovered(true)}
-                onMouseLeave={() => setIsPosterHovered(false)}*/
-    />
-    //   {/*<div className="postersInfo">*/}
-    //   {/*    {isPosterHovered && (*/}
-    //   {/*        <div>*/}
-    //   {/*            <ContentInformation/>*/}
-    //   {/*            <div className="flex w-64 justify-center">*/}
-    //   {/*                /!* <Link *!/*/}
-    //   {/*                /!*     className="absolute bottom-0 z-10 mb-10" *!/*/}
-    //   {/*                /!*     to={`/watch/${metadata.videoId}`} *!/*/}
-    //   {/*                /!* > *!/*/}
-    //   {/*                <button*/}
-    //   {/*                    className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"*/}
-    //   {/*                    // onClick={() => {};*/}
-    //   {/*                    //     // TODO rewrite to Zustand*/}
-    //   {/*                    //     // dispatch(setVideoId(metadata.videoId))*/}
-    //   {/*                    // }*/}
-    //   {/*                >*/}
-    //   {/*                    Смотреть*/}
-    //   {/*                </button>*/}
-    //   {/*                /!* </Link> *!/*/}
-    //   {/*            </div>*/}
-    //   {/*        </div>*/}
-    //   {/*    )}*/}
-    //   {/*</div>*/}
-    // {/* </Image> */}
+    <View
+      className={`
+      ${posterType === PosterType.PREVIEW && "h-[200px] w-[150px]"}
+      ${posterType === PosterType.DEFAULT && "h-96 w-64"}
+      `}
+    >
+      <Image
+        className={`w-full h-full rounded-3xl `}
+        source={{
+          uri: `data:image/jpeg;base64,${base64}`,
+        }}
+      />
+    </View>
   );
 }
+
+//   {/*<div className="postersInfo">*/}
+//   {/*    {isPosterHovered && (*/}
+//   {/*        <div>*/}
+//   {/*            <ContentInformation/>*/}
+//   {/*            <div className="flex w-64 justify-center">*/}
+//   {/*                /!* <Link *!/*/}
+//   {/*                /!*     className="absolute bottom-0 z-10 mb-10" *!/*/}
+//   {/*                /!*     to={`/watch/${metadata.videoId}`} *!/*/}
+//   {/*                /!* > *!/*/}
+//   {/*                <button*/}
+//   {/*                    className="select-none rounded-3xl bg-pink-700 p-4 font-sans text-2xl font-bold text-white opacity-75 hover:opacity-95"*/}
+//   {/*                    // onClick={() => {};*/}
+//   {/*                    //     // TODO rewrite to Zustand*/}
+//   {/*                    //     // dispatch(setVideoId(metadata.videoId))*/}
+//   {/*                    // }*/}
+//   {/*                >*/}
+//   {/*                    Смотреть*/}
+//   {/*                </button>*/}
+//   {/*                /!* </Link> *!/*/}
+//   {/*            </div>*/}
+//   {/*        </div>*/}
+//   {/*    )}*/}
+//   {/*</div>*/}
+// {/* </Image> */}

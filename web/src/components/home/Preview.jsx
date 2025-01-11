@@ -7,7 +7,7 @@ import { ContentMetadata } from "@/src/types/ContentMetadata";
 import PosterType from "@/src/components/poster/PosterType";
 import { parsePathFromExpoGoLink } from "expo-router/build/fork/extractPathFromURL";
 import { FlatList } from "react-native";
-import PreviewCompilation from "@/src/components/compilations/PreviewCompilation";
+import Compilation from "@/src/components/compilations/Compilation";
 
 /**
  *
@@ -91,7 +91,7 @@ export default function Preview() {
   return (
     <View id="previews-sequence-block" className="flex flex-col justify-center">
       <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
-        <PreviewCompilation
+        <Compilation
           posters={postersBase64List}
           metadataList={metadataList}
           errmes={postersLoadingMessage}
