@@ -1,5 +1,6 @@
 package ru.storage.content.content_creators;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

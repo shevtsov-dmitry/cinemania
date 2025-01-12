@@ -26,11 +26,10 @@ public class ContentCreatorController {
     }
 
     @PostMapping("user-pic/upload")
-    public ResponseEntity<Void> uploadUserPic(@RequestParam String id , @RequestParam MultipartFile multipartFile) {
+    public ResponseEntity<Void> uploadUserPic(@RequestParam String id, @RequestParam MultipartFile multipartFile) {
         contentCreatorService.uploadUserPic(id, multipartFile);
-        return new ResponseEntity<Void>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
-
 
 }
