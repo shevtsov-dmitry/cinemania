@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @Service
 public class PosterService {
 
-    private final S3GeneralOperations s3GeneralOperations;
     @Value("${custom.s3.BUCKET_NAME}")
     private String bucketName;
     private static final String S3_FOLDER = "posters";
@@ -34,10 +33,9 @@ public class PosterService {
     private final PosterRepo posterRepo;
     private final S3Client s3Client;
 
-    public PosterService(PosterRepo posterRepo, S3Client s3Client, S3GeneralOperations s3GeneralOperations) {
+    public PosterService(PosterRepo posterRepo, S3Client s3Client) {
         this.posterRepo = posterRepo;
         this.s3Client = s3Client;
-        this.s3GeneralOperations = s3GeneralOperations;
     }
 
     /**
@@ -121,7 +119,7 @@ public class PosterService {
             throw new ParseRequestIdException();
         }
 
-        List<String> matchedS3Ids = s3GeneralOperations.findMatchedIds(S3_FOLDER, idsSet);
+        List<String> matchedS3Ids = S3GeneralOperations.findMatchedIds(S3_FOLDER, idsSet);
         matchedS3Ids.forEach(key -> {
             var getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
@@ -173,7 +171,7 @@ public class PosterService {
             throw new ParseRequestIdException();
         }
         ids.forEach(posterRepo::deleteById);
-        s3GeneralOperations.deleteFromS3(S3_FOLDER, ids);
+        S3GeneralOperations.deleteItems(S3_FOLDER, ids);
     }
 
 

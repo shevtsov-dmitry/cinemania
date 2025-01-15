@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -17,13 +19,23 @@ import java.util.List;
 @Component
 public class S3GeneralOperations {
 
-    private static final Logger log = LoggerFactory.getLogger(S3GeneralOperations.class);
-    private final S3Client s3Client;
+    private final S3Client initS3Client;
     @Value("${custom.s3.BUCKET_NAME}")
-    private String bucketName;
+    private String initBucketName;
+    
+    private static String bucketName;
+    private static S3Client s3Client;
 
+    private static final Logger log = LoggerFactory.getLogger(S3GeneralOperations.class);
+    
     public S3GeneralOperations(S3Client s3Client) {
-        this.s3Client = s3Client;
+        this.initS3Client = s3Client;
+    }
+
+    @PostConstruct
+    private void init() {
+        bucketName = initBucketName;
+        s3Client = initS3Client;
     }
 
     /**
@@ -33,7 +45,7 @@ public class S3GeneralOperations {
      * @param ids    required ids
      * @return list of matched item names by id
      */
-    public List<String> findMatchedIds(String folder, Collection<String> ids) {
+    public static List<String> findMatchedIds(String folder, Collection<String> ids) {
         var lsRequest = ListObjectsRequest.builder()
                 .bucket(bucketName)
                 .prefix(folder)
@@ -51,18 +63,19 @@ public class S3GeneralOperations {
     }
 
     /**
-     * Delete saved videos which matches requested ids from S3.
+     * Delete saved items which matches requested ids from S3.
      *
      * @param ids ids to delete
-     * @throws S3Exception when image wasn't deleted
+     * @throws S3Exception when items wasn't deleted
      */
-    public void deleteFromS3(String folderName, Collection<String> ids) {
+    public static void deleteItems(String folderName, Collection<String> ids) {
         ids.forEach(id -> {
             var path = folderName + "/" + id;
             var deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)
                     .key(path)
                     .build();
+
             try {
                 s3Client.deleteObject(deleteObjectRequest);
             } catch (AwsServiceException e) {

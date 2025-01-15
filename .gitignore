@@ -71,3 +71,5 @@ sketch
 *.iml
 *.factorypath
 *.prefs
+
+web/android
