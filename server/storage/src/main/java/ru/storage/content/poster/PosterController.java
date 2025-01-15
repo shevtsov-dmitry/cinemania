@@ -1,5 +1,6 @@
 package ru.storage.content.poster;
 
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +53,7 @@ public class PosterController {
     /**
      * Retrieve poster images from S3 cloud storage based on specified metadata IDs.
      *
-     * <p>This method supports both single and multiple content metadata IDs, separated by commas.
+     * <p>This method supports both single and multiple content metadata IDs, separated by commas</p>.
      *
      * @param contentMetadataIds a comma-separated string of content metadata IDs
      * @return Response
@@ -64,7 +65,7 @@ public class PosterController {
      * </ul>
      */
     @GetMapping("{contentMetadataIds}")
-    public ResponseEntity<List<byte[]>> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
+    public ResponseEntity<List<Pair<String, byte[]>>> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
         try {
             return ResponseEntity.ok(service.getImagesMatchingMetadataIds(contentMetadataIds));
         } catch (ParseRequestIdException e) {

@@ -70,7 +70,7 @@ export default function Preview() {
             setPostersLoadingMessage(errmes);
           }
         })
-        .then((fetchedBase64Array) => setPostersBase64List(fetchedBase64Array));
+        .then((idAndImagePair) => setPostersBase64List(idAndImagePair[1]));
     }
   }, [metadataList]);
 

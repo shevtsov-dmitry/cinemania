@@ -28,25 +28,17 @@ import static org.hamcrest.Matchers.*;
 
 import java.io.File;
 
-import javax.swing.text.AbstractDocument.Content;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ContentCreatorFlowTest {
     @Value("${server.url}")
     private String serverUrl;
-    private String endpointUrl;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
     private static final File IMAGE_FILE = new File("src/test/java/ru/storage/assets/image.jpg");
-
-    @BeforeEach
-    void setUp() {
-        endpointUrl = serverUrl + "/content-creators";
-    }
 
     @Test
     @Order(1)
@@ -58,7 +50,7 @@ class ContentCreatorFlowTest {
         creator.setHeightMeters(1.7D);
         creator.setContentCreatorKind(ContentCreatorKind.ACTOR);
 
-        mockMvc.perform(post(endpointUrl)
+        mockMvc.perform(post(serverUrl + "/api/v0/content-creators")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(creator)))
         .andExpect(content().string(is(not(emptyString()))));
@@ -68,29 +60,23 @@ class ContentCreatorFlowTest {
     @Order(2)
     void uploadUserPic() throws Exception {
 
-        // mockMvc.perform(post(endpointUrl + "/user-pic/upload"))
-        // .andExpect();
+        mockMvc.perform(post(serverUrl + "/api/v0/content-creators/user-pics/upload"))
+        .andExpect();
     }
 
-    // @Test
-    // @Order(1)
-    // void name() throws Exception {}
-    // @Test
-    // @Order(1)
-    // void name() throws Exception {}
-    // @Test
-    // @Order(1)
-    // void name() throws Exception {}
-    // @Test
-    // @Order(1)
-    // void name() throws Exception {}
-    // @Test
-    // @Order(1)
-    // void name() throws Exception {}
-    // @Test
-    // @Order(1)
-    // void name() throws Exception {}
-    // @Test
-    // @Order(1)
-    // void name() throws Exception {}
+    
+    @Test
+    @Order(100)
+    void deleteContentCreatorInfo() throws Exception {
+        mockMvc.perform(delete(endpointUrl + "/1"))
+            .andExpect(content().string(is(not(emptyString()))));
+    }
+
+    @Test
+    @Order(101)
+    void deleteSavedUserPic() throws Exception {
+        mockMvc.perform(delete(endpointUrl + "/user-pic/1"))
+            .andExpect(content().string(is(not(emptyString()))));
+    }
+
 }

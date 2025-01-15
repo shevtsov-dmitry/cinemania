@@ -186,7 +186,7 @@ public class VideoService {
             throw new ParseRequestIdException();
         }
         ids.forEach(videoRepo::deleteById);
-        s3GeneralOperations.deleteFromS3(S3_FOLDER, ids);
+        s3GeneralOperations.deleteItems(S3_FOLDER, ids);
     }
 
 }

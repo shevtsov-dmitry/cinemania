@@ -5,6 +5,7 @@ import net.coobird.thumbnailator.Thumbnailator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.FastByteArrayOutputStream;
@@ -105,40 +106,10 @@ public class PosterService {
      *
      * @param unparsedIds a comma-separated string of content metadata IDs
      * @return List of matched images from S3.
-     * @throws ParseRequestIdException when invalid number format defined by api
-     * @throws UncheckedIOException    when image retrieval from S3
+     * @throws S3Exception when an error occurs during the retrieval process.
      */
-    public List<byte[]> getImagesMatchingMetadataIds(String unparsedIds) {
-        List<byte[]> images = new ArrayList<>();
-        Set<String> idsSet;
-        try {
-            idsSet = Arrays.stream(unparsedIds.split(","))
-                    .collect(Collectors.toSet());
-        } catch (NumberFormatException e) {
-            LOG.warn(e.getMessage());
-            throw new ParseRequestIdException();
-        }
-
-        List<String> matchedS3Ids = S3GeneralOperations.findMatchedIds(S3_FOLDER, idsSet);
-        matchedS3Ids.forEach(key -> {
-            var getObjectRequest = GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .build();
-
-            // Retrieve the object and add its contents as a byte array to the list
-            try (ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest)) {
-                images.add(s3Object.readAllBytes());
-            } catch (Exception e) {
-                String errmes = "Ошибка при получении изображений постеров из облачного хранилища";
-                LOG.warn("{}. {}", errmes, e.getMessage());
-                throw S3Exception.builder()
-                        .message(errmes)
-                        .build();
-            }
-        });
-
-        return images;
+    public List<Pair<String, byte[]>> getImagesMatchingMetadataIds(String unparsedIds) {
+        return S3GeneralOperations.getItemsByIds(S3_FOLDER, unparsedIds);
     }
 
     /**
