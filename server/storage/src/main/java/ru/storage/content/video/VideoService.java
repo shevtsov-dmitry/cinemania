@@ -45,19 +45,7 @@ public class VideoService {
         this.s3GeneralOperations = s3GeneralOperations;
     }
 
-    /**
-     * Assure a video processing by comparing input content type with expected.
-     *
-     * @param contentType contentType
-     * @throws IllegalArgumentException when non image content used
-     */
-    private void assureVideoProcessing(String contentType) throws IllegalArgumentException {
-        if (contentType == null || !contentType.startsWith("video")) {
-            String errmes = "Ошибка при сохранении видео. Файл не является видеороликом. Был выбран файл типа " + contentType;
-            LOG.warn(errmes);
-            throw new IllegalArgumentException(errmes);
-        }
-    }
+   
 
     // TODO create upload method by hls chunks
 

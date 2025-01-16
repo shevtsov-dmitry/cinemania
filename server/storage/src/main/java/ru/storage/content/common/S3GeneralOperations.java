@@ -1,6 +1,5 @@
 package ru.storage.content.common;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -36,9 +35,10 @@ public class S3GeneralOperations {
 
     private static final Logger log = LoggerFactory.getLogger(S3GeneralOperations.class);
     
-    public S3GeneralOperations(S3Client s3Client) {
-        this.initS3Client = s3Client;
+    private S3GeneralOperations(S3Client initS3Client) {
+        this.initS3Client = initS3Client;
     }
+
 
     @PostConstruct
     private void init() {
