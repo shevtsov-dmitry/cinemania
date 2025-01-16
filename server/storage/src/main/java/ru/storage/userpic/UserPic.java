@@ -17,4 +17,5 @@ public class UserPic {
     private String id;
     private String contentType;
     private String filename;
+    private UserPicCategory userPicCategory;
 }

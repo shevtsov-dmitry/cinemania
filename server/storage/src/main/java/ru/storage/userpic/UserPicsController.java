@@ -34,7 +34,7 @@ public class UserPicsController {
      *     <li> 201 CREATED - User pic uploaded successfully </li>
      * </ul>
      */
-    @PostMapping("user-pics/upload")
+    @PostMapping("upload")
     public ResponseEntity<Void> uploadUserPic(@RequestParam String id, @RequestParam MultipartFile multipartFile) {
         userPicsService.uploadUserPic(id, multipartFile);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -54,7 +54,7 @@ public class UserPicsController {
      *     <li>500 (INTERNAL_SERVER_ERROR). An empty list with an error message header if an error occurs </li>
      * </ul>
      */
-    @GetMapping("user-pics/{ids}")
+    @GetMapping("{ids}")
     public ResponseEntity<List<Pair<String, byte[]>>> getUserPic(@PathVariable String ids) {
         return new ResponseEntity<>(userPicsService.getUserPics(ids), HttpStatus.OK);
     }
@@ -68,7 +68,7 @@ public class UserPicsController {
      *     <li> 204 (No Content) </li>
      * </ul>
      */
-    @DeleteMapping("user-pics/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteUserPic(@PathVariable String id) {
         userPicsService.deleteUserPic(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

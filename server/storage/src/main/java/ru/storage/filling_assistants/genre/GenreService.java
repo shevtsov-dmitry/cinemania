@@ -1,15 +1,12 @@
 package ru.storage.filling_assistants.genre;
 
-import com.mongodb.MongoException;
-
-import ru.storage.filling_assistants.country.Country;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.GenericArrayType;
-import java.util.List;
+import com.mongodb.MongoException;
 
 @Service
 public class GenreService {
