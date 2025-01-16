@@ -16,9 +16,9 @@ import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ru.storage.content.content_creators.Actor;
-import ru.storage.content.content_creators.ContentCreator;
-import ru.storage.content.content_creators.ContentCreatorKind;
+import ru.storage.content_creators.Actor;
+import ru.storage.content_creators.ContentCreator;
+import ru.storage.content_creators.ContentCreatorKind;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;

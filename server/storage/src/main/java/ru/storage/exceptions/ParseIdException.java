@@ -1,18 +1,18 @@
-package ru.storage.content.exceptions;
+package ru.storage.exceptions;
 
 /**
- * Indicates invalid usage of predefined request content format
+ * Indicates invalid usage of predefined request content format.
  */
-public class ParseRequestIdException extends IllegalArgumentException {
+public class ParseIdException extends IllegalArgumentException {
 
     private static final String DEFAULT_MESSAGE =
             "Произошла попытка использования идентификатора представленного в виде неверного формата MongoDB ID.";
 
-    public ParseRequestIdException() {
+    public ParseIdException() {
         super(DEFAULT_MESSAGE);
     }
 
-    public ParseRequestIdException(String message) {
+    public ParseIdException(String message) {
         super(message);
     }
 }

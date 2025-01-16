@@ -1,5 +1,7 @@
-package ru.storage.content.common;
+package ru.storage.utils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -11,18 +13,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.annotation.PostConstruct;
+import ru.storage.exceptions.ParseIdException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
+/**
+ * A utility class for general predefined operations with S3 storage.
+ */
 @Component
 public class S3GeneralOperations {
 
@@ -39,11 +48,42 @@ public class S3GeneralOperations {
         this.initS3Client = initS3Client;
     }
 
-
     @PostConstruct
     private void init() {
         bucketName = initBucketName;
         s3Client = initS3Client;
+    }
+    
+    /**
+     * Uploads an image to the specified S3 folder.
+     * 
+     * <p>Stored image has the same name as the id.</p>
+     * 
+     * @param s3Folder the folder in which the image will be stored.
+     * @param id the unique identifier for the image.
+     * @param image the image to be uploaded.
+     * @throws IllegalArgumentException if the image is not an image file.
+     * @throws S3Exception if an error occurs during the upload process.
+     */
+    public static void uploadImage(String s3Folder, String id, MultipartFile image) {
+        BinaryContentUtils.assureImageProcessing(image.getContentType());
+        try (InputStream inputStream = image.getInputStream()) {
+            var putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(s3Folder + "/" + id)
+                    .contentType(image.getContentType())
+                    .build();
+            InputStream compressedImage = BinaryContentUtils.compressImage(inputStream);
+            s3Client.putObject(putObjectRequest,
+                    RequestBody.fromInputStream(compressedImage, compressedImage.available()));
+            compressedImage.close();
+        } catch (IOException | AwsServiceException e) {
+            String errmes = "Ошибка при сохранении фотографии профиля.";
+            log.warn("{}. {}", errmes, e.getMessage());
+            throw S3Exception.builder()
+                    .message(errmes)
+                    .build();
+        }
     }
 
     /**
@@ -129,12 +169,17 @@ public class S3GeneralOperations {
      * 
      * @param ids ids to parse
      * @return set of unique strings
+     * @throws ParseRequestIdException if the input is not a valid comma-separated list of strings
      */
     private static Set<String> parseIds(String ids) {
-        return Arrays.asList(ids.split(",")).stream()
+        Set<String> parsedIds = Arrays.asList(ids.split(",")).stream()
                 .map(String::trim)
                 .distinct()
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toSet());
+        if (parsedIds.isEmpty()) {
+            throw new ParseIdException();
+        }
+        return parsedIds;
     }
 
     /**

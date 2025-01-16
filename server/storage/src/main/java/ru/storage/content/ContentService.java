@@ -4,11 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.storage.content.exceptions.ParseRequestIdException;
+
 import ru.storage.content.poster.PosterMetadata;
 import ru.storage.content.poster.PosterService;
 import ru.storage.content.video.VideoMetadata;
 import ru.storage.content.video.VideoService;
+import ru.storage.exceptions.ParseIdException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.util.List;
@@ -66,7 +67,7 @@ public class ContentService {
      *
      * @param contentId contentId from local db
      * @throws NoSuchElementException  when element not found
-     * @throws ParseRequestIdException when of invalid number format defined by api
+     * @throws ParseIdException when of invalid number format defined by api
      * @throws S3Exception             when image wasn't deleted
      */
     public void removeContent(String contentId) {

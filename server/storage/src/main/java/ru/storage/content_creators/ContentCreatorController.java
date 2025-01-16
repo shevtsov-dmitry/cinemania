@@ -1,4 +1,4 @@
-package ru.storage.content.content_creators;
+package ru.storage.content_creators;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import ru.storage.content.content_creators.user_pics.UserPicsService;
+import ru.storage.userpic.UserPicsService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -3,7 +3,8 @@ package ru.storage.content;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.storage.utility.EncodedHttpHeaders;
+
+import ru.storage.utils.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.util.List;

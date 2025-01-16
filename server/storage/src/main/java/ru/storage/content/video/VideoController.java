@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import ru.storage.content.exceptions.ParseRequestIdException;
-import ru.storage.utility.EncodedHttpHeaders;
+import ru.storage.exceptions.ParseIdException;
+import ru.storage.utils.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @RestController
@@ -73,7 +73,7 @@ public class VideoController {
         try {
             service.deleteByIds(ids);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (ParseRequestIdException e) {
+        } catch (ParseIdException e) {
             return new ResponseEntity<>(null,
                     new EncodedHttpHeaders(e.getMessage()),
                     HttpStatus.BAD_REQUEST);

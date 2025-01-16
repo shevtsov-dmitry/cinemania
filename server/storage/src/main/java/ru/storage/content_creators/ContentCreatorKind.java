@@ -1,4 +1,4 @@
-package ru.storage.content.content_creators;
+package ru.storage.content_creators;
 
 import lombok.Getter;
 

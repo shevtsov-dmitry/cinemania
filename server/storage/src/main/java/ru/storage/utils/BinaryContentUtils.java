@@ -1,4 +1,4 @@
-package ru.storage.content.common;
+package ru.storage.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,10 @@ import org.springframework.util.FastByteArrayOutputStream;
 
 import net.coobird.thumbnailator.Thumbnailator;
 
+/**
+ * A utility class for general operations with binary content.
+ * Content is stored in S3 object storage.
+ */
 public class BinaryContentUtils {
 
     private BinaryContentUtils() {}

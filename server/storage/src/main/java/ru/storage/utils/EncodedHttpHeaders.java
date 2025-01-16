@@ -1,4 +1,4 @@
-package ru.storage.utility;
+package ru.storage.utils;
 
 import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpHeaders;
