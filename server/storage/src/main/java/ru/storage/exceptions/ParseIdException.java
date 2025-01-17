@@ -6,7 +6,7 @@ package ru.storage.exceptions;
 public class ParseIdException extends IllegalArgumentException {
 
     private static final String DEFAULT_MESSAGE =
-            "Произошла попытка использования идентификатора представленного в виде неверного формата MongoDB ID.";
+            "Произошла попытка использования идентификатора представленного в виде неверного формата ID.";
 
     public ParseIdException() {
         super(DEFAULT_MESSAGE);

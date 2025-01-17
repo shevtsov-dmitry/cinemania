@@ -31,15 +31,15 @@ public class UserPicsController {
      * @param image the multipart file containing the user pic
      * @return Response:
      * <ul>
-     *     <li> 201 CREATED - User pic uploaded successfully </li>
+     *     <li> 201 CREATED - User pic uploaded successfully with saved metadata.</li>
      * </ul>
      */
     @PostMapping("upload")
-    public ResponseEntity<Void> uploadUserPic(@RequestParam PicCategory picCategory, @RequestParam MultipartFile image) {
+    public ResponseEntity<UserPic> uploadUserPic(@RequestParam PicCategory picCategory, @RequestParam MultipartFile image) {
         var userPic = new UserPic(null, image.getContentType(), image.getOriginalFilename(), PicCategory.USER);
         var savedUserPic = userPicsService.saveMetadata(userPic);
         userPicsService.upload(savedUserPic , image);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(savedUserPic, HttpStatus.CREATED);
     }
 
     /**

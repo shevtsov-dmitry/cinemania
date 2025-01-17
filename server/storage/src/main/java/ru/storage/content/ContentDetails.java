@@ -1,27 +1,31 @@
 package ru.storage.content;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.annotation.CreatedDate;
-
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import ru.storage.content.poster.PosterMetadata;
-import ru.storage.content.video.VideoMetadata;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.storage.content.poster.PosterMetadata;
+import ru.storage.content.video.VideoMetadata;
+
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Document
 public class ContentDetails {
 
@@ -30,7 +34,7 @@ public class ContentDetails {
     @NotNull(message = "Необходимо указать название")
     private String title;
     @NotNull(message = "Необходимо указать дату выпуска")
-    private Date releaseDate;
+    private LocalDate releaseDate;
     @NotNull(message = "Необходимо указать страну")
     private String country;
     @NotNull(message = "Необходимо указать главный жанр")
