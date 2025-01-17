@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.annotation.PostConstruct;
 import ru.storage.exceptions.ParseIdException;
+import ru.storage.userpic.PicCategory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -59,11 +60,11 @@ public class S3GeneralOperations {
      * 
      * <p>Stored image has the same name as the id.</p>
      * 
-     * @param s3Folder the folder in which the image will be stored.
+     * @param picCategory the category of the user pic selected from predefined options.
      * @param id the unique identifier for the image.
      * @param image the image to be uploaded.
-     * @throws IllegalArgumentException if the image is not an image file.
-     * @throws S3Exception if an error occurs during the upload process.
+     * @throws IllegalArgumentException when the image is not an image file.
+     * @throws S3Exception when an error occurs during the upload process.
      */
     public static void uploadImage(String s3Folder, String id, MultipartFile image) {
         BinaryContentUtils.assureImageProcessing(image.getContentType());
@@ -115,7 +116,7 @@ public class S3GeneralOperations {
      *
      * @param s3Folder the folder name in S3 where images are stored
      * @param ids      a comma-separated string of content metadata IDs
-     * @return List of matched ids and images from S3 in pair.
+     * @return List of matched ids and images from S3 in pairs.
      * @throws S3Exception when an error occurs during the retrieval process
      */
     public static List<Pair<String, byte[]>> getItemsByIds(String s3Folder, String ids) {
@@ -169,7 +170,7 @@ public class S3GeneralOperations {
      * 
      * @param ids ids to parse
      * @return set of unique strings
-     * @throws ParseRequestIdException if the input is not a valid comma-separated list of strings
+     * @throws ParseRequestIdException when the input is not a valid comma-separated list of strings
      */
     private static Set<String> parseIds(String ids) {
         Set<String> parsedIds = Arrays.asList(ids.split(",")).stream()
