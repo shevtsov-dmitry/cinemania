@@ -23,6 +23,10 @@ public class ContentCreatorService {
     public List<ContentCreator> getAllCreators() {
         return contentCreatorRepository.findAll();
     }
+
+    public ContentCreator getCreatorById(String id) {
+        return contentCreatorRepository.findById(id).orElse(null);
+    }
     
     public void deleteCreator(String id) {
         contentCreatorRepository.deleteById(id);

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.storage.content.ContentDetails;
+import ru.storage.userpic.UserPic;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +19,6 @@ public class ContentCreator {
     private String fullnameEng;
     private String bornPlace;
     private Double heightMeters;
-    private ContentCreatorKind contentCreatorKind;
+    private UserPic userPic;
     private List<ContentDetails> filmsParticipated;
 }

@@ -5,20 +5,15 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import ru.storage.userpic.UserPicsService;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-
-
 
 @RestController
 @RequestMapping("api/v0/content-creators")
@@ -38,6 +33,11 @@ public class ContentCreatorController {
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<ContentCreator> getCreatorById(@PathVariable String id) {
+        return new ResponseEntity<>(contentCreatorService.getCreatorById(id), HttpStatus.OK);
+    }
+
     @GetMapping("all")
     public ResponseEntity<List<ContentCreator>> getAllCreators() {
         return new ResponseEntity<>(contentCreatorService.getAllCreators(), HttpStatus.OK);
@@ -46,7 +46,8 @@ public class ContentCreatorController {
     @DeleteMapping
     public ResponseEntity<Void> deleteCreator(@RequestParam String id) {
         contentCreatorService.deleteCreator(id);
-        userPicsService.deleteUserPic(id);
+        var userPic = contentCreatorService.getCreatorById(id).getUserPic();
+        userPicsService.delete(userPic.getPicCategory(), userPic.getId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
