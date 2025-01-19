@@ -12,5 +12,4 @@ public interface PosterRepo extends MongoRepository<PosterMetadata, String> {
 //    @Query("{'contentMetadata.id': ?0}")
 //    void deleteByContentMetadataId(Long metadataId);
 
-
 }
