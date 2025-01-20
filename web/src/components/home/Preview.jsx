@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
 import { PosterClass } from "@/src/components/poster/Poster";
 import Poster from "@/src/components/poster/Poster";
 import Constants from "@/src/constants/Constants";
@@ -8,6 +6,7 @@ import PosterType from "@/src/components/poster/PosterType";
 import { parsePathFromExpoGoLink } from "expo-router/build/fork/extractPathFromURL";
 import { FlatList } from "react-native";
 import Compilation from "@/src/components/compilations/Compilation";
+import { parseSplittedWithDefaultDelimiter } from "@/src/utils/BinaryContentUtils";
 
 /**
  *
@@ -18,17 +17,20 @@ export default function Preview() {
   const NON_ASCII_PATTERN = /[^\u0000-\u007F]/;
   const POSTERS_AMOUNT = 20;
 
+  /** @type {[string, function(string): void]}  */
   const [postersLoadingMessage, setPostersLoadingMessage] = useState("");
+  /** @type {[ContentMetadata[], function(ContentMetadata[]): void} */
   const [metadataList, setMetadataList] = useState([]);
-  const [postersBase64List, setPostersBase64List] = useState([]);
+  /** @type {[string[], function(string[]): void]} */
+  const [posterImagesUrls, setPosterImagesUrls] = useState([]);
 
   // const videoPlayerState = useSelector((state) => state.videoPlayer);
   // let isPlayerOpened = videoPlayerState.isPlayerOpened; // ?
 
   useEffect(() => {
-    fetchRecentlyAdded();
+    fetchRecentlyAddedFilmsMetadata();
 
-    async function fetchRecentlyAdded() {
+    async function fetchRecentlyAddedFilmsMetadata() {
       fetch(`${STORAGE_URL}/api/v0/metadata/recent/${POSTERS_AMOUNT}`)
         .then((res) => {
           if (res.ok) {
@@ -36,7 +38,7 @@ export default function Preview() {
           } else {
             const errmes = decodeURI(res.headers.get("Message")).replaceAll(
               "+",
-              " ",
+              " "
             );
             console.error(errmes);
             setPostersLoadingMessage(errmes);
@@ -57,20 +59,17 @@ export default function Preview() {
       fetch(`${STORAGE_URL}/api/v0/posters/${joinedIds}`)
         .then((res) => {
           if (res.ok) {
-            // res.json().then((data) => {
-            //   console.log("love");
-            // });
-            return res.json();
+            return res.blob();
           } else {
             const errmes = decodeURI(res.headers.get("Message")).replaceAll(
               "+",
-              " ",
+              " "
             );
             console.error(errmes);
             setPostersLoadingMessage(errmes);
           }
         })
-        .then((idAndImagePair) => setPostersBase64List(idAndImagePair[1]));
+        .then((binaryOctetStream) => setPosterImagesUrls(parseSplittedWithDefaultDelimiter(binaryOctetStream)));
     }
   }, [metadataList]);
 
@@ -92,7 +91,7 @@ export default function Preview() {
     <View id="previews-sequence-block" className="flex flex-col justify-center">
       <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
         <Compilation
-          posters={postersBase64List}
+          posterImageUrls={posterImagesUrls}
           metadataList={metadataList}
           errmes={postersLoadingMessage}
         />

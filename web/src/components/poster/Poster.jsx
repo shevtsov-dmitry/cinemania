@@ -9,13 +9,13 @@ import PosterType from "./PosterType";
  * @param {Object} props
  * @param {PosterType} props.posterType - predefined PosterType (enum)
  * @param {ContentMetadata} props.metadata - list of content metadata for each poster fetched from server
- * @param {string} props.base64 - encoded image in basic base 64 jpeg format
+ * @param {string} props.imageUrl image URL which can be inserted in the `<img src="...">` tag to display image
  * @returns {JSX.Element}
  */
 export default function Poster({
   posterType = PosterType.DEFAULT,
   metadata,
-  base64,
+  imageUrl,
 }) {
   return (
     <View
@@ -26,9 +26,10 @@ export default function Poster({
     >
       <Image
         className={`w-full h-full rounded-3xl `}
-        source={{
-          uri: `data:image/jpeg;base64,${base64}`,
-        }}
+        // source={{
+        //   uri: `data:image/jpeg;base64,${base64}`,
+        // }}
+        source={{ uri: imageUrl }}
       />
     </View>
   );

@@ -1,5 +1,11 @@
 const DEFAULT_DELIMITER = "%%SPLIT_DELIMITER%%"; // Same delimiter as server
 
+/**
+ * 
+ * @param {Response} response
+ * @param {string} delimiter used to separate binary content 
+ * @returns {Response<string[]>} temporary image URLs array; each one can be inserted in the `<img src="...">`  tag to display image
+ */
 async function parseSplitted(response, delimer) {
   if (delimer === undefined) {
     throw new Error("Error parsing binary content. Delimiter is not defined.");
@@ -31,6 +37,10 @@ async function parseSplitted(response, delimer) {
   });
 }
 
+/**
+ * @param {Response} response
+ * @returns {Response<string[]>} temporary image URLs array; each one can be inserted in the `<img src="...">`  tag to display image
+ */
 async function parseSplittedWithDefaultDelimiter(binaryContent) {
   return parseSplitted(binaryContent, DEFAULT_DELIMITER);
 }
