@@ -4,7 +4,7 @@ import Header from "@/src/components/header/Header";
 import Home from "@/src/components/home/Home";
 import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
 import VideoPlayer from "@/src/components/video-player/VideoPlayer";
-import PosterType from "./poster/PosterType";
+import PosterType from "./compilations/PosterType";
 import { useEffect, useState } from "react";
 import Constants from "../constants/Constants";
 

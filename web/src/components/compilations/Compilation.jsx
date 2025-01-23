@@ -10,7 +10,7 @@ import {
   InteractionManager,
 } from "react-native";
 import { ContentMetadata } from "@/src/types/ContentMetadata";
-import PosterType from "../poster/PosterType";
+import PosterType from "./PosterType";
 
 /**
  * @param {Object} props

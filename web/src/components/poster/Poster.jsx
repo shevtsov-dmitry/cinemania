@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import ContentMetadata from "@/src/types/ContentMetadata";
 import { View, Image, Pressable } from "react-native";
-import PosterType from "./PosterType";
+import PosterType from "../compilations/PosterType";
 
 /**
  *

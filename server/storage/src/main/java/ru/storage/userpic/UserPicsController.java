@@ -59,7 +59,9 @@ public class UserPicsController {
      */
     @GetMapping("{picCategory}/{ids}")
     public ResponseEntity<List<Pair<String, byte[]>>> getUserPic(@PathVariable PicCategory picCategory, @PathVariable String ids) {
-        return new ResponseEntity<>(userPicsService.getInPairs(picCategory, ids), HttpStatus.OK);
+        // TODO 
+        // return new ResponseEntity<>(userPicsService.getInPairs(picCategory, ids), HttpStatus.OK);
+        return null;
     }
 
     /**
