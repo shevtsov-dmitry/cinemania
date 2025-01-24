@@ -1,12 +1,11 @@
 import { PosterClass } from "@/src/components/poster/Poster";
 import Poster from "@/src/components/poster/Poster";
 import Constants from "@/src/constants/Constants";
-import { ContentMetadata } from "@/src/types/ContentMetadata";
-import PosterType from "@/src/components/poster/PosterType";
 import { parsePathFromExpoGoLink } from "expo-router/build/fork/extractPathFromURL";
-import { FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import Compilation from "@/src/components/compilations/Compilation";
 import { parseSplittedWithDefaultDelimiter } from "@/src/utils/BinaryContentUtils";
+import { useState, useEffect } from "react";
 
 /**
  *

@@ -1,39 +1,37 @@
-import { useEffect, useState } from "react";
+import { ReactElement } from "react";
 
-import ContentMetadata from "@/src/types/ContentMetadata";
-import { View, Image, Pressable } from "react-native";
-import PosterType from "../compilations/PosterType";
+import ContentDetails from "@/src/interfaces/ContentDetails";
+import { Image, View } from "react-native";
+import CompilationKind from "../compilations/CompilationKind";
+
+interface PosterProps {
+  compilationKind: CompilationKind;
+  metadata: ContentDetails;
+  imageUrl: string;
+}
 
 /**
- *
- * @param {Object} props
- * @param {PosterType} props.posterType - predefined PosterType (enum)
- * @param {ContentMetadata} props.metadata - list of content metadata for each poster fetched from server
- * @param {string} props.imageUrl image URL which can be inserted in the `<img src="...">` tag to display image
- * @returns {JSX.Element}
+ * @note image URL can be inserted in the `<img src="...">` tag to display image
  */
-export default function Poster({
-  posterType = PosterType.DEFAULT,
+const Poster = ({
+  compilationKind = CompilationKind.DEFAULT,
   metadata,
   imageUrl,
-}) {
+}: PosterProps): ReactElement => {
   return (
     <View
       className={`
-      ${posterType === PosterType.PREVIEW && "h-[200px] w-[150px]"}
-      ${posterType === PosterType.DEFAULT && "h-96 w-64"}
+      ${compilationKind === CompilationKind.PREVIEW && "h-[200px] w-[150px]"}
+      ${compilationKind === CompilationKind.DEFAULT && "h-96 w-64"}
       `}
     >
       <Image
         className={`w-full h-full rounded-3xl `}
-        // source={{
-        //   uri: `data:image/jpeg;base64,${base64}`,
-        // }}
         source={{ uri: imageUrl }}
       />
     </View>
   );
-}
+};
 
 //   {/*<div className="postersInfo">*/}
 //   {/*    {isPosterHovered && (*/}
@@ -59,3 +57,5 @@ export default function Poster({
 //   {/*    )}*/}
 //   {/*</div>*/}
 // {/* </Image> */}
+
+export default Poster;
