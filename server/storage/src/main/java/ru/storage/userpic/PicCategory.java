@@ -15,5 +15,4 @@ public enum PicCategory {
         this.stringValue = stringValue.toUpperCase();
     }
 
-
 }

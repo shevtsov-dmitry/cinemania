@@ -3,7 +3,6 @@ package ru.storage.userpic;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.core.io.Resource;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.utils.S3GeneralOperations;
@@ -12,6 +11,7 @@ import ru.storage.utils.S3GeneralOperations;
 public class UserPicsService {
 
   private final UserPicsRepo userPicsRepo;
+  private static final String PICTURES_STORAGE_FOLDER = "userpic";
 
   public UserPicsService(UserPicsRepo userPicsRepo) {
     this.userPicsRepo = userPicsRepo;
@@ -36,7 +36,10 @@ public class UserPicsService {
    * @throws S3Exception if an error occurs during the upload process.
    */
   public void upload(UserPic userPic, MultipartFile image) {
-    S3GeneralOperations.uploadImage(userPic.getPicCategory().stringValue, userPic.getId(), image);
+    S3GeneralOperations.uploadImage(
+        PICTURES_STORAGE_FOLDER + "/" + userPic.getPicCategory().stringValue,
+        userPic.getId(),
+        image);
   }
 
   /**
@@ -44,12 +47,12 @@ public class UserPicsService {
    *
    * @param picCategory the category of the user pic (e.g., USER)
    * @param ids a comma-separated string of content metadata IDs
-   * @return resouce containing single byte array with the
-   *     delimiter in between the images.
+   * @return resouce containing single byte array with the delimiter in between the images.
    * @throws S3Exception when an error occurs during the retrieval process
    */
   public Resource getInPairs(PicCategory picCategory, String ids) {
-    return S3GeneralOperations.getItemsByIds(picCategory.stringValue, ids);
+    return S3GeneralOperations.getItemsByIds(
+        PICTURES_STORAGE_FOLDER + "/" + picCategory.stringValue, ids);
   }
 
   /**
@@ -57,8 +60,7 @@ public class UserPicsService {
    *
    * @param picCategory the category of the user pic (e.g., USER)
    * @param ids a comma-separated string of content metadata IDs
-   * @return resouce containing single byte array with the
-   *     delimiter in between the images.
+   * @return resouce containing single byte array with the delimiter in between the images.
    * @throws S3Exception when an error occurs during the retrieval process
    */
   public Resource getInPairs(String s3Folder, String ids) {
@@ -75,7 +77,8 @@ public class UserPicsService {
   public void delete(PicCategory picCategory, String ids) {
     List<String> parsedIds = Arrays.asList(ids.split(",")).stream().map(String::trim).toList();
     userPicsRepo.deleteAllById(parsedIds);
-    S3GeneralOperations.deleteItems(picCategory.stringValue, parsedIds);
+    S3GeneralOperations.deleteItems(
+        PICTURES_STORAGE_FOLDER + "/" + picCategory.stringValue, parsedIds);
   }
 
   /**

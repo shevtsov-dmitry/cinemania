@@ -35,7 +35,7 @@ public class UserPicsController {
      * </ul>
      */
     @PostMapping("upload")
-    public ResponseEntity<UserPic> uploadUserPic(@RequestParam("picCategory") PicCategory picCategory, @RequestParam MultipartFile image) {
+    public ResponseEntity<UserPic> uploadUserPic(@RequestParam PicCategory picCategory, @RequestParam MultipartFile image) {
         var userPic = new UserPic(null, image.getContentType(), image.getOriginalFilename(), picCategory);
         var savedUserPicDetails = userPicsService.saveImageMetadata(userPic);
         userPicsService.upload(savedUserPicDetails , image);

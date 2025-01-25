@@ -25,9 +25,8 @@ public class ContentCreatorController {
     }
     
     @PostMapping
-    public ResponseEntity<String> addCreator(@RequestBody ContentCreator creator) {
-        final String id = contentCreatorService.addCreator(creator);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<ContentCreator> addCreator(@RequestBody ContentCreator creator) {
+        return new ResponseEntity<>(contentCreatorService.addCreator(creator), HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")

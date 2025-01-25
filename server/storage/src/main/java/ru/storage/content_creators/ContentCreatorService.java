@@ -7,28 +7,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class ContentCreatorService {
 
-    private final ContentCreatorRepo contentCreatorRepository;
+    private final ContentCreatorRepo contentCreatorRepo;
 
-    public ContentCreatorService(ContentCreatorRepo contentCreatorRepository) {
-        this.contentCreatorRepository = contentCreatorRepository;
+    public ContentCreatorService(ContentCreatorRepo contentCreatorRepo) {
+        this.contentCreatorRepo = contentCreatorRepo;
     }
-    
 
-    public String addCreator(ContentCreator creator) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addCreator'");
+    public ContentCreator addCreator(ContentCreator creator) {
+        return contentCreatorRepo.save(creator);
     }
      
 
     public List<ContentCreator> getAllCreators() {
-        return contentCreatorRepository.findAll();
+        return contentCreatorRepo.findAll();
     }
 
     public ContentCreator getCreatorById(String id) {
-        return contentCreatorRepository.findById(id).orElse(null);
+        return contentCreatorRepo.findById(id).orElse(null);
     }
     
     public void deleteCreator(String id) {
-        contentCreatorRepository.deleteById(id);
+        contentCreatorRepo.deleteById(id);
     }
 }
