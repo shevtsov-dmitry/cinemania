@@ -8,10 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
+import javax.imageio.ImageIO;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -121,14 +123,23 @@ class ContentCreatorFlowTest {
   @Order(3)
   @Test
   void getSavedPic() throws Exception {
-
-    // mockMvc.perform(get(serverUrl + "/api/v0/content-creators/user-pics/" + savedUserPicMetadata.getId()))
-    // .andExpect(status().isOk())
-    // .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
-
-
+    mockMvc
+        .perform(
+            get(
+                serverUrl
+                    + "/api/v0/content-creators/user-pics/%s/%s"
+                        .formatted(
+                            savedContentCreator.getUserPic().getPicCategory(),
+                            savedContentCreator.getUserPic().getId())))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
+        .andExpect(
+            result -> {
+              byte[] rawBytes = result.getResponse().getContentAsByteArray();
+              assertThat(rawBytes).isNotNull().isNotEmpty();
+              assertDoesNotThrow(() -> ImageIO.read(new ByteArrayInputStream(rawBytes)));
+            });
   }
-
 
   /**
    * @apiNote This endpoint function removes creator metadata, image metadata from db and image from
