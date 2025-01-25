@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Poster from "../poster/Poster";
 import CompilationKind from "./CompilationKind";
+import Poster from "@/src/components/poster/Poster";
 
 interface CompilationProps {
   posterImageUrls: string[];

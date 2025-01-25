@@ -1,11 +1,8 @@
 import Preview from "@/src/components/home/Preview";
-import { Text, View } from "react-native";
+import React, { ReactElement } from "react";
+import { Text } from "react-native";
 
-/**
- *
- * @returns {JSX.Element}
- */
-export default function Home() {
+const Home = (): ReactElement => {
   return (
     <>
       <Text className={"p-2 text-2xl font-bold text-white"}>Новинки</Text>
@@ -13,7 +10,8 @@ export default function Home() {
       <Text className={"p-2 text-2xl font-bold text-white"}>
         Вам может понравится
       </Text>
-      <View id="preview-posters-holder"></View>
     </>
   );
-}
+};
+
+export default Home;
