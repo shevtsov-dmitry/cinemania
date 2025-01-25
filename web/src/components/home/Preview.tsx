@@ -1,11 +1,9 @@
-import { PosterClass } from "@/src/components/poster/Poster";
-import Poster from "@/src/components/poster/Poster";
-import Constants from "@/src/constants/Constants";
-import { parsePathFromExpoGoLink } from "expo-router/build/fork/extractPathFromURL";
-import { View, FlatList } from "react-native";
 import Compilation from "@/src/components/compilations/Compilation";
+import Constants from "@/src/constants/Constants";
+import ContentDetails from "@/src/interfaces/ContentDetails";
 import { parseSplittedWithDefaultDelimiter } from "@/src/utils/BinaryContentUtils";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { View } from "react-native";
 
 /**
  *
@@ -16,12 +14,10 @@ export default function Preview() {
   const NON_ASCII_PATTERN = /[^\u0000-\u007F]/;
   const POSTERS_AMOUNT = 20;
 
-  /** @type {[string, function(string): void]}  */
-  const [postersLoadingMessage, setPostersLoadingMessage] = useState("");
-  /** @type {[ContentMetadata[], function(ContentMetadata[]): void} */
-  const [metadataList, setMetadataList] = useState([]);
-  /** @type {[string[], function(string[]): void]} */
-  const [posterImagesUrls, setPosterImagesUrls] = useState([]);
+  const [postersLoadingMessage, setPostersLoadingMessage] =
+    useState<string>("");
+  const [metadataList, setMetadataList] = useState<ContentDetails[]>([]);
+  const [posterImagesUrls, setPosterImagesUrls] = useState<string[]>([]);
 
   // const videoPlayerState = useSelector((state) => state.videoPlayer);
   // let isPlayerOpened = videoPlayerState.isPlayerOpened; // ?
@@ -35,10 +31,10 @@ export default function Preview() {
           if (res.ok) {
             return res.json();
           } else {
-            const errmes = decodeURI(res.headers.get("Message")).replaceAll(
-              "+",
-              " "
-            );
+            let errmes =
+              res.headers.get("Message") ??
+              "Ошибка получения метаданных фильмов для превью.";
+            errmes = decodeURI(errmes).replaceAll("+", " ");
             console.error(errmes);
             setPostersLoadingMessage(errmes);
           }
@@ -60,15 +56,25 @@ export default function Preview() {
           if (res.ok) {
             return res.blob();
           } else {
-            const errmes = decodeURI(res.headers.get("Message")).replaceAll(
-              "+",
-              " "
-            );
+            let errmes =
+              res.headers.get("Message") ?? "Ошибка получения постеров.";
+            errmes = decodeURI(errmes).replaceAll("+", " ");
             console.error(errmes);
             setPostersLoadingMessage(errmes);
           }
         })
-        .then((binaryOctetStream) => setPosterImagesUrls(parseSplittedWithDefaultDelimiter(binaryOctetStream)));
+        .then((binaryOctetStream) =>
+          attemptToSetPostersUrls(binaryOctetStream as Blob)
+        )
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+
+    function attemptToSetPostersUrls(binaryOctetStream: Blob) {
+      parseSplittedWithDefaultDelimiter(binaryOctetStream)
+        .then((parsedPostersUrls) => setPosterImagesUrls(parsedPostersUrls))
+        .catch((err) => console.error(err));
     }
   }, [metadataList]);
 
@@ -78,7 +84,7 @@ export default function Preview() {
    * @returns
    */
   // TODO figure out if i should use it to parse russian text to display it in posters info on hover
-  function base64ToUtf8(ASCII_parsed_text) {
+  function base64ToUtf8(ASCII_parsed_text: string) {
     const bytes = new Uint8Array(ASCII_parsed_text.length);
     for (let i = 0; i < ASCII_parsed_text.length; i++) {
       bytes[i] = ASCII_parsed_text.charCodeAt(i);

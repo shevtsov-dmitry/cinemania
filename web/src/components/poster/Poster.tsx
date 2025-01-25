@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 
 import ContentDetails from "@/src/interfaces/ContentDetails";
 import { Image, View } from "react-native";
@@ -18,6 +18,11 @@ const Poster = ({
   metadata,
   imageUrl,
 }: PosterProps): ReactElement => {
+
+  // useEffect(() => {
+  //   console.log(imageUrl)
+  // })
+
   return (
     <View
       className={`
