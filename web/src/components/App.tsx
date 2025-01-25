@@ -10,7 +10,7 @@ import Constants from "../constants/Constants";
 const App = (): ReactElement => (
   <View className="min-w-100 h-dvh min-h-20 bg-neutral-800">
     <Header />
-    {/* <FormAddFilm /> */}
+    <FormAddFilm />
     <Home />
     {/* <VideoPlayer /> */}
     {/*TODO use zustand instead*/}

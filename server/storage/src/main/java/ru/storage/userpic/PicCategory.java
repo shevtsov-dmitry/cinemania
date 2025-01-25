@@ -5,14 +5,14 @@ package ru.storage.userpic;
  */
 public enum PicCategory {
 
-    DIRECTOR("director"), 
-    ACTOR("actor"),
-    USER("user");
+    DIRECTOR("DIRECTOR"), 
+    ACTOR("ACTOR"),
+    USER("USER");
 
     public final String stringValue;
 
     PicCategory(String stringValue)  {
-        this.stringValue = stringValue;
+        this.stringValue = stringValue.toUpperCase();
     }
 
 

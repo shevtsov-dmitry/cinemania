@@ -10,9 +10,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.nio.file.Files;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -47,6 +45,7 @@ class ContentCreatorFlowTest {
   @Test
   @Order(1)
   void savePicture() throws Exception {
+
     var multipartFile =
         new MockMultipartFile(
             "image",
@@ -58,8 +57,7 @@ class ContentCreatorFlowTest {
         .perform(
             multipart(serverUrl + "/api/v0/content-creators/user-pics/upload")
                 .file(multipartFile)
-                .param("picCategory", PicCategory.ACTOR.stringValue)
-                .contentType(MediaType.MULTIPART_FORM_DATA))
+                .param("picCategory", PicCategory.ACTOR.stringValue))
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id", is(not(emptyString()))))

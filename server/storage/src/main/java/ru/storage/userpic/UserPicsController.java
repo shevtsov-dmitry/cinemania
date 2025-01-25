@@ -35,11 +35,11 @@ public class UserPicsController {
      * </ul>
      */
     @PostMapping("upload")
-    public ResponseEntity<UserPic> uploadUserPic(@RequestParam PicCategory picCategory, @RequestParam MultipartFile image) {
-        var userPic = new UserPic(null, image.getContentType(), image.getOriginalFilename(), PicCategory.USER);
-        var savedUserPic = userPicsService.saveMetadata(userPic);
-        userPicsService.upload(savedUserPic , image);
-        return new ResponseEntity<>(savedUserPic, HttpStatus.CREATED);
+    public ResponseEntity<UserPic> uploadUserPic(@RequestParam("picCategory") PicCategory picCategory, @RequestParam MultipartFile image) {
+        var userPic = new UserPic(null, image.getContentType(), image.getOriginalFilename(), picCategory);
+        var savedUserPicDetails = userPicsService.saveImageMetadata(userPic);
+        userPicsService.upload(savedUserPicDetails , image);
+        return new ResponseEntity<>(savedUserPicDetails, HttpStatus.CREATED);
     }
 
     /**

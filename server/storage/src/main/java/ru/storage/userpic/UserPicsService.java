@@ -18,12 +18,12 @@ public class UserPicsService {
   }
 
   /**
-   * Save user metadata to the database.
+   * Save user pic image metadata to the database.
    *
-   * @param userPic the user metadata object to be saved
-   * @return The saved user metadata object from mongoDB
+   * @param userPic the user pic metadata object to be saved
+   * @return The saved user pic metadata object from mongoDB
    */
-  public UserPic saveMetadata(UserPic userPic) {
+  public UserPic saveImageMetadata(UserPic userPic) {
     return userPicsRepo.save(userPic);
   }
 
