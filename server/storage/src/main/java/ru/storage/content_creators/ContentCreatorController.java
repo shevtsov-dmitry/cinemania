@@ -41,9 +41,9 @@ public class ContentCreatorController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteCreator(@PathVariable String id) {
-        contentCreatorService.deleteCreator(id);
         var userPic = contentCreatorService.getCreatorById(id).getUserPic();
         userPicsService.delete(userPic.getPicCategory(), userPic.getId());
+        contentCreatorService.deleteCreator(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
