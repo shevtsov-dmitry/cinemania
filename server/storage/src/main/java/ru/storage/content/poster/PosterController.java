@@ -1,5 +1,6 @@
 package ru.storage.content.poster;
 
+import java.util.NoSuchElementException;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,8 +53,7 @@ public class PosterController {
    * Get images from S3 cloud storage by IDs.
    *
    * @apiNote
-   * <p>This method supports both single and multiple content metadata IDs, separated by commas.
-   *
+   *     <p>This method supports both single and multiple content metadata IDs, separated by commas.
    * @param contentMetadataIds string of ids separated by comma
    * @return Response:
    *     <ul>
@@ -61,8 +61,9 @@ public class PosterController {
    *           binary items
    *       <li>400 (BAD_REQUEST) with the cause header "Message" when content metadata IDs are
    *           invalid
+   *       <li> 404 (NOT_FOUND) with the cause header "Message" when no matching items are found
    *       <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when an error occurs
-   *    </ul>
+   *     </ul>
    */
   @GetMapping(value = "{contentMetadataIds}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
   public ResponseEntity<Resource> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
@@ -71,6 +72,9 @@ public class PosterController {
     } catch (ParseIdException e) {
       return new ResponseEntity<>(
           null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (NoSuchElementException e) {
+      return new ResponseEntity<>(
+          null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.NOT_FOUND);
     } catch (S3Exception e) {
       return new ResponseEntity<>(
           null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

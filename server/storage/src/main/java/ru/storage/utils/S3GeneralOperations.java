@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -90,20 +91,27 @@ public class S3GeneralOperations {
    * @param folder folder name which will be searched
    * @param ids required ids
    * @return list of matched item names by id
+   * @throws NoSuchElementException when no matching items are found
    */
   public static List<String> findMatchedIds(String folder, Collection<String> ids) {
     var lsRequest = ListObjectsRequest.builder().bucket(bucketName).prefix(folder).build();
 
-    return s3Client.listObjects(lsRequest).contents().stream()
-        .skip(1)
-        .map(S3Object::key)
-        .filter(
-            filepath -> {
-              String[] splitFilename = filepath.split("/");
-              String filename = splitFilename[splitFilename.length - 1];
-              return ids.contains(filename);
-            })
-        .toList();
+    List<String> matchedIds =
+        s3Client.listObjects(lsRequest).contents().stream()
+            .map(S3Object::key)
+            .filter(
+                filepath -> {
+                  String[] splitFilename = filepath.split("/");
+                  String filename = splitFilename[splitFilename.length - 1];
+                  return ids.contains(filename);
+                })
+            .toList();
+
+    if (matchedIds.isEmpty()) {
+      throw new NoSuchElementException("Не удалось найти запрощенные изображения по ID: %s".formatted(ids));
+    } else {
+      return matchedIds;
+    }
   }
 
   /**
@@ -115,6 +123,7 @@ public class S3GeneralOperations {
    * @param ids required ids
    * @return resouce containing single byte array with the delimiter in between the binary items.
    * @throws S3Exception when an error occurs during the retrieval process
+   * @throws NoSuchElementException when no matches are found for the provided ids
    */
   public static Resource getItemsByIds(String s3Folder, String ids) {
     Set<String> idsSet = parseIds(ids);
@@ -132,6 +141,7 @@ public class S3GeneralOperations {
    * @param ids required ids
    * @return resouce containing single byte array with the delimiter in between the binary items.
    * @throws S3Exception when an error occurs during the retrieval process
+   * @throws NoSuchElementException when no matches are found for the provided ids
    */
   public static Resource getItemsByIds(String s3Folder, Collection<String> ids) {
     List<byte[]> binaryItemsList =

@@ -118,18 +118,22 @@ class ContentCreatorFlowTest {
             });
   }
 
-  // @Test
-  // @Order(100)
-  // void deleteImage() throws Exception {
-  //   assertNotNull(savedUserPic);
-  //   String url =
-  //       serverUrl
-  //           + "/api/v0/content-creators/user-pics/%s/%s"
-  //               .formatted(PicCategory.ACTOR, savedUserPic.getId());
-  //
-  //   mockMvc.perform(delete(url)).andExpect(status().isNoContent());
-  // }
+  @Order(3)
+  @Test
+  void getSavedPic() throws Exception {
 
+    // mockMvc.perform(get(serverUrl + "/api/v0/content-creators/user-pics/" + savedUserPicMetadata.getId()))
+    // .andExpect(status().isOk())
+    // .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
+
+
+  }
+
+
+  /**
+   * @apiNote This endpoint function removes creator metadata, image metadata from db and image from
+   *     s3, because there is no point to leave image if creator does not exists.
+   */
   @Test
   @Order(101)
   void deleteMetadata() throws Exception {

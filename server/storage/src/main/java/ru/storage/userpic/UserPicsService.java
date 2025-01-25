@@ -49,22 +49,11 @@ public class UserPicsService {
    * @param ids a comma-separated string of content metadata IDs
    * @return resouce containing single byte array with the delimiter in between the images.
    * @throws S3Exception when an error occurs during the retrieval process
+   * @throws NoSuchElementException when no matches are found for the provided ids
    */
-  public Resource getInPairs(PicCategory picCategory, String ids) {
+  public Resource getUserPics(PicCategory picCategory, String ids) {
     return S3GeneralOperations.getItemsByIds(
         PICTURES_STORAGE_FOLDER + "/" + picCategory.stringValue, ids);
-  }
-
-  /**
-   * Retrieve poster images from S3 storage based on specified metadata IDs .
-   *
-   * @param picCategory the category of the user pic (e.g., USER)
-   * @param ids a comma-separated string of content metadata IDs
-   * @return resouce containing single byte array with the delimiter in between the images.
-   * @throws S3Exception when an error occurs during the retrieval process
-   */
-  public Resource getInPairs(String s3Folder, String ids) {
-    return S3GeneralOperations.getItemsByIds(s3Folder, ids);
   }
 
   /**

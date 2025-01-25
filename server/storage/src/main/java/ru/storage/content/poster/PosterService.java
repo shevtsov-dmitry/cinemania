@@ -72,6 +72,7 @@ public class PosterService {
    * @param unparsedIds string of ids separated by comma
    * @return resouce containing single byte array with the delimiter in between the binary items.
    * @throws S3Exception when an error occurs during the retrieval process
+   * @throws NoSuchElementException when no matching items are found
    */
   public Resource getImagesMatchingMetadataIds(String unparsedIds) {
     return S3GeneralOperations.getItemsByIds(S3_FOLDER, unparsedIds);
