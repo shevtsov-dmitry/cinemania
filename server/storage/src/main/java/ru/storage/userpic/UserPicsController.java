@@ -45,7 +45,7 @@ public class UserPicsController {
       @RequestParam String personCategory, @RequestParam MultipartFile image) {
     PersonCategory category;
     try {
-      category = PersonCategory.valueOf(personCategory);
+      category = PersonCategory.valueOf(personCategory.toUpperCase());
     } catch (IllegalArgumentException e) {
       String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
       return new ResponseEntity<>(new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);
@@ -78,7 +78,7 @@ public class UserPicsController {
       @PathVariable String personCategory, @PathVariable String ids) {
     PersonCategory category;
     try {
-      category = PersonCategory.valueOf(personCategory);
+      category = PersonCategory.valueOf(personCategory.toUpperCase());
     } catch (IllegalArgumentException e) {
       String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
       return new ResponseEntity<>(null, new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);
@@ -114,7 +114,7 @@ public class UserPicsController {
       @PathVariable String personCategory, @PathVariable String ids) {
     PersonCategory category;
     try {
-      category = PersonCategory.valueOf(personCategory);
+      category = PersonCategory.valueOf(personCategory.toUpperCase());
     } catch (IllegalArgumentException e) {
       String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
       return new ResponseEntity<>(null, new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);

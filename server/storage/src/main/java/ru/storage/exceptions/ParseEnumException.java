@@ -12,20 +12,6 @@ public class ParseEnumException extends IllegalArgumentException {
 
   public static Enum<?>[] getSupportedValues(Class<? extends Enum<?>> enumClass) {
     return enumClass.getEnumConstants();
-    // Enum<?>[] enumConstants = enumClass.getEnumConstants();
-    // StringBuilder supportedValues = new StringBuilder();
-    //
-    // for (Enum<?> constant : enumConstants) {
-    //   if (supportedValues.length() > 0) {
-    //     supportedValues.append(", ");
-    //   }
-    //   supportedValues.append(constant.name());
-    // }
-    //
-    // return supportedValues.toString();
-    // var sj = new StringJoiner(", ", "[", "]");
-    // Arrays.stream(enumClass.getEnumConstants()).map(Enum::name).forEach(sj::add);
-    // return sj.toString();
   }
 
   /**
@@ -44,7 +30,7 @@ public class ParseEnumException extends IllegalArgumentException {
   @Override
   public String getMessage() {
     if (enumClass == null) {
-      return "Ошибка преобразования строки в перечисление(enum).";
+      return "Используется неверный тип в перечислении(enum).";
     } else {
       return "Используется неверный тип в перечислении(enum). Список поддерживаемых: %s".formatted(getSupportedValuesAsString(enumClass));
     }

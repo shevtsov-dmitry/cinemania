@@ -5,14 +5,14 @@ package ru.storage.person;
  */
 public enum PersonCategory {
 
-    DIRECTOR("director"), 
-    ACTOR("actor"),
-    USER("user");
+    DIRECTOR("DIRECTOR"), 
+    ACTOR("ACTOR"),
+    USER("USER");
 
     public final String stringValue;
 
     PersonCategory(String stringValue)  {
-        this.stringValue = stringValue.toLowerCase();
+        this.stringValue = stringValue;
     }
 
 }
