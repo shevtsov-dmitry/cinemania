@@ -61,12 +61,12 @@ public class PosterController {
    *           binary items
    *       <li>400 (BAD_REQUEST) with the cause header "Message" when content metadata IDs are
    *           invalid
-   *       <li> 404 (NOT_FOUND) with the cause header "Message" when no matching items are found
+   *       <li>404 (NOT_FOUND) with the cause header "Message" when no matching items are found
    *       <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when an error occurs
    *     </ul>
    */
   @GetMapping(value = "{contentMetadataIds}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-  public ResponseEntity<Resource> getImagesByMetadataId(@PathVariable String contentMetadataIds) {
+  public ResponseEntity<Resource> getImagesByMetadataIds(@PathVariable String contentMetadataIds) {
     try {
       return ResponseEntity.ok(service.getImagesMatchingMetadataIds(contentMetadataIds));
     } catch (ParseIdException e) {

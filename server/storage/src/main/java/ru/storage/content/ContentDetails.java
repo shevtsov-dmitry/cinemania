@@ -21,6 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.storage.content.poster.PosterMetadata;
 import ru.storage.content.video.VideoMetadata;
+import ru.storage.person.PersonCategory;
 
 @Data
 @NoArgsConstructor
@@ -44,6 +45,7 @@ public class ContentDetails {
     @Max(21)
     @NotNull(message = "Необходимо указать возрастное ограничение")
     private Integer age;
+    private PersonCategory personCategory;
     private Double rating;
     @DBRef
     private PosterMetadata posterMetadata;

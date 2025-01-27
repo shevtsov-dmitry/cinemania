@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.storage.person.PersonCategory;
 
 @Data
 @Document
@@ -17,5 +18,5 @@ public class UserPic {
     private String id;
     private String contentType;
     private String filename;
-    private PicCategory picCategory;
+    private PersonCategory personCategory;
 }

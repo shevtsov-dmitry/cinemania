@@ -27,7 +27,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.storage.content.ContentDetails;
 import ru.storage.content_creators.ContentCreator;
-import ru.storage.userpic.PicCategory;
+import ru.storage.person.PersonCategory;
 import ru.storage.userpic.UserPic;
 
 @SpringBootTest
@@ -59,13 +59,13 @@ class ContentCreatorFlowTest {
         .perform(
             multipart(serverUrl + "/api/v0/content-creators/user-pics/upload")
                 .file(multipartFile)
-                .param("picCategory", PicCategory.ACTOR.stringValue))
+                .param("picCategory", PersonCategory.ACTOR.stringValue))
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id", is(not(emptyString()))))
         .andExpect(jsonPath("$.contentType", is(MediaType.IMAGE_JPEG_VALUE)))
         .andExpect(jsonPath("$.filename", is("image.jpg")))
-        .andExpect(jsonPath("$.picCategory", is(PicCategory.ACTOR.stringValue)))
+        .andExpect(jsonPath("$.personCategory", is(PersonCategory.ACTOR.stringValue)))
         .andDo(
             result -> {
               savedUserPicMetadata =
@@ -129,7 +129,7 @@ class ContentCreatorFlowTest {
                 serverUrl
                     + "/api/v0/content-creators/user-pics/%s/%s"
                         .formatted(
-                            savedContentCreator.getUserPic().getPicCategory(),
+                            savedContentCreator.getUserPic().getPersonCategory(),
                             savedContentCreator.getUserPic().getId())))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
