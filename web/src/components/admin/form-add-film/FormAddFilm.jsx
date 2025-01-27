@@ -10,7 +10,6 @@ export default function FormAddFilm() {
   const options = {
     MAX_AUTO_SUGGESTIONS_DISPLAYED: 5,
   };
-  const isFormAddFilmVisible = useStore((state) => state.isFormAddFilmVisible);
   const closeForm = useStore((state) => state.hideFormAddFilm);
 
   const [suggestionsDOM, setSuggestionsDOM] = useState([]);
@@ -465,10 +464,6 @@ export default function FormAddFilm() {
     function showLoadingIcon() {
       loadingRef.current.style.display = "block";
     }
-  }
-
-  if (!isFormAddFilmVisible) {
-    return <div />;
   }
 
   return (

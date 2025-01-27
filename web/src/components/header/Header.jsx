@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
 import useStore from "@/src/state/useStore";
-import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, Image, TouchableOpacity, FlatList, Pressable } from "react-native";
 
 // TODO use expo router instead
 // import { Link, Route, Routes } from 'react-router-dom';
@@ -22,6 +22,7 @@ export default function Header() {
 
   const isFormAddFilmVisible = useStore((state) => state.isFormAddFilmVisible);
   const toggleFormAddFilm = useStore((state) => state.showFormAddFilm);
+  const toggleFormAddCreator = useStore((state) => state.showFormAddCreator);
 
   const topics = ["Фильмы", "Сериалы", "Мультфильмы", "Аниме"];
 
@@ -94,9 +95,15 @@ export default function Header() {
             <Text>Подборки</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={toggleFormAddFilm}>
+        <View className="bg-neutral-700 px-5 py-2 rounded-2xl">
+          <Text className="text-white text-sm">Панель администратора</Text>
+        <Pressable onPress={toggleFormAddFilm}>
           <Text className="text-orange-500">Добавить новый фильм</Text>
-        </TouchableOpacity>
+        </Pressable>
+        <Pressable onPress={toggleFormAddCreator}>
+          <Text className="text-orange-500">Добавить члена съёмочной группы</Text>
+        </Pressable>
+        </View>
         <View className="flex-row gap-1.25"></View>
         <View className="flex-row items-center gap-0.25">
           <Image

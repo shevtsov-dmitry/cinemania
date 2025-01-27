@@ -6,11 +6,12 @@ import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
 import VideoPlayer from "@/src/components/video-player/VideoPlayer";
 import { ReactElement, useEffect, useState } from "react";
 import Constants from "../constants/Constants";
+import AdminPage from "./admin/AdminPage";
 
 const App = (): ReactElement => (
   <View className="min-w-100 h-dvh min-h-20 bg-neutral-800">
     <Header />
-    <FormAddFilm />
+    <AdminPage/>
     <Home />
     {/* <VideoPlayer /> */}
     {/*TODO use zustand instead*/}
