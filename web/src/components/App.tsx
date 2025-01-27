@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 
-import Header from "@/src/components/header/Header";
+import TopPanel from "@/src/components/top-panel/TopPanel";
 import Home from "@/src/components/home/Home";
 import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
 import VideoPlayer from "@/src/components/video-player/VideoPlayer";
@@ -10,7 +10,7 @@ import AdminPage from "./admin/AdminPage";
 
 const App = (): ReactElement => (
   <View className="min-w-100 h-dvh min-h-20 bg-neutral-800">
-    <Header />
+    <TopPanel />
     <AdminPage/>
     <Home />
     {/* <VideoPlayer /> */}

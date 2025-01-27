@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import useStore from "@/src/state/useStore";
 import Constants from "@/src/constants/Constants";
-// TODO use expo router instead
-// import { Link } from 'react-router-dom';
+import useFormAddFilmStore from "@/src/state/formAddFilmState";
 
 export default function FormAddFilm() {
   const STORAGE_URL = Constants.STORAGE_URL;
@@ -10,7 +8,7 @@ export default function FormAddFilm() {
   const options = {
     MAX_AUTO_SUGGESTIONS_DISPLAYED: 5,
   };
-  const closeForm = useStore((state) => state.hideFormAddFilm);
+  const hideFormAddFilm = useFormAddFilmStore((state) => state.hideFormAddFilm);
 
   const [suggestionsDOM, setSuggestionsDOM] = useState([]);
   const [countryInput, setCountryInput] = useState("");
@@ -18,11 +16,11 @@ export default function FormAddFilm() {
   const [subGenresInput, setSubGenresInput] = useState("");
   const [countrySuggestionsDOM, setCountrySuggestionsDOM] = useState(<div />);
   const [mainGenreSuggestionsDOM, setMainGenreSuggestionsDOM] = useState(
-    <div />,
+    <div />
   );
   const [autoSuggestionsMap, setAutoSuggestionsMap] = useState({});
   const [subGenresSuggestionsDOM, setSubGenresSuggestionsDOM] = useState(
-    <div />,
+    <div />
   );
 
   const posterInputRef = useRef();
@@ -41,10 +39,10 @@ export default function FormAddFilm() {
         recentInputLength: 0,
       };
       let response = await fetch(
-        `${STORAGE_URL}/filling-assistants/genres/get/all`,
+        `${STORAGE_URL}/filling-assistants/genres/get/all`
       ).catch(() => {
         console.error(
-          `problem fetching: ${STORAGE_URL}/filling-assistants/genres/get/all`,
+          `problem fetching: ${STORAGE_URL}/filling-assistants/genres/get/all`
         );
         return;
       });
@@ -56,10 +54,10 @@ export default function FormAddFilm() {
       };
 
       response = await fetch(
-        `${STORAGE_URL}/filling-assistants/countries/get/all`,
+        `${STORAGE_URL}/filling-assistants/countries/get/all`
       ).catch(() => {
         console.error(
-          `problem fetching: ${STORAGE_URL}/filling-assistants/countries/get/all`,
+          `problem fetching: ${STORAGE_URL}/filling-assistants/countries/get/all`
         );
       });
       responseData = await response.json();
@@ -82,7 +80,7 @@ export default function FormAddFilm() {
   function createDivFromRetrievedSuggestion(
     suggestions,
     formFieldName,
-    inputValue,
+    inputValue
   ) {
     return suggestions.map((suggestion) => createDOM(suggestion));
 
@@ -226,7 +224,7 @@ export default function FormAddFilm() {
       if (posterFile == null) {
         throw new Error("Необходимо выбрать постер для видео.");
       }
-      
+
       const posterFormData = new FormData();
       posterFormData.append("image", posterFile);
       posterFormData.append("id", id);
@@ -238,7 +236,7 @@ export default function FormAddFilm() {
 
       if (res.status !== 201) {
         throw new Error(
-          decodeURI(res.headers.get("Message")).replaceAll("+", " "),
+          decodeURI(res.headers.get("Message")).replaceAll("+", " ")
         );
       }
     }
@@ -264,7 +262,7 @@ export default function FormAddFilm() {
 
       if (res.status !== 201) {
         throw new Error(
-          decodeURI(res.headers.get("Message")).replaceAll("+", " "),
+          decodeURI(res.headers.get("Message")).replaceAll("+", " ")
         );
       }
     }
@@ -302,7 +300,7 @@ export default function FormAddFilm() {
 
       if (res.status !== 201) {
         throw new Error(
-          decodeURI(res.headers.get("Message")).replaceAll("+", " "),
+          decodeURI(res.headers.get("Message")).replaceAll("+", " ")
         );
       }
 
@@ -476,7 +474,7 @@ export default function FormAddFilm() {
           <button
             id="form-close-sign"
             className="cursor-pointer select-none text-xl font-bold text-gray-500 hover:text-gray-700 dark:text-blue-200 dark:hover:text-blue-300"
-            onClick={closeForm}
+            onClick={hideFormAddFilm}
           >
             X
           </button>
