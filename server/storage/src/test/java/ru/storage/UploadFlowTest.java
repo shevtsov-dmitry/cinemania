@@ -7,12 +7,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -141,16 +146,12 @@ class UploadFlowTest {
     mockMvc
         .perform(get(endpointUrl + "/api/v0/posters/" + posterId))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(
-            result -> {
-              List<String> postersList =
-                  objectMapper.readValue(
-                      result.getResponse().getContentAsString(), new TypeReference<>() {});
-              assertThat(postersList).isNotEmpty();
-              byte[] receivedImage = Base64.getDecoder().decode(postersList.getFirst());
-              assertTrue(receivedImage.length > 0);
-            });
+        .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
+        .andExpect(result -> {
+             byte[] rawBytes = result.getResponse().getContentAsByteArray();
+              assertThat(rawBytes).isNotNull().isNotEmpty();
+              assertDoesNotThrow(() -> ImageIO.read(new ByteArrayInputStream(rawBytes)));
+        });
   }
 
   // ------------- VIDEO -------------
