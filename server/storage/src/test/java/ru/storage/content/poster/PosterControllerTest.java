@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebMvcTest(PosterController.class)
 @ExtendWith(MockitoExtension.class)
-class PosterMetadataControllerTest {
+class PosterControllerTest {
 
     private static final String MESSAGE_HEADER = "Message";
 
