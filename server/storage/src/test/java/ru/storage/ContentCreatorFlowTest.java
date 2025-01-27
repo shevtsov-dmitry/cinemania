@@ -59,7 +59,7 @@ class ContentCreatorFlowTest {
         .perform(
             multipart(serverUrl + "/api/v0/content-creators/user-pics/upload")
                 .file(multipartFile)
-                .param("picCategory", PersonCategory.ACTOR.stringValue))
+                .param("personCategory", PersonCategory.ACTOR.stringValue))
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id", is(not(emptyString()))))

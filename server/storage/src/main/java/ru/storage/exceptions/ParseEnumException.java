@@ -37,6 +37,7 @@ public class ParseEnumException extends IllegalArgumentException {
   public static String getSupportedValuesAsString(Class<? extends Enum<?>> enumClass) {
     var sj = new StringJoiner(", ", "[", "]");
     Arrays.stream(enumClass.getEnumConstants()).map(Enum::name).forEach(sj::add);
+    System.out.println(sj);
     return sj.toString();
   }
 
@@ -45,8 +46,7 @@ public class ParseEnumException extends IllegalArgumentException {
     if (enumClass == null) {
       return "Ошибка преобразования строки в перечисление(enum).";
     } else {
-      return "Используется неверный тип в перечислении(enum). Список поддерживаемых: %s".formatted(getSupportedValues(enumClass))
-          + getSupportedValues(this.enumClass);
+      return "Используется неверный тип в перечислении(enum). Список поддерживаемых: %s".formatted(getSupportedValuesAsString(enumClass));
     }
   }
 

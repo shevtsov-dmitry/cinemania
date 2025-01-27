@@ -227,7 +227,7 @@ export default function FormAddFilm() {
       if (posterFile == null) {
         throw new Error("Необходимо выбрать постер для видео.");
       }
-
+      
       const posterFormData = new FormData();
       posterFormData.append("image", posterFile);
       posterFormData.append("id", id);
