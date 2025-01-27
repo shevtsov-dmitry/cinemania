@@ -1,28 +1,37 @@
-import { useEffect, useRef, useState } from "react";
-import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
-import useStore from "@/src/state/useStore";
-import { View, Text, Image, TouchableOpacity, FlatList, Pressable } from "react-native";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  FlatList,
+  Pressable,
+} from "react-native";
+import useFormAddFilmStore from "@/src/state/formAddFilmState";
+import useFormAddCreatorStore from "@/src/state/formAddCreatorState";
 
 // TODO use expo router instead
 // import { Link, Route, Routes } from 'react-router-dom';
 
-/**
- *
- * @returns {JSX.Element}
- */
-export default function Header() {
-  const generalTopicsRef = useRef();
-  const newShowsAndCollectionsRef = useRef();
-  const loginImageRef = useRef();
-  const searchImageRef = useRef();
-  const burgerImageRef = useRef();
-  const closeImageRef = useRef();
+const TopPanel = (): ReactElement => {
+  const generalTopicsRef = useRef<FlatList | null>(null);
+  const newShowsAndCollectionsRef = useRef<View | null>(null);
+  const loginImageRef = useRef<Image | null>(null);
+  const searchImageRef = useRef<Image | null>(null);
+  const burgerImageRef = useRef<Image | null>(null);
+  const closeImageRef = useRef<Image | null>(null);
 
   const [isBurgerActive, setIsBurgerActive] = useState(false);
 
-  const isFormAddFilmVisible = useStore((state) => state.isFormAddFilmVisible);
-  const toggleFormAddFilm = useStore((state) => state.showFormAddFilm);
-  const toggleFormAddCreator = useStore((state) => state.showFormAddCreator);
+  const isFormAddFilmVisible = useFormAddFilmStore(
+    (state) => state.isFormAddFilmVisible
+  );
+  const toggleFormAddFilm = useFormAddFilmStore(
+    (state) => state.toggleFormAddFilm
+  );
+  const toggleFormAddCreator = useFormAddCreatorStore(
+    (state) => state.toggleFormAddCreator
+  );
 
   const topics = ["Фильмы", "Сериалы", "Мультфильмы", "Аниме"];
 
@@ -43,7 +52,7 @@ export default function Header() {
   // }
 
   // TODO restore commented parts
-  const BurgerPanel = () => (
+  const BurgerPanel = (): ReactElement => (
     <>
       <View className="fixed z-20 h-full w-full bg-gray-800 transition-all duration-300 ease-in-out">
         <View className="ml-5 mt-2.5">
@@ -61,12 +70,7 @@ export default function Header() {
     </>
   );
 
-  /**
-   * @param {Object} props
-   * @param {string} props.topicName
-   * @returns {JSX.Element}
-   */
-  const GeneralTopic = ({ topicName }) =>
+  const GeneralTopic = ({ topicName }: { topicName: string }): ReactElement =>
     isBurgerActive ? <Text>{topicName + " ▼"}</Text> : <Text>{topicName}</Text>;
   // signs variants: ▼ᐁ
 
@@ -85,8 +89,8 @@ export default function Header() {
           className="flex-row gap-1.25"
           horizontal
           data={topics}
-          renderItem={({ item, idx }) => (
-            <GeneralTopic key={idx} topicName={item} />
+          renderItem={({ item, index }) => (
+            <GeneralTopic key={index} topicName={item} />
           )}
         />
         <View ref={newShowsAndCollectionsRef} className="flex-row gap-1.25">
@@ -97,12 +101,14 @@ export default function Header() {
         </View>
         <View className="bg-neutral-700 px-5 py-2 rounded-2xl">
           <Text className="text-white text-sm">Панель администратора</Text>
-        <Pressable onPress={toggleFormAddFilm}>
-          <Text className="text-orange-500">Добавить новый фильм</Text>
-        </Pressable>
-        <Pressable onPress={toggleFormAddCreator}>
-          <Text className="text-orange-500">Добавить члена съёмочной группы</Text>
-        </Pressable>
+          <Pressable onPress={toggleFormAddFilm}>
+            <Text className="text-orange-500">Добавить новый фильм</Text>
+          </Pressable>
+          <Pressable onPress={toggleFormAddCreator}>
+            <Text className="text-orange-500">
+              Добавить члена съёмочной группы
+            </Text>
+          </Pressable>
         </View>
         <View className="flex-row gap-1.25"></View>
         <View className="flex-row items-center gap-0.25">
@@ -143,7 +149,9 @@ export default function Header() {
       {isBurgerActive && <BurgerPanel />}
     </View>
   );
-}
+};
+
+export default TopPanel;
 
 /*     <Route */
 /*         path="/add-new-film" */
