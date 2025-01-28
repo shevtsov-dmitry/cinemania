@@ -1,11 +1,8 @@
 import { Text, View } from "react-native";
 
-import TopPanel from "@/src/components/top-panel/TopPanel";
 import Home from "@/src/components/home/Home";
-import FormAddFilm from "@/src/components/admin/form-add-film/FormAddFilm";
-import VideoPlayer from "@/src/components/video-player/VideoPlayer";
-import { ReactElement, useEffect, useState } from "react";
-import Constants from "../constants/Constants";
+import TopPanel from "@/src/components/top-panel/TopPanel";
+import { ReactElement } from "react";
 import AdminPage from "./admin/AdminPage";
 
 const App = (): ReactElement => (
@@ -14,7 +11,7 @@ const App = (): ReactElement => (
     <AdminPage/>
     <Home />
     {/* <VideoPlayer /> */}
-    {/*TODO use zustand instead*/}
+    
     {/*<Routes>*/}
     {/*    <Route path="/" element={<Home />} />*/}
     {/*    <Route path="/watch/:videoId" element={<VideoPlayer />} />*/}

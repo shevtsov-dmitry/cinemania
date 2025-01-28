@@ -1,6 +1,6 @@
 import { ReactElement, useEffect } from "react";
 
-import ContentDetails from "@/src/interfaces/ContentDetails";
+import ContentDetails from "@/src/types/ContentDetails";
 import { Image, View } from "react-native";
 import CompilationKind from "../compilations/CompilationKind";
 

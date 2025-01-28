@@ -1,6 +1,6 @@
 import Compilation from "@/src/components/compilations/Compilation";
 import Constants from "@/src/constants/Constants";
-import ContentDetails from "@/src/interfaces/ContentDetails";
+import ContentDetails from "@/src/types/ContentDetails";
 import { parseSplittedWithDefaultDelimiter } from "@/src/utils/BinaryContentUtils";
 import { useEffect, useState } from "react";
 import { View } from "react-native";

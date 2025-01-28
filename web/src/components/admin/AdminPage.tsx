@@ -6,10 +6,10 @@ import FormAddCreator from "./form-add-creator/FormAddCreator";
 import { View } from "react-native";
 
 const AdminPage = (): React.ReactElement => {
-  const isFormAddFilmVisible = useFormAddCreatorStore(
+  const isFormAddCreatorVisible = useFormAddCreatorStore(
     (state) => state.isFormAddCreatorVisible
   );
-  const isFormAddCreatorVisible = useFormAddFilmStore(
+  const isFormAddFilmVisible = useFormAddFilmStore(
     (state) => state.isFormAddFilmVisible
   );
 
