@@ -34,9 +34,9 @@ public class GenreController {
     }
 
     @PostMapping(value = "multiple", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> save(@RequestBody List<Genre> genres) {
+    public ResponseEntity<Void> save(@RequestBody List<String> genreNames) {
         try {
-            genreService.save(genres);
+            genreService.saveMultiple(genreNames);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (MongoException e) {
             return new ResponseEntity<>(null,
@@ -45,7 +45,7 @@ public class GenreController {
         }
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> getAllNames() {
         return new ResponseEntity<>(genreService.getAll(), HttpStatus.OK);
     }

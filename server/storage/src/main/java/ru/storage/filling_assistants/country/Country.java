@@ -14,5 +14,9 @@ public class Country {
     private String id;
     @Indexed(unique = true)
     private String name;
+    
+    public Country(String name) {
+        this.name = name;
+    }
 
 }

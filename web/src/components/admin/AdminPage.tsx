@@ -4,6 +4,7 @@ import useFormAddFilmStore from "@/src/state/formAddFilmState";
 import FormAddFilm from "./form-add-film/FormAddFilm";
 import FormAddCreator from "./form-add-creator/FormAddCreator";
 import { View } from "react-native";
+import FormRelatedShowsChooser from "./form-add-creator/FormRelatedShowsChooser";
 
 const AdminPage = (): React.ReactElement => {
   const isFormAddCreatorVisible = useFormAddCreatorStore(
@@ -17,6 +18,7 @@ const AdminPage = (): React.ReactElement => {
     <View>
       {isFormAddFilmVisible && <FormAddFilm />}
       {isFormAddCreatorVisible && <FormAddCreator />}
+      <FormRelatedShowsChooser/>
     </View>
   );
 };

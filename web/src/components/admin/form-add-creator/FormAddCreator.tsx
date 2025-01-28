@@ -93,6 +93,7 @@ const FormAddCreator = () => {
     setDeathDate("");
     setIsDead(false);
     setUserPic(null);
+    setFilmsParticipated([]);
     if (formRef.current) formRef.current.reset();
   }
 
@@ -155,20 +156,19 @@ const FormAddCreator = () => {
           <li>
             <label>Должность</label>
             <div className="flex gap-1">
-
-            {Object.values(PersonCategory).map((category) => (
-              <div key={category}>
-                <input
-                  type="radio"
-                  value={category}
-                  checked={personCategory === category}
-                  onChange={(e) =>
-                    setPersonCategory(e.target.value as PersonCategory)
-                  }
-                />
-                <label className="ml-2">{category}</label>
-              </div>
-            ))}
+              {Object.values(PersonCategory).map((category) => (
+                <div key={category}>
+                  <input
+                    type="radio"
+                    value={category}
+                    checked={personCategory === category}
+                    onChange={(e) =>
+                      setPersonCategory(e.target.value as PersonCategory)
+                    }
+                  />
+                  <label className="ml-2">{category}</label>
+                </div>
+              ))}
             </div>
           </li>
 
@@ -238,6 +238,15 @@ const FormAddCreator = () => {
           </li>
 
           <li>
+            <button
+              className="bg-neutral-100 hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded shadow"
+              type="button"
+            >
+              Выбрать связанные шоу
+            </button>
+          </li>
+
+          <li>
             <label className="block text-sm font-medium mb-1">Фото</label>
             <input
               ref={fileInputRef}
@@ -261,14 +270,14 @@ const FormAddCreator = () => {
         <div className="mt-6 flex justify-center gap-4">
           <button
             type="submit"
-            className="rounded-lg bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
+            className="rounded-lg bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none shadow"
           >
             Сохранить
           </button>
           <button
             type="button"
             onClick={resetForm}
-            className="rounded-lg bg-gray-300 px-4 py-2 font-bold text-black hover:bg-gray-400"
+            className="rounded-lg bg-neutral-100 px-4 py-2 font-bold text-black hover:bg-neutral-200 shadow"
           >
             Очистить
           </button>

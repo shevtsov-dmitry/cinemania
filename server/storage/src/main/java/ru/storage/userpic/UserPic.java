@@ -13,7 +13,6 @@ import ru.storage.person.PersonCategory;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserPic {
-
     @Id
     private String id;
     private String contentType;

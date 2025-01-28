@@ -69,7 +69,7 @@ public class UserPicsController {
    *           binary items
    *       <li>400 (bad request) with the cause header "Message" when content metadata IDs are
    *           invalid or person category is invalid
-   *       <LI>404 (not found) WITH THE CAUSE HEADER "Message" WHEN NO MATCHING ITEMS ARE FOUND
+   *       <li>404 (not found) WITH THE CAUSE HEADER "Message" WHEN NO MATCHING ITEMS ARE FOUND
    *       <li>500 (internal server error) with the cause header "Message" when an error occurs
    *     </ul>
    */
