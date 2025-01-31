@@ -98,10 +98,10 @@ const FormAddCreator = () => {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 p-4 dark:bg-gray-900">
       <form
         ref={formRef}
-        className="relative full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:text-blue-100"
+        className="relative max-w-md rounded-lg bg-white p-6 shadow-lg full dark:bg-neutral-800 dark:text-blue-100"
         onSubmit={handleSubmit}
       >
         <div className="absolute top-4 right-4">
@@ -120,9 +120,9 @@ const FormAddCreator = () => {
 
         <ul className="space-y-4">
           <li>
-            <label className="block text-sm font-medium mb-1">Полное имя</label>
+            <label className="mb-1 block text-sm font-medium">Полное имя</label>
             <input
-              className="w-full rounded-md border py-2 px-3"
+              className="w-full rounded-md border px-3 py-2"
               value={fullname}
               onChange={(e) => setFullname(e.target.value)}
               placeholder="Введите полное имя"
@@ -130,11 +130,11 @@ const FormAddCreator = () => {
           </li>
 
           <li>
-            <label className="block text-sm font-medium mb-1">
+            <label className="mb-1 block text-sm font-medium">
               Полное имя (Латиницей)
             </label>
             <input
-              className="w-full rounded-md border py-2 px-3"
+              className="w-full rounded-md border px-3 py-2"
               value={fullnameEng}
               onChange={(e) => setFullnameEng(e.target.value)}
               placeholder="Введите имя латиницей"
@@ -142,11 +142,11 @@ const FormAddCreator = () => {
           </li>
 
           <li>
-            <label className="block text-sm font-medium mb-1">
+            <label className="mb-1 block text-sm font-medium">
               Место рождения
             </label>
             <input
-              className="w-full rounded-md border py-2 px-3"
+              className="w-full rounded-md border px-3 py-2"
               value={bornPlace}
               onChange={(e) => setBornPlace(e.target.value)}
               placeholder="Введите место рождения"
@@ -174,9 +174,9 @@ const FormAddCreator = () => {
 
           <li className="flex gap-2">
             <div>
-              <label className="block text-sm font-medium mb-1">Рост (м)</label>
+              <label className="mb-1 block text-sm font-medium">Рост (м)</label>
               <input
-                className="w-full rounded-md border py-2 px-3"
+                className="w-full rounded-md border px-3 py-2"
                 type="number"
                 value={heightMeters}
                 onChange={(e) =>
@@ -187,9 +187,9 @@ const FormAddCreator = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Возраст</label>
+              <label className="mb-1 block text-sm font-medium">Возраст</label>
               <input
-                className="w-full rounded-md border py-2 px-3"
+                className="w-full rounded-md border px-3 py-2"
                 type="number"
                 value={age}
                 onChange={(e) => setAge(parseInt(e.target.value, 10) || 0)}
@@ -197,9 +197,9 @@ const FormAddCreator = () => {
             </div>
           </li>
 
-          <li className="flex gap-2 items-center ">
+          <li className="flex items-center gap-2">
             <div className="flex gap-1 mb-[-20px]">
-              <label className="block text-sm font-medium mb-1">
+              <label className="mb-1 block text-sm font-medium">
                 {"Мёртв"}
               </label>
               <input
@@ -211,11 +211,11 @@ const FormAddCreator = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="mb-1 block text-sm font-medium">
                 Дата рождения
               </label>
               <input
-                className="w-full rounded-md border py-2 px-3"
+                className="w-full rounded-md border px-3 py-2"
                 type="date"
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
@@ -224,11 +224,11 @@ const FormAddCreator = () => {
 
             {isDead && (
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="mb-1 block text-sm font-medium">
                   Дата смерти
                 </label>
                 <input
-                  className="w-full rounded-md border py-2 px-3"
+                  className="w-full rounded-md border px-3 py-2"
                   type="date"
                   value={deathDate}
                   onChange={(e) => setDeathDate(e.target.value)}
@@ -239,7 +239,7 @@ const FormAddCreator = () => {
 
           <li>
             <button
-              className="bg-neutral-100 hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded shadow"
+              className="rounded bg-neutral-100 px-4 py-2 font-bold text-black shadow hover:bg-neutral-200"
               type="button"
             >
               Выбрать связанные шоу
@@ -247,7 +247,7 @@ const FormAddCreator = () => {
           </li>
 
           <li>
-            <label className="block text-sm font-medium mb-1">Фото</label>
+            <label className="mb-1 block text-sm font-medium">Фото</label>
             <input
               ref={fileInputRef}
               type="file"
@@ -261,7 +261,7 @@ const FormAddCreator = () => {
               <img
                 src={userPic.filename}
                 alt="Загруженное изображение"
-                className="mt-2 w-32 h-32 border"
+                className="mt-2 h-32 w-32 border"
               />
             </li>
           )}
@@ -270,14 +270,14 @@ const FormAddCreator = () => {
         <div className="mt-6 flex justify-center gap-4">
           <button
             type="submit"
-            className="rounded-lg bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none shadow"
+            className="rounded-lg bg-blue-600 px-4 py-2 font-bold text-white shadow hover:bg-blue-700 focus:outline-none"
           >
             Сохранить
           </button>
           <button
             type="button"
             onClick={resetForm}
-            className="rounded-lg bg-neutral-100 px-4 py-2 font-bold text-black hover:bg-neutral-200 shadow"
+            className="rounded-lg bg-neutral-100 px-4 py-2 font-bold text-black shadow hover:bg-neutral-200"
           >
             Очистить
           </button>

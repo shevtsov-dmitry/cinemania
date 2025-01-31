@@ -56,10 +56,10 @@ const FormRelatedShowsChooser = () => {
           </select>
         </div>
       </div>
-      <button className="bg-blue-500 text-white p-2 font-bold">Искать</button>
-      <div className="grid row-cols-3 gap-1"></div>
+      <button className="bg-blue-500 p-2 font-bold text-white">Искать</button>
+      <div className="grid gap-1 row-cols-3"></div>
 
-      <button className="bg-blue-500 text-white p-2 font-bold">
+      <button className="bg-blue-500 p-2 font-bold text-white">
         Подтвердить
       </button>
     </form>

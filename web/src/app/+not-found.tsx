@@ -15,10 +15,10 @@ export default function NotFoundScreen() {
                 </Text>
 
                 <Link href="/" className="mt-4 py-4">
-                    <Text className="text-base text-link underline">
+                    <Text className="text-base underline text-link">
                         Go to home screen. {'\n'}
                     </Text>
-                    <Text className="text-base text-link underline">
+                    <Text className="text-base underline text-link">
                         Перейти на главный экран.
                     </Text>
                 </Link>

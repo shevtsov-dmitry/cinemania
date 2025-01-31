@@ -6,7 +6,7 @@ import { ReactElement } from "react";
 import AdminPage from "./admin/AdminPage";
 
 const App = (): ReactElement => (
-  <View className="min-w-100 h-dvh min-h-20 bg-neutral-800">
+  <View className="bg-neutral-800 min-w-100 h-dvh min-h-20">
     <TopPanel />
     <AdminPage/>
     <Home />

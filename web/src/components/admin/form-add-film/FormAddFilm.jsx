@@ -465,7 +465,7 @@ export default function FormAddFilm() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 p-4 dark:bg-gray-900">
       <form
         ref={formRef}
         className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:text-blue-100"
@@ -494,7 +494,7 @@ export default function FormAddFilm() {
                 event.keyCode === 13 && event.preventDefault()
               }
               onSubmit={(event) => event.preventDefault()}
-              className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
               type="search"
               name="title"
             />
@@ -508,7 +508,7 @@ export default function FormAddFilm() {
               onKeyDown={(event) =>
                 event.keyCode === 13 && event.preventDefault()
               }
-              className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
               type="search"
               name="country"
               // TODO restore autosuggesstion in the future
@@ -530,7 +530,7 @@ export default function FormAddFilm() {
               onKeyDown={(event) =>
                 event.keyCode === 13 && event.preventDefault()
               }
-              className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
               type="date"
               name="releaseDate"
             />
@@ -544,7 +544,7 @@ export default function FormAddFilm() {
               onKeyDown={(event) =>
                 event.keyCode === 13 && event.preventDefault()
               }
-              className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
               type="search"
               name="mainGenre"
               // TODO restore autosuggesstion in the future
@@ -566,7 +566,7 @@ export default function FormAddFilm() {
               onKeyDown={(event) =>
                 event.keyCode === 13 && event.preventDefault()
               }
-              className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
               type="search"
               name="subGenres"
               placeholder="разделять запятой"
@@ -599,7 +599,7 @@ export default function FormAddFilm() {
             <input
               ref={posterInputRef}
               type="file"
-              className="block w-full text-sm text-gray-700 dark:text-blue-100 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100"
+              className="file:mr-4 block w-full file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 text-sm text-gray-700 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100 dark:text-blue-100"
               name="imageUrl"
             />
           </li>
@@ -611,7 +611,7 @@ export default function FormAddFilm() {
             <input
               ref={videoInputRef}
               type="file"
-              className="block w-full text-sm text-gray-700 dark:text-blue-100 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100"
+              className="file:mr-4 block w-full file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 text-sm text-gray-700 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100 dark:text-blue-100"
               name="videoUrl"
             />
           </li>
@@ -624,7 +624,7 @@ export default function FormAddFilm() {
               onKeyDown={(event) =>
                 event.keyCode === 13 && event.preventDefault()
               }
-              className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
               type="text"
               placeholder="6.89"
               name="rating"

@@ -94,7 +94,7 @@ export default function Preview() {
 
   return (
     <View id="previews-sequence-block" className="flex flex-col justify-center">
-      <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
+      <View className="relative overflow-x-scroll scroll-smooth p-2 no-scrollbar">
         <Compilation
           posterImageUrls={posterImagesUrls}
           metadataList={metadataList}

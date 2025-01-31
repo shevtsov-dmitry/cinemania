@@ -56,13 +56,13 @@ const TopPanel = (): ReactElement => {
     <>
       <View className="fixed z-20 h-full w-full bg-gray-800 transition-all duration-300 ease-in-out">
         <View className="ml-5 mt-2.5">
-          <Text className="text-lg text-white uppercase">
+          <Text className="text-lg uppercase text-white">
             {/*{generalTopicsLiContent()}*/}
           </Text>
           {/*<View>{newsAndCollectionContent()}</View>*/}
         </View>
       </View>
-      <View className="fixed bottom-2.5 left-2.5 z-20">
+      <View className="fixed z-20 bottom-2.5 left-2.5">
         <Text className="text-xs text-white opacity-75">
           © 2024 ООО «Bē commerce»
         </Text>
@@ -76,10 +76,10 @@ const TopPanel = (): ReactElement => {
 
   return (
     <View>
-      <View className="flex-row justify-between items-center mx-[3.5%] text-white">
+      <View className="flex-row items-center justify-between text-white mx-[3.5%]">
         <TouchableOpacity>
           <Image
-            className="mt-2.5 w-16 h-16"
+            className="h-16 w-16 mt-2.5"
             source={require("@/images/icons/company_logo.png")}
             alt="company logo"
           />
@@ -99,8 +99,8 @@ const TopPanel = (): ReactElement => {
             <Text>Подборки</Text>
           </View>
         </View>
-        <View className="bg-neutral-700 px-5 py-2 rounded-2xl">
-          <Text className="text-white text-sm">Панель администратора</Text>
+        <View className="rounded-2xl bg-neutral-700 px-5 py-2">
+          <Text className="text-sm text-white">Панель администратора</Text>
           <Pressable onPress={toggleFormAddFilm}>
             <Text className="text-orange-500">Добавить новый фильм</Text>
           </Pressable>
@@ -156,8 +156,8 @@ export default TopPanel;
 /*     <Route */
 /*         path="/add-new-film" */
 /*         element={ */
-/*             <div className="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center"> */
-/*                 <div className="absolute h-full w-full bg-gray-800 opacity-85 backdrop-blur-md dark:backdrop-blur-lg"></div> */
+/*             <div className="fixed top-0 left-0 z-50 flex items-center justify-center h-dvh w-dvw"> */
+/*                 <div className="absolute h-full w-full bg-gray-800 backdrop-blur-md opacity-85 dark:backdrop-blur-lg"></div> */
 /*                 <div className="z-50"> */
 /*                     <FormAddFilm /> */
 /*                 </div> */

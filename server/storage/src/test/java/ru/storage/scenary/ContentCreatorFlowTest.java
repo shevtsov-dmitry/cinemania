@@ -27,10 +27,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.storage.content.ContentDetails;
-import ru.storage.content_creators.ContentCreator;
+import ru.storage.content_metadata.ContentMetadata;
+import ru.storage.person.content_creator.ContentCreator;
 import ru.storage.person.PersonCategory;
-import ru.storage.userpic.UserPic;
+import ru.storage.person.userpic.UserPic;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -90,7 +90,7 @@ class ContentCreatorFlowTest {
             .birthDate(LocalDate.of(1975, 10, 24))
             .deathDate(LocalDate.of(2015, 10, 24))
             .userPic(savedUserPicMetadata)
-            .filmsParticipated(List.of(new ContentDetails()))
+            .filmsParticipated(List.of(new ContentMetadata()))
             .build();
 
     mockMvc
