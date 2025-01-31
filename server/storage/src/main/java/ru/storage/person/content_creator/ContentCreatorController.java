@@ -1,5 +1,6 @@
 package ru.storage.person.content_creator;
 
+import java.util.Collections;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.storage.person.userpic.UserPic;
 import ru.storage.person.userpic.UserPicsService;
 import ru.storage.utils.EncodedHttpHeaders;
 
@@ -34,7 +36,15 @@ public class ContentCreatorController {
 
   @GetMapping("{id}")
   public ResponseEntity<ContentCreator> getCreatorById(@PathVariable String id) {
-    return new ResponseEntity<>(contentCreatorService.getCreatorById(id), HttpStatus.OK);
+    var creator = contentCreatorService.getCreatorById(id);
+    if (creator.isPresent()) {
+      return new ResponseEntity<>(creator.get(), HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>(
+          null,
+          new EncodedHttpHeaders("Запрашиваемый член съёмочной группы не найден."),
+          HttpStatus.NOT_FOUND);
+    }
   }
 
   @GetMapping("{country}/{genre}")
@@ -64,8 +74,17 @@ public class ContentCreatorController {
 
   @DeleteMapping("{id}")
   public ResponseEntity<Void> deleteCreator(@PathVariable String id) {
-    var userPic = contentCreatorService.getCreatorById(id).getUserPic();
-    userPicsService.delete(userPic.getPersonCategory(), userPic.getId());
+    var contentCreatorOptional = contentCreatorService.getCreatorById(id);
+    if (contentCreatorOptional.isEmpty()) {
+      return new ResponseEntity<>(
+          null,
+          new EncodedHttpHeaders("Запрашиваемый член съёмочной группы не найден."),
+          HttpStatus.NOT_FOUND);
+    }
+    var userPic = contentCreatorOptional.get().getUserPic();
+    if (userPic != null) {
+      userPicsService.delete(userPic.getPersonCategory(), userPic.getId());
+    }
     contentCreatorService.deleteCreator(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }

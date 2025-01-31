@@ -73,10 +73,10 @@ class IntendedSequenceTest {
         .andExpect(jsonPath("$.bornPlace").value("США, шт. Миссури, г. Файет"))
         .andExpect(jsonPath("$.heightCm").value(180))
         .andExpect(jsonPath("$.age").value(35))
-        .andExpect(jsonPath("$.userPic", is(null)))
+        .andExpect(jsonPath("$.userPic", nullValue()))
         .andExpect(jsonPath("$.isDead").value(false))
-        .andExpect(jsonPath("$.birthDate").value("2020-05-10"))
-        .andExpect(jsonPath("$.deathDate", is(null)))
+        .andExpect(jsonPath("$.birthDate").value("10.05.1980"))
+        .andExpect(jsonPath("$.deathDate", nullValue()))
         .andDo(
             result -> {
               String rawStringAnswer = result.getResponse().getContentAsString();
