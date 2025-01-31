@@ -21,50 +21,47 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ContentMetadataControllerTest {
 
-    public static final String API_PATH = "/api/v0/metadata";
-    private static VideoInfoParts testMetadata;
+  public static final String API_PATH = "/api/v0/metadata";
+  private static VideoInfoParts testMetadata;
 
-    @MockBean
-    private ContentMetadataService contentMetadataService;
+  @MockBean private ContentMetadataService contentMetadataService;
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-    @BeforeAll
-    static void setUp() {
-        EnhancedRandom randomData = EnhancedRandomBuilder.aNewEnhancedRandomBuilder()
-                .excludeField(field -> field.getName().equals("id"))
-                .collectionSizeRange(1, 5)
-                .build();
+  @BeforeAll
+  static void setUp() {
+    EnhancedRandom randomData =
+        EnhancedRandomBuilder.aNewEnhancedRandomBuilder()
+            .excludeField(field -> field.getName().equals("id"))
+            .collectionSizeRange(1, 5)
+            .build();
 
-        testMetadata = new VideoInfoParts(
-                randomData.nextObject(ContentMetadata.class, "video", "poster", "createdAt"),
-                randomData.nextObject(Video.class, "contentMetadata"),
-                randomData.nextObject(Poster.class, "contentMetadata")
-        );
-        testMetadata.video().setContentType("video/mp4");
-        testMetadata.poster().setContentType("image/jpeg");
-    }
+    testMetadata =
+        new VideoInfoParts(
+            randomData.nextObject(ContentMetadata.class, "video", "poster", "createdAt"),
+            randomData.nextObject(Video.class, "contentMetadata"),
+            randomData.nextObject(Poster.class, "contentMetadata"));
+    testMetadata.video().setContentType("video/mp4");
+    testMetadata.poster().setContentType("image/jpeg");
+  }
 
-    @Test
-    void saveFormData_ok() throws Exception {
-        when(contentMetadataService.saveMetadata(testMetadata)).thenReturn(any(ContentMetadata.class));
-        String json = objectMapper.writeValueAsString(testMetadata);
-        mockMvc.perform(post("/api/v0/metadata")
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-    }
+  @Test
+  void saveFormData_ok() throws Exception {
+    when(contentMetadataService.saveMetadata(testMetadata)).thenReturn(any(ContentMetadata.class));
+    String json = objectMapper.writeValueAsString(testMetadata);
+    mockMvc
+        .perform(post("/api/v0/metadata").content(json).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isCreated());
+  }
 
-    @Test
-    void saveFormData_badRequest() throws Exception {
-        when(contentMetadataService.saveMetadata(testMetadata)).thenThrow(IllegalArgumentException.class);
-        String json = objectMapper.writeValueAsString(testMetadata);
-        mockMvc.perform(post(API_PATH)
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
+  @Test
+  void saveFormData_badRequest() throws Exception {
+    when(contentMetadataService.saveMetadata(testMetadata))
+        .thenThrow(IllegalArgumentException.class);
+    String json = objectMapper.writeValueAsString(testMetadata);
+    mockMvc
+        .perform(post(API_PATH).content(json).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
 }

@@ -85,12 +85,11 @@ class ContentCreatorFlowTest {
             .fullname("Джон вик")
             .fullnameLatin("John Ouieek")
             .bornPlace("США, Мэриленд")
-            .heightMeters(1.77D)
+            .heightCm(187)
             .isDead(true)
             .birthDate(LocalDate.of(1975, 10, 24))
             .deathDate(LocalDate.of(2015, 10, 24))
             .userPic(savedUserPicMetadata)
-            .filmsParticipated(List.of(new ContentMetadata()))
             .build();
 
     mockMvc

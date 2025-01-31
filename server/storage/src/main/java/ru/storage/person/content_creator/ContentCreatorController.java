@@ -15,7 +15,7 @@ import ru.storage.person.userpic.UserPicsService;
 import ru.storage.utils.EncodedHttpHeaders;
 
 @RestController
-@RequestMapping("api/v0/content-creators")
+@RequestMapping("api/v0/metadata/content-creators")
 public class ContentCreatorController {
 
   private final ContentCreatorService contentCreatorService;

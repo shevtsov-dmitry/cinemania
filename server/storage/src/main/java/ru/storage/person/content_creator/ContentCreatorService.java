@@ -31,6 +31,8 @@ public class ContentCreatorService {
     }
 
     public ContentCreator findCreatorByCountryAndGenre(String country, String genre) {
-        ContentCreator result = contentCreatorRepo.findByCountryAndGenre(country, genre);
+        // TODO implement the logic to find a creator by country and genre
+//        ContentCreator result = contentCreatorRepo.findByCountryAndGenre(country, genre);
+        return null;
     }
 }
