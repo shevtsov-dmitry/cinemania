@@ -51,16 +51,16 @@ public class VideoService {
     /**
      * Save video metadata to a database.
      *
-     * @param videoMetadata video object metadata
+     * @param video video object metadata
      * @throws IllegalArgumentException when content type if not an image
      */
-    public VideoMetadata saveMetadata(VideoMetadata videoMetadata) {
-        if (videoMetadata == null) {
+    public Video saveMetadata(Video video) {
+        if (video == null) {
             LOG.warn("Error saving video object from request, because it is null.");
             throw new IllegalArgumentException("Метаданные видеофайла отсутствуют.");
         }
-        BinaryContentUtils.assureVideoProcessing(videoMetadata.getContentType());
-        return videoRepo.save(videoMetadata);
+        BinaryContentUtils.assureVideoProcessing(video.getContentType());
+        return videoRepo.save(video);
     }
 
     /**

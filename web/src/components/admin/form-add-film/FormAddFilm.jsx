@@ -204,8 +204,8 @@ export default function FormAddFilm() {
 
     try {
       const videoInfo = await saveMetadata();
-      await uploadPoster(videoInfo.posterMetadata.id);
-      await uploadVideo(videoInfo.videoMetadata.id);
+      await uploadPoster(videoInfo.poster.id);
+      await uploadVideo(videoInfo.video.id);
       displayStatusMessage(OPERATION_STATUS.SUCCESS);
     } catch (e) {
       setRecentFormErrorMessage(e.message);
@@ -280,11 +280,11 @@ export default function FormAddFilm() {
           age: form.get("age").trim(),
           rating: form.get("rating").trim(),
         },
-        posterMetadata: {
+        poster: {
           filename: posterInputRef.current.files[0].name,
           contentType: posterInputRef.current.files[0].type,
         },
-        videoMetadata: {
+        video: {
           filename: videoInputRef.current.files[0].name,
           contentType: videoInputRef.current.files[0].type,
         },
@@ -592,7 +592,7 @@ export default function FormAddFilm() {
             </div>
           </li>
 
-          <li id="posterMetadata">
+          <li id="poster">
             <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
               Постер
             </label>
@@ -604,7 +604,7 @@ export default function FormAddFilm() {
             />
           </li>
 
-          <li id="videoMetadata">
+          <li id="video">
             <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
               Видео
             </label>

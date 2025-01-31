@@ -83,7 +83,7 @@ class ContentCreatorFlowTest {
     var contentCreator =
         ContentCreator.builder()
             .fullname("Джон вик")
-            .fullnameEng("John Ouieek")
+            .fullnameLatin("John Ouieek")
             .bornPlace("США, Мэриленд")
             .heightMeters(1.77D)
             .isDead(true)

@@ -12,8 +12,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -31,8 +29,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.storage.content.ContentDetails;
 import ru.storage.content.VideoInfoParts;
-import ru.storage.content.poster.PosterMetadata;
-import ru.storage.content.video.VideoMetadata;
+import ru.storage.content.poster.Poster;
+import ru.storage.content.video.Video;
 
 /**
  * Tests behavior:
@@ -79,8 +77,8 @@ class UploadFlowTest {
     var videoInfoParts =
         new VideoInfoParts(
             contentDetails,
-            new VideoMetadata(null, VIDEO_FILE.getName(), "video/mp4"),
-            new PosterMetadata(null, IMAGE_FILE.getName(), "image/jpeg"));
+            new Video(null, VIDEO_FILE.getName(), "video/mp4"),
+            new Poster(null, IMAGE_FILE.getName(), "image/jpeg"));
 
     String json = objectMapper.writeValueAsString(videoInfoParts);
     mockMvc
@@ -113,8 +111,8 @@ class UploadFlowTest {
                       new TypeReference<List<ContentDetails>>() {});
               var saved = recentMetadataList.getFirst();
               assertFalse(saved.getTitle().isBlank());
-              assertNotNull(saved.getPosterMetadata());
-              assertNotNull(saved.getVideoMetadata());
+              assertNotNull(saved.getPoster());
+              assertNotNull(saved.getVideo());
               savedContentDetails = saved;
             });
   }
@@ -124,11 +122,11 @@ class UploadFlowTest {
   @Test
   @Order(3)
   void savePoster() throws Exception {
-    final var posterId = savedContentDetails.getPosterMetadata().getId();
+    final var posterId = savedContentDetails.getPoster().getId();
     final var imageMultipartFile =
         new MockMultipartFile(
             "image", posterId, "image/jpeg", Files.readAllBytes(IMAGE_FILE.toPath()));
-    assertNotNull(savedContentDetails.getPosterMetadata());
+    assertNotNull(savedContentDetails.getPoster());
 
     mockMvc
         .perform(
@@ -142,7 +140,7 @@ class UploadFlowTest {
   @Test
   @Order(4)
   void getSavedPoster() throws Exception {
-    final var posterId = savedContentDetails.getPosterMetadata().getId();
+    final var posterId = savedContentDetails.getPoster().getId();
     mockMvc
         .perform(get(endpointUrl + "/api/v0/posters/" + posterId))
         .andExpect(status().isOk())
@@ -159,11 +157,11 @@ class UploadFlowTest {
   @Test
   @Order(11)
   void saveVideo() throws Exception {
-    final var videoId = savedContentDetails.getVideoMetadata().getId();
+    final var videoId = savedContentDetails.getVideo().getId();
     final var videoMultipartFile =
         new MockMultipartFile(
             "video", videoId, "video/mp4", Files.readAllBytes(VIDEO_FILE.toPath()));
-    assertNotNull(savedContentDetails.getPosterMetadata());
+    assertNotNull(savedContentDetails.getPoster());
 
     mockMvc
         .perform(
@@ -190,7 +188,7 @@ class UploadFlowTest {
     mockMvc
         .perform(
             delete(
-                endpointUrl + "/api/v0/posters/" + savedContentDetails.getPosterMetadata().getId()))
+                endpointUrl + "/api/v0/posters/" + savedContentDetails.getPoster().getId()))
         .andExpect(status().isNoContent());
   }
 
@@ -201,7 +199,7 @@ class UploadFlowTest {
     mockMvc
         .perform(
             delete(
-                endpointUrl + "/api/v0/videos/" + savedContentDetails.getVideoMetadata().getId()))
+                endpointUrl + "/api/v0/videos/" + savedContentDetails.getVideo().getId()))
         .andExpect(status().isNoContent());
   }
 }

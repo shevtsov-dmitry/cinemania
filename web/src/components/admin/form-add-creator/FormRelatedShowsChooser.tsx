@@ -27,23 +27,37 @@ const FormRelatedShowsChooser = () => {
       });
   }, []);
 
+  async function findPerson(e: Event) {
+    e.preventDefault();
+    fetch
+  }
+
   return (
     <form>
-      <div>
+      <div className="flex gap-2">
         <div id="country-picker">
-          <label htmlFor="country-picker">Выберите связанные шоу:</label>
-          <select
-            id="country-picker"
-            onChange={(e) => (e.target.value)}
-          >
-            {showsMetadata.map((show, index) => (
-              <option key={index} value={show}>
-                {show}
+          <label htmlFor="country-picker">Страна</label>
+          <select id="country-picker" onChange={(e) => e.target.value}>
+            {defaultCountries.map((country, index) => (
+              <option key={index} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div id="genre-picker">
+          <label htmlFor="genre-picker">Жанр</label>
+          <select id="genre-picker" onChange={(e) => e.target.value}>
+            {defaultGenres.map((genre, index) => (
+              <option key={index} value={genre}>
+                {genre}
               </option>
             ))}
           </select>
         </div>
       </div>
+      <button className="bg-blue-500 text-white p-2 font-bold">Искать</button>
+      <div className="grid row-cols-3 gap-1"></div>
 
       <button className="bg-blue-500 text-white p-2 font-bold">
         Подтвердить

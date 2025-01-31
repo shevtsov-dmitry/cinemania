@@ -2,6 +2,7 @@ package ru.storage.content_creators;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,5 +29,9 @@ public class ContentCreatorService {
     
     public void deleteCreator(String id) {
         contentCreatorRepo.deleteById(id);
+    }
+
+    public ContentCreator findCreatorByCountryAndGenre(String country, String genre) {
+        ContentCreator result = contentCreatorRepo.findByCountryAndGenre(country, genre);
     }
 }

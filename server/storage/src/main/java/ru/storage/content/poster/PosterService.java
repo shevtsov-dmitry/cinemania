@@ -40,16 +40,16 @@ public class PosterService {
   /**
    * Save poster metadata in database
    *
-   * @param posterMetadata poster object with metadata
+   * @param poster poster object with metadata
    * @throws IllegalArgumentException when content type if not an image
    */
-  public PosterMetadata saveMetadata(PosterMetadata posterMetadata) {
-    if (posterMetadata == null) {
+  public Poster saveMetadata(Poster poster) {
+    if (poster == null) {
       log.warn("Error saving poster object from request, because it is null.");
       throw new IllegalArgumentException("Метаданные постера отсутствуют.");
     }
-    BinaryContentUtils.assureImageProcessing(posterMetadata.getContentType());
-    return posterRepo.save(posterMetadata);
+    BinaryContentUtils.assureImageProcessing(poster.getContentType());
+    return posterRepo.save(poster);
   }
 
   /**

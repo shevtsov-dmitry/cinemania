@@ -22,7 +22,7 @@ class VideoServiceTest {
     @Autowired
     private VideoRepo videoRepo;
 
-    private static final VideoMetadata TEST_VIDEO_METADATA_METADATA = new VideoMetadata(null, "video.mp4", "video/mp4");
+    private static final Video TEST_VIDEO_METADATA_METADATA = new Video(null, "video.mp4", "video/mp4");
 
     @Test
     @Order(1)

@@ -1,7 +1,6 @@
 package ru.storage.content_creators;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -14,6 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.storage.content.ContentDetails;
+import ru.storage.person.PersonCategory;
 import ru.storage.userpic.UserPic;
 
 @Data
@@ -25,11 +25,12 @@ public class ContentCreator {
     @Id
     private String id;
     private String fullname;
-    private String fullnameEng;
+    private String fullnameLatin;
     private String bornPlace;
     private Double heightMeters;
     private Integer age;
     private UserPic userPic;
+    private PersonCategory personCategory;
     private List<ContentDetails> filmsParticipated;
     private Boolean isDead;
     @JsonFormat(pattern = "dd.MM.yyyy", locale = "RU_ru")

@@ -19,8 +19,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.storage.content.poster.PosterMetadata;
-import ru.storage.content.video.VideoMetadata;
+import ru.storage.content.poster.Poster;
+import ru.storage.content.video.Video;
 import ru.storage.person.PersonCategory;
 
 @Data
@@ -48,9 +48,9 @@ public class ContentDetails {
     private PersonCategory personCategory;
     private Double rating;
     @DBRef
-    private PosterMetadata posterMetadata;
+    private Poster poster;
     @DBRef
-    private VideoMetadata videoMetadata;
+    private Video video;
     @JsonIgnore
     @CreatedDate
     private LocalDateTime createdAt = LocalDateTime.now();

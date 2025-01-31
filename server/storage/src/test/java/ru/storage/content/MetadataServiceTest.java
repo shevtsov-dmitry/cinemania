@@ -8,9 +8,9 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import ru.storage.content.poster.PosterMetadata;
+import ru.storage.content.poster.Poster;
 import ru.storage.content.poster.PosterRepo;
-import ru.storage.content.video.VideoMetadata;
+import ru.storage.content.video.Video;
 import ru.storage.content.video.VideoRepo;
 
 @SpringBootTest
@@ -37,11 +37,11 @@ class MetadataServiceTest {
 
         testMetadata = new VideoInfoParts(
                 randomData.nextObject(ContentDetails.class, "video", "poster", "createdAt"),
-                randomData.nextObject(VideoMetadata.class, "contentMetadata"),
-                randomData.nextObject(PosterMetadata.class, "contentMetadata")
+                randomData.nextObject(Video.class, "contentMetadata"),
+                randomData.nextObject(Poster.class, "contentMetadata")
         );
-        testMetadata.videoMetadata().setContentType("video/mp4");
-        testMetadata.posterMetadata().setContentType("image/jpeg");
+        testMetadata.video().setContentType("video/mp4");
+        testMetadata.poster().setContentType("image/jpeg");
 
     }
 
