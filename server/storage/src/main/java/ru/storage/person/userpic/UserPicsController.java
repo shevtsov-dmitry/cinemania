@@ -20,7 +20,7 @@ import ru.storage.utils.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @RestController
-@RequestMapping("api/v0/content-creators/user-pics")
+@RequestMapping("api/v0/metadata/content-creators/user-pics")
 public class UserPicsController {
 
   private final UserPicsService userPicsService;
