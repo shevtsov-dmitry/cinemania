@@ -16,4 +16,10 @@ public class Trailer {
   @Id private String id;
   private String filename;
   private String contentType;
+
+  public Trailer (String filename, String contentType) {
+    this.filename = filename;
+    this.contentType = contentType;
+  }
+  
 }

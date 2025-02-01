@@ -48,6 +48,8 @@ class IntendedSequenceTest {
   private static UserPic userPicMetadata;
   private static ContentCreator creator;
 
+  // ===== ADD CONTENT CREATOR =====
+
   @Test
   @Order(1)
   void saveContentCreatorUserPicture() throws Exception {
@@ -140,6 +142,22 @@ class IntendedSequenceTest {
               creator = objectMapper.readValue(rawStringAnswer, new TypeReference<>() {});
             });
   }
+  
+
+ // ===== UPLOAD FILM S3 CONTENT ===== 
+
+  @Test 
+  @Order(10)
+  void uploadPoster() throws Exception {
+    assertNotNull(creator);
+    String posterPath = "src/test/resources/poster.jpg";
+    File file = new File(posterPath);
+  }
+
+
+  
+
+  // ===== CLEAN UP =====
 
   @Test
   @Order(100)

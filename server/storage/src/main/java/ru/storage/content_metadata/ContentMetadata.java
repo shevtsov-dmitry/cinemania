@@ -19,7 +19,7 @@ import ru.storage.content_metadata.country.Country;
 import ru.storage.content_metadata.genre.Genre;
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.trailer.Trailer;
-import ru.storage.content_metadata.tv_series.TvSeries;
+import ru.storage.content_metadata.video.TvSeries;
 import ru.storage.content_metadata.video.Video;
 import ru.storage.person.filming_group.FilmingGroup;
 
@@ -50,7 +50,6 @@ public class ContentMetadata {
   private String description;
 
   // TODO make this field but without recursive stack overflow
-  //    List<ContentMetadata> relatedShows;
   @Min(0)
   @Max(21)
   @NotNull(message = "Необходимо указать возрастное ограничение")
@@ -58,9 +57,10 @@ public class ContentMetadata {
 
   private Double rating;
   @DBRef private Poster poster;
-  @DBRef private Video singleShowVideo;
+  @DBRef private Video singleVideoShow;
   @DBRef private FilmingGroup filmingGroup;
-  @DBRef private TvSeries tvSeries;
+  @DBRef private Video standalone;
+  @DBRef private List<Video> tvSeries;
   @DBRef private Trailer trailer;
   @JsonIgnore @CreatedDate private LocalDateTime createdAt = LocalDateTime.now();
 }

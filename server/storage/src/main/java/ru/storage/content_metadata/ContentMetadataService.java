@@ -36,20 +36,12 @@ public class ContentMetadataService {
    * @param metadataObjects {@link VideoInfoParts} metadata record of {@link Video}, {@link Poster}
    *     and {@link ContentMetadata}
    * @return {@link VideoInfoParts} object
-   * @throws IllegalArgumentException when content type is wrong
    */
-  public ContentMetadata saveMetadata(VideoInfoParts metadataObjects) {
-    Video savedVideoMetadata = videoService.saveMetadata(metadataObjects.video());
-    Poster savedPosterMetadata = posterService.saveMetadata(metadataObjects.poster());
-    ContentMetadata contentMetadata = metadataObjects.contentMetadata();
-    if (contentMetadata == null) {
-      log.warn("Error saving contentDetails object from request, because it is null.");
-      throw new IllegalArgumentException(
-          "Необходимые сведения о загружаемом видео-проекте отсутствуют");
-    }
-
-    contentMetadata.setSingleShowVideo(savedVideoMetadata);
-    contentMetadata.setPoster(savedPosterMetadata);
+  public ContentMetadata saveMetadata(ContentMetadata contentMetadata) {
+    contentMetadata.setSingleVideoShow(null);
+    contentMetadata.setTvSeries(null);
+    contentMetadata.setTrailer(null);
+    contentMetadata.setPoster(null);
     return contentMetadataRepo.save(contentMetadata);
   }
 
@@ -82,7 +74,7 @@ public class ContentMetadataService {
                     new NoSuchElementException(
                         "Не удалось найти запрашиваемый материал по идентификатору."));
     posterService.deleteByIds(contentDetails.getPoster().getId());
-    videoService.deleteByIds(contentDetails.getSingleShowVideo().getId());
+    videoService.deleteByIds(contentDetails.getSingleVideoShow().getId());
     contentMetadataRepo.delete(contentDetails);
   }
 

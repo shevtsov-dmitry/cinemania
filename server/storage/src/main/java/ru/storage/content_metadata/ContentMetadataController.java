@@ -29,9 +29,9 @@ public class ContentMetadataController {
      * </ul>
      */
     @PostMapping
-    public ResponseEntity<ContentMetadata> saveFormData(@RequestBody VideoInfoParts metadataObjects) {
+    public ResponseEntity<ContentMetadata> saveFormData(@RequestBody ContentMetadata contentMetadata) {
         try {
-            final var savedContentMetadata = service.saveMetadata(metadataObjects);
+            final var savedContentMetadata = service.saveMetadata(contentMetadata);
             return new ResponseEntity<>(savedContentMetadata, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);

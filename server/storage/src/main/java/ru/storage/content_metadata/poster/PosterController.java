@@ -24,21 +24,19 @@ public class PosterController {
   /**
    * Upload poster into S3 cloud storage.
    *
-   * @param id poster metadata id from mongodb db
    * @param image multipart file of image type
    * @return Response
    *     <ul>
-   *       <li>201 (CREATED)
+   *       <li>201 (CREATED) with the metadata of uploaded poster
    *       <li>400 (BAD_REQUEST) with the cause header "Message" when invalid args
    *       <li>500 (INTERNAL_SERVER_ERROR) with the cause header "Message" when image wasn't saved
    *           into S3 cloud storage/li>
    *     </ul>
    */
   @PostMapping("upload")
-  public ResponseEntity<Void> uploadImage(
-      @RequestParam String id, @RequestParam MultipartFile image) {
+  public ResponseEntity<Poster> uploadImage(@RequestParam MultipartFile image) {
     try {
-      service.uploadImage(id, image);
+      service.uploadImage(image);
       return new ResponseEntity<>(HttpStatus.CREATED);
     } catch (IllegalArgumentException e) {
       return new ResponseEntity<>(

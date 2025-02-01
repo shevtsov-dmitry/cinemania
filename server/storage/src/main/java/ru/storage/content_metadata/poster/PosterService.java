@@ -36,22 +36,6 @@ public class PosterService {
         bucketName,
         "переменная BUCKET_NAME должна быть указана в конфигурации application.properties.");
   }
-
-  /**
-   * Save poster metadata in database
-   *
-   * @param poster poster object with metadata
-   * @throws IllegalArgumentException when content type if not an image
-   */
-  public Poster saveMetadata(Poster poster) {
-    if (poster == null) {
-      log.warn("Error saving poster object from request, because it is null.");
-      throw new IllegalArgumentException("Метаданные постера отсутствуют.");
-    }
-    BinaryContentUtils.assureImageProcessing(poster.getContentType());
-    return posterRepo.save(poster);
-  }
-
   /**
    * Upload image to S3 cloud storage.
    *
@@ -60,8 +44,10 @@ public class PosterService {
    * @throws IllegalArgumentException when multipart file is not an image
    * @throws S3Exception when image wasn't saved to S3 cloud storage
    */
-  public void uploadImage(String id, MultipartFile image) {
-    S3GeneralOperations.uploadImage(S3_FOLDER, id, image);
+  public Poster uploadImage(MultipartFile image) {
+    var poster = posterRepo.save(new Poster(null, image.getOriginalFilename(), image.getContentType()));
+    S3GeneralOperations.uploadImage(S3_FOLDER, poster.getId(), image);
+    return poster;
   }
 
   /**
