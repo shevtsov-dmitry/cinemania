@@ -14,35 +14,8 @@ import ru.storage.content_metadata.video.StandaloneVideoShow;
 import ru.storage.content_metadata.video.VideoRepo;
 
 @SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MetadataServiceTest {
 
-    private static VideoInfoParts testMetadata;
-
-    @Autowired
-    private VideoRepo videoRepo;
-    @Autowired
-    private PosterRepo posterRepo;
-    @Autowired
-    private ContentMetadataService contentMetadataService;
-    @Autowired
-    private ContentMetadataRepo contentMetadataRepo;
-
-    @BeforeAll
-    static void setUp() {
-        EnhancedRandom randomData = EnhancedRandomBuilder.aNewEnhancedRandomBuilder()
-                .excludeField(field -> field.getName().equals("id"))
-                .collectionSizeRange(1, 5)
-                .build();
-
-        testMetadata = new VideoInfoParts(
-                randomData.nextObject(ContentMetadata.class, "video", "poster", "createdAt"),
-                randomData.nextObject(StandaloneVideoShow.class, "contentMetadata"),
-                randomData.nextObject(Poster.class, "contentMetadata")
-        );
-        testMetadata.video().setContentType("video/mp4");
-        testMetadata.poster().setContentType("image/jpeg");
-
-    }
+    
 
 }

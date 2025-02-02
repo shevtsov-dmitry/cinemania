@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.TypeKey;
 import io.micrometer.core.annotation.TimedSet;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.storage.content_metadata.poster.Poster;
 import ru.storage.person.PersonCategory;
 import ru.storage.person.content_creator.ContentCreator;
 import ru.storage.person.userpic.UserPic;
@@ -46,7 +48,8 @@ class IntendedSequenceTest {
   private String serverUrl;
 
   private static UserPic userPicMetadata;
-  private static ContentCreator creator;
+  private static ContentCreator creatorMetadata;
+  private static Poster posterMetadata;
 
   // ===== ADD CONTENT CREATOR =====
 
@@ -139,23 +142,50 @@ class IntendedSequenceTest {
         .andDo(
             result -> {
               String rawStringAnswer = result.getResponse().getContentAsString();
-              creator = objectMapper.readValue(rawStringAnswer, new TypeReference<>() {});
+              creatorMetadata = objectMapper.readValue(rawStringAnswer, new TypeReference<>() {});
             });
   }
-  
- // ===== UPLOAD POSTER ===== 
 
-  @Test 
+  // ===== UPLOAD POSTER =====
+
+  @Test
   @Order(10)
   void uploadPoster() throws Exception {
-    assertNotNull(creator);
-    String posterPath = "src/test/resources/poster.jpg";
-    File file = new File(posterPath);
+    assertNotNull(creatorMetadata);
+    var multipartFile =
+        new MockMultipartFile(
+            "image", IMAGE_FILE.getName(), "image/jpeg", Files.readAllBytes(IMAGE_FILE.toPath()));
+    mockMvc
+        .perform(multipart(serverUrl + "/api/v0/posters/upload").file(multipartFile))
+        .andExpect(status().isCreated())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.id", notNullValue()))
+        .andExpect(jsonPath("$.filename", notNullValue()))
+        .andExpect(jsonPath("$.contentType", notNullValue()))
+        .andDo(
+            result -> {
+              posterMetadata =
+                  objectMapper.readValue(
+                      result.getResponse().getContentAsString(), new TypeReference<>() {});
+            });
   }
 
+  @Test
+  @Order(11)
+  void getPoster_thenTryToParseItToImage() throws Exception {
+    assertNotNull(posterMetadata);
+    mockMvc
+        .perform(get(serverUrl + "/api/v0/posters/{id}", posterMetadata.getId()))
+        .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_OCTET_STREAM))
+        .andExpect(
+            result -> {
+              byte[] imageRawBytes = result.getResponse().getContentAsByteArray();
+              assertDoesNotThrow(() -> ImageIO.read(new ByteArrayInputStream(imageRawBytes)));
+            });
+  }
 
- // ===== UPLOAD STANDALONE VIDEO SHOW TO S3 CONTENT ===== 
-  
+  // ===== UPLOAD STANDALONE VIDEO SHOW TO S3 CONTENT =====
 
   // ===== CLEAN UP =====
 
@@ -183,13 +213,29 @@ class IntendedSequenceTest {
   @Test
   @Order(101)
   void deleteContentCreator() throws Exception {
-    assertNotNull(creator);
+    assertNotNull(creatorMetadata);
     mockMvc
-        .perform(delete(serverUrl + "/api/v0/metadata/content-creators/{id}", creator.getId()))
+        .perform(
+            delete(serverUrl + "/api/v0/metadata/content-creators/{id}", creatorMetadata.getId()))
         .andExpect(status().isNoContent());
 
     mockMvc
-        .perform(get(serverUrl + "/api/v0/metadata/content-creators/{id}", creator.getId()))
+        .perform(get(serverUrl + "/api/v0/metadata/content-creators/{id}", creatorMetadata.getId()))
         .andExpect(status().isNotFound());
   }
+
+  @Test
+  @Order(102)
+  void deletePoster() throws Exception {
+    assertNotNull(posterMetadata);
+    mockMvc
+        .perform(delete(serverUrl + "/api/v0/posters/{id}", posterMetadata.getId()))
+        .andExpect(status().isNoContent());
+
+    mockMvc
+        .perform(get(serverUrl + "/api/v0/posters/{id}", posterMetadata.getId()))
+        .andExpect(status().isNotFound());
+  }
+
+
 }

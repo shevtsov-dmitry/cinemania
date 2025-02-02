@@ -19,7 +19,6 @@ import ru.storage.content_metadata.country.Country;
 import ru.storage.content_metadata.genre.Genre;
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.trailer.Trailer;
-import ru.storage.content_metadata.video.TvSeries;
 import ru.storage.content_metadata.video.StandaloneVideoShow;
 import ru.storage.person.filming_group.FilmingGroup;
 

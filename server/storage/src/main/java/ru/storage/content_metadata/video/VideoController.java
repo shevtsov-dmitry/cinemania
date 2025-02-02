@@ -1,5 +1,7 @@
 package ru.storage.content_metadata.video;
 
+import java.io.IOException;
+import org.apache.tomcat.util.json.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +22,8 @@ public class VideoController {
     this.service = service;
   }
 
-  @PostMapping("/upload/trailer")
-  public ResponseEntity<Trailer> uploadVideo(@RequestParam MultipartFile video) {
-    service.uploadTrailer(video);
-    return new ResponseEntity<>(HttpStatus.CREATED);
-  }
+  private static final String VIDEO_UPLOAD_ERROR_MESSAGE =
+      "Возникла ошибка загрузки видео при его обработке на сервере.";
 
   /**
    * Upload video into S3 cloud storage by chunks
@@ -42,13 +41,19 @@ public class VideoController {
    *     </ul>
    */
   @PostMapping("upload/standalone")
-  public ResponseEntity<StandaloneVideoShow> uploadStandaloneVideoShow(@RequestParam MultipartFile video) {
+  public ResponseEntity<StandaloneVideoShow> uploadStandaloneVideoShow(
+      @RequestParam MultipartFile video) {
     try {
       service.uploadStandaloneVideoShow(video);
       return new ResponseEntity<>(HttpStatus.CREATED);
     } catch (IllegalArgumentException e) {
       return new ResponseEntity<>(
           null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (ParseException | IOException e) {
+      return new ResponseEntity<>(
+          null,
+          new EncodedHttpHeaders(VIDEO_UPLOAD_ERROR_MESSAGE),
+          HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (S3Exception e) {
       return new ResponseEntity<>(
           null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -64,8 +69,14 @@ public class VideoController {
     try {
       var savedVideo = service.uploadEpisode(video, contentMetadataId, season, episode);
       return new ResponseEntity<>(savedVideo, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return null;
+    } catch (ParseException | IOException e) {
+      return new ResponseEntity<>(
+          null,
+          new EncodedHttpHeaders(VIDEO_UPLOAD_ERROR_MESSAGE),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (S3Exception e) {
+      return new ResponseEntity<>(
+          null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -74,8 +85,14 @@ public class VideoController {
     try {
       var savedTrailer = service.uploadTrailer(video);
       return new ResponseEntity<>(savedTrailer, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return null;
+    } catch (ParseException | IOException e) {
+      return new ResponseEntity<>(
+          null,
+          new EncodedHttpHeaders(VIDEO_UPLOAD_ERROR_MESSAGE),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (S3Exception e) {
+      return new ResponseEntity<>(
+          null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
