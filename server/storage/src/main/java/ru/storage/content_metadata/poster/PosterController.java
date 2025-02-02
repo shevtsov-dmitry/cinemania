@@ -36,7 +36,8 @@ public class PosterController {
   @PostMapping("upload")
   public ResponseEntity<Poster> uploadImage(@RequestParam MultipartFile image) {
     try {
-      return new ResponseEntity<>(service.uploadImage(image), HttpStatus.CREATED);
+      Poster savedMetadata = service.uploadImage(image);
+      return new ResponseEntity<>(savedMetadata, HttpStatus.CREATED);
     } catch (IllegalArgumentException e) {
       return new ResponseEntity<>(
           null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);

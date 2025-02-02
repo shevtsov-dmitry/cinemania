@@ -121,7 +121,7 @@ public class S3GeneralOperations {
    *     <p>This method supports both single and multiple content metadata IDs, separated by commas.
    * @param s3Folder folder name which will be searched
    * @param ids required ids
-   * @return resouce containing single byte array with the delimiter in between the binary items.
+   * @return resource containing single byte array with the delimiter in between the binary items.
    * @throws S3Exception when an error occurs during the retrieval process
    * @throws NoSuchElementException when no matches are found for the provided ids
    */
@@ -139,7 +139,7 @@ public class S3GeneralOperations {
    *
    * @param s3Folder folder name which will be searched
    * @param ids required ids
-   * @return resouce containing single byte array with the delimiter in between the binary items.
+   * @return resource containing single byte array with the delimiter in between the binary items.
    * @throws S3Exception when an error occurs during the retrieval process
    * @throws NoSuchElementException when no matches are found for the provided ids
    */

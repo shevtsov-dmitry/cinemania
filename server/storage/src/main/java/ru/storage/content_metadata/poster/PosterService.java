@@ -4,15 +4,12 @@ import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.exceptions.ParseIdException;
-import ru.storage.utils.BinaryContentUtils;
 import ru.storage.utils.S3GeneralOperations;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
@@ -23,7 +20,6 @@ public class PosterService {
   private String bucketName;
 
   private static final String S3_FOLDER = "posters";
-  private static final Logger log = LoggerFactory.getLogger(PosterService.class);
   private final PosterRepo posterRepo;
 
   public PosterService(PosterRepo posterRepo) {
@@ -36,18 +32,21 @@ public class PosterService {
         bucketName,
         "переменная BUCKET_NAME должна быть указана в конфигурации application.properties.");
   }
+
   /**
    * Upload image to S3 cloud storage.
    *
-   * @param id poster metadata id from mongodb db
-   * @param image form data image
+   * @param image multipart file
+   * @return saved image metadata
    * @throws IllegalArgumentException when multipart file is not an image
    * @throws S3Exception when image wasn't saved to S3 cloud storage
    */
   public Poster uploadImage(MultipartFile image) {
-    var poster = posterRepo.save(new Poster(image.getOriginalFilename(), image.getContentType(), image.getSize()));
-    S3GeneralOperations.uploadImage(S3_FOLDER, poster.getId(), image);
-    return poster;
+    Poster savedPosterMetadata =
+        posterRepo.save(
+            new Poster(image.getOriginalFilename(), image.getContentType(), image.getSize()));
+    S3GeneralOperations.uploadImage(S3_FOLDER, savedPosterMetadata.getId(), image);
+    return savedPosterMetadata;
   }
 
   /**

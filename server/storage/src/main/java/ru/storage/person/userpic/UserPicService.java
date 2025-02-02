@@ -5,25 +5,34 @@ import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import ru.storage.person.PersonCategory;
 import ru.storage.utils.S3GeneralOperations;
 
 @Service
 public class UserPicService {
 
-  private final UserPicsRepo userPicsRepo;
+  private final UserPicRepo userPicRepo;
   private static final String PICTURES_STORAGE_FOLDER = "userpic";
 
-  public UserPicService(UserPicsRepo userPicsRepo) {
-    this.userPicsRepo = userPicsRepo;
+  public UserPicService(UserPicRepo userPicsRepo) {
+    this.userPicRepo = userPicsRepo;
   }
 
-  public UserPic upload(MultipartFile image) {
-    S3GeneralOperations.uploadImage(
-        PICTURES_STORAGE_FOLDER + "/" + userPic.getPersonCategory().stringValue,
-        userPic.getId(),
-        image);
+  /**
+   * Uploads a new image to the specified storage folder and associates it with the given user pic
+   * entity.
+   *
+   * @param userPic the entity to associate with the uploaded image
+   * @param image the multipart file to upload
+   * @return the created user pic metadataa with the new image details
+   * @throws IllegalArgumentException when the multipart file is not an image file.
+   * @throws S3Exception when an error occurs during the upload process.
+   */
+  public UserPic uploadImage(UserPic userPic, MultipartFile image) {
+    UserPic savedMetadata = userPicRepo.save(userPic);
+    String s3Key = PICTURES_STORAGE_FOLDER + "/" + userPic.getPersonCategory().stringValue;
+    S3GeneralOperations.uploadImage(s3Key, userPic.getId(), image);
+    return savedMetadata;
   }
 
   /**
@@ -49,7 +58,7 @@ public class UserPicService {
    */
   public void delete(PersonCategory personCategory, String ids) {
     List<String> parsedIds = Arrays.asList(ids.split(",")).stream().map(String::trim).toList();
-    userPicsRepo.deleteAllById(parsedIds);
+    userPicRepo.deleteAllById(parsedIds);
     S3GeneralOperations.deleteItems(
         PICTURES_STORAGE_FOLDER + "/" + personCategory.stringValue, parsedIds);
   }
@@ -57,13 +66,13 @@ public class UserPicService {
   /**
    * Delete user pics from S3 storage based by their IDs.
    *
-   * @param picCategory the category of the user pic (e.g., USER)
+   * @param s3Folder the folder in S3 storage where the user pics are stored
    * @param ids a comma-separated string of content metadata IDs
    * @throws S3Exception when an error occurs during the deletion process from S3 storage
    */
   public void delete(String s3Folder, String ids) {
     List<String> parsedIds = Arrays.asList(ids.split(",")).stream().map(String::trim).toList();
-    userPicsRepo.deleteAllById(parsedIds);
+    userPicRepo.deleteAllById(parsedIds);
     S3GeneralOperations.deleteItems(s3Folder, parsedIds);
   }
 }

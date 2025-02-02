@@ -23,10 +23,10 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 @RequestMapping("api/v0/metadata/content-creators/user-pics")
 public class UserPicController {
 
-  private final UserPicService userPicsService;
+  private final UserPicService userPicService;
 
   public UserPicController(UserPicService userPicsService) {
-    this.userPicsService = userPicsService;
+    this.userPicService = userPicsService;
   }
 
   /**
@@ -36,8 +36,13 @@ public class UserPicController {
    * @param image the multipart file containing the user pic
    * @return Response:
    *     <ul>
-   *       <li>201 created - User pic uploaded successfully with saved metadata.
-   *       <li>400 bad request - Invalid request parameters or missing file.
+   *       <li>201 created when user pic uploaded successfully with saved metadata.
+   *       <li>400 bad request - invalid request parameters, missing file or non image file trying to be uploaded.
+   *       <li>500 internal server error - unexpected errors during upload or update process.
+   *     </ul>
+   *     Headers:
+   *     <ul>
+   *       <li>Message: with error message if any.
    *     </ul>
    */
   @PostMapping("upload")
@@ -50,9 +55,23 @@ public class UserPicController {
       String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
       return new ResponseEntity<>(new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);
     }
-    var userPic = new UserPic(null, image.getContentType(), image.getOriginalFilename(),image.getSize(), category);
-    var savedUserPicDetails = userPicsService.upload(category, userPic);
-    return new ResponseEntity<>(savedUserPicDetails, HttpStatus.CREATED);
+
+    try {
+      UserPic userPicMetadata =
+          UserPic.builder()
+              .filename(image.getOriginalFilename())
+              .contentType(image.getContentType())
+              .size(image.getSize())
+              .personCategory(category)
+              .build();
+      UserPic savedUserPicMetadata = userPicService.uploadImage(userPicMetadata, image);
+      return new ResponseEntity<>(savedUserPicMetadata, HttpStatus.CREATED);
+    } catch (IllegalArgumentException e) {
+      return new ResponseEntity<>(new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
+    } catch (S3Exception e) {
+      return new ResponseEntity<>(
+          new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   /**
@@ -84,7 +103,7 @@ public class UserPicController {
     }
 
     try {
-      return new ResponseEntity<>(userPicsService.getUserPics(category, ids), HttpStatus.OK);
+      return new ResponseEntity<>(userPicService.getUserPics(category, ids), HttpStatus.OK);
     } catch (NoSuchElementException e) {
       return new ResponseEntity<>(
           null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.NOT_FOUND);
@@ -118,7 +137,7 @@ public class UserPicController {
       String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
       return new ResponseEntity<>(null, new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);
     }
-    userPicsService.delete(category, ids);
+    userPicService.delete(category, ids);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

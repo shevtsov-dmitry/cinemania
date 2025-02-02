@@ -1,6 +1,7 @@
 package ru.storage.content_metadata.poster;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document
+@Builder
 public class Poster {
     @Id
     private String id;
@@ -23,6 +25,5 @@ public class Poster {
         this.contentType = contentType;
         this.size = size;
     }
-
         
 }
