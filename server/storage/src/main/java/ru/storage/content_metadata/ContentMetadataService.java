@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.poster.PosterService;
-import ru.storage.content_metadata.video.Video;
+import ru.storage.content_metadata.video.StandaloneVideoShow;
 import ru.storage.content_metadata.video.VideoService;
 import ru.storage.exceptions.ParseIdException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -33,7 +33,7 @@ public class ContentMetadataService {
   }
 
   /**
-   * @param metadataObjects {@link VideoInfoParts} metadata record of {@link Video}, {@link Poster}
+   * @param metadataObjects {@link VideoInfoParts} metadata record of {@link StandaloneVideoShow}, {@link Poster}
    *     and {@link ContentMetadata}
    * @return {@link VideoInfoParts} object
    */

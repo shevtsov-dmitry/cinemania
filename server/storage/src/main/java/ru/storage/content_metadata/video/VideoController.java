@@ -42,9 +42,9 @@ public class VideoController {
    *     </ul>
    */
   @PostMapping("upload/standalone")
-  public ResponseEntity<Video> uploadSingleVideoShow(@RequestParam MultipartFile video) {
+  public ResponseEntity<StandaloneVideoShow> uploadStandaloneVideoShow(@RequestParam MultipartFile video) {
     try {
-      service.uploadVideo(video);
+      service.uploadStandaloneVideoShow(video);
       return new ResponseEntity<>(HttpStatus.CREATED);
     } catch (IllegalArgumentException e) {
       return new ResponseEntity<>(
@@ -55,22 +55,25 @@ public class VideoController {
     }
   }
 
-  @PostMapping("upload/tv-series")
-  public ResponseEntity<Video> uploadTvSeries(
-      @RequestParam int season, @RequestParam int episode, @RequestParam MultipartFile video) {
+  @PostMapping("upload/episode")
+  public ResponseEntity<Episode> uploadEpisode(
+      @RequestParam String contentMetadataId,
+      @RequestParam int season,
+      @RequestParam int episode,
+      @RequestParam MultipartFile video) {
     try {
-      service.uploadEpisode(video, season, episode);
-      return new ResponseEntity<>(HttpStatus.CREATED);
+      var savedVideo = service.uploadEpisode(video, contentMetadataId, season, episode);
+      return new ResponseEntity<>(savedVideo, HttpStatus.CREATED);
     } catch (Exception e) {
       return null;
     }
   }
-  
+
   @PostMapping("upload/trailer")
-  public ResponseEntity<Video> uploadTrailer(@RequestParam MultipartFile video) {
+  public ResponseEntity<Trailer> uploadTrailer(@RequestParam MultipartFile video) {
     try {
-      service.uploadTrailer(video);
-      return new ResponseEntity<>(HttpStatus.CREATED);
+      var savedTrailer = service.uploadTrailer(video);
+      return new ResponseEntity<>(savedTrailer, HttpStatus.CREATED);
     } catch (Exception e) {
       return null;
     }

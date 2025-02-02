@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ru.storage.content_metadata.poster.Poster;
-import ru.storage.content_metadata.video.Video;
+import ru.storage.content_metadata.video.StandaloneVideoShow;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,7 +40,7 @@ class ContentMetadataControllerTest {
     testMetadata =
         new VideoInfoParts(
             randomData.nextObject(ContentMetadata.class, "video", "poster", "createdAt"),
-            randomData.nextObject(Video.class, "contentMetadata"),
+            randomData.nextObject(StandaloneVideoShow.class, "contentMetadata"),
             randomData.nextObject(Poster.class, "contentMetadata"));
     testMetadata.video().setContentType("video/mp4");
     testMetadata.poster().setContentType("image/jpeg");

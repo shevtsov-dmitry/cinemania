@@ -143,8 +143,7 @@ class IntendedSequenceTest {
             });
   }
   
-
- // ===== UPLOAD FILM S3 CONTENT ===== 
+ // ===== UPLOAD POSTER ===== 
 
   @Test 
   @Order(10)
@@ -155,6 +154,7 @@ class IntendedSequenceTest {
   }
 
 
+ // ===== UPLOAD STANDALONE VIDEO SHOW TO S3 CONTENT ===== 
   
 
   // ===== CLEAN UP =====

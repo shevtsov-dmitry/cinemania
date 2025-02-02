@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.poster.PosterRepo;
-import ru.storage.content_metadata.video.Video;
+import ru.storage.content_metadata.video.StandaloneVideoShow;
 import ru.storage.content_metadata.video.VideoRepo;
 
 @SpringBootTest
@@ -37,7 +37,7 @@ class MetadataServiceTest {
 
         testMetadata = new VideoInfoParts(
                 randomData.nextObject(ContentMetadata.class, "video", "poster", "createdAt"),
-                randomData.nextObject(Video.class, "contentMetadata"),
+                randomData.nextObject(StandaloneVideoShow.class, "contentMetadata"),
                 randomData.nextObject(Poster.class, "contentMetadata")
         );
         testMetadata.video().setContentType("video/mp4");

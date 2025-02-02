@@ -20,7 +20,7 @@ import ru.storage.content_metadata.genre.Genre;
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.trailer.Trailer;
 import ru.storage.content_metadata.video.TvSeries;
-import ru.storage.content_metadata.video.Video;
+import ru.storage.content_metadata.video.StandaloneVideoShow;
 import ru.storage.person.filming_group.FilmingGroup;
 
 @Data
@@ -57,10 +57,10 @@ public class ContentMetadata {
 
   private Double rating;
   @DBRef private Poster poster;
-  @DBRef private Video singleVideoShow;
+  @DBRef private StandaloneVideoShow singleVideoShow;
   @DBRef private FilmingGroup filmingGroup;
-  @DBRef private Video standalone;
-  @DBRef private List<Video> tvSeries;
+  @DBRef private StandaloneVideoShow standalone;
+  @DBRef private List<StandaloneVideoShow> tvSeries;
   @DBRef private Trailer trailer;
   @JsonIgnore @CreatedDate private LocalDateTime createdAt = LocalDateTime.now();
 }
