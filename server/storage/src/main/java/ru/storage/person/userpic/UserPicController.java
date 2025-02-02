@@ -21,11 +21,11 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @RestController
 @RequestMapping("api/v0/metadata/content-creators/user-pics")
-public class UserPicsController {
+public class UserPicController {
 
-  private final UserPicsService userPicsService;
+  private final UserPicService userPicsService;
 
-  public UserPicsController(UserPicsService userPicsService) {
+  public UserPicController(UserPicService userPicsService) {
     this.userPicsService = userPicsService;
   }
 
@@ -50,9 +50,8 @@ public class UserPicsController {
       String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
       return new ResponseEntity<>(new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);
     }
-    var userPic = new UserPic(null, image.getContentType(), image.getOriginalFilename(), category);
-    var savedUserPicDetails = userPicsService.saveImageMetadata(userPic);
-    userPicsService.upload(savedUserPicDetails, image);
+    var userPic = new UserPic(null, image.getContentType(), image.getOriginalFilename(),image.getSize(), category);
+    var savedUserPicDetails = userPicsService.upload(category, userPic);
     return new ResponseEntity<>(savedUserPicDetails, HttpStatus.CREATED);
   }
 

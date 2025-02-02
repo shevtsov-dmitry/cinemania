@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.storage.person.userpic.UserPic;
-import ru.storage.person.userpic.UserPicsService;
+import ru.storage.person.userpic.UserPicService;
 import ru.storage.utils.EncodedHttpHeaders;
 
 @RestController
@@ -21,10 +21,10 @@ import ru.storage.utils.EncodedHttpHeaders;
 public class ContentCreatorController {
 
   private final ContentCreatorService contentCreatorService;
-  private final UserPicsService userPicsService;
+  private final UserPicService userPicsService;
 
   public ContentCreatorController(
-      ContentCreatorService contentCreatorService, UserPicsService userPicsService) {
+      ContentCreatorService contentCreatorService, UserPicService userPicsService) {
     this.contentCreatorService = contentCreatorService;
     this.userPicsService = userPicsService;
   }

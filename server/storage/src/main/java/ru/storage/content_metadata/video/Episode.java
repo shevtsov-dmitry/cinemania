@@ -17,11 +17,13 @@ public class Episode {
   private String contentType;
   private Integer season;
   private Integer episode;
+  private Long size;
 
-  public Episode(String filename, String contentType, Integer season, Integer episode) {
+  public Episode(String filename, String contentType, Integer season, Integer episode, Long size) {
     this.filename = filename;
     this.contentType = contentType;
     this.season = season;
     this.episode = episode;
+    this.size = size;
   }
 }

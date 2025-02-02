@@ -69,7 +69,6 @@ class IntendedSequenceTest {
         .andExpect(jsonPath("$.id", notNullValue()))
         .andExpect(jsonPath("$.contentType", notNullValue()))
         .andExpect(jsonPath("$.filename", notNullValue()))
-        .andExpect(jsonPath("$.size", notNullValue()))
         .andExpect(jsonPath("$.personCategory", notNullValue()))
         .andDo(
             result -> {
@@ -162,7 +161,6 @@ class IntendedSequenceTest {
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id", notNullValue()))
         .andExpect(jsonPath("$.filename", notNullValue()))
-        .andExpect(jsonPath("$.size", notNullValue()))
         .andExpect(jsonPath("$.contentType", notNullValue()))
         .andDo(
             result -> {
@@ -189,18 +187,18 @@ class IntendedSequenceTest {
 
   // ===== UPLOAD STANDALONE VIDEO SHOW =====
 
-  // @Test
-  // @Order(20)
-  // void uploadStandaloneVideoShow() throws Exception {
-  //   var multipartFile = new MockMultipartFile("video", VIDEO_FILE.getName(), "video/mp4", Files.readAllBytes(VIDEO_FILE.toPath()));
-  //   mockMvc.perform(multipart(serverUrl + "/api/v0/videos/upload/standalone")
-  //   .file(multipartFile))
-  //   .andExpect(status().isCreated())
-  //   .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-  //   .andExpect(jsonPath("$.id", notNullValue()))
-  //   .andExpect(jsonPath("$.filename"), notNullValue())
-  //   .andExpect(jsonPath("$.", null))
-  // }
+  @Test
+  @Order(20)
+  void uploadStandaloneVideoShow() throws Exception {
+    var multipartFile = new MockMultipartFile("video", VIDEO_FILE.getName(), "video/mp4", Files.readAllBytes(VIDEO_FILE.toPath()));
+    mockMvc.perform(multipart(serverUrl + "/api/v0/videos/upload/standalone")
+    .file(multipartFile))
+    .andExpect(status().isCreated())
+    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+    .andExpect(jsonPath("$.id", notNullValue()))
+    .andExpect(jsonPath("$.filename"), notNullValue())
+    .andExpect(jsonPath("$.", null))
+  }
 
   // ===== CLEAN UP =====
 

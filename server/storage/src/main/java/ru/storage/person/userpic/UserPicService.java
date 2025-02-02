@@ -10,34 +10,16 @@ import ru.storage.person.PersonCategory;
 import ru.storage.utils.S3GeneralOperations;
 
 @Service
-public class UserPicsService {
+public class UserPicService {
 
   private final UserPicsRepo userPicsRepo;
   private static final String PICTURES_STORAGE_FOLDER = "userpic";
 
-  public UserPicsService(UserPicsRepo userPicsRepo) {
+  public UserPicService(UserPicsRepo userPicsRepo) {
     this.userPicsRepo = userPicsRepo;
   }
 
-  /**
-   * Save user pic image metadata to the database.
-   *
-   * @param userPic the user pic metadata object to be saved
-   * @return The saved user pic metadata object from mongoDB
-   */
-  public UserPic saveImageMetadata(UserPic userPic) {
-    return userPicsRepo.save(userPic);
-  }
-
-  /**
-   * Upload image to S3 storage based on user pic metadata.
-   *
-   * @param userPic the user metadata object containing image details
-   * @param image the multipart file representing the uploaded
-   * @throws IllegalArgumentException if the image is not an image file.
-   * @throws S3Exception if an error occurs during the upload process.
-   */
-  public void upload(UserPic userPic, MultipartFile image) {
+  public UserPic upload(MultipartFile image) {
     S3GeneralOperations.uploadImage(
         PICTURES_STORAGE_FOLDER + "/" + userPic.getPersonCategory().stringValue,
         userPic.getId(),

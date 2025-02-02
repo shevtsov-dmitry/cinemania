@@ -41,8 +41,7 @@ public class VideoService {
   private final S3Client s3Client;
   private final VideoRepo videoRepo;
 
-  public VideoService(
-      S3Client s3Client, VideoRepo videoRepo) {
+  public VideoService(S3Client s3Client, VideoRepo videoRepo) {
     this.s3Client = s3Client;
     this.videoRepo = videoRepo;
   }
@@ -57,11 +56,13 @@ public class VideoService {
    * @throws S3Exception when error uploading file to S3
    * @return Video object with metadata saved in database
    */
-  public StandaloneVideoShow uploadStandaloneVideoShow(MultipartFile video) throws ParseException, IOException {
+  public StandaloneVideoShow uploadStandaloneVideoShow(MultipartFile video)
+      throws ParseException, IOException {
     BinaryContentUtils.assureVideoProcessing(video.getContentType());
     StandaloneVideoShow videoMetadata =
         videoRepo.save(
-            new StandaloneVideoShow(video.getOriginalFilename(), video.getContentType()));
+            new StandaloneVideoShow(
+                video.getOriginalFilename(), video.getContentType(), video.getSize()));
     File[] hlsFiles = splitVideoToHlsChunks(videoMetadata.getId(), video.getInputStream());
     for (File hlsFile : hlsFiles) {
       String s3Key = S3_FOLDER + "/" + videoMetadata.getId() + "/standalone/" + hlsFile.getName();
@@ -82,7 +83,8 @@ public class VideoService {
    */
   public Trailer uploadTrailer(MultipartFile video) throws ParseException, IOException {
     BinaryContentUtils.assureVideoProcessing(video.getContentType());
-    Trailer trailerMetadata = new Trailer(video.getOriginalFilename(), video.getContentType());
+    Trailer trailerMetadata =
+        new Trailer(video.getOriginalFilename(), video.getContentType(), video.getSize());
     File[] hlsFiles = splitVideoToHlsChunks(trailerMetadata.getId(), video.getInputStream());
     for (File hlsFile : hlsFiles) {
       String s3Key = S3_FOLDER + "/" + trailerMetadata.getId() + "/trailer/" + hlsFile.getName();
@@ -108,7 +110,8 @@ public class VideoService {
       throws ParseException, IOException {
     BinaryContentUtils.assureVideoProcessing(video.getContentType());
     var episodeMetadata =
-        new Episode(video.getOriginalFilename(), video.getContentType(), season, episode);
+        new Episode(
+            video.getOriginalFilename(), video.getContentType(), season, episode, video.getSize());
     File[] hlsFiles = splitVideoToHlsChunks(episodeMetadata.getId(), video.getInputStream());
     for (File hlsFile : hlsFiles) {
       String s3Key =

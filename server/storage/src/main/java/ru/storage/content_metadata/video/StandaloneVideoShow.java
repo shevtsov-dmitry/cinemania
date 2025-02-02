@@ -1,6 +1,5 @@
 package ru.storage.content_metadata.video;
 
-import com.mongodb.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,10 +16,11 @@ public class StandaloneVideoShow {
   @Id private String id;
   private String filename;
   private String contentType;
+  private Long size;
 
-  public StandaloneVideoShow(String filename, String contentType) {
+  public StandaloneVideoShow(String filename, String contentType, Long size) {
     this.filename = filename;
     this.contentType = contentType;
+    this.size = size;
   }
-
 }

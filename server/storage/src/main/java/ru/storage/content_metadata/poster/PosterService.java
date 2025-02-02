@@ -45,7 +45,7 @@ public class PosterService {
    * @throws S3Exception when image wasn't saved to S3 cloud storage
    */
   public Poster uploadImage(MultipartFile image) {
-    var poster = posterRepo.save(new Poster(null, image.getOriginalFilename(), image.getContentType()));
+    var poster = posterRepo.save(new Poster(image.getOriginalFilename(), image.getContentType(), image.getSize()));
     S3GeneralOperations.uploadImage(S3_FOLDER, poster.getId(), image);
     return poster;
   }
