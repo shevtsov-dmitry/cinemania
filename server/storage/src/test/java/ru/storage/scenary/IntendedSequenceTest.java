@@ -3,14 +3,11 @@ package ru.storage.scenary;
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.TypeKey;
-import io.micrometer.core.annotation.TimedSet;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.file.Files;
@@ -189,18 +186,21 @@ class IntendedSequenceTest {
 
   // ===== UPLOAD STANDALONE VIDEO SHOW =====
 
-  // @Test
-  // @Order(20)
-  // void uploadStandaloneVideoShow() throws Exception {
-  //   var multipartFile = new MockMultipartFile("video", VIDEO_FILE.getName(), "video/mp4", Files.readAllBytes(VIDEO_FILE.toPath()));
-  //   mockMvc.perform(multipart(serverUrl + "/api/v0/videos/upload/standalone")
-  //   .file(multipartFile))
-  //   .andExpect(status().isCreated())
-  //   .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-  //   .andExpect(jsonPath("$.id", notNullValue()))
-  //   .andExpect(jsonPath("$.filename"), notNullValue())
-  //   .andExpect(jsonPath("$.", null))
-  // }
+  @Test
+  @Order(20)
+  void uploadStandaloneVideoShow() throws Exception {
+    var multipartFile =
+        new MockMultipartFile(
+            "video", VIDEO_FILE.getName(), "video/mp4", Files.readAllBytes(VIDEO_FILE.toPath()));
+    mockMvc
+        .perform(multipart(serverUrl + "/api/v0/videos/upload/standalone").file(multipartFile))
+        .andExpect(status().isCreated())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.id", notNullValue()))
+        .andExpect(jsonPath("$.filename", notNullValue()))
+        .andExpect(jsonPath("$.contentType", notNullValue()))
+        .andExpect(jsonPath("$.size", notNullValue()));
+  }
 
   // ===== CLEAN UP =====
 
@@ -251,6 +251,4 @@ class IntendedSequenceTest {
         .perform(get(serverUrl + "/api/v0/posters/{id}", posterMetadata.getId()))
         .andExpect(status().isNotFound());
   }
-
-
 }

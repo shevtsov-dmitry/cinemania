@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.poster.PosterRepo;
 import ru.storage.content_metadata.video.StandaloneVideoShow;
-import ru.storage.content_metadata.video.VideoRepo;
+import ru.storage.content_metadata.video.StandaloneVideoShowRepo;
 
 @SpringBootTest
 class MetadataServiceTest {
