@@ -24,6 +24,7 @@ export default function FormAddFilm() {
   );
 
   const posterInputRef = useRef();
+  const trailerInputRef = useRef();
   const videoInputRef = useRef();
 
   // *** AUTO SUGGESTIONS
@@ -195,6 +196,11 @@ export default function FormAddFilm() {
 
   const [recentFormErrorMessage, setRecentFormErrorMessage] = useState("");
   const [isInfoSignActive, setIsInfoSignActive] = useState(false);
+
+  const [isPosterFileSelected, setIsPosterFileSelected] = useState(false);
+  const [isVideoShowFileSelected, setIsVideoShowFileSelected] = useState(false);
+  const [isTrailerFileSelected, setIsTrailerFileSelected] = useState(false);
+  const [isFilmingGroupSelected, setIsFilmingGroupSelected] = useState(false);
 
   async function saveFormData() {
     const OPERATION_STATUS = {
@@ -500,135 +506,199 @@ export default function FormAddFilm() {
             />
           </li>
 
-          <li id="country">
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
-              Страна
-            </label>
-            <input
-              onKeyDown={(event) =>
-                event.keyCode === 13 && event.preventDefault()
-              }
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
-              type="search"
-              name="country"
-              // TODO restore autosuggesstion in the future
-              // value={countryInput}
-              // onChange={(ev) => setCountryInput(ev.target.value)}
-            />
-            <div className="relative mt-1">
-              <div className="absolute z-10 w-full bg-white shadow-lg dark:bg-neutral-700">
-                {countrySuggestionsDOM}
+          <li className="flex gap-3 ">
+            <div id="country">
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                Страна
+              </label>
+              <input
+                onKeyDown={(event) =>
+                  event.keyCode === 13 && event.preventDefault()
+                }
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+                type="search"
+                name="country"
+              />
+              <div className="relative mt-1">
+                <div className="absolute z-10 w-full bg-white shadow-lg dark:bg-neutral-700">
+                  {countrySuggestionsDOM}
+                </div>
+              </div>
+            </div>
+
+            <div id="releaseDate">
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                Дата релиза
+              </label>
+              <input
+                onKeyDown={(event) =>
+                  event.keyCode === 13 && event.preventDefault()
+                }
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+                type="date"
+                name="releaseDate"
+              />
+            </div>
+          </li>
+
+          <li className="flex gap-3 w-full ">
+            <div id="mainGenre" className="">
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                Основной жанр
+              </label>
+              <input
+                onKeyDown={(event) =>
+                  event.keyCode === 13 && event.preventDefault()
+                }
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outdivne-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+                type="search"
+                name="mainGenre"
+                // TODO restore autosuggesstion in the future
+                // value={mainGenreInput}
+                // onChange={(ev) => setMainGenreInput(ev.target.value)}
+              />
+              <div className="relative mt-1">
+                <div className="absolute z-10 w-full bg-white shadow-lg dark:bg-neutral-700">
+                  {mainGenreSuggestionsDOM}
+                </div>
+              </div>
+            </div>
+
+            <div id="subGenres" className="w-full">
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                Поджанры
+              </label>
+              <input
+                onKeyDown={(event) =>
+                  event.keyCode === 13 && event.preventDefault()
+                }
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outdivne-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+                type="search"
+                name="subGenres"
+                placeholder="разделять запятой"
+                onChange={() => {}}
+              />
+              <div className="relative mt-1">
+                <div className="absolute z-10 w-full bg-white shadow-lg dark:bg-neutral-700">
+                  {subGenresSuggestionsDOM}
+                </div>
               </div>
             </div>
           </li>
 
-          <li id="releaseDate">
+          <li id="description">
             <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
-              Дата релиза
+              Описание
             </label>
-            <input
-              onKeyDown={(event) =>
-                event.keyCode === 13 && event.preventDefault()
-              }
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
-              type="date"
-              name="releaseDate"
-            />
-          </li>
-
-          <li id="mainGenre">
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
-              Основной жанр
-            </label>
-            <input
-              onKeyDown={(event) =>
-                event.keyCode === 13 && event.preventDefault()
-              }
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
-              type="search"
-              name="mainGenre"
-              // TODO restore autosuggesstion in the future
-              // value={mainGenreInput}
-              // onChange={(ev) => setMainGenreInput(ev.target.value)}
-            />
-            <div className="relative mt-1">
-              <div className="absolute z-10 w-full bg-white shadow-lg dark:bg-neutral-700">
-                {mainGenreSuggestionsDOM}
-              </div>
-            </div>
-          </li>
-
-          <li id="subGenres">
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
-              Поджанры
-            </label>
-            <input
-              onKeyDown={(event) =>
-                event.keyCode === 13 && event.preventDefault()
-              }
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
-              type="search"
-              name="subGenres"
-              placeholder="разделять запятой"
+            <textarea
+              name="description"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outdivne-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+              rows={4}
+              cols={50}
+              placeholder="Описание фильма"
               onChange={() => {}}
-            />
-            <div className="relative mt-1">
-              <div className="absolute z-10 w-full bg-white shadow-lg dark:bg-neutral-700">
-                {subGenresSuggestionsDOM}
+            ></textarea>
+          </li>
+
+          <li className="flex gap-3 w-full ">
+            <div className="w-fit flex-1">
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                Рейтинг
+              </label>
+              <input
+                onKeyDown={(event) =>
+                  event.keyCode === 13 && event.preventDefault()
+                }
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outdivne-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
+                type="number"
+                placeholder="6.89"
+                name="rating"
+              />
+            </div>
+
+            <div id="ageRestriction" className="w-full flex-[4]">
+              <p className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                Возраст
+              </p>
+              <div className="flex w-full gap-2 items-center justify-between mt-2.5">
+                <AgeRadioInput age={0} />
+                <AgeRadioInput age={6} />
+                <AgeRadioInput age={12} />
+                <AgeRadioInput age={16} />
+                <AgeRadioInput age={18} />
               </div>
             </div>
           </li>
 
-          <li id="ageRestriction">
-            <p className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
-              Возраст
-            </p>
-            <div className="flex w-full justify-between gap-2">
-              <AgeRadioInput age={0} />
-              <AgeRadioInput age={6} />
-              <AgeRadioInput age={12} />
-              <AgeRadioInput age={16} />
-              <AgeRadioInput age={18} />
+          <li id="filmingGroup">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+              Выберите съёмочную группу
+            </label>
+            <button
+              className={` mr-4 block w-full  rounded-md  border-0  px-3  py-2 text-sm text-blue-700
+          ${isFilmingGroupSelected ? "bg-green-500 text-white" : "bg-blue-50"}`}
+            >
+              Выбрать
+            </button>
+          </li>
+
+          <li className="flex gap-3">
+            <div id="poster">
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                Постер
+              </label>
+              <input
+                ref={posterInputRef}
+                type="file"
+                onChange={() => setIsPosterFileSelected(true)}
+                className={`file:mr-4 block w-full file:rounded-md file:border-0 file:px-3 file:py-2 text-sm text-gray-700 file:text-blue-700 hover:file:bg-blue-100 
+          dark:file:bg-neutral-600 dark:file:text-blue-100 dark:text-blue-100 
+          ${
+            isPosterFileSelected
+              ? "file:bg-green-500 file:text-white"
+              : "file:bg-blue-50"
+          }`}
+                name="imageUrl"
+              />
             </div>
-          </li>
 
-          <li id="poster">
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
-              Постер
-            </label>
-            <input
-              ref={posterInputRef}
-              type="file"
-              className="file:mr-4 block w-full file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 text-sm text-gray-700 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100 dark:text-blue-100"
-              name="imageUrl"
-            />
-          </li>
+            <div id="trailer">
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                Трейлер
+              </label>
+              <input
+                ref={trailerInputRef}
+                type="file"
+                onChange={() => setIsTrailerFileSelected(true)}
+                className={`file:mr-4 block w-full file:rounded-md file:border-0 file:px-3 file:py-2 text-sm text-gray-700 file:text-blue-700 hover:file:bg-blue-100 
+          dark:file:bg-neutral-600 dark:file:text-blue-100 dark:text-blue-100 
+          ${
+            isTrailerFileSelected
+              ? "file:bg-green-500 file:text-white"
+              : "file:bg-blue-50"
+          }`}
+                name="trailerUrl"
+              />
+            </div>
 
-          <li id="video">
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
-              Видео
-            </label>
-            <input
-              ref={videoInputRef}
-              type="file"
-              className="file:mr-4 block w-full file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 text-sm text-gray-700 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100 dark:text-blue-100"
-              name="videoUrl"
-            />
-          </li>
-
-          <li>
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
-              Рейтинг
-            </label>
-            <input
-              onKeyDown={(event) =>
-                event.keyCode === 13 && event.preventDefault()
-              }
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100"
-              type="text"
-              placeholder="6.89"
-              name="rating"
-            />
+            <div id="video">
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                Видео
+              </label>
+              <input
+                ref={videoInputRef}
+                type="file"
+                onChange={() => setIsVideoShowFileSelected(true)}
+                className={`file:mr-4 block w-full file:rounded-md file:border-0 file:px-3 file:py-2 text-sm text-gray-700 file:text-blue-700 hover:file:bg-blue-100 
+          dark:file:bg-neutral-600 dark:file:text-blue-100 dark:text-blue-100 
+          ${
+            isVideoShowFileSelected
+              ? "file:bg-green-500 file:text-white"
+              : "file:bg-blue-50"
+          }`}
+                name="videoUrl"
+              />
+            </div>
           </li>
         </ul>
 

@@ -64,16 +64,16 @@ public class VideoService {
   public StandaloneVideoShow uploadStandaloneVideoShow(MultipartFile video)
       throws ParseException, IOException {
     BinaryContentUtils.assureVideoProcessing(video.getContentType());
-    StandaloneVideoShow videoMetadata =
+    StandaloneVideoShow savedVideoMetadata =
         videoRepo.save(
             new StandaloneVideoShow(
                 video.getOriginalFilename(), video.getContentType(), video.getSize()));
-    File[] hlsFiles = splitVideoToHlsChunks(videoMetadata.getId(), video.getInputStream());
+    File[] hlsFiles = splitVideoToHlsChunks(savedVideoMetadata.getId(), video.getInputStream());
     for (File hlsFile : hlsFiles) {
-      String s3Key = S3_FOLDER + "/" + videoMetadata.getId() + "/standalone/" + hlsFile.getName();
+      String s3Key = S3_FOLDER + "/" + savedVideoMetadata.getId() + "/" + hlsFile.getName();
       uploadToS3(s3Key, hlsFile);
     }
-    return videoMetadata;
+    return savedVideoMetadata;
   }
 
   /**
@@ -93,8 +93,7 @@ public class VideoService {
             new Trailer(video.getOriginalFilename(), video.getContentType(), video.getSize()));
     File[] hlsFiles = splitVideoToHlsChunks(savedTrailerMetadata.getId(), video.getInputStream());
     for (File hlsFile : hlsFiles) {
-      String s3Key =
-          S3_FOLDER + "/" + savedTrailerMetadata.getId() + "/trailer/" + hlsFile.getName();
+      String s3Key = S3_FOLDER + "/" + savedTrailerMetadata.getId() + "/" + hlsFile.getName();
       uploadToS3(s3Key, hlsFile);
     }
     return savedTrailerMetadata;
@@ -127,8 +126,9 @@ public class VideoService {
     File[] hlsFiles = splitVideoToHlsChunks(savedEpisodeMetadata.getId(), video.getInputStream());
     for (File hlsFile : hlsFiles) {
       String s3Key =
-          "%s/tv-series/%s/%d/%d/%s"
-              .formatted(S3_FOLDER, contentMetadataId, season, episode, hlsFile.getName());
+          S3_FOLDER
+              + "/tv-series/%s/%d/%d/%s"
+                  .formatted(contentMetadataId, season, episode, hlsFile.getName());
       uploadToS3(s3Key, hlsFile);
     }
     return savedEpisodeMetadata;

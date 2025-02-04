@@ -57,8 +57,8 @@ public class ContentMetadata {
 
   private Double rating;
   @DBRef private Poster poster;
-  @DBRef private StandaloneVideoShow singleVideoShow;
   @DBRef private FilmingGroup filmingGroup;
+  @DBRef private StandaloneVideoShow singleVideoShow;
   @DBRef private Trailer trailer;
   @DBRef private StandaloneVideoShow standalone;
   @DBRef private List<Episode> tvSeries;
