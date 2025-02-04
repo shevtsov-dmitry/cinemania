@@ -1,6 +1,6 @@
 import Constants from "@/src/constants/Constants";
 import useFormAddCreatorStore from "@/src/state/formAddCreatorState";
-import ContentDetails from "@/src/types/ContentDetails";
+import ContentDetails from "@/src/types/ContentMetadata";
 import PersonCategory from "@/src/types/PersonCategory";
 import UserPic from "@/src/types/UserPic";
 import React, { useState, useRef, FormEventHandler, useEffect } from "react";

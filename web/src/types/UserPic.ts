@@ -3,6 +3,7 @@ type UserPic = {
   contentType: string;
   filename: string;
   personCategory: string;
+  size: number;
 };
 
 export default UserPic;

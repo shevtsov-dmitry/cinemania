@@ -1,4 +1,4 @@
-import ContentDetails from "@/src/types/ContentDetails";
+import ContentDetails from "@/src/types/ContentMetadata";
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import {
   Animated,

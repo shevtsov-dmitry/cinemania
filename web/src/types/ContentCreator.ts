@@ -1,17 +1,18 @@
-import ContentDetails from "./ContentDetails";
+import PersonCategory from "./PersonCategory";
 import UserPic from "./UserPic";
 
 type ContentCreator = {
+  id: string;
   fullname: string;
-  fullnameEng: string;
+  fullnameLatin: string;
   bornPlace: string;
-  heightMeters: number;
+  heightCm: number;
   age: number;
-  userPic?: UserPic;
-  filmsParticipated?: ContentDetails[];
-  birthDate: string; // Format: dd.MM.yyyy
-  deathDate?: string | null; // Optional
+  personCategory: PersonCategory;
+  userPic: UserPic;
   isDead: boolean;
+  birthDate: string;
+  deathDate: string;
 };
 
 export default ContentCreator;

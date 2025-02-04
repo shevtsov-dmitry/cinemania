@@ -1,6 +1,7 @@
 import Compilation from "@/src/components/compilations/Compilation";
 import Constants from "@/src/constants/Constants";
-import ContentDetails from "@/src/types/ContentDetails";
+import ContentDetails from "@/src/types/ContentMetadata";
+import PosterMetadata from "@/src/types/PosterMetadata";
 import { parseSplittedWithDefaultDelimiter } from "@/src/utils/BinaryContentUtils";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -39,7 +40,11 @@ export default function Preview() {
             setPostersLoadingMessage(errmes);
           }
         })
-        .then((fetchedMetadata) => setMetadataList(fetchedMetadata));
+        .then((fetchedMetadata) => setMetadataList(fetchedMetadata))
+        .catch(e => {
+          console.error(e.message);
+          
+        })
     }
   }, []);
 
@@ -49,7 +54,7 @@ export default function Preview() {
     async function fetchPosters() {
       if (metadataList.length === 0) return;
       const joinedIds = metadataList
-        .map((item) => item.posterMetadata.id)
+        .map((item) => item.posterMetadata?.id)
         .join(",");
       fetch(`${STORAGE_URL}/api/v0/posters/${joinedIds}`)
         .then((res) => {
