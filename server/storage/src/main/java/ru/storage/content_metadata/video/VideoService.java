@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.storage.content_metadata.trailer.Trailer;
 import ru.storage.exceptions.ParseIdException;
 import ru.storage.utils.BinaryContentUtils;
 import ru.storage.utils.S3GeneralOperations;
@@ -37,11 +36,19 @@ public class VideoService {
   private static final Logger LOG = LoggerFactory.getLogger(VideoService.class);
 
   private final S3Client s3Client;
-  private final VideoRepo videoRepo;
+  private final StandaloneVideoShowRepo videoRepo;
+  private final TrailerRepo trailerRepo;
+  private final EpisodeRepo episodeRepo;
 
-  public VideoService(S3Client s3Client, VideoRepo videoRepo) {
+  public VideoService(
+      S3Client s3Client,
+      StandaloneVideoShowRepo videoRepo,
+      TrailerRepo trailerRepo,
+      EpisodeRepo episodeRepo) {
     this.s3Client = s3Client;
     this.videoRepo = videoRepo;
+    this.trailerRepo = trailerRepo;
+    this.episodeRepo = episodeRepo;
   }
 
   /**
@@ -81,14 +88,16 @@ public class VideoService {
    */
   public Trailer uploadTrailer(MultipartFile video) throws ParseException, IOException {
     BinaryContentUtils.assureVideoProcessing(video.getContentType());
-    Trailer trailerMetadata =
-        new Trailer(video.getOriginalFilename(), video.getContentType(), video.getSize());
-    File[] hlsFiles = splitVideoToHlsChunks(trailerMetadata.getId(), video.getInputStream());
+    Trailer savedTrailerMetadata =
+        trailerRepo.save(
+            new Trailer(video.getOriginalFilename(), video.getContentType(), video.getSize()));
+    File[] hlsFiles = splitVideoToHlsChunks(savedTrailerMetadata.getId(), video.getInputStream());
     for (File hlsFile : hlsFiles) {
-      String s3Key = S3_FOLDER + "/" + trailerMetadata.getId() + "/trailer/" + hlsFile.getName();
+      String s3Key =
+          S3_FOLDER + "/" + savedTrailerMetadata.getId() + "/trailer/" + hlsFile.getName();
       uploadToS3(s3Key, hlsFile);
     }
-    return trailerMetadata;
+    return savedTrailerMetadata;
   }
 
   /**
@@ -107,17 +116,22 @@ public class VideoService {
       MultipartFile video, String contentMetadataId, int season, int episode)
       throws ParseException, IOException {
     BinaryContentUtils.assureVideoProcessing(video.getContentType());
-    var episodeMetadata =
-        new Episode(
-            video.getOriginalFilename(), video.getContentType(), season, episode, video.getSize());
-    File[] hlsFiles = splitVideoToHlsChunks(episodeMetadata.getId(), video.getInputStream());
+    var savedEpisodeMetadata =
+        episodeRepo.save(
+            new Episode(
+                video.getOriginalFilename(),
+                video.getContentType(),
+                season,
+                episode,
+                video.getSize()));
+    File[] hlsFiles = splitVideoToHlsChunks(savedEpisodeMetadata.getId(), video.getInputStream());
     for (File hlsFile : hlsFiles) {
       String s3Key =
           "%s/tv-series/%s/%d/%d/%s"
               .formatted(S3_FOLDER, contentMetadataId, season, episode, hlsFile.getName());
       uploadToS3(s3Key, hlsFile);
     }
-    return episodeMetadata;
+    return savedEpisodeMetadata;
   }
 
   // TODO convert to hls with stream instead of temp folder
