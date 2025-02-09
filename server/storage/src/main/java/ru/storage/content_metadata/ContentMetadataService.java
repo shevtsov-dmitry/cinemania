@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 @Service
 public class ContentMetadataService {
 
-    private static final Logger log = LoggerFactory.getLogger(ContentMetadataService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContentMetadataService.class);
     private final ContentMetadataRepo contentMetadataRepo;
     private final VideoService videoService;
     private final PosterService posterService;
@@ -39,10 +39,6 @@ public class ContentMetadataService {
      * @return {@link VideoInfoParts} object
      */
     public ContentMetadata saveMetadata(ContentMetadata contentMetadata) {
-        contentMetadata.setSingleVideoShow(null);
-        contentMetadata.setTvSeries(null);
-        contentMetadata.setTrailer(null);
-        contentMetadata.setPoster(null);
         return contentMetadataRepo.save(contentMetadata);
     }
 
@@ -74,30 +70,9 @@ public class ContentMetadataService {
                                 () ->
                                         new NoSuchElementException(
                                                 "Не удалось найти запрашиваемый материал по"
-                                                    + " идентификатору."));
+                                                        + " идентификатору."));
         posterService.deleteByIds(contentDetails.getPoster().getId());
         videoService.deleteStandaloneVideoShowByIds(contentDetails.getSingleVideoShow().getId());
         contentMetadataRepo.delete(contentDetails);
     }
-
-    //    /**
-    //     * Retrieve recently added video info parts bundle
-    //     *
-    //     * @param amount how many instances need to be searched
-    //     * @return recently added {@code VideoInfoParts} bundle
-    //     */
-    //    public List<VideoInfoParts> getRecentlyAdded(int amount) {
-    //        List<ContentMetadata> recentlyAdded =
-    // contentMetadataRepo.findRecentlyAdded(Pageable.ofSize(amount));
-    //        return recentlyAdded.stream()
-    //                .map(contentMetadata -> {
-    //                    long id = contentMetadata.getId();
-    //                    return new VideoInfoParts(
-    //                            contentMetadata,
-    //                            videoService.findByContentMetadataId(id).orElse(new Video()),
-    //                            posterService.findByContentMetadataId(id).orElse(new Poster())
-    //                    );
-    //                }).toList();
-    //    }
-
 }

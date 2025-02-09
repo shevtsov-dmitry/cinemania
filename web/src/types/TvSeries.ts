@@ -1,6 +1,8 @@
 import Episode from "./Episode";
 
-export type TvSeries = {
+type TvSeries = {
   id: string;
   episodes: Episode[];
 };
+
+export default TvSeries;

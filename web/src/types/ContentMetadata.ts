@@ -1,10 +1,11 @@
-import { Genre } from "./Genre";
+import FilmingGroup from "./FilmingGroup";
+import Genre from "./Genre";
 import Poster from "./Poster";
 import StandaloneVideoShow from "./StandaloneVideoShow";
 import Trailer from "./Trailer";
-import { TvSeries } from "./TvSeries";
+import TvSeries from "./TvSeries";
 
-export type ContentMetadata = {
+type ContentMetadata = {
   id: string;
   title: string;
   releaseDate: string;
@@ -21,3 +22,5 @@ export type ContentMetadata = {
   standalone: StandaloneVideoShow;
   tvSeries: TvSeries;
 };
+
+export default ContentMetadata;

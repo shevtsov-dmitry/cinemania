@@ -1,7 +1,7 @@
-export enum PersonCategory {
+enum PersonCategory {
   DIRECTOR = "DIRECTOR",
   ACTOR = "ACTOR",
   USER = "USER",
 }
 
-// export default PersonCategory;
+export default PersonCategory;

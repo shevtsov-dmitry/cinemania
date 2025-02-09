@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ru.storage.utils.EncodedHttpHeaders;
+
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.util.List;
@@ -23,18 +24,20 @@ public class ContentMetadataController {
     /**
      * @param metadataObjects {@link VideoInfoParts} objects record
      * @return Response
-     * <ul>
-     *     <li>201 (CREATED)</li>
-     *     <li>400 (BAD REQUEST) when content type is wrong </li>
-     * </ul>
+     *     <ul>
+     *       <li>201 (CREATED)
+     *       <li>400 (BAD REQUEST) when content type is wrong
+     *     </ul>
      */
     @PostMapping
-    public ResponseEntity<ContentMetadata> saveFormData(@RequestBody ContentMetadata contentMetadata) {
+    public ResponseEntity<ContentMetadata> saveFormData(
+            @RequestBody ContentMetadata contentMetadata) {
         try {
             final var savedContentMetadata = service.saveMetadata(contentMetadata);
             return new ResponseEntity<>(savedContentMetadata, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -43,9 +46,9 @@ public class ContentMetadataController {
      *
      * @param amount requested amount
      * @return Response
-     * <ul>
-     *     <li>200 (OK)</li>
-     * </ul>
+     *     <ul>
+     *       <li>200 (OK)
+     *     </ul>
      */
     @GetMapping("recent/{amount}")
     public ResponseEntity<List<ContentMetadata>> getRecentlyAdded(@PathVariable int amount) {
@@ -57,12 +60,12 @@ public class ContentMetadataController {
      *
      * @param contentId contentId from local db
      * @return Response
-     * <ul>
-     *     <li>204 (NO_CONTENT) on success</li>
-     *     <li>400 (BAD_REQUEST) when error on parsing or passed illegal arguments</li>
-     *     <li>404 (NOT_FOUND) when there is no such element related to requested id</li>
-     *     <li>500 (INTERNAL_SERVER_ERROR) when S3 couldn't remove content for some reason</li>
-     * <ul/>
+     *     <ul>
+     *       <li>204 (NO_CONTENT) on success
+     *       <li>400 (BAD_REQUEST) when error on parsing or passed illegal arguments
+     *       <li>404 (NOT_FOUND) when there is no such element related to requested id
+     *       <li>500 (INTERNAL_SERVER_ERROR) when S3 couldn't remove content for some reason
+     *           <ul/>
      */
     @DeleteMapping("{contentId}")
     public ResponseEntity<ContentMetadata> remove(@PathVariable String contentId) {
@@ -70,18 +73,14 @@ public class ContentMetadataController {
             service.removeContent(contentId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(
+                    null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (S3Exception e) {
-            return new ResponseEntity<>(null,
-                    new EncodedHttpHeaders(e.getMessage()),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

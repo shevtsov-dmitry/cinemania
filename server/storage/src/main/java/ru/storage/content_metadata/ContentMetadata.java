@@ -17,6 +17,7 @@ import ru.storage.content_metadata.genre.Genre;
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.video.StandaloneVideoShow;
 import ru.storage.content_metadata.video.Trailer;
+import ru.storage.content_metadata.video.TvSeries;
 import ru.storage.person.filming_group.FilmingGroup;
 
 import java.time.LocalDate;

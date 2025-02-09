@@ -1,4 +1,4 @@
-export type Episode = {
+type Episode = {
   id: string;
   filename: string;
   contentType: string;
@@ -7,3 +7,4 @@ export type Episode = {
   size: number;
 };
 
+export default Episode;
