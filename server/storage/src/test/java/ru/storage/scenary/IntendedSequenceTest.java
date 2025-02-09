@@ -63,7 +63,7 @@ class IntendedSequenceTest {
         Trailer trailer;
     }
 
-    private static final Metadata meta = new Metadata();
+    private static Metadata meta = new Metadata();
 
     // ===== ADD CONTENT CREATOR =====
 
@@ -167,7 +167,9 @@ class IntendedSequenceTest {
                         });
     }
 
-    // ===== UPLOAD POSTER =====
+    // ===== UPLOADS =====
+
+    // ----- IMAGES -----
 
     @Test
     @Order(10)
@@ -210,7 +212,7 @@ class IntendedSequenceTest {
                         });
     }
 
-    // ===== UPLOAD STANDALONE VIDEO SHOW =====
+    // ----- VIDEOS -----
 
     @Test
     @Order(20)
@@ -229,10 +231,44 @@ class IntendedSequenceTest {
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.filename", notNullValue()))
                 .andExpect(jsonPath("$.contentType", notNullValue()))
-                .andExpect(jsonPath("$.size", notNullValue()));
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andDo(
+                        result -> {
+                            meta.standaloneVideoShow =
+                                    objectMapper.readValue(
+                                            result.getResponse().getContentAsString(),
+                                            new TypeReference<>() {});
+                        });
     }
 
+    @Test
+    @Order(21)
+    void upploadTrailer() throws Exception {
+        var multipartFile =
+                new MockMultipartFile(
+                        "video",
+                        VIDEO_FILE.getName(),
+                        "video/mp4",
+                        Files.readAllBytes(VIDEO_FILE.toPath()));
+        mockMvc.perform(multipart(serverUrl + "/api/v0/videos/upload/trailer").file(multipartFile))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.filename", notNullValue()))
+                .andExpect(jsonPath("$.contentType", notNullValue()))
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andDo(
+                        result -> {
+                            meta.trailer =
+                                    objectMapper.readValue(
+                                            result.getResponse().getContentAsString(),
+                                            new TypeReference<>() {});
+                        });
+    }
+
+    // ====================
     // ===== CLEAN UP =====
+    // ====================
 
     @Test
     @Order(100)
@@ -286,10 +322,19 @@ class IntendedSequenceTest {
     @Test
     @Order(103)
     void deleteStandaloneVideoShow() throws Exception {
+        assertNotNull(meta.standaloneVideoShow);
         mockMvc.perform(
                         delete(
                                 serverUrl + "/api/v0/videos/standalone/{id}",
                                 meta.standaloneVideoShow.getId()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @Order(104)
+    void deleteTrailer() throws Exception {
+        assertNotNull(meta.trailer);
+        mockMvc.perform(delete(serverUrl + "/api/v0/videos/trailer/{id}", meta.trailer.getId()))
                 .andExpect(status().isNoContent());
     }
 }
