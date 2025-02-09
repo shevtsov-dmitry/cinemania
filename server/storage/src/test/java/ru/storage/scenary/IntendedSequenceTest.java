@@ -224,7 +224,7 @@ class IntendedSequenceTest {
                         "video/mp4",
                         Files.readAllBytes(VIDEO_FILE.toPath()));
         mockMvc.perform(
-                        multipart(serverUrl + "/api/v0/videos/upload/standalone")
+                        multipart(serverUrl + "/api/v0/videos/standalone")
                                 .file(multipartFile))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -250,7 +250,7 @@ class IntendedSequenceTest {
                         VIDEO_FILE.getName(),
                         "video/mp4",
                         Files.readAllBytes(VIDEO_FILE.toPath()));
-        mockMvc.perform(multipart(serverUrl + "/api/v0/videos/upload/trailer").file(multipartFile))
+        mockMvc.perform(multipart(serverUrl + "/api/v0/videos/trailer").file(multipartFile))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", notNullValue()))
@@ -264,6 +264,25 @@ class IntendedSequenceTest {
                                             result.getResponse().getContentAsString(),
                                             new TypeReference<>() {});
                         });
+    }
+
+    @Test
+    @Order(30)
+    void uploadEpisode() throws Exception {
+        var multipartFile =
+                new MockMultipartFile(
+                        "video",
+                        VIDEO_FILE.getName(),
+                        "video/mp4",
+                        Files.readAllBytes(VIDEO_FILE.toPath()));
+
+        mockMvc.perform(multipart("/api/v0/videos/episode/")
+            .file(multipartFile)
+        .param( "season", 1)
+        .param( "episode", 1)
+        .param( "contentMetadataId", ))
+       
+        
     }
 
     // ====================

@@ -1,4 +1,4 @@
-type UserPic = {
+export type UserPic = {
   id: string;
   contentType: string;
   filename: string;
@@ -6,4 +6,3 @@ type UserPic = {
   size: number;
 };
 
-export default UserPic;

@@ -1,24 +1,23 @@
-import PersonCategory from "./PersonCategory";
-import PosterMetadata from "./PosterMetadata";
-import VideoMetadata from "./VideoMetadata";
+import { Genre } from "./Genre";
+import Poster from "./Poster";
+import StandaloneVideoShow from "./StandaloneVideoShow";
+import Trailer from "./Trailer";
+import { TvSeries } from "./TvSeries";
 
-type ContentMetadata = {
+export type ContentMetadata = {
   id: string;
   title: string;
-  releaseDate: LocalDate;
-  country: Country;
+  releaseDate: string;
+  country: string;
   mainGenre: Genre;
-  subGenres: List<Genre>;
+  subGenres: Genre[];
   description: string;
   age: number;
-  rating: double;
+  rating: number;
   poster: Poster;
   filmingGroup: FilmingGroup;
   singleVideoShow: StandaloneVideoShow;
   trailer: Trailer;
   standalone: StandaloneVideoShow;
-  tvSeries: List<Episode>;
-  createdAt: LocalDateTime;
+  tvSeries: TvSeries;
 };
-
-export default ContentMetadata;

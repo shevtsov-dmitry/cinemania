@@ -121,17 +121,17 @@ public class VideoService {
     /**
      * Upload an episode to s3 storage.
      *
-     * @param episode video multipart file from the form
+     * @param video video multipart file from the form
+     * @param tvSeriesId id of the tv show
      * @param season number of the season
-     * @param episode number of the episode
+     * @param episode number of the Episode
      * @throws IllegalArgumentException when multipart file is not a an episode
      * @throws ParseException when failed to parse an episode to HLS chunks with ffmpeg
      * @throws IOException when error allocating space to new episode file
      * @throws S3Exception when error uploading file to S3
      * @return episode object with metadata saved in database
      */
-    public Episode uploadEpisode(
-            MultipartFile video, String contentMetadataId, int season, int episode)
+    public Episode uploadEpisode(MultipartFile video, String tvSeriesId, int season, int episode)
             throws ParseException, IOException {
         BinaryContentUtils.assureVideoProcessing(video.getContentType());
         var savedEpisodeMetadata =
@@ -148,8 +148,7 @@ public class VideoService {
             String s3Key =
                     S3_FOLDER
                             + "/tv-series/%s/%d/%d/%s"
-                                    .formatted(
-                                            contentMetadataId, season, episode, hlsFile.getName());
+                                    .formatted(tvSeriesId, season, episode, hlsFile.getName());
             uploadToS3(s3Key, hlsFile);
         }
         return savedEpisodeMetadata;
@@ -251,7 +250,7 @@ public class VideoService {
         S3GeneralOperations.deleteItems(S3_FOLDER + "/standalone", ids);
     }
 
-    public void deleteTrailer(String unparsedIds) {
+    public void deleteTrailerByIds(String unparsedIds) {
         List<String> ids = Arrays.asList(unparsedIds.split(","));
         if (ids.isEmpty()) {
             throw new ParseIdException();

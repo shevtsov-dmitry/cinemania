@@ -41,7 +41,7 @@ public class VideoController {
      *       <li>custom header "Message" encoded URL string which describes error message
      *     </ul>
      */
-    @PostMapping("upload/standalone")
+    @PostMapping("standalone")
     public ResponseEntity<StandaloneVideoShow> uploadStandaloneVideoShow(
             @RequestParam MultipartFile video) {
 
@@ -62,14 +62,14 @@ public class VideoController {
         }
     }
 
-    @PostMapping("upload/episode")
+    @PostMapping("episode")
     public ResponseEntity<Episode> uploadEpisode(
-            @RequestParam String contentMetadataId,
+            @RequestParam String tvSeriesId,
             @RequestParam int season,
             @RequestParam int episode,
             @RequestParam MultipartFile video) {
         try {
-            var savedEpisode = service.uploadEpisode(video, contentMetadataId, season, episode);
+            var savedEpisode = service.uploadEpisode(video, tvSeriesId, season, episode);
             return new ResponseEntity<>(savedEpisode, HttpStatus.CREATED);
         } catch (ParseException | IOException e) {
             return new ResponseEntity<>(
@@ -97,7 +97,7 @@ public class VideoController {
      *       <li>custom header "Message" encoded URL string which describes error message
      *     </ul>
      */
-    @PostMapping("upload/trailer")
+    @PostMapping("trailer")
     public ResponseEntity<Trailer> uploadTrailer(@RequestParam MultipartFile video) {
         try {
             var savedTrailer = service.uploadTrailer(video);
@@ -145,7 +145,7 @@ public class VideoController {
     @DeleteMapping("trailer/{ids}")
     public ResponseEntity<Void> deleteTrailer(@PathVariable String ids) {
         try {
-            service.deleteTrailer(ids);
+            service.deleteTrailerByIds(ids);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (ParseIdException e) {
             return new ResponseEntity<>(
