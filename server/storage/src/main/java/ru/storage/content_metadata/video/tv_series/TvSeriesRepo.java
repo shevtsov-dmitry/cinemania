@@ -1,4 +1,4 @@
-package ru.storage.content_metadata.video;
+package ru.storage.content_metadata.video.tv_series;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

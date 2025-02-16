@@ -33,6 +33,10 @@ public class PosterService {
         "переменная BUCKET_NAME должна быть указана в конфигурации application.properties.");
   }
 
+  public Poster saveMetadata(Poster poster) {
+    return posterRepo.save(poster);
+  }
+
   /**
    * Upload image to S3 cloud storage.
    *

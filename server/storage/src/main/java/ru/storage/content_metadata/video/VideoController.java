@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import ru.storage.content_metadata.video.trailer.Trailer;
+import ru.storage.content_metadata.video.episode.Episode;
+import ru.storage.content_metadata.video.standalone.StandaloneVideoShow;
 import ru.storage.exceptions.ParseIdException;
 import ru.storage.utils.EncodedHttpHeaders;
 

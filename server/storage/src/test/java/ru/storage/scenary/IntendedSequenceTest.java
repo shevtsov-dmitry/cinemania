@@ -28,9 +28,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.storage.content_metadata.ContentMetadata;
 import ru.storage.content_metadata.poster.Poster;
-import ru.storage.content_metadata.video.StandaloneVideoShow;
-import ru.storage.content_metadata.video.Trailer;
+import ru.storage.content_metadata.video.standalone.StandaloneVideoShow;
+import ru.storage.content_metadata.video.trailer.Trailer;
 import ru.storage.person.PersonCategory;
 import ru.storage.person.content_creator.ContentCreator;
 import ru.storage.person.filming_group.FilmingGroup;
@@ -58,6 +59,7 @@ class IntendedSequenceTest {
     Poster poster;
     StandaloneVideoShow standaloneVideoShow;
     Trailer trailer;
+    ContentMetadata contentMetadata;
   }
 
   private static Metadata meta = new Metadata();
@@ -114,27 +116,56 @@ class IntendedSequenceTest {
   @Order(3)
   void saveContentCreator() throws Exception {
     assertNotNull(meta.userPic);
-    var contentCreatorToBeSaved =
-        ContentCreator.builder()
-            .id(null)
-            .fullname("Ален")
-            .fullnameLatin("Alen")
-            .bornPlace("США, шт. Миссури, г. Файет")
-            .heightCm(180)
-            .age(35)
-            .personCategory(PersonCategory.ACTOR)
-            .userPic(meta.userPic)
-            .isDead(false)
-            .birthDate(LocalDate.of(1980, 5, 10))
-            .deathDate(null)
-            .build();
+    Map<String, Object> contentCreatorToBeSaved = new HashMap<>();
+    // ContentCreator.builder()
+    //     .id(null)
+    //     .fullname("Ален")
+    //     .fullnameLatin("Alen")
+    //     .bornPlace("США, шт. Миссури, г. Файет")
+    //     .heightCm(180)
+    //     .age(35)
+    //     .personCategory(PersonCategory.ACTOR)
+    //     .userPic(meta.userPic)
+    //     .isDead(false)
+    //     .birthDate(LocalDate.of(1980, 5, 10))
+    //     .deathDate(null)
+    //     .build();
+
+    contentCreatorToBeSaved.put("id", null);
+    contentCreatorToBeSaved.put("fullName", "Ален");
+    contentCreatorToBeSaved.put("fullLatinName", "Alen");
+    contentCreatorToBeSaved.put("bornPlace", "US, шт. Миссури, г. Файет");
+    contentCreatorToBeSaved.put("heightCm", 180);
+    contentCreatorToBeSaved.put("age", 35);
+    contentCreatorToBeSaved.put("personCategory", "ACTOR");
+    contentCreatorToBeSaved.put("userPic", meta.userPic);
+    contentCreatorToBeSaved.put("isDead", false);
+    contentCreatorToBeSaved.put("birthDate", "10.05.1980");
+    contentCreatorToBeSaved.put("deathDate", null);
+    //             {
+    //   "id": null,
+    //   "fullName": "Ален",
+    //   "fullLatinName": "Alen",
+    //   "bornPlace": "US, шт. Миссури, г. Файет",
+    //   "heightCm": 180,
+    //   "age": 35,
+    //   "personCategory": "ACTOR",
+    //   "userPic": meta.userPic,
+    //   "isDead": false,
+    //   "birthDate": "1980-05-10",
+    //   "deathDate": null
+    // }
+
+    String json = objectMapper.writeValueAsString(contentCreatorToBeSaved);
+    System.out.println(json);
 
     mockMvc
         .perform(
             post(serverUrl + "/api/v0/metadata/content-creators")
-                .header("Content-Type", "application/json")
-                .content(objectMapper.writeValueAsString(contentCreatorToBeSaved)))
+                .contentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+                .content(json))
         .andExpect(status().isCreated())
+        .andDo(result -> System.out.printf("RAWWWW %s", result.getResponse().getContentAsString()))
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(jsonPath("$.id", notNullValue()))
         .andExpect(jsonPath("$.fullname").value("Ален"))
@@ -185,7 +216,6 @@ class IntendedSequenceTest {
   // ----- IMAGES -----
 
   @Test
-
   @Order(10)
   void uploadPoster() throws Exception {
     assertNotNull(meta.creator);
@@ -320,27 +350,27 @@ class IntendedSequenceTest {
         .andExpect(jsonPath("$.poster", notNullValue()))
         .andExpect(jsonPath("$.filmingGroup", notNullValue()))
         .andExpect(jsonPath("$.filmingGroup.id", is(not(emptyString()))))
+        .andExpect(jsonPath("$.trailer", notNullValue()))
+        .andExpect(jsonPath("$.trailer.id", is(not(emptyString()))))
         .andExpect(jsonPath("$.standaloneVideoShow", notNullValue()))
-        .andExpect(jsonPath("$.standaloneVideoShow.id", is(not(emptyString()))));
+        .andExpect(jsonPath("$.standaloneVideoShow.id", is(not(emptyString()))))
+        .andDo(
+            result -> {
+              ContentMetadata savedMetadata =
+                  objectMapper.readValue(
+                      result.getResponse().getContentAsString(), new TypeReference<>() {});
+              meta.contentMetadata = savedMetadata;
+            });
   }
 
+  @Order(30)
   @Test
-  @Order(29)
-  void deleteStandaloneVideoShow() throws Exception {
-    assertNotNull(meta.standaloneVideoShow);
+  void deleteWholeStandaloneShowRelatedContent() throws Exception {
+    assertNotNull(meta.contentMetadata);
     mockMvc
-        .perform(
-            delete(serverUrl + "/api/v0/videos/standalone/{id}", meta.standaloneVideoShow.getId()))
+        .perform(delete(serverUrl + "/api/v0/metadata/{id}", meta.contentMetadata))
         .andExpect(status().isNoContent());
-  }
-
-  @Test
-  @Order(29)
-  void deleteTrailer() throws Exception {
-    assertNotNull(meta.trailer);
-    mockMvc
-        .perform(delete(serverUrl + "/api/v0/videos/trailer/{id}", meta.trailer.getId()))
-        .andExpect(status().isNoContent());
+    meta.contentMetadata = null;
   }
 
   // ----- TV SERIES -----

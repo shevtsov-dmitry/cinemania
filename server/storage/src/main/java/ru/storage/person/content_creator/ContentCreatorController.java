@@ -1,6 +1,5 @@
 package ru.storage.person.content_creator;
 
-import java.util.Collections;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.storage.person.userpic.UserPic;
 import ru.storage.person.userpic.UserPicService;
 import ru.storage.utils.EncodedHttpHeaders;
 

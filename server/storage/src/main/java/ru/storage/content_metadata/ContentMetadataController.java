@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/v0/metadata")
+@RequestMapping("api/v0/metadata")
 public class ContentMetadataController {
 
     private final ContentMetadataService service;

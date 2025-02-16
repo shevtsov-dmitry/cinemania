@@ -15,9 +15,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import ru.storage.content_metadata.country.Country;
 import ru.storage.content_metadata.genre.Genre;
 import ru.storage.content_metadata.poster.Poster;
-import ru.storage.content_metadata.video.StandaloneVideoShow;
-import ru.storage.content_metadata.video.Trailer;
-import ru.storage.content_metadata.video.TvSeries;
+import ru.storage.content_metadata.video.trailer.Trailer;
+import ru.storage.content_metadata.video.standalone.StandaloneVideoShow;
+import ru.storage.content_metadata.video.tv_series.TvSeries;
 import ru.storage.person.filming_group.FilmingGroup;
 
 import java.time.LocalDate;
@@ -64,7 +64,7 @@ public class ContentMetadata {
     @DBRef private Poster poster;
     @DBRef private FilmingGroup filmingGroup;
     @DBRef private Trailer trailer;
-    @DBRef private StandaloneVideoShow standalone;
+    @DBRef private StandaloneVideoShow standaloneVideoShow;
     @DBRef private TvSeries tvSeries;
     @JsonIgnore @CreatedDate private LocalDateTime createdAt = LocalDateTime.now();
 }

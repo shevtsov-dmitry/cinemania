@@ -1,7 +1,8 @@
-package ru.storage.content_metadata.video;
+package ru.storage.content_metadata.video.tv_series;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.storage.content_metadata.video.episode.Episode;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

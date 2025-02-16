@@ -7,6 +7,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import ru.storage.content_metadata.video.trailer.Trailer;
+import ru.storage.content_metadata.video.episode.Episode;
+import ru.storage.content_metadata.video.episode.EpisodeRepo;
+import ru.storage.content_metadata.video.standalone.StandaloneVideoShow;
+import ru.storage.content_metadata.video.standalone.StandaloneVideoShowRepo;
+import ru.storage.content_metadata.video.trailer.TrailerRepo;
 import ru.storage.exceptions.ParseIdException;
 import ru.storage.utils.BinaryContentUtils;
 import ru.storage.utils.S3GeneralOperations;
@@ -250,6 +256,13 @@ public class VideoService {
         S3GeneralOperations.deleteItems(S3_FOLDER + "/standalone", ids);
     }
 
+    /**
+     * Delete related content from local metadata db and also from S3 storage.
+     * 
+     * @param unparsedIds a comma-separated string of content metadata IDs
+     * @throws ParseIdException when of invalid number format defined by api
+     * @throws S3Exception when image wasn't deleted
+     */
     public void deleteTrailerByIds(String unparsedIds) {
         List<String> ids = Arrays.asList(unparsedIds.split(","));
         if (ids.isEmpty()) {
@@ -258,4 +271,9 @@ public class VideoService {
         ids.forEach(trailerRepo::deleteById);
         S3GeneralOperations.deleteItems(S3_FOLDER + "/trailer", ids);
     }
+
+    // public void deleteEpisodeByIds(String unparsedIds) {
+    // }
+
+
 }

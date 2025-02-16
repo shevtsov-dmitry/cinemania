@@ -1,26 +1,29 @@
-package ru.storage.content_metadata.video;
+package ru.storage.content_metadata.video.episode;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import nonapi.io.github.classgraph.json.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Trailer {
+@Document
+public class Episode {
+
   @Id private String id;
   private String filename;
   private String contentType;
+  private Integer season;
+  private Integer episode;
   private Long size;
 
-  public Trailer(String filename, String contentType, Long size) {
+  public Episode(String filename, String contentType, Integer season, Integer episode, Long size) {
     this.filename = filename;
     this.contentType = contentType;
+    this.season = season;
+    this.episode = episode;
     this.size = size;
   }
 }

@@ -1,4 +1,4 @@
-package ru.storage.content_metadata.video;
+package ru.storage.content_metadata.video.standalone;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
