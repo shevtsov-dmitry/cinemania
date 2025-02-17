@@ -11,14 +11,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Document
 public class Genre {
-  @Id private String id;
+    @Id
+    private String id;
 
-  @Indexed(unique = true)
-  private String name;
+    @Indexed(unique = true)
+    private String name;
 
-  private Map<String, String> localizedNames;
+    private Map<String, String> localizedNames;
 
-  public Genre(String name) {
-    this.name = name;
-  }
+    public Genre(String name) {
+        this.name = name;
+    }
 }

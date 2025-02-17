@@ -1,5 +1,6 @@
 package ru.storage.content_metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.slf4j.Logger;
@@ -7,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import ru.storage.content_metadata.country.CountryRepo;
+import ru.storage.content_metadata.genre.Genre;
+import ru.storage.content_metadata.genre.GenreRepo;
 import ru.storage.content_metadata.poster.PosterService;
 import ru.storage.content_metadata.video.VideoService;
 import ru.storage.content_metadata.video.standalone.StandaloneVideoShowService;
@@ -27,6 +30,8 @@ public class ContentMetadataService {
   private final StandaloneVideoShowService standaloneVideoShowService;
   private final TvSeriesService tvSeriesService;
   private final VideoService videoService;
+  private final GenreRepo genreRepo;
+  private final CountryRepo countryRepo;
 
   public ContentMetadataService(
       VideoService videoService,
@@ -34,13 +39,17 @@ public class ContentMetadataService {
       PosterService posterService,
       TrailerService trailerService,
       StandaloneVideoShowService standaloneVideoShowService,
-      TvSeriesService tvSeriesService) {
+      TvSeriesService tvSeriesService,
+      GenreRepo genreRepo,
+      CountryRepo countryRepo) {
     this.videoService = videoService;
     this.contentMetadataRepo = contentMetadataRepo;
     this.posterService = posterService;
     this.trailerService = trailerService;
     this.standaloneVideoShowService = standaloneVideoShowService;
     this.tvSeriesService = tvSeriesService;
+    this.genreRepo = genreRepo;
+    this.countryRepo = countryRepo;
   }
 
   /**
@@ -51,8 +60,34 @@ public class ContentMetadataService {
    * @throws IllegalArgumentException if the metadata does not contain any video or episode
    */
   public ContentMetadata saveMetadata(ContentMetadata metadata) {
+    var country = countryRepo.findByName(metadata.getCountry().getName());
+    if (country.isEmpty()) {
+      metadata.setCountry(countryRepo.save(metadata.getCountry()));
+    } else {
+      metadata.setCountry(country.get());
+    }
+
+    var genre = genreRepo.findByName(metadata.getMainGenre().getName());
+    if (genre.isEmpty()) {
+      metadata.setMainGenre(genreRepo.save(metadata.getMainGenre()));
+    } else {
+      metadata.setMainGenre(genre.get());
+    }
+
+    List<Genre> subGenresWithDbRefs = new ArrayList<>(metadata.getSubGenres().size());
+    for (Genre subGenre : metadata.getSubGenres()) {
+      if (genreRepo.findByName(subGenre.getName()).isEmpty()) {
+        var savedGenre = genreRepo.save(subGenre);
+        subGenresWithDbRefs.add(savedGenre);
+      } else {
+        subGenresWithDbRefs.add(genreRepo.findByName(subGenre.getName());
+      }
+    }
+    metadata.setSubGenres(subGenresWithDbRefs);
+
     if (metadata.getStandaloneVideoShow() != null) {
-      metadata.setStandaloneVideoShow(standaloneVideoShowService.saveMetadata(metadata.getStandaloneVideoShow()));
+      metadata.setStandaloneVideoShow(
+          standaloneVideoShowService.saveMetadata(metadata.getStandaloneVideoShow()));
     } else if (metadata.getTrailer() != null) {
       metadata.setTrailer(trailerService.saveMetadata(metadata.getTrailer()));
     } else if (metadata.getTvSeries() != null) {
@@ -95,16 +130,15 @@ public class ContentMetadataService {
                         "Не удалось найти запрашиваемый материал по идентификатору."));
     posterService.deleteByIds(metadata.getPoster().getId());
     if (metadata.getTrailer() != null) {
-        trailerService.deleteMetadata(metadata.getTrailer().getId());
-        videoService.deleteTrailerByIds(metadata.getTrailer().getId());
+      trailerService.deleteMetadata(metadata.getTrailer().getId());
+      videoService.deleteTrailerByIds(metadata.getTrailer().getId());
     }
     if (metadata.getStandaloneVideoShow() != null) {
-        standaloneVideoShowService.deleteMetadata(metadata.getStandaloneVideoShow().getId());
-        videoService.deleteStandaloneVideoShowByIds(metadata.getStandaloneVideoShow().getId());
-    } 
+      standaloneVideoShowService.deleteMetadata(metadata.getStandaloneVideoShow().getId());
+      videoService.deleteStandaloneVideoShowByIds(metadata.getStandaloneVideoShow().getId());
+    }
     // if (metadata.getTvSeries() != null) {
     // }
     contentMetadataRepo.delete(metadata);
   }
-
 }
