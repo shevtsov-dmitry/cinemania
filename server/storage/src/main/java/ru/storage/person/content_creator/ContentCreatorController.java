@@ -29,7 +29,12 @@ public class ContentCreatorController {
 
   @PostMapping
   public ResponseEntity<ContentCreator> addCreator(@RequestBody ContentCreator creator) {
-    return new ResponseEntity<>(contentCreatorService.addCreator(creator), HttpStatus.CREATED);
+    try {
+      return new ResponseEntity<>(contentCreatorService.addCreator(creator), HttpStatus.CREATED);
+    } catch (Exception e) {
+      return new ResponseEntity<>(
+          null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
   }
 
   @GetMapping("{id}")

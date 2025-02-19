@@ -28,9 +28,9 @@ public class ContentCreator {
   @DBRef private UserPic userPic;
   private Boolean isDead;
 
-  @JsonFormat(pattern = "dd.MM.yyyy", locale = "RU_ru")
+  @JsonFormat(pattern = "dd.MM.yyyy")
   private LocalDate birthDate;
 
-  @JsonFormat(pattern = "dd.MM.yyyy", locale = "RU_ru")
+  @JsonFormat(pattern = "dd.MM.yyyy")
   private LocalDate deathDate;
 }
