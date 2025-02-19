@@ -23,14 +23,7 @@ public class ContentMetadataController {
         this.service = service;
     }
 
-    /**
-     * @param metadataObjects {@link VideoInfoParts} objects record
-     * @return Response
-     *         <ul>
-     *         <li>201 (CREATED)
-     *         <li>400 (BAD REQUEST) when content type is wrong
-     *         </ul>
-     */
+
     @PostMapping
     public ResponseEntity<ContentMetadata> saveFormData(
             @RequestBody ContentMetadata metadata) {

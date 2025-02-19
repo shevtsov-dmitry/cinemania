@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nonapi.io.github.classgraph.json.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.storage.person.content_creator.ContentCreator;
 
@@ -17,6 +18,6 @@ import ru.storage.person.content_creator.ContentCreator;
 @Builder
 public class FilmingGroup {
   @Id private String id;
-  private ContentCreator director;
-  private List<ContentCreator> actors;
+  @DBRef private ContentCreator director;
+  @DBRef private List<ContentCreator> actors;
 }

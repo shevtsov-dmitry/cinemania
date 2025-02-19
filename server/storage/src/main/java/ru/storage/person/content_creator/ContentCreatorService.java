@@ -1,6 +1,7 @@
 package ru.storage.person.content_creator;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.OptBoolean;
@@ -35,5 +36,11 @@ public class ContentCreatorService {
     // TODO implement the logic to find a creator by country and genre
     //        ContentCreator result = contentCreatorRepo.findByCountryAndGenre(country, genre);
     return null;
+  }
+
+  public ContentCreator findById(String id) {
+    return contentCreatorRepo
+        .findContentCreatorById(id)
+        .orElseThrow(() -> new NoSuchElementException("Content Creator not found with ID: " + id));
   }
 }

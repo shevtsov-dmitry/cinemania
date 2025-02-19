@@ -3,6 +3,8 @@ package ru.storage.content_metadata;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.mongodb.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +16,10 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import ru.storage.content_metadata.country.Country;
+import ru.storage.content_metadata.country.CountryDeserializer;
 import ru.storage.content_metadata.genre.Genre;
+import ru.storage.content_metadata.genre.GenreArrayDeserializer;
+import ru.storage.content_metadata.genre.GenreDeserializer;
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.video.trailer.Trailer;
 import ru.storage.content_metadata.video.standalone.StandaloneVideoShow;
@@ -24,6 +29,7 @@ import ru.storage.person.filming_group.FilmingGroup;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.constraints.Max;
@@ -48,13 +54,18 @@ public class ContentMetadata {
 
   @DBRef
   @NotNull(message = "Необходимо указать страну")
+  @JsonDeserialize(using = CountryDeserializer.class)
   private Country country;
 
   @DBRef
   @NotNull(message = "Необходимо указать главный жанр")
+  @JsonDeserialize(using = GenreDeserializer.class)
   private Genre mainGenre;
 
-  @DBRef private List<?> subGenres;
+  @DBRef
+  @JsonDeserialize(using = GenreArrayDeserializer.class)
+  private List<Genre> subGenres;
+
   private String description;
 
   @Min(0)
@@ -65,28 +76,8 @@ public class ContentMetadata {
   private Double rating;
   @DBRef private Poster poster;
   @DBRef private FilmingGroup filmingGroup;
-  @DBRef private Trailer trailer;
-  @DBRef private StandaloneVideoShow standaloneVideoShow;
-  @DBRef private TvSeries tvSeries;
+  @DBRef @Nullable private Trailer trailer;
+  @DBRef @Nullable private StandaloneVideoShow standaloneVideoShow;
+  @DBRef @Nullable private TvSeries tvSeries;
   @JsonIgnore @CreatedDate private LocalDateTime createdAt = LocalDateTime.now();
-
-  public void setMainGenre(String name) {
-    this.mainGenre = new Genre(name);
-  }
-
-  public void setMainGenre(Genre genre) {
-    this.mainGenre = genre;
-  }
-
-  public void setCountry(Country country) {
-    this.country = country;
-  }
-
-  public void setCountry(String name) {
-    this.country = new Country(name);
-  }
-
-  public void setSubGenres(List<String> subGenres) {
-    this.subGenres = subGenres.stream().map(Genre::new).toList();
-  }
 }
