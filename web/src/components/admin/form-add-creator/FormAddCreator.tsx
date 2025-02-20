@@ -59,7 +59,9 @@ const FormAddCreator = () => {
         if (!res.ok) {
             const errmes = decodeURI(res.headers.get("Message") as string).replaceAll("+", " ");
             setOperationStatus({ok: false, message: errmes})
-            console.error(errmes)
+            console.error(errmes) 
+        } else {
+            setOperationStatus({ok: true, message: "✓"})
         }
     }
 
@@ -120,7 +122,7 @@ const FormAddCreator = () => {
         if (!operationStatus) return
 
         const timer = setTimeout(() => {
-            setOperationStatus(null);
+            setOperationStatus(undefined);
         }, 3000);
         return () => clearTimeout(timer);
 
@@ -300,7 +302,7 @@ const FormAddCreator = () => {
                 <div className="mt-6 flex justify-center gap-4">
                     <div className={"absolute left-5"}>
                         {operationStatus &&
-                            <p className={operationStatus.ok ? 'text-green-500' : 'text-red-500'}>
+                            <p className={operationStatus.ok ? 'text-green-500 text-4xl' : 'text-red-500'}>
                                 {operationStatus?.message}
                             </p>
                         }

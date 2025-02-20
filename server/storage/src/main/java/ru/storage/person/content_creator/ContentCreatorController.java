@@ -1,6 +1,7 @@
 package ru.storage.person.content_creator;
 
 import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -39,19 +40,18 @@ public class ContentCreatorController {
 
   @GetMapping("{id}")
   public ResponseEntity<ContentCreator> getCreatorById(@PathVariable String id) {
-    var creator = contentCreatorService.getCreatorById(id);
-    if (creator.isPresent()) {
-      return new ResponseEntity<>(creator.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(
-          null,
-          new EncodedHttpHeaders("Запрашиваемый член съёмочной группы не найден."),
-          HttpStatus.NOT_FOUND);
-    }
+    return contentCreatorService
+        .getCreatorById(id)
+        .map(ResponseEntity::ok)
+        .orElse(
+            new ResponseEntity<>(
+                null,
+                new EncodedHttpHeaders("Запрашиваемый член съёмочной группы не найден."),
+                HttpStatus.NOT_FOUND));
   }
 
-  @GetMapping("{country}/{genre}")
-  public ResponseEntity<ContentCreator> findCreatorByCountryAndGenre(
+  @GetMapping("country-genre/{country}/{genre}")
+  public ResponseEntity<List<ContentCreator>> findCreatorByCountryAndGenre(
       @Nullable @PathVariable String country, @Nullable @PathVariable String genre) {
     if ((country == null || country.isBlank()) && (genre == null || genre.isBlank())) {
       return new ResponseEntity<>(
@@ -67,6 +67,27 @@ public class ContentCreatorController {
     } catch (Exception e) {
       return new ResponseEntity<>(
           null, new EncodedHttpHeaders("Совпадений не найдено."), HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @GetMapping("fullname/{prefix}")
+  public ResponseEntity<List<ContentCreator>> findCreatorByFullnamePrefix(
+      @PathVariable String prefix) {
+    if (prefix.isBlank()) {
+      return new ResponseEntity<>(
+          null,
+          new EncodedHttpHeaders("Необходимо указать имя или фамилию искомого человека."),
+          HttpStatus.BAD_REQUEST);
+    }
+
+    List<ContentCreator> creators = contentCreatorService.findCreatorByFullnamePrefix(prefix);
+    if (!creators.isEmpty()) {
+      return ResponseEntity.ok(creators);
+    } else {
+      return new ResponseEntity<>(
+          null,
+          new EncodedHttpHeaders("Человек с указанным именем или фамилией не найден."),
+          HttpStatus.NOT_FOUND);
     }
   }
 

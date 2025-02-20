@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.OptBoolean;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,10 +31,14 @@ public class ContentCreatorService {
     contentCreatorRepo.deleteById(id);
   }
 
-  public ContentCreator findCreatorByCountryAndGenre(String country, String genre) {
-    // TODO implement the logic to find a creator by country and genre
-    //        ContentCreator result = contentCreatorRepo.findByCountryAndGenre(country, genre);
-    return null;
+  public List<ContentCreator> findCreatorByCountryAndGenre(String country, String genre) {
+//      return contentCreatorRepo.fin(country, genre);
+    // TODO
+    throw new RuntimeException("Unimplemented method Exception");
+  }
+
+  public List<ContentCreator> findCreatorByFullnamePrefix(String prefix) {
+    return contentCreatorRepo.findByFullnameStartingWith(prefix);
   }
 
   public ContentCreator findById(String id) {
