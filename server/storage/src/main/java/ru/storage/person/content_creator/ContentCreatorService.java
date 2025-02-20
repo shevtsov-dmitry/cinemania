@@ -1,8 +1,6 @@
 package ru.storage.person.content_creator;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 
@@ -32,13 +30,25 @@ public class ContentCreatorService {
   }
 
   public List<ContentCreator> findCreatorByCountryAndGenre(String country, String genre) {
-//      return contentCreatorRepo.fin(country, genre);
+    //      return contentCreatorRepo.fin(country, genre);
     // TODO
     throw new RuntimeException("Unimplemented method Exception");
   }
 
   public List<ContentCreator> findCreatorByFullnamePrefix(String prefix) {
-    return contentCreatorRepo.findByFullnameStartingWith(prefix);
+    Set<ContentCreator> contentCreators = new HashSet<>();
+    if (isEnglishLetter(prefix.charAt(0))) {
+      contentCreators.addAll(contentCreatorRepo.findByNameLatinStartingWith(prefix));
+      contentCreators.addAll(contentCreatorRepo.findBySurnameLatinStartingWith(prefix));
+    } else {
+      contentCreators.addAll(contentCreatorRepo.findByNameStartingWith(prefix));
+      contentCreators.addAll(contentCreatorRepo.findBySurnameStartingWith(prefix));
+    }
+    return contentCreators.stream().toList();
+  }
+
+  private static boolean isEnglishLetter(char c) {
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
   }
 
   public ContentCreator findById(String id) {

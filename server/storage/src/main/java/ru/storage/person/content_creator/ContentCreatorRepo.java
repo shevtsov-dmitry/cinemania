@@ -6,7 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ContentCreatorRepo extends MongoRepository<ContentCreator, String> {
-    Optional<ContentCreator> findContentCreatorById(String id);
-    List<ContentCreator> findByFullnameStartingWith(String prefix);
+  Optional<ContentCreator> findContentCreatorById(String id);
 
+  List<ContentCreator> findByNameStartingWith(String prefix);
+
+  List<ContentCreator> findBySurnameStartingWith(String prefix);
+
+  List<ContentCreator> findByNameLatinStartingWith(String prefix);
+
+  List<ContentCreator> findBySurnameLatinStartingWith(String prefix);
 }

@@ -3,8 +3,10 @@ import UserPic from "./UserPic";
 
 type ContentCreator = {
   id: string;
-  fullname: string;
-  fullnameLatin: string;
+  name: string;
+  surname: string;
+  nameLatin: string;
+  surnameLatin: string;
   bornPlace: string;
   heightCm: number;
   age: number;

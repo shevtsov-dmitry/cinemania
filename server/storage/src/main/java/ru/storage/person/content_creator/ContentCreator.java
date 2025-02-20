@@ -19,8 +19,10 @@ import ru.storage.person.userpic.UserPic;
 @Document
 public class ContentCreator {
   @Id private String id;
-  private String fullname;
-  private String fullnameLatin;
+  private String name;
+  private String surname;
+  private String nameLatin;
+  private String surnameLatin;
   private String bornPlace;
   private Integer heightCm;
   private Integer age;
