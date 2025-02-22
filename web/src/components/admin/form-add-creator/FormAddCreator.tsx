@@ -50,6 +50,7 @@ const FormAddCreator = () => {
       bornPlace,
       heightMeters,
       age,
+      personCategory,
       userPic: userPicMetadata as UserPic,
       birthDate: parseDateEngToRus(birthDate),
       deathDate: isDead ? parseDateEngToRus(deathDate) : null,

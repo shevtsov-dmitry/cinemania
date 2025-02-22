@@ -8,7 +8,7 @@ const CreatorItem = ({
   onSelect,
 }: {
   creator: ContentCreator;
-  onSelect: (id: string) => void; // Add onSelect prop
+  onSelect: (id: string) => void; 
 }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
@@ -102,12 +102,9 @@ const FormFilmCrewChooser = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [creators, setCreators] = useState<ContentCreator[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  // Add state to store the selected creator's ID
-  const [selectedCreatorId, setSelectedCreatorId] = useState<string | null>(
-    null
-  );
 
   const hideFilmCrewChooser = useFilmCrewChooserStore((state) => state.hide);
+  const setSelectedCreatorId = useFilmCrewChooserStore((state) => state.setSelectedCreatorId);
 
   const handleSearch = async (e: FormEvent) => {
     e.preventDefault();
@@ -181,11 +178,11 @@ const FormFilmCrewChooser = () => {
             <CreatorItem
               key={creator.id}
               creator={creator}
-              onSelect={setSelectedCreatorId} // Pass the state setter
+              onSelect={setSelectedCreatorId} 
             />
           ))
         ) : (
-          <p className="text-gray-600">No creators to display.</p>
+          <p className="text-gray-600">Не найдено совпадений.</p>
         )}
       </div>
     </div>
