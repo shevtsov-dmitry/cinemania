@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import Constants from "@/src/constants/Constants";
 import useFormAddFilmStore from "@/src/state/formAddFilmState";
+import FormFilmCrewChooser from "./FormFilmCrewChooser";
+import useFilmCrewChooserStore from "@/src/state/formFilmCrewChooserState";
 
 export default function FormAddFilm() {
   const STORAGE_URL = Constants.STORAGE_URL;
-
-  const hideFormAddFilm = useFormAddFilmStore((state) => state.hideFormAddFilm);
 
   const formRef = useRef();
   const posterInputRef = useRef();
@@ -13,6 +13,12 @@ export default function FormAddFilm() {
   const videoInputRef = useRef();
   const formSaveStatus = useRef();
   const loadingRef = useRef();
+
+  const hideFormAddFilm = useFormAddFilmStore((state) => state.hideFormAddFilm);
+  const isFormFilmCrewChooserVisible = useFilmCrewChooserStore(
+    (state) => state.isVisible
+  );
+  const showFilmCrewChooser = useFilmCrewChooserStore((state) => state.show);
 
   const [recentFormErrorMessage, setRecentFormErrorMessage] = useState("");
 
@@ -298,11 +304,11 @@ export default function FormAddFilm() {
       >
         <div className="absolute top-4 right-4">
           <button
-            id="form-close-sign"
+            id="close-sign"
             className="cursor-pointer select-none text-xl font-bold text-gray-500 hover:text-gray-700 dark:text-blue-200 dark:hover:text-blue-300"
             onClick={hideFormAddFilm}
           >
-            X
+            &#10006;
           </button>
         </div>
 
@@ -457,9 +463,21 @@ export default function FormAddFilm() {
             <button
               className={` mr-4 block w-full  rounded-md  border-0  px-3  py-2 text-sm text-blue-700 dark:bg-neutral-700 dark:text-white
           ${isFilmingGroupSelected ? "bg-green-500 text-white" : "bg-blue-50"}`}
+              onClick={(e) => {
+                e.preventDefault();
+                showFilmCrewChooser();
+              }}
             >
               Выбрать
             </button>
+          </li>
+
+          <li>
+            {isFormFilmCrewChooserVisible && (
+              <div className="fixed z-10 bottom-[20%]">
+                <FormFilmCrewChooser />
+              </div>
+            )}
           </li>
 
           <li className="flex gap-3">

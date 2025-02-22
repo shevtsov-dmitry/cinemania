@@ -1,5 +1,8 @@
 package ru.storage.person.content_creator;
 
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -73,6 +76,7 @@ public class ContentCreatorController {
   @GetMapping("fullname/{prefix}")
   public ResponseEntity<List<ContentCreator>> findCreatorByFullnamePrefix(
       @PathVariable String prefix) {
+        prefix = URLDecoder.decode(prefix, StandardCharsets.UTF_8);
     if (prefix.isBlank()) {
       return new ResponseEntity<>(
           null,

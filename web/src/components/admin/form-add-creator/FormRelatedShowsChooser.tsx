@@ -29,12 +29,12 @@ const FormRelatedShowsChooser = () => {
 
   async function findPerson(e: Event) {
     e.preventDefault();
-    fetch
   }
 
   return (
     <form>
       <div className="flex gap-2">
+        <div id="close-sign" className="fixed top-1 right-2">&#10006;</div>
         <div id="country-picker">
           <label htmlFor="country-picker">Страна</label>
           <select id="country-picker" onChange={(e) => e.target.value}>
