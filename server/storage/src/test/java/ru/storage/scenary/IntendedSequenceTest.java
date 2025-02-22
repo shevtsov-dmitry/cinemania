@@ -120,8 +120,10 @@ class IntendedSequenceTest {
     var contentCreatorToBeSaved =
         ContentCreator.builder()
             .id(null)
-            .fullname("Alen Winter")
-            .fullnameLatin("Alen Winter")
+            .name("Alen")
+            .surname( "Winter")
+            .nameLatin("Alen")
+            .surnameLatin( "Winter")
             .bornPlace("USA, New York City, NY 10023")
             .heightCm(180)
             .age(35)
@@ -142,8 +144,10 @@ class IntendedSequenceTest {
         .andExpect(status().isCreated())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(jsonPath("$.id", notNullValue()))
-        .andExpect(jsonPath("$.fullname").value("Alen Winter"))
-        .andExpect(jsonPath("$.fullnameLatin").value("Alen Winter"))
+        .andExpect(jsonPath("$.name", is("Alen")))
+        .andExpect(jsonPath("$.surname", is("Winter")))
+        .andExpect(jsonPath("$.nameLatin", is("Alen")))
+        .andExpect(jsonPath("$.surnameLatin", is("Winter")))
         .andExpect(jsonPath("$.bornPlace").value("USA, New York City, NY 10023"))
         .andExpect(jsonPath("$.heightCm").value(180))
         .andExpect(jsonPath("$.age").value(35))
@@ -171,8 +175,10 @@ class IntendedSequenceTest {
         .andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(jsonPath("$.id", is(not(emptyString()))))
-        .andExpect(jsonPath("$.fullname").value("Alen Winter"))
-        .andExpect(jsonPath("$.fullnameLatin").value("Alen Winter"))
+        .andExpect(jsonPath("$.name", is("Alen")))
+        .andExpect(jsonPath("$.surname", is("Winter")))
+        .andExpect(jsonPath("$.nameLatin", is("Alen")))
+        .andExpect(jsonPath("$.surnameLatin", is("Winter")))
         .andExpect(jsonPath("$.bornPlace").value("USA, New York City, NY 10023"))
         .andExpect(jsonPath("$.heightCm").value(180))
         .andExpect(jsonPath("$.age").value(35))
@@ -242,9 +248,6 @@ class IntendedSequenceTest {
         .andExpect(jsonPath("$.size", notNullValue()))
         .andDo(
             result -> {
-              ContentMetadata contentMetadata =
-                  objectMapper.readValue(
-                      result.getResponse().getContentAsString(), ContentMetadata.class);
               meta.standaloneVideoShow =
                   objectMapper.readValue(
                       result.getResponse().getContentAsString(), new TypeReference<>() {});

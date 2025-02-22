@@ -82,8 +82,10 @@ class ContentCreatorFlowTest {
 
     var contentCreator =
         ContentCreator.builder()
-            .fullname("Джон вик")
-            .fullnameLatin("John Ouieek")
+            .name("Джон")
+            .surname("Вик")
+            .nameLatin("John")
+            .surnameLatin("Ouieek")
             .bornPlace("США, Мэриленд")
             .heightCm(187)
             .isDead(true)
@@ -91,7 +93,7 @@ class ContentCreatorFlowTest {
             .deathDate(LocalDate.of(2015, 10, 24))
             .userPic(savedUserPicMetadata)
             .build();
-
+   
     mockMvc
         .perform(
             post(serverUrl + "/api/v0/content-creators")
@@ -99,8 +101,10 @@ class ContentCreatorFlowTest {
                 .content(objectMapper.writeValueAsString(contentCreator)))
         .andExpect(status().isCreated())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.fullname", is("Джон вик")))
-        .andExpect(jsonPath("$.fullnameEng", is("John Ouieek")))
+        .andExpect(jsonPath("$.name", is("Джон")))
+        .andExpect(jsonPath("$.surname", is("Вик")))
+        .andExpect(jsonPath("$.nameLatin", is("John")) )
+        .andExpect(jsonPath("$.surnameLatin", is("Ouieek")))
         .andExpect(jsonPath("$.bornPlace", is("США, Мэриленд")))
         .andExpect(jsonPath("$.isDead", is(true)))
         .andExpect(jsonPath("$.birthDate", is("24.10.1975")))
