@@ -1,23 +1,163 @@
 import Constants from "@/src/constants/Constants";
 import useFilmCrewChooserStore from "@/src/state/formFilmCrewChooserState";
 import ContentCreator from "@/src/types/ContentCreator";
-import { FormEvent, useEffect, useState } from "react";
+import PersonCategory from "@/src/types/PersonCategory";
+import React, {
+  Dispatch,
+  FormEvent,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+
+const FormFilmCrewChooser = (): ReactElement => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [creators, setCreators] = useState<ContentCreator[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [creatorTypeHeaderLabel, setCreatorTypeHeaderLabel] =
+    useState<string>();
+
+  const hideFilmCrewChooser = useFilmCrewChooserStore((state) => state.hide);
+
+  const creatorType: PersonCategory = useFilmCrewChooserStore(
+    (state) => state.choosingType,
+  );
+  const selectedActorsList: ContentCreator[] = useFilmCrewChooserStore(
+    (state) => state.selectedActors,
+  );
+
+  useEffect(() => {
+    if (creatorType === PersonCategory.DIRECTOR) {
+      setCreatorTypeHeaderLabel("Выбор режиссёра");
+    } else if (creatorType === PersonCategory.ACTOR) {
+      setCreatorTypeHeaderLabel("Выбор актёров");
+    }
+  }, [creatorType]);
+
+  const handleSearch = async (e: FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    if (!searchTerm.trim()) {
+      setErrorMessage("Please enter a name or surname to search.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        Constants.STORAGE_URL +
+          `/api/v0/metadata/content-creators/fullname/${encodeURIComponent(
+            searchTerm,
+          )}`,
+      );
+
+      if (response.status === 400) {
+        setErrorMessage("Invalid search term.");
+        return;
+      }
+      if (response.status === 404) {
+        setErrorMessage("No creators found with that name or surname.");
+        setCreators([]);
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data: ContentCreator[] = await response.json();
+      setCreators(data);
+    } catch (error) {
+      console.error("Error fetching creators:", error);
+      setErrorMessage("An error occurred while fetching creators.");
+    }
+  };
+
+  return (
+    <div className="related p-5 bg-white text-gray-800 max-w-2xl mx-auto shadow rounded">
+      <div
+        id="close-sign"
+        className="absolute top-1 right-2 hover:cursor-pointer"
+        onClick={hideFilmCrewChooser}
+      >
+        ✖
+      </div>
+      <h1 className="font-bold">{creatorTypeHeaderLabel}</h1>
+      <div className="flex gap-2 mb-5 mt-1">
+        <label htmlFor="search-input" className="sr-only">
+          Поиск по имени\фамилии
+        </label>
+        <input
+          id="search-input"
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Поиск по имени или фамилии"
+          className="p-2 w-72 border-2 border-blue-500 rounded text-base"
+        />
+        <button
+          onClick={handleSearch}
+          className="p-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700"
+        >
+          Искать
+        </button>
+      </div>
+      {errorMessage && <div className="text-red-500 mb-5">{errorMessage}</div>}
+      {selectedActorsList.length > 0 && (
+        <div className={"flex gap-2"}>
+          <h1>Выбранные актёры:</h1>
+          <div className={"flex"}>
+            {selectedActorsList.map((actor) => (
+              <div
+                key={actor.id}
+                className="flex items-center gap-2 flex-wrap text-sm text-neutral-500"
+              >
+                {actor.name} {actor.surname}
+                {","}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-5 overflow-scroll">
+        {creators.length > 0 &&
+          creators
+              .filter(creator => creator.personCategory === creatorType)
+              .map((creator) => (
+            <CreatorItem
+              key={creator.id}
+              creator={creator}
+              setCreators={setCreators}
+            />
+          ))}
+      </div>
+    </div>
+  );
+};
+
+interface CreatorItemProps {
+  creator: ContentCreator;
+  setCreators: Dispatch<SetStateAction<ContentCreator[]>>;
+}
 
 const CreatorItem = ({
   creator,
-  onSelect,
-}: {
-  creator: ContentCreator;
-  onSelect: (id: string) => void; 
-}) => {
+  setCreators,
+}: CreatorItemProps): ReactElement => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const setDirector = useFilmCrewChooserStore(
+    (state) => state.setSelectedDirector,
+  );
+  const setActors = useFilmCrewChooserStore((state) => state.setSelectedActors);
+  const actors: ContentCreator[] = useFilmCrewChooserStore(
+    (state) => state.selectedActors,
+  );
 
   useEffect(() => {
     const fetchImage = async () => {
       try {
         const response = await fetch(
           Constants.STORAGE_URL +
-            `/api/v0/metadata/content-creators/user-pics/${creator.personCategory}/${creator.userPic.id}`
+            `/api/v0/metadata/content-creators/user-pics/${creator.personCategory}/${creator.userPic.id}`,
         );
         if (!response.ok) {
           throw new Error(`Failed to fetch image: ${response.status}`);
@@ -38,6 +178,17 @@ const CreatorItem = ({
       }
     };
   }, [creator]);
+
+    function handleCreatorSelectClick(e: FormEvent) {
+    e.preventDefault();
+    if (creator.personCategory === PersonCategory.DIRECTOR) {
+      setDirector(creator);
+    } else if (creator.personCategory === PersonCategory.ACTOR) {
+      actors.push(creator);
+      setActors(actors);
+    }
+    setCreators([]);
+  }
 
   return (
     <div className="flex items-center p-4 bg-gray-100 rounded border border-gray-300">
@@ -88,102 +239,11 @@ const CreatorItem = ({
         )}
         {/* Add the Select button */}
         <button
-          onClick={() => onSelect(creator.id)}
+          onClick={handleCreatorSelectClick}
           className="mt-2 p-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700"
         >
-          Select
+          Выбрать
         </button>
-      </div>
-    </div>
-  );
-};
-
-const FormFilmCrewChooser = () => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [creators, setCreators] = useState<ContentCreator[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const hideFilmCrewChooser = useFilmCrewChooserStore((state) => state.hide);
-  const setSelectedCreatorId = useFilmCrewChooserStore((state) => state.setSelectedCreatorId);
-
-  const handleSearch = async (e: FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(null);
-    if (!searchTerm.trim()) {
-      setErrorMessage("Please enter a name or surname to search.");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        Constants.STORAGE_URL +
-          `/api/v0/metadata/content-creators/fullname/${encodeURIComponent(
-            searchTerm
-          )}`
-      );
-
-      if (response.status === 400) {
-        setErrorMessage("Invalid search term.");
-        return;
-      }
-      if (response.status === 404) {
-        setErrorMessage("No creators found with that name or surname.");
-        setCreators([]);
-        return;
-      }
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data: ContentCreator[] = await response.json();
-      setCreators(data);
-    } catch (error) {
-      console.error("Error fetching creators:", error);
-      setErrorMessage("An error occurred while fetching creators.");
-    }
-  };
-
-  return (
-    <div className="related p-5 bg-white text-gray-800 max-w-2xl mx-auto shadow rounded">
-      <div
-        id="close-sign"
-        className="absolute top-1 right-2 hover:cursor-pointer"
-        onClick={hideFilmCrewChooser}
-      >
-        ✖
-      </div>
-      <div className="flex gap-2 mb-5 mt-3">
-        <label htmlFor="search-input" className="sr-only">
-          Поиск по имени\фамилии
-        </label>
-        <input
-          id="search-input"
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search by name or surname"
-          className="p-2 w-72 border-2 border-blue-500 rounded text-base"
-        />
-        <button
-          onClick={handleSearch}
-          className="p-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700"
-        >
-          Искать
-        </button>
-      </div>
-      {errorMessage && <div className="text-red-500 mb-5">{errorMessage}</div>}
-      <div className="flex flex-col gap-5">
-        {creators.length > 0 ? (
-          creators.map((creator) => (
-            <CreatorItem
-              key={creator.id}
-              creator={creator}
-              onSelect={setSelectedCreatorId} 
-            />
-          ))
-        ) : (
-          <p className="text-gray-600">Не найдено совпадений.</p>
-        )}
       </div>
     </div>
   );

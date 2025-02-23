@@ -1,8 +1,15 @@
 import { create } from "zustand";
+import ContentCreator from "../types/ContentCreator";
+import PersonCategory from "../types/PersonCategory";
 
 interface FilmCrewChooserStore {
   isVisible: boolean;
-  selectedCreatorId: string | null;
+  selectedDirector: ContentCreator | null;
+  selectedActors: ContentCreator[];
+  choosingType: PersonCategory;
+  setSelectedDirector: (director: ContentCreator) => void;
+  setSelectedActors: (actors: ContentCreator[]) => void;
+  setChoosingType: (type: PersonCategory) => void;
   show: () => void;
   hide: () => void;
   toggle: () => void;
@@ -10,9 +17,17 @@ interface FilmCrewChooserStore {
 
 const useFilmCrewChooserStore = create<FilmCrewChooserStore>((set) => ({
   isVisible: false,
-  selectedCreatorId: null,
-  setSelectedCreatorId: (id: string) => {
-    set({ selectedCreatorId: id });
+  selectedDirector: null,
+  selectedActors: [],
+  choosingType: PersonCategory.ACTOR,
+  setSelectedDirector: (director: ContentCreator) => {
+    set({ selectedDirector: director });
+  },
+  setSelectedActors: (actors: ContentCreator[]) => {
+    set({ selectedActors: actors });
+  },
+  setChoosingType: (type: PersonCategory) => {
+    set({ choosingType: type });
   },
   show: () => set(() => ({ isVisible: true })),
   hide: () => set(() => ({ isVisible: false })),

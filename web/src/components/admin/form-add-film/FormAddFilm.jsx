@@ -1,3 +1,4 @@
+import PersonCategory from "@/src/types/PersonCategory";
 import React, { useEffect, useRef, useState } from "react";
 import Constants from "@/src/constants/Constants";
 import useFormAddFilmStore from "@/src/state/formAddFilmState";
@@ -19,6 +20,9 @@ export default function FormAddFilm() {
     (state) => state.isVisible
   );
   const showFilmCrewChooser = useFilmCrewChooserStore((state) => state.show);
+  const setFormFilmCrewChoosingType = useFilmCrewChooserStore(
+    (state) => state.setChoosingType
+  );
 
   const [recentFormErrorMessage, setRecentFormErrorMessage] = useState("");
 
@@ -102,6 +106,7 @@ export default function FormAddFilm() {
     async function saveMetadata() {
       const form = new FormData(formRef.current);
       validateFormInputs(form); // throws error if not satisfied
+
       const metadata = {
         contentDetails: {
           title: form.get("title").trim(),
@@ -111,6 +116,12 @@ export default function FormAddFilm() {
           subGenres: parseSubGenres(form.get("subGenres")),
           age: form.get("age").trim(),
           rating: form.get("rating").trim(),
+          filmingGroup: {
+            director: useFilmCrewChooserStore(
+              (state) => state.selectedDirector
+            ),
+            actors: useFilmCrewChooserStore((state) => state.selectedActors),
+          },
         },
         poster: {
           filename: posterInputRef.current.files[0].name,
@@ -460,16 +471,41 @@ export default function FormAddFilm() {
             <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
               Выберите съёмочную группу
             </label>
-            <button
-              className={` mr-4 block w-full  rounded-md  border-0  px-3  py-2 text-sm text-blue-700 dark:bg-neutral-700 dark:text-white
+            <div className="flex gap-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                  Режиссёр
+                </label>
+                <button
+                  className={` mr-4 block w-full  rounded-md  border-0  px-3  py-2 text-sm text-blue-700 dark:bg-neutral-700 dark:text-white
           ${isFilmingGroupSelected ? "bg-green-500 text-white" : "bg-blue-50"}`}
-              onClick={(e) => {
-                e.preventDefault();
-                showFilmCrewChooser();
-              }}
-            >
-              Выбрать
-            </button>
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setFormFilmCrewChoosingType(PersonCategory.DIRECTOR);
+                    showFilmCrewChooser();
+                  }}
+                >
+                  Выбрать
+                </button>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-blue-100">
+                  Актёры
+                </label>
+                <button
+                  className={` mr-4 block w-full  rounded-md  border-0  px-3  py-2 text-sm text-blue-700 dark:bg-neutral-700 dark:text-white
+          ${isFilmingGroupSelected ? "bg-green-500 text-white" : "bg-blue-50"}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setFormFilmCrewChoosingType(PersonCategory.ACTOR);
+                    showFilmCrewChooser();
+                  }}
+                >
+                  Выбрать
+                </button>
+              </div>
+            </div>
           </li>
 
           <li>

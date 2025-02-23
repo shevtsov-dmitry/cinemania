@@ -31,7 +31,6 @@ public class ContentCreatorService {
 
   public List<ContentCreator> findCreatorByCountryAndGenre(String country, String genre) {
     //      return contentCreatorRepo.fin(country, genre);
-    // TODO
     throw new RuntimeException("Unimplemented method Exception");
   }
 
