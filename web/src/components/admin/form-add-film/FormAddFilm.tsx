@@ -92,16 +92,17 @@ export default function FormAddFilm() {
         }
 
         async function uploadVideo(id: string) {
-            const videoFile = standaloneVideoShowRef.current!.files?.[0] as File
-            if (videoFile == null) {
+            if (!standaloneVideoShowRef.current) {
                 throw new Error('Необходимо выбрать видеофайл.')
             }
+
+            const videoFile = standaloneVideoShowRef.current.files?.[0] as File
 
             const videoFormData = new FormData()
             videoFormData.append('id', id)
             videoFormData.append('video', videoFile)
 
-            const res = await fetch(`${STORAGE_URL}/api/v0/videos/upload`, {
+            const res = await fetch(`${STORAGE_URL}/api/v0/videos/standalone`, {
                 method: 'POST',
                 body: videoFormData,
             })

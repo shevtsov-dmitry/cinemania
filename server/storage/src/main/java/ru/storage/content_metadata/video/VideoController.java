@@ -26,31 +26,34 @@ public class VideoController {
         this.service = service;
     }
 
-    private static final String VIDEO_UPLOAD_ERROR_MESSAGE =
-            "Возникла ошибка загрузки видео при его обработке на сервере.";
+    private static final String VIDEO_UPLOAD_ERROR_MESSAGE = "Возникла ошибка загрузки видео при его обработке на сервере.";
 
     /**
      * Upload video into S3 cloud storage by chunks
      *
+     * @param id    saved metadata id from mongodb
      * @param video multipart file of video type
      * @return Response:
-     *     <ul>
-     *       <li>201 (CREATED) with saved video metadata
-     *       <li>400 (BAD_REQUEST) when invalid args
-     *       <li>500 (INTERNAL_SERVER_ERROR) when video wasn't saved into S3 cloud storage
-     *     </ul>
-     *     Headers:
-     *     <ul>
-     *       <li>custom header "Message" encoded URL string which describes error message
-     *     </ul>
+     *         <ul>
+     *         <li>201 (CREATED) with saved video metadata
+     *         <li>400 (BAD_REQUEST) when invalid args
+     *         <li>500 (INTERNAL_SERVER_ERROR) when video wasn't saved into S3 cloud
+     *         storage
+     *         </ul>
+     *         Headers:
+     *         <ul>
+     *         <li>custom header "Message" encoded URL string which describes error
+     *         message
+     *         </ul>
      */
     @PostMapping("standalone")
-    public ResponseEntity<StandaloneVideoShow> uploadStandaloneVideoShow(
+    public ResponseEntity<Void> uploadStandaloneVideoShow(
+            @RequestParam String id,
             @RequestParam MultipartFile video) {
 
         try {
-            var savedVideo = service.uploadStandaloneVideoShow(video);
-            return new ResponseEntity<>(savedVideo, HttpStatus.CREATED);
+            service.uploadStandaloneVideoShow(id, video);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(
                     null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
@@ -66,14 +69,15 @@ public class VideoController {
     }
 
     @PostMapping("episode")
-    public ResponseEntity<Episode> uploadEpisode(
+    public ResponseEntity<Void> uploadEpisode(
+            @RequestParam String id,
             @RequestParam String tvSeriesId,
             @RequestParam int season,
             @RequestParam int episode,
             @RequestParam MultipartFile video) {
         try {
-            var savedEpisode = service.uploadEpisode(video, tvSeriesId, season, episode);
-            return new ResponseEntity<>(savedEpisode, HttpStatus.CREATED);
+            service.uploadEpisode(id, video, tvSeriesId, season, episode);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (ParseException | IOException e) {
             return new ResponseEntity<>(
                     null,
@@ -88,23 +92,26 @@ public class VideoController {
     /**
      * Upload video trailer into S3 cloud storage by chunks
      *
+     * @param id    video id from database
      * @param video multipart file of video type
      * @return Response:
-     *     <ul>
-     *       <li>201 (CREATED) with saved video metadata
-     *       <li>400 (BAD_REQUEST) when invalid args
-     *       <li>500 (INTERNAL_SERVER_ERROR) when video wasn't saved into S3 cloud storage
-     *     </ul>
-     *     Headers:
-     *     <ul>
-     *       <li>custom header "Message" encoded URL string which describes error message
-     *     </ul>
+     *         <ul>
+     *         <li>201 (CREATED) with saved video metadata
+     *         <li>400 (BAD_REQUEST) when invalid args
+     *         <li>500 (INTERNAL_SERVER_ERROR) when video wasn't saved into S3 cloud
+     *         storage
+     *         </ul>
+     *         Headers:
+     *         <ul>
+     *         <li>custom header "Message" encoded URL string which describes error
+     *         message
+     *         </ul>
      */
     @PostMapping("trailer")
-    public ResponseEntity<Trailer> uploadTrailer(@RequestParam MultipartFile video) {
+    public ResponseEntity<Trailer> uploadTrailer(@RequestParam String id, @RequestParam MultipartFile video) {
         try {
-            var savedTrailer = service.uploadTrailer(video);
-            return new ResponseEntity<>(savedTrailer, HttpStatus.CREATED);
+            service.uploadTrailer(id, video);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (ParseException | IOException e) {
             return new ResponseEntity<>(
                     null,
@@ -121,15 +128,17 @@ public class VideoController {
      *
      * @param ids is a comma-separated string of content metadata IDs
      * @return Response:
-     *     <ul>
-     *       <li>201 (CREATED)
-     *       <li>400 (BAD_REQUEST) when error parsing ids
-     *       <li>500 (INTERNAL_SERVER_ERROR) when video wasn't saved into S3 cloud storage
-     *     </ul>
-     *     Headers:
-     *     <ul>
-     *       <li>custom header "Message" encoded URL string which describes error message
-     *     </ul>
+     *         <ul>
+     *         <li>201 (CREATED)
+     *         <li>400 (BAD_REQUEST) when error parsing ids
+     *         <li>500 (INTERNAL_SERVER_ERROR) when video wasn't saved into S3 cloud
+     *         storage
+     *         </ul>
+     *         Headers:
+     *         <ul>
+     *         <li>custom header "Message" encoded URL string which describes error
+     *         message
+     *         </ul>
      */
     @DeleteMapping("standalone/{ids}")
     public ResponseEntity<Void> deleteStandaloneVideoShow(@PathVariable String ids) {

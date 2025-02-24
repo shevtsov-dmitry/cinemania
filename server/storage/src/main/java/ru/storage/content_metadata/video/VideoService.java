@@ -63,113 +63,95 @@ public class VideoService {
     /**
      * Upload video to s3 storage.
      *
+     * @param id    saved video metadata id from mongodb
      * @param video video multipart file from the form
+     *
      * @throws IllegalArgumentException when multipart file is not a video
-     * @throws ParseException when failed to parse video to HLS chunks with ffmpeg
-     * @throws IOException when error allocating space to new video file
-     * @throws S3Exception when error uploading file to S3
-     * @return Video object with metadata saved in database
+     * @throws ParseException           when failed to parse video to HLS chunks
+     *                                  with ffmpeg
+     * @throws IOException              when error allocating space to new video
+     *                                  file
+     * @throws S3Exception              when error uploading file to S3
      */
-    public StandaloneVideoShow uploadStandaloneVideoShow(MultipartFile video)
+    public void uploadStandaloneVideoShow(String id, MultipartFile video)
             throws ParseException, IOException {
         BinaryContentUtils.assureVideoProcessing(video.getContentType());
-        StandaloneVideoShow savedVideoMetadata =
-                standaloneVideoShowRepo.save(
-                        new StandaloneVideoShow(
-                                video.getOriginalFilename(),
-                                video.getContentType(),
-                                video.getSize()));
-        File[] hlsFiles = splitVideoToHlsChunks(savedVideoMetadata.getId(), video.getInputStream());
+        File[] hlsFiles = splitVideoToHlsChunks(id, video.getInputStream());
         for (File hlsFile : hlsFiles) {
-            String s3Key =
-                    S3_FOLDER
-                            + "/standalone/"
-                            + savedVideoMetadata.getId()
-                            + "/"
-                            + hlsFile.getName();
+            String s3Key = S3_FOLDER
+                    + "/standalone/"
+                    + id
+                    + "/"
+                    + hlsFile.getName();
             uploadToS3(s3Key, hlsFile);
         }
-        return savedVideoMetadata;
     }
 
     /**
      * Upload trailer to s3 storage.
      *
+     * @param id      saved video metadata id from mongodb
      * @param trailer video multipart file from the form
+     *
      * @throws IllegalArgumentException when multipart file is not a trailer
-     * @throws ParseException when failed to parse trailer to HLS chunks with ffmpeg
-     * @throws IOException when error allocating space to new trailer file
-     * @throws S3Exception when error uploading file to S3
-     * @return trailer object with metadata saved in database
+     * @throws ParseException           when failed to parse trailer to HLS chunks
+     *                                  with ffmpeg
+     * @throws IOException              when error allocating space to new trailer
+     *                                  file
+     * @throws S3Exception              when error uploading file to S3
      */
-    public Trailer uploadTrailer(MultipartFile video) throws ParseException, IOException {
+    public void uploadTrailer(String id, MultipartFile video) throws ParseException, IOException {
         BinaryContentUtils.assureVideoProcessing(video.getContentType());
-        Trailer savedTrailerMetadata =
-                trailerRepo.save(
-                        new Trailer(
-                                video.getOriginalFilename(),
-                                video.getContentType(),
-                                video.getSize()));
-        File[] hlsFiles =
-                splitVideoToHlsChunks(savedTrailerMetadata.getId(), video.getInputStream());
+        File[] hlsFiles = splitVideoToHlsChunks(id, video.getInputStream());
         for (File hlsFile : hlsFiles) {
-            String s3Key =
-                    S3_FOLDER
-                            + "/trailer/"
-                            + savedTrailerMetadata.getId()
-                            + "/"
-                            + hlsFile.getName();
+            String s3Key = S3_FOLDER
+                    + "/trailer/"
+                    + id
+                    + "/"
+                    + hlsFile.getName();
             uploadToS3(s3Key, hlsFile);
         }
-        return savedTrailerMetadata;
     }
 
     /**
      * Upload an episode to s3 storage.
      *
-     * @param video video multipart file from the form
+     * @param id         saved video metadata id from mongodb
+     * @param video      video multipart file from the form
      * @param tvSeriesId id of the tv show
-     * @param season number of the season
-     * @param episode number of the Episode
+     * @param season     number of the season
+     * @param episode    number of the Episode
+     *
      * @throws IllegalArgumentException when multipart file is not a an episode
-     * @throws ParseException when failed to parse an episode to HLS chunks with ffmpeg
-     * @throws IOException when error allocating space to new episode file
-     * @throws S3Exception when error uploading file to S3
-     * @return episode object with metadata saved in database
+     * @throws ParseException           when failed to parse an episode to HLS
+     *                                  chunks with ffmpeg
+     * @throws IOException              when error allocating space to new episode
+     *                                  file
+     * @throws S3Exception              when error uploading file to S3
      */
-    public Episode uploadEpisode(MultipartFile video, String tvSeriesId, int season, int episode)
+    public void uploadEpisode(String id, MultipartFile video, String tvSeriesId, int season, int episode)
             throws ParseException, IOException {
         BinaryContentUtils.assureVideoProcessing(video.getContentType());
-        var savedEpisodeMetadata =
-                episodeRepo.save(
-                        new Episode(
-                                video.getOriginalFilename(),
-                                video.getContentType(),
-                                season,
-                                episode,
-                                video.getSize()));
-        File[] hlsFiles =
-                splitVideoToHlsChunks(savedEpisodeMetadata.getId(), video.getInputStream());
+        File[] hlsFiles = splitVideoToHlsChunks(id, video.getInputStream());
         for (File hlsFile : hlsFiles) {
-            String s3Key =
-                    S3_FOLDER
-                            + "/tv-series/%s/%d/%d/%s"
-                                    .formatted(tvSeriesId, season, episode, hlsFile.getName());
+            String s3Key = S3_FOLDER
+                    + "/tv-series/%s/%d/%d/%s"
+                            .formatted(tvSeriesId, season, episode, id);
             uploadToS3(s3Key, hlsFile);
         }
-        return savedEpisodeMetadata;
     }
 
     // TODO convert to hls with stream instead of temp folder
     /**
      * Split video into hls chunks and upload them to s3 storage.
      *
-     * @param id video id from database
+     * @param id          video id from database
      * @param inputStream input stream of video file from database
      * @return array of hls chunk files
      * @throws ParseException when error parsing video file
-     * @throws IOException when error reading or writing to file system (possible reason is not
-     *     enough disk space)
+     * @throws IOException    when error reading or writing to file system (possible
+     *                        reason is not
+     *                        enough disk space)
      */
     private File[] splitVideoToHlsChunks(String id, InputStream inputStream)
             throws ParseException, IOException {
@@ -181,10 +163,9 @@ public class VideoService {
         Path tempFile = Files.createFile(Path.of(tempFolderPath + "/" + id));
         Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
-        String ffmpegCommand =
-                "ffmpeg -i %s -profile:v baseline -level 3.0 -s 640x360 -start_number 0 -hls_time 10 -hls_list_size 0 -f hls %s/index.m3u8"
-                        .formatted(
-                                tempFile.toFile().getAbsolutePath(), tempFolder.getAbsolutePath());
+        String ffmpegCommand = "ffmpeg -i %s -profile:v baseline -level 3.0 -s 640x360 -start_number 0 -hls_time 10 -hls_list_size 0 -f hls %s/index.m3u8"
+                .formatted(
+                        tempFile.toFile().getAbsolutePath(), tempFolder.getAbsolutePath());
 
         Process process = Runtime.getRuntime().exec(ffmpegCommand);
         try (var stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
@@ -212,16 +193,17 @@ public class VideoService {
      * Upload file to S3 bucket.
      *
      * @param s3Key S3 key for the uploaded file.
-     * @param file file to be uploaded.
+     * @param file  file to be uploaded.
+     *
+     * @throws S3Exception when error uploading to S3
      */
     private void uploadToS3(String s3Key, File file) {
         try (InputStream inputStream = new FileInputStream(file)) {
-            var putObjectRequest =
-                    PutObjectRequest.builder()
-                            .bucket(bucketName)
-                            .key(s3Key)
-                            .contentType(Files.probeContentType(file.toPath()))
-                            .build();
+            var putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(s3Key)
+                    .contentType(Files.probeContentType(file.toPath()))
+                    .build();
             s3Client.putObject(
                     putObjectRequest, RequestBody.fromInputStream(inputStream, file.length()));
         } catch (IOException e) {
@@ -230,22 +212,22 @@ public class VideoService {
         }
     }
 
-    private void deleteFolder(File folder) {
-        File[] files = folder.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                file.delete();
-            }
-        }
-        folder.delete();
-    }
+    // private void deleteFolder(File folder) {
+    // File[] files = folder.listFiles();
+    // if (files != null) {
+    // for (File file : files) {
+    // file.delete();
+    // }
+    // }
+    // folder.delete();
+    // }
 
     /**
      * Delete related content from local metadata db and also from S3 storage.
      *
      * @param unparsedIds a comma-separated string of content metadata IDs
      * @throws ParseIdException when of invalid number format defined by api
-     * @throws S3Exception when image wasn't deleted
+     * @throws S3Exception      when image wasn't deleted
      */
     public void deleteStandaloneVideoShowByIds(String unparsedIds) {
         List<String> ids = Arrays.asList(unparsedIds.split(","));
@@ -258,10 +240,11 @@ public class VideoService {
 
     /**
      * Delete related content from local metadata db and also from S3 storage.
-     * 
+     *
      * @param unparsedIds a comma-separated string of content metadata IDs
+     *
      * @throws ParseIdException when of invalid number format defined by api
-     * @throws S3Exception when image wasn't deleted
+     * @throws S3Exception      when image wasn't deleted
      */
     public void deleteTrailerByIds(String unparsedIds) {
         List<String> ids = Arrays.asList(unparsedIds.split(","));
@@ -274,6 +257,5 @@ public class VideoService {
 
     // public void deleteEpisodeByIds(String unparsedIds) {
     // }
-
 
 }
