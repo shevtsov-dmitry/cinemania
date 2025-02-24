@@ -1,8 +1,8 @@
 type Trailer = {
-  id: string;
-  filename: string;
-  contentType: string;
-  size: number;
-};
+    id?: string
+    filename: string
+    contentType: string
+    size: number
+}
 
-export default Trailer;
+export default Trailer

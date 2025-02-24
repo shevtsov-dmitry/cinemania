@@ -10,7 +10,6 @@ import ru.storage.utils.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -23,11 +22,8 @@ public class ContentMetadataController {
         this.service = service;
     }
 
-
     @PostMapping
-    public ResponseEntity<ContentMetadata> saveFormData(
-            @RequestBody ContentMetadata metadata) {
-
+    public ResponseEntity<ContentMetadata> saveFormData(@RequestBody ContentMetadata metadata) {
         try {
             final var savedContentMetadata = service.saveMetadata(metadata);
             return new ResponseEntity<>(savedContentMetadata, HttpStatus.CREATED);

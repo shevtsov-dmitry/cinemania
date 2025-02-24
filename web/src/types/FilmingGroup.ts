@@ -1,9 +1,9 @@
-import ContentCreator from "./ContentCreator";
+import ContentCreator from './ContentCreator'
 
 type FilmingGroup = {
-  id: string;
-  director: ContentCreator;
-  actors: ContentCreator[];
-};
+    id?: string | null
+    director: ContentCreator
+    actors: ContentCreator[]
+}
 
-export default FilmingGroup;
+export default FilmingGroup

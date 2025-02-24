@@ -17,7 +17,10 @@ import ru.storage.person.content_creator.ContentCreator;
 @AllArgsConstructor
 @Builder
 public class FilmingGroup {
-  @Id private String id;
-  @DBRef private ContentCreator director;
-  @DBRef private List<ContentCreator> actors;
+    @Id
+    private String id;
+    @DBRef
+    private ContentCreator director;
+    @DBRef
+    private List<ContentCreator> actors;
 }

@@ -2,14 +2,7 @@ import Constants from "@/src/constants/Constants";
 import useFilmCrewChooserStore from "@/src/state/formFilmCrewChooserState";
 import ContentCreator from "@/src/types/ContentCreator";
 import PersonCategory from "@/src/types/PersonCategory";
-import React, {
-  Dispatch,
-  FormEvent,
-  ReactElement,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import React, {Dispatch, FormEvent, ReactElement, SetStateAction, useEffect, useState,} from "react";
 
 const FormFilmCrewChooser = (): ReactElement => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -27,6 +20,8 @@ const FormFilmCrewChooser = (): ReactElement => {
     (state) => state.selectedActors,
   );
 
+  const selectedDirector = useFilmCrewChooserStore(state => state.selectedDirector) as ContentCreator
+
   useEffect(() => {
     if (creatorType === PersonCategory.DIRECTOR) {
       setCreatorTypeHeaderLabel("Выбор режиссёра");
@@ -39,36 +34,32 @@ const FormFilmCrewChooser = (): ReactElement => {
     e.preventDefault();
     setErrorMessage(null);
     if (!searchTerm.trim()) {
-      setErrorMessage("Please enter a name or surname to search.");
+      setErrorMessage("Введите имя или фамилию для поиска.");
       return;
     }
 
+    let response
     try {
-      const response = await fetch(
+      response = await fetch(
         Constants.STORAGE_URL +
           `/api/v0/metadata/content-creators/fullname/${encodeURIComponent(
             searchTerm,
           )}`,
       );
 
-      if (response.status === 400) {
-        setErrorMessage("Invalid search term.");
-        return;
-      }
-      if (response.status === 404) {
-        setErrorMessage("No creators found with that name or surname.");
-        setCreators([]);
-        return;
-      }
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error()
       }
 
       const data: ContentCreator[] = await response.json();
       setCreators(data);
     } catch (error) {
-      console.error("Error fetching creators:", error);
-      setErrorMessage("An error occurred while fetching creators.");
+      if (response) {
+        const errmes: string = decodeURI(response.headers.get("Message") || "Ошибка при поиске").replaceAll("+", " ")
+        setErrorMessage(errmes)
+      } else {
+        setErrorMessage("Ошибка при поиске");
+      }
     }
   };
 
@@ -102,23 +93,25 @@ const FormFilmCrewChooser = (): ReactElement => {
         </button>
       </div>
       {errorMessage && <div className="text-red-500 mb-5">{errorMessage}</div>}
-      {selectedActorsList.length > 0 && (
+      {selectedDirector && creatorType === PersonCategory.DIRECTOR && (
+          <h1>Выбранный режиссёр: {selectedDirector.name} {selectedDirector.surname}</h1>
+      )}
+      {creatorType === PersonCategory.ACTOR && selectedActorsList.length > 0 && (
         <div className={"flex gap-2"}>
           <h1>Выбранные актёры:</h1>
           <div className={"flex"}>
-            {selectedActorsList.map((actor) => (
+            {selectedActorsList.map((actor, idx) => (
               <div
                 key={actor.id}
                 className="flex items-center gap-2 flex-wrap text-sm text-neutral-500"
               >
-                {actor.name} {actor.surname}
-                {","}
+                {actor.name} {actor.surname} {idx !== selectedActorsList.length - 1 && ","}
               </div>
             ))}
           </div>
         </div>
       )}
-      <div className="grid grid-cols-2 gap-5 overflow-scroll">
+      <div className="grid grid-cols-2 gap-5">
         {creators.length > 0 &&
           creators
               .filter(creator => creator.personCategory === creatorType)
@@ -160,7 +153,7 @@ const CreatorItem = ({
             `/api/v0/metadata/content-creators/user-pics/${creator.personCategory}/${creator.userPic.id}`,
         );
         if (!response.ok) {
-          throw new Error(`Failed to fetch image: ${response.status}`);
+          throw new Error(`Ошибка ${response.status} при загрузке изображения.`);
         }
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
@@ -203,10 +196,10 @@ const CreatorItem = ({
       )}
       <div className="flex-1">
         <h3 className="text-xl font-bold text-blue-500 mb-2">{`${creator.name} ${creator.surname}`}</h3>
-        <p className="text-base text-gray-800">
-          <strong className="font-semibold text-gray-600">Category:</strong>{" "}
-          {creator.personCategory}
-        </p>
+        {/*<p className="text-base text-gray-800">*/}
+        {/*  <strong className="font-semibold text-gray-600">Category:</strong>{" "}*/}
+        {/*  {creator.personCategory}*/}
+        {/*</p>*/}
         <p className="text-base text-gray-800">
           <strong className="font-semibold text-gray-600">Age:</strong>{" "}
           {creator.age}
