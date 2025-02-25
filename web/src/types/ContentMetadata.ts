@@ -1,5 +1,4 @@
 import FilmingGroup from './FilmingGroup'
-import Genre from './Genre'
 import Poster from './Poster'
 import StandaloneVideoShow from './StandaloneVideoShow'
 import Trailer from './Trailer'
