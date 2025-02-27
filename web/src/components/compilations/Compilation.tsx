@@ -89,7 +89,7 @@ const Compilation = ({
                 <FlatList
                     data={metadataList}
                     horizontal
-                    keyExtractor={(item) => item.id} // Assuming id is a string
+                    keyExtractor={(item) => item.id}
                     renderItem={({ item, index }) => (
                         <SelectablePoster metadata={item} index={index} />
                     )}

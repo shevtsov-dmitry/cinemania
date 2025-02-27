@@ -33,7 +33,7 @@ const useFilmCrewChooserStore = create<FilmCrewChooserStore>((set) => ({
     hide: () => set(() => ({ isVisible: false })),
     toggle: () =>
         set((state) => ({
-            isVisible: !state.isVisible,
+            isVisible: state.isVisible,
         })),
 }))
 
