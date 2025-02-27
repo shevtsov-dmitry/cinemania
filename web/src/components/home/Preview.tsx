@@ -1,10 +1,10 @@
-import Compilation from '@/src/components/compilations/Compilation'
-import Constants from '@/src/constants/Constants'
 import { parseSplittedWithDefaultDelimiter } from '@/src/utils/BinaryContentUtils'
 import { ReactElement, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import Poster from '../poster/Poster'
 import ContentMetadata from '@/src/types/ContentMetadata'
+import Compilation from '@/src/components/compilations/Compilation'
+import Constants from '@/src/constants/Constants'
 
 interface PreviewProps {}
 
@@ -58,7 +58,9 @@ const Preview = ({}: PreviewProps): ReactElement => {
             const joinedIds = metadataList
                 .map((item: ContentMetadata) => item.poster?.id)
                 .join(',')
+            console.log('joined ids', joinedIds)
 
+            console.log(joinedIds)
             fetch(`${STORAGE_URL}/api/v0/posters/${joinedIds}`)
                 .then((res) => {
                     if (res.ok) {
@@ -117,4 +119,4 @@ const Preview = ({}: PreviewProps): ReactElement => {
     )
 }
 
-export default Poster
+export default Preview

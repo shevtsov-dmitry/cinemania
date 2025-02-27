@@ -1,4 +1,3 @@
-import ContentMetadata from '@/src/types/ContentMetadata'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import {
     Animated,
@@ -10,6 +9,7 @@ import {
 } from 'react-native'
 import CompilationKind from './CompilationKind'
 import Poster from '@/src/components/poster/Poster'
+import ContentMetadata from '@/src/types/ContentMetadata'
 
 interface CompilationProps {
     posterImageUrls: string[]

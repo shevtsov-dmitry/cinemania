@@ -8,6 +8,8 @@ import formAddCreator from '@/src/components/admin/form-add-creator/FormAddCreat
 import ContentCreator from '@/src/types/ContentCreator'
 import ContentMetadata from '@/src/types/ContentMetadata'
 import FilmingGroup from '@/src/types/FilmingGroup'
+import { jsx } from 'react/jsx-runtime'
+import Poster from '../../poster/Poster'
 
 export default function FormAddFilm() {
     const STORAGE_URL = Constants.STORAGE_URL
@@ -72,8 +74,8 @@ export default function FormAddFilm() {
             }
 
             const posterFormData = new FormData()
-            posterFormData.append('image', posterFile)
             posterFormData.append('id', id)
+            posterFormData.append('image', posterFile)
 
             const res = await fetch(`${STORAGE_URL}/api/v0/posters/upload`, {
                 method: 'POST',
@@ -88,7 +90,6 @@ export default function FormAddFilm() {
                     ).replaceAll('+', ' ')
                 )
             }
-            return OPERATION_STATUS.SUCCESS
         }
 
         async function uploadVideo(id: string) {
@@ -124,7 +125,7 @@ export default function FormAddFilm() {
                 .files?.[0] as File
 
             const metadata: ContentMetadata = {
-                title: form.get('rating')?.toString().trim()!,
+                title: form.get('title')?.toString().trim()!,
                 releaseDate: parseDateEngToRus(
                     form.get('releaseDate')?.toString().trim()!
                 ),
