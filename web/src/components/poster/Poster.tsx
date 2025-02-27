@@ -1,42 +1,41 @@
-import { ReactElement, useEffect } from "react";
+import { ReactElement, useEffect } from 'react'
 
-import ContentDetails from "@/src/types/ContentMetadata";
-import { Image, View } from "react-native";
-import CompilationKind from "../compilations/CompilationKind";
+import ContentMetadata from '@/src/types/ContentMetadata'
+import { Image, View } from 'react-native'
+import CompilationKind from '../compilations/CompilationKind'
+import useContentPageState from '@/src/state/contentPageState'
 
 interface PosterProps {
-  compilationKind: CompilationKind;
-  metadata: ContentDetails;
-  imageUrl: string;
+    compilationKind: CompilationKind
+    metadata: ContentMetadata
+    imageUrl: string
 }
 
 /**
  * @note image URL can be inserted in the `<img src="...">` tag to display image
  */
 const Poster = ({
-  compilationKind = CompilationKind.DEFAULT,
-  metadata,
-  imageUrl,
+    compilationKind = CompilationKind.DEFAULT,
+    metadata,
+    imageUrl,
 }: PosterProps): ReactElement => {
+    const { setContentPageMetadata, showContentPage } = useContentPageState()
 
-  // useEffect(() => {
-  //   console.log(imageUrl)
-  // })
-
-  return (
-    <View
-      className={`
-      ${compilationKind === CompilationKind.PREVIEW && "h-[200px] w-[150px]"}
-      ${compilationKind === CompilationKind.DEFAULT && "h-96 w-64"}
-      `}
-    >
-      <Image
-        className={`w-full h-full rounded-3xl `}
-        source={{ uri: imageUrl }}
-      />
-    </View>
-  );
-};
+    return (
+        <View
+            className={` ${compilationKind === CompilationKind.PREVIEW && 'h-[200px] w-[150px]'} ${compilationKind === CompilationKind.DEFAULT && 'h-96 w-64'} `}
+            onPointerDown={(e) => {
+                setContentPageMetadata(metadata)
+                showContentPage()
+            }}
+        >
+            <Image
+                className={`h-full w-full rounded-3xl`}
+                source={{ uri: imageUrl }}
+            />
+        </View>
+    )
+}
 
 //   {/*<div className="postersInfo">*/}
 //   {/*    {isPosterHovered && (*/}
@@ -63,4 +62,4 @@ const Poster = ({
 //   {/*</div>*/}
 // {/* </Image> */}
 
-export default Poster;
+export default Poster
