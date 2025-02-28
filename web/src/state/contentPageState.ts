@@ -19,8 +19,8 @@ const useContentPageState = create<ContentPageState>((set) => ({
         set((state) => ({
             isContentPageVisible: state.isContentPageVisible,
         })),
-    setContentPageMetadata: () =>
-        set((state) => ({ contentPageMetadata: state.contentPageMetadata })),
+    setContentPageMetadata: (metadata: ContentMetadata) =>
+        set((state) => ({ contentPageMetadata: metadata })),
 }))
 
 export default useContentPageState

@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from 'react'
+import { memo, ReactElement, useEffect } from 'react'
 
 import ContentMetadata from '@/src/types/ContentMetadata'
 import { Image, View } from 'react-native'
