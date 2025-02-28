@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons'
 import useContentPageState from '@/src/state/contentPageState'
 import { useRouter } from 'expo-router'
 import Colors from '@/src/constants/Colors'
+import BackSign from '../common/BackSign'
 
 interface ContentPageProps {}
 
@@ -17,8 +18,6 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
         useContentPageState()
 
     const router = useRouter()
-
-    const isPC = true
 
     useEffect(() => {
         if (isContentPageVisible) {
@@ -33,6 +32,7 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
         const res = await fetch(url)
         const blob = await res.blob()
         setPosterUrl(URL.createObjectURL(blob))
+        console.log('status', res.status)
     }
 
     if (!contentPageMetadata) {
@@ -47,10 +47,12 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                     Выбранный видеофайл не найден.
                 </Text>
                 <Pressable
-                    className="w-52 rounded-xl bg-cyan-700 p-5 text-center text-2xl font-bold text-white shadow"
+                    className="w-52 rounded-xl bg-cyan-700 p-5 shadow hover:bg-cyan-500"
                     onPress={() => router.back()}
                 >
-                    Вернуться
+                    <Text className="text-center text-3xl font-bold text-white">
+                        Вернуться
+                    </Text>
                 </Pressable>
             </View>
         )
@@ -64,8 +66,11 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
         `/api/v0/videos/${contentPageMetadata.standaloneVideoShow?.id}`
 
     return (
-        <View className="relative z-10 h-screen w-screen flex-1 bg-cyan-800">
+        <View className="relative h-screen w-screen flex-1 bg-cyan-800">
             {/* Background Video with Poster */}
+            <View className="fixed left-3 top-3 z-10">
+                <BackSign />
+            </View>
             <Video
                 source={{ uri: trailerUrl }}
                 posterSource={{ uri: posterUrl }}

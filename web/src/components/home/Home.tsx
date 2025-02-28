@@ -16,6 +16,8 @@ const Home = (): ReactElement => {
             <Text className={'p-2 text-2xl font-bold text-white'}>
                 Вам может понравится
             </Text>
+
+            <Preview />
         </View>
     )
 }

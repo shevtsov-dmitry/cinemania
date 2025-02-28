@@ -4,6 +4,7 @@ import {
     FlatList,
     InteractionManager,
     Text,
+    StyleSheet,
     TouchableOpacity,
     View,
 } from 'react-native'
@@ -12,6 +13,7 @@ import Poster from '@/src/components/poster/Poster'
 import ContentMetadata from '@/src/types/ContentMetadata'
 import { useRouter } from 'expo-router'
 import useContentPageState from '@/src/state/contentPageState'
+import { BlurView } from 'expo-blur'
 
 interface CompilationProps {
     posterImageUrls: string[]
@@ -94,28 +96,51 @@ const Compilation = ({
 
     return (
         <>
-            {posterImageUrls.length !== 0 ? (
-                <FlatList
-                    data={metadataList}
-                    horizontal
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item, index }) => (
-                        <SelectablePoster metadata={item} index={index} />
-                    )}
-                    contentContainerStyle={{
-                        flexDirection: 'row',
-                        gap: 16,
-                        padding: 12,
-                        backgroundColor: 'white',
-                    }}
-                />
-            ) : (
-                <Text className={'text-1xl font-bold text-white opacity-20'}>
-                    {errmes}
-                </Text>
-            )}
+            <BlurView
+                intensity={30}
+                tint="prominent"
+                style={styles.blurContainer}
+            >
+                {posterImageUrls.length !== 0 ? (
+                    <FlatList
+                        horizontal
+                        contentContainerStyle={styles.flatListContent}
+                        data={metadataList}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item, index }) => (
+                            <SelectablePoster metadata={item} index={index} />
+                        )}
+                    />
+                ) : (
+                    <Text
+                        className={'text-1xl font-bold text-white opacity-20'}
+                    >
+                        {errmes}
+                    </Text>
+                )}
+            </BlurView>
         </>
     )
 }
+
+const styles = StyleSheet.create({
+    backgroundImage: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+    },
+    blurContainer: {
+        flex: 1,
+        padding: 15,
+        borderRadius: 15,
+        justifyContent: 'center',
+    },
+    flatListContent: {
+        flexDirection: 'row',
+        gap: 16,
+        padding: 12,
+        borderRadius: 10,
+    },
+})
 
 export default Compilation
