@@ -4,6 +4,7 @@ import { View } from 'react-native'
 import ContentMetadata from '@/src/types/ContentMetadata'
 import Compilation from '@/src/components/compilations/Compilation'
 import Constants from '@/src/constants/Constants'
+import { useRouter } from 'expo-router'
 
 interface PreviewProps {}
 
@@ -16,6 +17,8 @@ const Preview = ({}: PreviewProps): ReactElement => {
         useState<string>('')
     const [metadataList, setMetadataList] = useState<ContentMetadata[]>([])
     const [posterImagesUrls, setPosterImagesUrls] = useState<string[]>([])
+
+    const router = useRouter()
 
     // const videoPlayerState = useSelector((state) => state.videoPlayer);
     // let isPlayerOpened = videoPlayerState.isPlayerOpened; // ?

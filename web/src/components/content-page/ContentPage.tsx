@@ -1,17 +1,23 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import Constants from '@/src/constants/Constants'
-import { View, Text, Pressable } from 'react-native'
+import { View, Text, Pressable, Button } from 'react-native'
 import { ResizeMode, Video } from 'expo-av'
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import useContentPageState from '@/src/state/contentPageState'
+import { useRouter } from 'expo-router'
 
 interface ContentPageProps {}
 
 const ContentPage = ({}: ContentPageProps): ReactElement => {
     const [posterUrl, setPosterUrl] = useState<string>('')
 
-    const { contentPageMetadata, isContentPageVisible } = useContentPageState()
+    const { contentPageMetadata, isContentPageVisible, hideContentPage } =
+        useContentPageState()
+
+    const router = useRouter()
+
+    const isPC = true
 
     useEffect(() => {
         if (isContentPageVisible) {
@@ -45,8 +51,10 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
         Constants.STORAGE_URL +
         `/api/v0/videos/${contentPageMetadata.standaloneVideoShow?.id}`
 
-    return isContentPageVisible ? (
-        <View className="fixed h-[600px] w-[1000px] flex-1 bg-cyan-800">
+    return (
+        <View className="relative z-10 h-screen w-screen flex-1 bg-cyan-800">
+            <Button title="Close" onPress={() => router.back()} />
+
             {/* Background Video with Poster */}
             <Video
                 source={{ uri: trailerUrl }}
@@ -120,8 +128,6 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                 </Pressable>
             </BlurView>
         </View>
-    ) : (
-        <View />
     )
 }
 

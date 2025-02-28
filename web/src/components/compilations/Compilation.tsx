@@ -10,6 +10,8 @@ import {
 import CompilationKind from './CompilationKind'
 import Poster from '@/src/components/poster/Poster'
 import ContentMetadata from '@/src/types/ContentMetadata'
+import { useRouter } from 'expo-router'
+import useContentPageState from '@/src/state/contentPageState'
 
 interface CompilationProps {
     posterImageUrls: string[]
@@ -28,7 +30,11 @@ const Compilation = ({
     const [focusedIndex, setFocusedIndex] = useState<number>(0)
     const [selectedIndex, setSelectedIndex] = useState<number>()
 
+    const router = useRouter()
+
     const scaleAnim = useRef(new Animated.Value(1)).current
+
+    const { setContentPageMetadata } = useContentPageState()
 
     const handleFocus = (index: number) => {
         Animated.timing(scaleAnim, {
@@ -68,14 +74,17 @@ const Compilation = ({
         return (
             <TouchableOpacity
                 activeOpacity={1}
-                onPress={() => setSelectedIndex(index)}
+                onPress={() => {
+                    setSelectedIndex(index)
+                    setContentPageMetadata(metadata)
+                    router.push('/content')
+                }}
                 onFocus={() => handleFocus(index)}
                 onBlur={handleBlur}
             >
                 <View className={`${isFocused || (isSelected && 'scale-150')}`}>
                     <Poster
                         compilationKind={CompilationKind.PREVIEW}
-                        metadata={metadata}
                         imageUrl={posterImageUrls[index]}
                     />
                 </View>
