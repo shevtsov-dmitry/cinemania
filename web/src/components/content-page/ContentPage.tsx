@@ -1,12 +1,12 @@
-import React, { ReactElement, useEffect, useState } from 'react'
+import Colors from '@/src/constants/Colors'
 import Constants from '@/src/constants/Constants'
-import { View, Text, Pressable, Button } from 'react-native'
+import useContentPageState from '@/src/state/contentPageState'
+import { Ionicons } from '@expo/vector-icons'
 import { ResizeMode, Video } from 'expo-av'
 import { BlurView } from 'expo-blur'
-import { Ionicons } from '@expo/vector-icons'
-import useContentPageState from '@/src/state/contentPageState'
 import { useRouter } from 'expo-router'
-import Colors from '@/src/constants/Colors'
+import React, { ReactElement, useEffect, useState } from 'react'
+import { Image, Pressable, Text, View } from 'react-native'
 import BackSign from '../common/BackSign'
 
 interface ContentPageProps {}
@@ -86,6 +86,11 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                 tint="dark"
                 className="absolute inset-0 flex h-full w-full items-center justify-center p-5"
             >
+                <Image
+                    className="mb-[2%] h-52 w-52"
+                    source={{ uri: posterUrl }}
+                />
+
                 {/* Film Title */}
                 <Text className="mb-4 text-center text-3xl font-bold text-white">
                     {contentPageMetadata.title}

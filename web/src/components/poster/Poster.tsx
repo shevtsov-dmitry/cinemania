@@ -1,10 +1,7 @@
-import { memo, ReactElement, useEffect } from 'react'
+import { ReactElement } from 'react'
 
-import ContentMetadata from '@/src/types/ContentMetadata'
 import { Image, View } from 'react-native'
 import CompilationKind from '../compilations/CompilationKind'
-import useContentPageState from '@/src/state/contentPageState'
-import { useRouter } from 'expo-router'
 
 interface PosterProps {
     compilationKind: CompilationKind
@@ -18,8 +15,6 @@ const Poster = ({
     compilationKind = CompilationKind.DEFAULT,
     imageUrl,
 }: PosterProps): ReactElement => {
-    const { setContentPageMetadata } = useContentPageState()
-
     return (
         <View
             className={`${compilationKind === CompilationKind.PREVIEW && 'h-[200px] w-[150px]'} ${compilationKind === CompilationKind.DEFAULT && 'h-96 w-64'} `}
