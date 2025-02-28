@@ -24,8 +24,8 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
 
     async function fetchPoster() {
         const url =
-            Constants.STORAGE_URL + '/api/v0/posters/67c03adfccc1d3667f47b51f'
-        // const url = Constants.STORAGE_URL + `/api/v0/posters/${contentPageMetadata.poster.id}`;
+            Constants.STORAGE_URL +
+            `/api/v0/posters/${contentPageMetadata?.poster?.id}`
         const res = await fetch(url)
         const blob = await res.blob()
         setPosterUrl(URL.createObjectURL(blob))
@@ -87,7 +87,8 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                 className="absolute inset-0 flex h-full w-full items-center justify-center p-5"
             >
                 <Image
-                    className="mb-[2%] h-52 w-52"
+                    className="mb-[2%] h-52 w-52 text-2xl text-white"
+                    alt="Ошибка загрузки постера"
                     source={{ uri: posterUrl }}
                 />
 
