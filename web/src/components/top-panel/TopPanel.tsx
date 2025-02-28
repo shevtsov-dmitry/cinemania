@@ -167,16 +167,3 @@ const TopPanel = (): ReactElement => {
 }
 
 export default TopPanel
-
-/*     <Route */
-/*         path="/add-new-film" */
-/*         element={ */
-/*             <div className="fixed top-0 left-0 z-50 flex items-center justify-center h-dvh w-dvw"> */
-/*                 <div className="absolute h-full w-full bg-gray-800 backdrop-blur-md opacity-85 dark:backdrop-blur-lg"></div> */
-/*                 <div className="z-50"> */
-/*                     <FormAddFilm /> */
-/*                 </div> */
-/*             </div> */
-/*         } */
-/*     /> */
-/* </Routes> */

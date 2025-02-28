@@ -1,14 +1,14 @@
 import React, { ReactElement } from 'react'
 import { Text, View } from 'react-native'
 import Preview from './Preview'
+import Colors from '@/src/constants/Colors'
 
 const Home = (): ReactElement => {
     return (
         <View
             className="min-h-screen w-screen"
             style={{
-                backgroundImage:
-                    'linear-gradient(to right bottom, #3c4d66, #333f53, #2a3141, #20242f, #16181f)',
+                backgroundImage: Colors.TEAL_DARK_GRADIENT_BG_IMAGE,
             }}
         >
             <Text className={'p-2 text-2xl font-bold text-white'}>Новинки</Text>

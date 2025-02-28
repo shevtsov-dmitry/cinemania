@@ -1,8 +1,10 @@
-const tintColorLight = '#2f95dc';
-const tintColorDark = '#fff';
+const tintColorLight = '#2f95dc'
+const tintColorDark = '#fff'
 
 export default {
     link: '#2e78b7',
+    TEAL_DARK_GRADIENT_BG_IMAGE:
+        'linear-gradient(to right bottom, #3c4d66, #333f53, #2a3141, #20242f, #16181f)',
     light: {
         text: '#000',
         background: '#fff',
@@ -17,4 +19,4 @@ export default {
         tabIconDefault: '#ccc',
         tabIconSelected: tintColorDark,
     },
-};
+}

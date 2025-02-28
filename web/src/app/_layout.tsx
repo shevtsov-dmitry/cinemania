@@ -14,7 +14,7 @@ import '../../global.css'
 export { ErrorBoundary } from 'expo-router'
 
 export const unstable_settings = {
-    initialRouteName: 'home', // Adjust as needed
+    initialRouteName: 'index', // Maps to "/"
 }
 
 SplashScreen.preventAutoHideAsync()
@@ -41,11 +41,5 @@ export default function RootLayout() {
         return null
     }
 
-    return (
-        // <ThemeProvider
-        //     value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-        // >
-        <Stack screenOptions={{ headerShown: false }} />
-        // </ThemeProvider>
-    )
+    return <Stack screenOptions={{ headerShown: false }} />
 }

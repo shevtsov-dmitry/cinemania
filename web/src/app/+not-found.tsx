@@ -2,6 +2,7 @@ import { Link, Stack, useRouter } from 'expo-router'
 import { ReactElement } from 'react'
 
 import { Pressable, Text, View } from 'react-native'
+import Colors from '../constants/Colors'
 
 const NotFoundScreen = (): ReactElement => {
     const router = useRouter()
@@ -10,8 +11,7 @@ const NotFoundScreen = (): ReactElement => {
         <View
             className="flex h-screen w-screen items-center justify-center"
             style={{
-                backgroundImage:
-                    'linear-gradient(to right bottom, #3c4d66, #333f53, #2a3141, #20242f, #16181f)',
+                backgroundImage: Colors.TEAL_DARK_GRADIENT_BG_IMAGE,
             }}
         >
             <Stack.Screen options={{ title: 'Not Found.' }} />
@@ -22,7 +22,7 @@ const NotFoundScreen = (): ReactElement => {
                 <Text className="text-5xl font-bold text-white">
                     Страница не найдена.
                 </Text>
-                <Pressable onPress={() => router.push('/home')}>
+                <Pressable onPress={() => router.push('/')}>
                     <Text className="text-3xl text-link underline">
                         Go to home screen. {'\n'}
                     </Text>

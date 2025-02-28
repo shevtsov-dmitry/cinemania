@@ -6,6 +6,7 @@ import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import useContentPageState from '@/src/state/contentPageState'
 import { useRouter } from 'expo-router'
+import Colors from '@/src/constants/Colors'
 
 interface ContentPageProps {}
 
@@ -36,10 +37,21 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
 
     if (!contentPageMetadata) {
         return (
-            <View className="rounded bg-black p-5">
-                <Text className="text-lg font-bold text-white">
-                    Выбранный контент не найден.
+            <View
+                className="flex h-screen w-screen items-center justify-center gap-5"
+                style={{
+                    backgroundImage: Colors.TEAL_DARK_GRADIENT_BG_IMAGE,
+                }}
+            >
+                <Text className="text-5xl font-bold text-white">
+                    Выбранный видеофайл не найден.
                 </Text>
+                <Pressable
+                    className="w-52 rounded-xl bg-cyan-700 p-5 text-center text-2xl font-bold text-white shadow"
+                    onPress={() => router.back()}
+                >
+                    Вернуться
+                </Pressable>
             </View>
         )
     }
@@ -53,8 +65,6 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
 
     return (
         <View className="relative z-10 h-screen w-screen flex-1 bg-cyan-800">
-            <Button title="Close" onPress={() => router.back()} />
-
             {/* Background Video with Poster */}
             <Video
                 source={{ uri: trailerUrl }}
