@@ -18,8 +18,6 @@ const Preview = ({}: PreviewProps): ReactElement => {
     const [metadataList, setMetadataList] = useState<ContentMetadata[]>([])
     const [posterImagesUrls, setPosterImagesUrls] = useState<string[]>([])
 
-    const router = useRouter()
-
     // const videoPlayerState = useSelector((state) => state.videoPlayer);
     // let isPlayerOpened = videoPlayerState.isPlayerOpened; // ?
 
