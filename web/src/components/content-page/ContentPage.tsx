@@ -74,8 +74,8 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                 {/* Film Details */}
                 <Text className="mb-2 text-center text-lg text-white">
                     {contentPageMetadata.releaseDate} •{' '}
-                    {contentPageMetadata.country} •{' '}
-                    {contentPageMetadata.mainGenre} • Rating:{' '}
+                    {contentPageMetadata.country.name} •{' '}
+                    {contentPageMetadata.mainGenre.name} • Rating:{' '}
                     {contentPageMetadata.rating} • {contentPageMetadata.age}+
                 </Text>
 
@@ -116,7 +116,7 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                     }}
                 >
                     <Ionicons name="play" size={24} color="white" />
-                    <Text className="ml-2 text-lg text-white">Play Film</Text>
+                    <Text className="ml-2 text-lg text-white">Play</Text>
                 </Pressable>
             </BlurView>
         </View>

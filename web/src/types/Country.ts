@@ -1,8 +1,7 @@
 type Country = {
-  id: string;
-  name: string;
-  localizedNames?: { [key: string]: string };
-};
+    id?: string
+    name: string
+    localizedNames?: { [key: string]: string }
+}
 
-export default Country;
-
+export default Country

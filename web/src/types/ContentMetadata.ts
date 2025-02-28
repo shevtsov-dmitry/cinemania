@@ -1,4 +1,6 @@
+import Country from './Country'
 import FilmingGroup from './FilmingGroup'
+import Genre from './Genre'
 import Poster from './Poster'
 import StandaloneVideoShow from './StandaloneVideoShow'
 import Trailer from './Trailer'
@@ -8,9 +10,9 @@ type ContentMetadata = {
     id?: string
     title: string
     releaseDate: string
-    country: string
-    mainGenre: string
-    subGenres?: string[]
+    country: Country
+    mainGenre: Genre
+    subGenres?: Genre[]
     description?: string
     age: number
     rating: number

@@ -4,12 +4,8 @@ import Constants from '@/src/constants/Constants'
 import useFormAddFilmStore from '@/src/state/formAddFilmState'
 import FormFilmCrewChooser from './FormFilmCrewChooser'
 import useFilmCrewChooserStore from '@/src/state/formFilmCrewChooserState'
-import formAddCreator from '@/src/components/admin/form-add-creator/FormAddCreator'
 import ContentCreator from '@/src/types/ContentCreator'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import FilmingGroup from '@/src/types/FilmingGroup'
-import { jsx } from 'react/jsx-runtime'
-import Poster from '../../poster/Poster'
 
 export default function FormAddFilm() {
     const STORAGE_URL = Constants.STORAGE_URL
@@ -129,10 +125,14 @@ export default function FormAddFilm() {
                 releaseDate: parseDateEngToRus(
                     form.get('releaseDate')?.toString().trim()!
                 ),
-                country: form.get('country')?.toString().trim()!,
-                mainGenre: form.get('mainGenre')?.toString().trim()!,
+                country: { name: form.get('country')?.toString().trim()! },
+                mainGenre: { name: form.get('mainGenre')?.toString().trim()! },
                 description: form.get('description')?.toString().trim()!,
-                subGenres: parseSubGenres(form.get('subGenres')?.toString()!),
+                subGenres: parseSubGenres(
+                    form.get('subGenres')?.toString()!
+                ).map((name) => ({
+                    name: name,
+                })),
                 age: parseInt(form.get('age')?.toString()!),
                 rating: parseInt(form.get('rating')?.toString()!),
                 filmingGroup: {

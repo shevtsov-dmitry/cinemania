@@ -1,8 +1,7 @@
 type Genre = {
-  id: string;
-  name: string;
-  localizedNames?: { [key: string]: string };
-};
+    id?: string
+    name: string
+    localizedNames?: { [key: string]: string }
+}
 
-export default Genre;
-
+export default Genre
