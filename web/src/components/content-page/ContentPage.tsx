@@ -14,16 +14,13 @@ interface ContentPageProps {}
 const ContentPage = ({}: ContentPageProps): ReactElement => {
     const [posterUrl, setPosterUrl] = useState<string>('')
 
-    const { contentPageMetadata, isContentPageVisible, hideContentPage } =
-        useContentPageState()
+    const { contentPageMetadata } = useContentPageState()
 
     const router = useRouter()
 
     useEffect(() => {
-        if (isContentPageVisible) {
-            fetchPoster()
-        }
-    }, [isContentPageVisible])
+        fetchPoster()
+    }, [])
 
     async function fetchPoster() {
         const url =
@@ -32,7 +29,6 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
         const res = await fetch(url)
         const blob = await res.blob()
         setPosterUrl(URL.createObjectURL(blob))
-        console.log('status', res.status)
     }
 
     if (!contentPageMetadata) {
@@ -58,12 +54,13 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
         )
     }
 
+    // TODO stream trailer and film
     const trailerUrl =
         Constants.STORAGE_URL +
-        `/api/v0/trailers/${contentPageMetadata.trailer?.id}`
+        `/api/v0/trailers/trailer/${contentPageMetadata.trailer?.id}`
     const filmUrl =
         Constants.STORAGE_URL +
-        `/api/v0/videos/${contentPageMetadata.standaloneVideoShow?.id}`
+        `/api/v0/videos/standalone/${contentPageMetadata.standaloneVideoShow?.id}`
 
     return (
         <View className="relative h-screen w-screen flex-1 bg-cyan-800">

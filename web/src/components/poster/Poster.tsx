@@ -18,7 +18,7 @@ const Poster = ({
     compilationKind = CompilationKind.DEFAULT,
     imageUrl,
 }: PosterProps): ReactElement => {
-    const { setContentPageMetadata, showContentPage } = useContentPageState()
+    const { setContentPageMetadata } = useContentPageState()
 
     return (
         <View
