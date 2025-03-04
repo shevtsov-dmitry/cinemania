@@ -89,6 +89,9 @@ export default function FormAddFilm() {
             const res = await fetch(`${STORAGE_URL}/api/v0/posters/upload`, {
                 method: 'POST',
                 body: posterFormData,
+                headers: {
+                    'Content-Type': posterFile.type,
+                },
             })
 
             if (res.status !== 201) {
@@ -127,6 +130,9 @@ export default function FormAddFilm() {
             const res = await fetch(url, {
                 method: 'POST',
                 body: videoFormData,
+                headers: {
+                    'Content-Type': videoFile.type,
+                },
             })
 
             if (res.status !== 201) {
@@ -187,7 +193,7 @@ export default function FormAddFilm() {
                 headers: {
                     'Content-type': 'application/json',
                 },
-                body: JSON.stringify(metadata!),
+                body: JSON.stringify(metadata),
             })
 
             if (res.status !== 201) {
@@ -200,29 +206,32 @@ export default function FormAddFilm() {
             }
 
             return res.json()
+        }
 
-            function parseDateEngToRus(date: string): string {
-                const dateObj = new Date(date)
-                const options: Intl.DateTimeFormatOptions = {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                }
+        function isBlank(str: string): boolean {
+            return !str || str.trim() === ''
+        }
 
-                return dateObj.toLocaleDateString('ru-RU', options)
+        function parseDateEngToRus(date: string): string {
+            const dateObj = new Date(date)
+            const options: Intl.DateTimeFormatOptions = {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
             }
+            return dateObj.toLocaleDateString('ru-RU', options)
+        }
 
-            function parseSubGenres(subGenresString: string): string[] {
-                const splitted = subGenresString.split(',')
-                if (splitted.length === 0) {
-                    return []
-                }
-                let subGenresArray = []
-                for (const string of splitted) {
-                    if (string.length !== 0) subGenresArray.push(string.trim())
-                }
-                return subGenresArray
+        function parseSubGenres(subGenresString: string): string[] {
+            const splitted = subGenresString.split(',')
+            if (splitted.length === 0) {
+                return []
             }
+            let subGenresArray = []
+            for (const string of splitted) {
+                if (string.length !== 0) subGenresArray.push(string.trim())
+            }
+            return subGenresArray
         }
 
         // function validateFormInputs(form: FormData) {
@@ -289,11 +298,7 @@ export default function FormAddFilm() {
         //         }
         //     }
         // }
-
-        function isBlank(str: string): boolean {
-            return !str || str.trim() === ''
-        }
-
+        //
         function displayStatusMessage(
             operationStatus: OPERATION_STATUS,
             errmes?: string

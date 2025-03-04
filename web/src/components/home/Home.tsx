@@ -1,7 +1,9 @@
+import Colors from '@/src/constants/Colors'
 import React, { ReactElement } from 'react'
 import { Text, View } from 'react-native'
+import AdminPage from '../admin/AdminPage'
+import TopPanel from '../top-panel/TopPanel'
 import Preview from './Preview'
-import Colors from '@/src/constants/Colors'
 
 const Home = (): ReactElement => {
     return (
@@ -11,6 +13,8 @@ const Home = (): ReactElement => {
                 backgroundImage: Colors.TEAL_DARK_GRADIENT_BG_IMAGE,
             }}
         >
+            <TopPanel />
+            <AdminPage />
             <Text className={'p-2 text-2xl font-bold text-white'}>Новинки</Text>
             <Preview />
             <Text className={'p-2 text-2xl font-bold text-white'}>

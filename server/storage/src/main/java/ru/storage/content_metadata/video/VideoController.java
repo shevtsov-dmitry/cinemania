@@ -50,34 +50,12 @@ public class VideoController {
     public ResponseEntity<Void> uploadStandaloneVideoShow(
             @RequestParam String id,
             @RequestParam MultipartFile video) {
-
         try {
             service.uploadStandaloneVideoShow(id, video);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(
                     null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
-        } catch (ParseException | IOException e) {
-            return new ResponseEntity<>(
-                    null,
-                    new EncodedHttpHeaders(VIDEO_UPLOAD_ERROR_MESSAGE),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (S3Exception e) {
-            return new ResponseEntity<>(
-                    null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PostMapping("episode")
-    public ResponseEntity<Void> uploadEpisode(
-            @RequestParam String id,
-            @RequestParam String tvSeriesId,
-            @RequestParam int season,
-            @RequestParam int episode,
-            @RequestParam MultipartFile video) {
-        try {
-            service.uploadEpisode(id, video, tvSeriesId, season, episode);
-            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (ParseException | IOException e) {
             return new ResponseEntity<>(
                     null,
@@ -111,6 +89,27 @@ public class VideoController {
     public ResponseEntity<Trailer> uploadTrailer(@RequestParam String id, @RequestParam MultipartFile video) {
         try {
             service.uploadTrailer(id, video);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (ParseException | IOException e) {
+            return new ResponseEntity<>(
+                    null,
+                    new EncodedHttpHeaders(VIDEO_UPLOAD_ERROR_MESSAGE),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (S3Exception e) {
+            return new ResponseEntity<>(
+                    null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("episode")
+    public ResponseEntity<Void> uploadEpisode(
+            @RequestParam String id,
+            @RequestParam String tvSeriesId,
+            @RequestParam int season,
+            @RequestParam int episode,
+            @RequestParam MultipartFile video) {
+        try {
+            service.uploadEpisode(id, video, tvSeriesId, season, episode);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (ParseException | IOException e) {
             return new ResponseEntity<>(

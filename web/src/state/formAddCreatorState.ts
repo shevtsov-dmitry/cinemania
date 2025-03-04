@@ -13,7 +13,7 @@ const useFormAddCreatorStore = create<FormAddCreatorState>((set) => ({
     hideFormAddCreator: () => set(() => ({ isFormAddCreatorVisible: false })),
     toggleFormAddCreator: () =>
         set((state) => ({
-            isFormAddCreatorVisible: state.isFormAddCreatorVisible,
+            isFormAddCreatorVisible: !state.isFormAddCreatorVisible,
         })),
 }))
 

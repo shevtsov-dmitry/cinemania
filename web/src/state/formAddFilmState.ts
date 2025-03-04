@@ -13,7 +13,7 @@ const useFormAddFilmStore = create<FormAddFilmState>((set) => ({
     hideFormAddFilm: () => set(() => ({ isFormAddFilmVisible: false })),
     toggleFormAddFilm: () =>
         set((state) => ({
-            isFormAddFilmVisible: state.isFormAddFilmVisible,
+            isFormAddFilmVisible: !state.isFormAddFilmVisible,
         })),
 }))
 

@@ -1,14 +1,14 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
-import {
-    View,
-    Text,
-    Image,
-    TouchableOpacity,
-    FlatList,
-    Pressable,
-} from 'react-native'
-import useFormAddFilmStore from '@/src/state/formAddFilmState'
 import useFormAddCreatorStore from '@/src/state/formAddCreatorState'
+import useFormAddFilmStore from '@/src/state/formAddFilmState'
+import React, { ReactElement, useRef, useState } from 'react'
+import {
+    FlatList,
+    Image,
+    Pressable,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native'
 
 // TODO use expo router instead
 // import { Link, Route, Routes } from 'react-router-dom';
@@ -35,23 +35,7 @@ const TopPanel = (): ReactElement => {
 
     const topics = ['Фильмы', 'Сериалы', 'Мультфильмы', 'Аниме']
 
-    /*   useEffect(() => {
-    showAndHideBurgerMenu();
-  }, []) */
-    // function showAndHideBurgerMenu() {
-    //   burgerImageRef.current.addEventListener("click", () => {
-    //     burgerImageRef.current.style.display = "none";
-    //     closeImageRef.current.style.display = "block";
-    //     setIsBurgerActive(true);
-    //   });
-    //   closeImageRef.current.addEventListener("click", () => {
-    //     burgerImageRef.current.style.display = "block";
-    //     closeImageRef.current.style.display = "none";
-    //     setIsBurgerActive(false);
-    //   });
-    // }
-
-    // TODO restore commented parts
+    // TODO make burger work in the future
     const BurgerPanel = (): ReactElement => (
         <>
             <View className="fixed z-20 h-full w-full bg-gray-800 transition-all duration-300 ease-in-out">
@@ -68,6 +52,20 @@ const TopPanel = (): ReactElement => {
                 </Text>
             </View>
         </>
+    )
+
+    const TempoAdminPanel = (): ReactElement => (
+        <View className="rounded-2xl bg-neutral-700 px-5 py-2">
+            <Text className="text-sm text-white">Панель администратора</Text>
+            <Pressable onPress={toggleFormAddFilm}>
+                <Text className="text-orange-500">Добавить новый фильм</Text>
+            </Pressable>
+            <Pressable onPress={toggleFormAddCreator}>
+                <Text className="text-orange-500">
+                    Добавить члена съёмочной группы
+                </Text>
+            </Pressable>
+        </View>
     )
 
     const GeneralTopic = ({
@@ -110,21 +108,7 @@ const TopPanel = (): ReactElement => {
                         <Text>Подборки</Text>
                     </View>
                 </View>
-                <View className="rounded-2xl bg-neutral-700 px-5 py-2">
-                    <Text className="text-sm text-white">
-                        Панель администратора
-                    </Text>
-                    <Pressable onPress={toggleFormAddFilm}>
-                        <Text className="text-orange-500">
-                            Добавить новый фильм
-                        </Text>
-                    </Pressable>
-                    <Pressable onPress={toggleFormAddCreator}>
-                        <Text className="text-orange-500">
-                            Добавить члена съёмочной группы
-                        </Text>
-                    </Pressable>
-                </View>
+                <TempoAdminPanel />
                 <View className="gap-1.25 flex-row"></View>
                 <View className="gap-0.25 flex-row items-center">
                     <Image
