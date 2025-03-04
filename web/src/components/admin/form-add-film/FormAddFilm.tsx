@@ -1,11 +1,11 @@
-import PersonCategory from '@/src/types/PersonCategory'
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import Constants from '@/src/constants/Constants'
 import useFormAddFilmStore from '@/src/state/formAddFilmState'
-import FormFilmCrewChooser from './FormFilmCrewChooser'
 import useFilmCrewChooserStore from '@/src/state/formFilmCrewChooserState'
 import ContentCreator from '@/src/types/ContentCreator'
 import ContentMetadata from '@/src/types/ContentMetadata'
+import PersonCategory from '@/src/types/PersonCategory'
+import React, { FormEvent, useRef, useState } from 'react'
+import FormFilmCrewChooser from './FormFilmCrewChooser'
 
 export default function FormAddFilm() {
     const STORAGE_URL = Constants.STORAGE_URL
@@ -44,6 +44,12 @@ export default function FormAddFilm() {
     const [isTrailerFileSelected, setIsTrailerFileSelected] =
         useState<boolean>(false)
 
+    enum VideoType {
+        STANDALONE = 'standalone',
+        TRAILER = 'trailer',
+        EPISODE = 'episode',
+    }
+
     async function saveFormData() {
         enum OPERATION_STATUS {
             SUCCESS = 'SUCCESS',
@@ -53,7 +59,14 @@ export default function FormAddFilm() {
         try {
             const videoInfo: ContentMetadata = await saveMetadata()
             await uploadPoster(videoInfo.poster?.id as string)
-            await uploadVideo(videoInfo.standaloneVideoShow?.id as string)
+            await uploadVideo(
+                videoInfo.standaloneVideoShow?.id as string,
+                VideoType.STANDALONE
+            )
+            await uploadVideo(
+                videoInfo.trailer?.id as string,
+                VideoType.TRAILER
+            )
             displayStatusMessage(OPERATION_STATUS.SUCCESS)
         } catch (e: any) {
             setRecentFormErrorMessage(e.message)
@@ -88,9 +101,11 @@ export default function FormAddFilm() {
             }
         }
 
-        async function uploadVideo(id: string) {
+        async function uploadVideo(id: string, videoType: VideoType) {
             if (!standaloneVideoShowRef.current) {
-                throw new Error('Необходимо выбрать видеофайл.')
+                throw new Error(
+                    `Необходимо выбрать видеофайл. Не выбран ${videoType}.`
+                )
             }
 
             const videoFile = standaloneVideoShowRef.current.files?.[0] as File
@@ -99,7 +114,17 @@ export default function FormAddFilm() {
             videoFormData.append('id', id)
             videoFormData.append('video', videoFile)
 
-            const res = await fetch(`${STORAGE_URL}/api/v0/videos/standalone`, {
+            let url = ''
+            const baseUrl = '${STORAGE_URL}/api/v0/videos'
+            if (videoType === VideoType.STANDALONE) {
+                url = baseUrl + `/standalone`
+            } else if (videoType === VideoType.TRAILER) {
+                url = baseUrl + `/trailer`
+            } else if (videoType === VideoType.EPISODE) {
+                url = baseUrl + `/episode`
+            }
+
+            const res = await fetch(url, {
                 method: 'POST',
                 body: videoFormData,
             })

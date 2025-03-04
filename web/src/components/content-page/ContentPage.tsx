@@ -56,10 +56,10 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
 
     // TODO stream trailer and film
     const trailerUrl =
-        Constants.STORAGE_URL +
+        Constants.STREAMING_SERVER_URL +
         `/api/v0/trailers/trailer/${contentPageMetadata.trailer?.id}`
     const filmUrl =
-        Constants.STORAGE_URL +
+        Constants.STREAMING_SERVER_URL +
         `/api/v0/videos/standalone/${contentPageMetadata.standaloneVideoShow?.id}`
 
     return (
