@@ -16,8 +16,8 @@ type ContentMetadata = {
   description?: string;
   age: number;
   rating: number;
-  poster?: Poster;
   filmingGroup: FilmingGroup;
+  poster?: Poster;
   standaloneVideoShow?: StandaloneVideoShow;
   trailer?: Trailer;
   tvSeries?: TvSeries;

@@ -1,7 +1,7 @@
 type MediaFileInfo = {
-  filename: String;
-  contentType: String;
-  size: long;
+  filename: string;
+  contentType: string;
+  size: number;
 };
 
 export default MediaFileInfo;
