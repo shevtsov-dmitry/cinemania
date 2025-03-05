@@ -58,7 +58,7 @@ public class S3GeneralOperations {
    *
    * <p>Stored image has the same name as the id.
    *
-   * @param picCategory the category of the user pic selected from predefined options.
+   * @param s3Folder the folder in S3 where the image will be stored.
    * @param id the unique identifier for the image.
    * @param image the image to be uploaded.
    * @throws IllegalArgumentException when the image is not an image file.
@@ -108,7 +108,8 @@ public class S3GeneralOperations {
             .toList();
 
     if (matchedIds.isEmpty()) {
-      throw new NoSuchElementException("Не удалось найти запрощенные изображения по ID: %s".formatted(ids));
+      throw new NoSuchElementException(
+          "Не удалось найти запрощенные изображения по ID: %s".formatted(ids));
     } else {
       return matchedIds;
     }
@@ -174,7 +175,6 @@ public class S3GeneralOperations {
    *
    * @param ids ids to parse
    * @return set of unique strings
-   * @throws ParseRequestIdException when the input is not a valid comma-separated list of strings
    */
   private static Set<String> parseIds(String ids) {
     Set<String> parsedIds =

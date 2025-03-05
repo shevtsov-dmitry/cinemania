@@ -24,7 +24,7 @@ public class PosterController {
     /**
      * Upload poster into S3 cloud storage.
      *
-     * @param id    saved metatada id from db
+     * @param id    saved metadata id from db
      * @param image multipart file of image type
      * @return Response
      *         <ul>
