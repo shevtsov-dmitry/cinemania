@@ -291,13 +291,15 @@ class IntendedSequenceTest {
                 .andExpect(jsonPath("$.poster.id", notNullValue()))
                 .andExpect(jsonPath("$.poster.id", not(emptyString())))
                 .andExpect(jsonPath("$.trailer", notNullValue()))
-                .andExpect(jsonPath("$.trailer.id", is(not(notNullValue()))))
+                .andExpect(jsonPath("$.trailer.id", is(notNullValue())))
                 .andExpect(jsonPath("$.trailer.id", is(not(emptyString()))))
                 .andExpect(jsonPath("$.standaloneVideoShow", notNullValue()))
                 .andExpect(jsonPath("$.standaloneVideoShow.id", is(notNullValue())))
                 .andExpect(jsonPath("$.standaloneVideoShow.id", is(not(emptyString()))))
                 .andDo(
                         result -> {
+                            System.out.println("RAW JSON");
+                            System.out.println(result.getResponse().getContentAsString());
                             var contentMetadata = objectMapper.readValue(
                                     result.getResponse().getContentAsString(), ContentMetadata.class);
                             META.contentMetadata = contentMetadata;

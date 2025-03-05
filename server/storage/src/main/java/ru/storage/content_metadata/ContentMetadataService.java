@@ -104,13 +104,16 @@ public class ContentMetadataService {
 
         MediaFileInfo posterFile = dto.getPoster();
         var poster = new Poster(posterFile.filename(), posterFile.contentType(), posterFile.size());
+        poster = posterService.saveMetadata(poster);
 
         MediaFileInfo filmFile = dto.getStandaloneVideoShow();
         var standaloneVideoShow = new StandaloneVideoShow(
                 filmFile.filename(), filmFile.contentType(), filmFile.size());
+        standaloneVideoShow = standaloneVideoShowService.saveMetadata(standaloneVideoShow);
 
         MediaFileInfo trailerFile = dto.getTrailer();
         var trailer = new Trailer(trailerFile.filename(), trailerFile.contentType(), trailerFile.size());
+        trailer = trailerService.saveMetadata(trailer);
 
         return ContentMetadata.builder()
                 .title(dto.getTitle())
