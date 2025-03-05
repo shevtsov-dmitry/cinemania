@@ -1,7 +1,9 @@
 package ru.storage.content_metadata;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Pageable;
@@ -112,7 +114,8 @@ public class ContentMetadataService {
 
         return ContentMetadata.builder()
                 .title(dto.getTitle())
-                .releaseDate(LocalDate.parse(dto.getReleaseDate()))
+                .releaseDate(LocalDate.parse(dto.getReleaseDate(),
+                        DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.of("ru-RU"))))
                 .country(country)
                 .mainGenre(mainGenre)
                 .subGenres(subGenres)

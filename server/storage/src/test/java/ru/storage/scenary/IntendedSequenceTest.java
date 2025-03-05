@@ -257,7 +257,7 @@ class IntendedSequenceTest {
 
         var metadata = ContentMetadataDTO.builder()
                 .title("The Shawshank Redemption")
-                .releaseDate("1994-6-20")
+                .releaseDate("20.06.1994")
                 .countryName("USA")
                 .mainGenreName("fiction")
                 .subGenresNames(List.of("comedy", "drama"))
