@@ -26,6 +26,6 @@
     "tvSeries": null,
     "filmingGroup": {
         "directorId": "67c85f79f550a72371745f4b",
-        "actors": ["67c85f79f550a72371745f4c", "67c85f79f550a72371745f4d"]
+        "actorsIds": ["67c85f79f550a72371745f4c", "67c85f79f550a72371745f4d"]
     }
 }
