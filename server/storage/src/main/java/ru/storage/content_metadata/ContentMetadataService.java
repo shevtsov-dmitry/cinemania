@@ -22,8 +22,6 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 @Service
 public class ContentMetadataService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ContentMetadataService.class);
-
     private final ContentMetadataRepo contentMetadataRepo;
     private final PosterService posterService;
     private final TrailerService trailerService;

@@ -1,0 +1,31 @@
+{
+    "id": null,
+    "title": "The Shawshank Redemption",
+    "releaseDate": "20.06.1994",
+    "countryName": "USA",
+    "mainGenreName": "fiction",
+    "subGenres": ["comedy", "drama"],
+    "description": "A prison movie about a banker and his fellow inmates.",
+    "age": 18,
+    "rating": 9.3,
+    "poster": {
+        "filename": "image.jpg",
+        "contentType": "image/jpeg",
+        "size": 13254
+    },
+    "trailer": {
+        "filename": "video_sample.mp4",
+        "contentType": "video/mp4",
+        "size": 1055736
+    },
+    "standaloneVideoShow": {
+        "filename": "video_sample.mp4",
+        "contentType": "video/mp4",
+        "size": 1055736
+    },
+    "tvSeries": null,
+    "filmingGroup": {
+        "directorId": "67c85f79f550a72371745f4b",
+        "actors": ["67c85f79f550a72371745f4c", "67c85f79f550a72371745f4d"]
+    }
+}
