@@ -13,14 +13,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Builder
 public class Trailer {
-  @Id private String id;
-  private String filename;
-  private String contentType;
-  private Long size;
+    @Id
+    private String id;
+    private String filename;
+    private String contentType;
+    private Long size;
 
-  public Trailer(String filename, String contentType, Long size) {
-    this.filename = filename;
-    this.contentType = contentType;
-    this.size = size;
-  }
+    public Trailer(String filename, String contentType, Long size) {
+        this.filename = filename;
+        this.contentType = contentType;
+        this.size = size;
+    }
 }

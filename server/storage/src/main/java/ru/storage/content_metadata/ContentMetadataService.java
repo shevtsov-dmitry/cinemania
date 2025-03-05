@@ -1,17 +1,24 @@
 package ru.storage.content_metadata;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.micrometer.core.instrument.Meter;
+import ru.storage.content_metadata.common.MediaFileInfo;
+import ru.storage.content_metadata.country.Country;
+import ru.storage.content_metadata.country.CountryRepo;
+import ru.storage.content_metadata.genre.Genre;
+import ru.storage.content_metadata.genre.GenreRepo;
+import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.poster.PosterService;
 import ru.storage.content_metadata.video.VideoService;
+import ru.storage.content_metadata.video.standalone.StandaloneVideoShow;
 import ru.storage.content_metadata.video.standalone.StandaloneVideoShowService;
+import ru.storage.content_metadata.video.trailer.Trailer;
 import ru.storage.content_metadata.video.trailer.TrailerService;
 import ru.storage.content_metadata.video.tv_series.TvSeriesService;
 import ru.storage.exceptions.ParseIdException;
@@ -29,22 +36,22 @@ public class ContentMetadataService {
     private final TvSeriesService tvSeriesService;
     private final VideoService videoService;
     private final FilmingGroupService filmingGroupService;
+    private final GenreRepo genreRepo;
+    private final CountryRepo countryRepo;
 
-    public ContentMetadataService(
-            VideoService videoService,
-            ContentMetadataRepo contentMetadataRepo,
-            PosterService posterService,
-            TrailerService trailerService,
-            StandaloneVideoShowService standaloneVideoShowService,
-            TvSeriesService tvSeriesService,
-            FilmingGroupService filmingGroupService) {
-        this.videoService = videoService;
+    public ContentMetadataService(ContentMetadataRepo contentMetadataRepo, PosterService posterService,
+            TrailerService trailerService, StandaloneVideoShowService standaloneVideoShowService,
+            TvSeriesService tvSeriesService, VideoService videoService, FilmingGroupService filmingGroupService,
+            GenreRepo genreRepo, CountryRepo countryRepo) {
         this.contentMetadataRepo = contentMetadataRepo;
         this.posterService = posterService;
         this.trailerService = trailerService;
         this.standaloneVideoShowService = standaloneVideoShowService;
         this.tvSeriesService = tvSeriesService;
+        this.videoService = videoService;
         this.filmingGroupService = filmingGroupService;
+        this.genreRepo = genreRepo;
+        this.countryRepo = countryRepo;
     }
 
     /**
@@ -75,9 +82,52 @@ public class ContentMetadataService {
                     "Метаданные должны содержать хотя бы одно видео или эпизод.");
         }
 
-        System.out.println(metadata);
         return contentMetadataRepo.save(metadata);
     }
+
+    public ContentMetadata saveMetadataFromDTO(ContentMetadataDTO dto) {
+
+        Country country = countryRepo.findByName(dto.getCountryName())
+                .orElseGet(() -> countryRepo.save(new Country(dto.getCountryName())));
+
+        Genre mainGenre = genreRepo.findByName(dto.getMainGenreName())
+                .orElseGet(() -> genreRepo.save(new Genre(dto.getMainGenreName())));
+
+        List<Genre> subGenres = dto.getSubGenresNames().stream()
+                .map(name -> genreRepo.findByName(name)
+                        .orElseGet(() -> genreRepo.save(new Genre(name))))
+                .toList();
+
+        FilmingGroup filmingGroup = filmingGroupService.saveMetadataFromDTO(dto.getFilmingGroupDTO());
+
+        MediaFileInfo posterFile = dto.getPoster();
+        var poster = new Poster(posterFile.filename(), posterFile.contentType(), posterFile.size());
+
+        MediaFileInfo filmFile = dto.getStandaloneVideoShow();
+        var standaloneVideoShow = new StandaloneVideoShow(
+                filmFile.filename(), filmFile.contentType(), filmFile.size());
+
+        MediaFileInfo trailerFile = dto.getTrailer();
+        var trailer = new Trailer(trailerFile.filename(), trailerFile.contentType(), trailerFile.size());
+
+        return ContentMetadata.builder()
+                .title(dto.getTitle())
+                .releaseDate(LocalDate.parse(dto.getReleaseDate()))
+                .country(country)
+                .mainGenre(mainGenre)
+                .subGenres(subGenres)
+                .description(dto.getDescription())
+                .age(dto.getAge())
+                .rating(dto.getRating())
+                .filmingGroup(filmingGroup)
+                .poster(poster)
+                .trailer(trailer)
+                .standaloneVideoShow(standaloneVideoShow)
+                // TODO extremely important to add episodes parser
+                .tvSeries(null)
+                .build();
+
+    };
 
     // TODO Probably need to add exception handling if requested more than existed.
 

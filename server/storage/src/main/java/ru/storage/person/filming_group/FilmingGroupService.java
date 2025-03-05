@@ -1,38 +1,43 @@
 package ru.storage.person.filming_group;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
+
+import ru.storage.person.content_creator.ContentCreator;
 import ru.storage.person.content_creator.ContentCreatorService;
 
 @Service
 public class FilmingGroupService {
 
-  private final FilmingGroupRepo filmingGroupRepo;
-  private final ContentCreatorService contentCreatorService;
+    private final FilmingGroupRepo filmingGroupRepo;
+    private final ContentCreatorService contentCreatorService;
 
-  public FilmingGroupService(
-      FilmingGroupRepo filmingGroupRepo, ContentCreatorService contentCreatorService) {
-    this.filmingGroupRepo = filmingGroupRepo;
-    this.contentCreatorService = contentCreatorService;
-  }
+    public FilmingGroupService(
+            FilmingGroupRepo filmingGroupRepo, ContentCreatorService contentCreatorService) {
+        this.filmingGroupRepo = filmingGroupRepo;
+        this.contentCreatorService = contentCreatorService;
+    }
 
-  public FilmingGroup saveMetadata(FilmingGroup filmingGroup) {
-    Assert.notNull(filmingGroup, "filmingGroup is null");
-    var filmingGroupWithDbRefs = new FilmingGroup();
+    public FilmingGroup saveMetadata(FilmingGroup filmingGroup) {
+        return filmingGroupRepo.save(filmingGroup);
+    }
 
-    var directorFromDb = contentCreatorService.findById(filmingGroup.getDirector().getId());
-    filmingGroupWithDbRefs.setDirector(directorFromDb);
+    public FilmingGroup saveMetadataFromDTO(FilmingGroupDTO dto) {
 
-    var actorsFromDb =
-        filmingGroup.getActors().stream()
-            .map(actor -> contentCreatorService.findById(actor.getId()))
-            .toList();
-    filmingGroupWithDbRefs.setActors(actorsFromDb);
+        ContentCreator director = contentCreatorService.findById(dto.getDirectorId())
+                .orElseThrow(() -> new NoSuchElementException());
 
-    return filmingGroupRepo.save(filmingGroup);
-  }
+        List<ContentCreator> actors = dto.getActorsIds().stream()
+                .map(id -> contentCreatorService.findById(id)
+                        .orElseThrow(() -> new NoSuchElementException()))
+                .toList();
 
-  public void deleteById(String id) {
-    filmingGroupRepo.deleteById(id);
-  }
+        return new FilmingGroup(director, actors);
+    }
+
+    public void deleteById(String id) {
+        filmingGroupRepo.deleteById(id);
+    }
 }

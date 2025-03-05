@@ -6,7 +6,6 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 
 import org.springframework.lang.Nullable;
@@ -16,6 +15,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.storage.content_metadata.common.MediaFileInfo;
+import ru.storage.content_metadata.video.episode.Episode;
 import ru.storage.person.filming_group.FilmingGroupDTO;
 
 @Data
@@ -39,7 +39,7 @@ public class ContentMetadataDTO {
     @NotNull(message = "Основной жанр не может быть пустым")
     private String mainGenreName;
 
-    private List<String> subGenres;
+    private List<String> subGenresNames;
 
     @NotNull(message = "Описание не может быть пустым")
     private String description;
@@ -57,9 +57,9 @@ public class ContentMetadataDTO {
 
     private MediaFileInfo standaloneVideoShow;
 
-    private Object tvSeries;
+    private List<Episode> episodes;
 
     @NotNull(message = "Группа съемок не может быть пустой")
-    private FilmingGroupDTO filmingGroup;
+    private FilmingGroupDTO filmingGroupDTO;
 
 }

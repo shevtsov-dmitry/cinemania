@@ -13,14 +13,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 @Builder
 public class StandaloneVideoShow {
-  @Id private String id;
-  private String filename;
-  private String contentType;
-  private Long size;
+    @Id
+    private String id;
+    private String filename;
+    private String contentType;
+    private Long size;
 
-  public StandaloneVideoShow(String filename, String contentType, Long size) {
-    this.filename = filename;
-    this.contentType = contentType;
-    this.size = size;
-  }
+    public StandaloneVideoShow(String filename, String contentType, Long size) {
+        this.filename = filename;
+        this.contentType = contentType;
+        this.size = size;
+    }
 }
