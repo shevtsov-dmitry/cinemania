@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
@@ -180,5 +181,9 @@ public class ContentMetadataService {
         }
         // if (metadata.getTvSeries() != null) { }
         contentMetadataRepo.delete(metadata);
+    }
+
+    public Optional<ContentMetadata> findById(String id) {
+        return contentMetadataRepo.findById(id);
     }
 }

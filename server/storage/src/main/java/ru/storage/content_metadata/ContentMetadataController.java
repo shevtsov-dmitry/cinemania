@@ -2,6 +2,8 @@ package ru.storage.content_metadata;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,14 @@ public class ContentMetadataController {
     @GetMapping("recent/{amount}")
     public ResponseEntity<List<ContentMetadata>> getRecentlyAdded(@PathVariable int amount) {
         return ResponseEntity.ok(service.getRecentlyAdded(amount));
+    }
+
+    @GetMapping("byId/{id}")
+    public ResponseEntity<ContentMetadata> findById(@PathVariable String id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> new ResponseEntity<>(null,
+                        new EncodedHttpHeaders("Запрошенный видео файл не найден."), HttpStatus.NOT_FOUND));
     }
 
     /**

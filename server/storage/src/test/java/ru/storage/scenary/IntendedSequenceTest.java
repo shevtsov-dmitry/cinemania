@@ -17,14 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.nio.file.Files;
-import java.time.LocalDate;
-import java.util.LinkedList;
-import java.util.List;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.imageio.ImageIO;
+import lombok.Data;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -38,10 +34,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.Data;
 import ru.storage.content_metadata.ContentMetadata;
 import ru.storage.content_metadata.ContentMetadataDTO;
 import ru.storage.content_metadata.common.MediaFileInfo;
@@ -53,18 +45,26 @@ import ru.storage.person.content_creator.ContentCreator;
 import ru.storage.person.filming_group.FilmingGroupDTO;
 import ru.storage.person.userpic.UserPic;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.file.Files;
+import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class IntendedSequenceTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
 
     private static final File IMAGE_FILE = new File("src/test/java/ru/storage/assets/image.jpg");
-    private static final File VIDEO_FILE = new File("src/test/java/ru/storage/assets/video_sample.mp4");
+    private static final File VIDEO_FILE =
+            new File("src/test/java/ru/storage/assets/video_sample.mp4");
 
     @Value("${server.url}")
     private String serverUrl;
@@ -87,10 +87,14 @@ class IntendedSequenceTest {
     @Test
     @Order(1)
     void saveContentCreatorUserPicture() throws Exception {
-        var multipartFile = new MockMultipartFile(
-                "image", IMAGE_FILE.getName(), "image/jpeg", Files.readAllBytes(IMAGE_FILE.toPath()));
-        mockMvc
-                .perform(
+        var multipartFile =
+                new MockMultipartFile(
+                        "image",
+                        IMAGE_FILE.getName(),
+                        "image/jpeg",
+                        Files.readAllBytes(IMAGE_FILE.toPath()));
+
+        mockMvc.perform(
                         multipart(serverUrl + "/api/v0/metadata/content-creators/user-pics/upload")
                                 .file(multipartFile)
                                 .param("personCategory", PersonCategory.ACTOR.stringValue))
@@ -103,9 +107,10 @@ class IntendedSequenceTest {
                 .andExpect(jsonPath("$.personCategory", notNullValue()))
                 .andDo(
                         result -> {
-                            META.userPic = objectMapper.readValue(
-                                    result.getResponse().getContentAsString(), new TypeReference<>() {
-                                    });
+                            META.userPic =
+                                    objectMapper.readValue(
+                                            result.getResponse().getContentAsString(),
+                                            new TypeReference<>() {});
                         });
     }
 
@@ -113,10 +118,10 @@ class IntendedSequenceTest {
     @Order(2)
     void requestForSavedImage_andTryToParseIt() throws Exception {
         assertNotNull(META.userPic);
-        mockMvc
-                .perform(
+        mockMvc.perform(
                         get(
-                                serverUrl + "/api/v0/metadata/content-creators/user-pics/{personCategory}/{id}",
+                                serverUrl
+                                        + "/api/v0/metadata/content-creators/user-pics/{personCategory}/{id}",
                                 META.userPic.getPersonCategory().stringValue,
                                 META.userPic.getId()))
                 .andExpect(status().isOk())
@@ -125,7 +130,8 @@ class IntendedSequenceTest {
                         result -> {
                             byte[] savedImageBytes = result.getResponse().getContentAsByteArray();
                             assertThat(savedImageBytes).isNotEmpty();
-                            assertDoesNotThrow(() -> ImageIO.read(new ByteArrayInputStream(savedImageBytes)));
+                            assertDoesNotThrow(
+                                    () -> ImageIO.read(new ByteArrayInputStream(savedImageBytes)));
                         });
     }
 
@@ -133,26 +139,26 @@ class IntendedSequenceTest {
     @Order(3)
     void saveDirector() throws Exception {
         assertNotNull(META.userPic);
-        var contentCreatorToBeSaved = ContentCreator.builder()
-                .id(null)
-                .name("Alen")
-                .surname("Winter")
-                .nameLatin("Alen")
-                .surnameLatin("Winter")
-                .bornPlace("USA, New York City, NY 10023")
-                .heightCm(180)
-                .age(35)
-                .personCategory(PersonCategory.ACTOR)
-                .userPic(META.userPic)
-                .isDead(false)
-                .birthDate(LocalDate.of(1980, 5, 10))
-                .deathDate(null)
-                .build();
+        var contentCreatorToBeSaved =
+                ContentCreator.builder()
+                        .id(null)
+                        .name("Alen")
+                        .surname("Winter")
+                        .nameLatin("Alen")
+                        .surnameLatin("Winter")
+                        .bornPlace("USA, New York City, NY 10023")
+                        .heightCm(180)
+                        .age(35)
+                        .personCategory(PersonCategory.ACTOR)
+                        .userPic(META.userPic)
+                        .isDead(false)
+                        .birthDate(LocalDate.of(1980, 5, 10))
+                        .deathDate(null)
+                        .build();
 
         String json = objectMapper.writeValueAsString(contentCreatorToBeSaved);
 
-        mockMvc
-                .perform(
+        mockMvc.perform(
                         post(serverUrl + "/api/v0/metadata/content-creators")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
                                 .content(json))
@@ -170,24 +176,28 @@ class IntendedSequenceTest {
                 .andExpect(jsonPath("$.deathDate", nullValue()))
                 .andExpect(
                         result -> {
-                            ContentCreator savedCreator = objectMapper.readValue(
-                                    result.getResponse().getContentAsString(), new TypeReference<>() {
-                                    });
+                            ContentCreator savedCreator =
+                                    objectMapper.readValue(
+                                            result.getResponse().getContentAsString(),
+                                            new TypeReference<>() {});
                             assertEquals(META.userPic, savedCreator.getUserPic());
                         })
                 .andDo(
                         result -> {
                             String rawStringAnswer = result.getResponse().getContentAsString();
-                            META.director = objectMapper.readValue(rawStringAnswer, new TypeReference<>() {
-                            });
+                            META.director =
+                                    objectMapper.readValue(
+                                            rawStringAnswer, new TypeReference<>() {});
                         });
     }
 
     @Test
     @Order(4)
     void getSavedDirector() throws Exception {
-        mockMvc
-                .perform(get(serverUrl + "/api/v0/metadata/content-creators/{id}", META.director.getId()))
+        mockMvc.perform(
+                        get(
+                                serverUrl + "/api/v0/metadata/content-creators/{id}",
+                                META.director.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id", is(not(emptyString()))))
@@ -207,38 +217,39 @@ class IntendedSequenceTest {
     void saveActors() throws Exception {
         LinkedList<ContentCreator> actors = new LinkedList<>();
 
-        ContentCreator actor1 = ContentCreator.builder()
-                .name("Alen")
-                .nameLatin("Alen")
-                .surname("Winter")
-                .surnameLatin("Winter")
-                .bornPlace("USA, New York City, NY 10023")
-                .heightCm(180)
-                .userPic(META.userPic)
-                .personCategory(PersonCategory.ACTOR)
-                .age(35)
-                .birthDate(LocalDate.of(1980, 5, 10))
-                .build();
+        ContentCreator actor1 =
+                ContentCreator.builder()
+                        .name("Alen")
+                        .nameLatin("Alen")
+                        .surname("Winter")
+                        .surnameLatin("Winter")
+                        .bornPlace("USA, New York City, NY 10023")
+                        .heightCm(180)
+                        .userPic(META.userPic)
+                        .personCategory(PersonCategory.ACTOR)
+                        .age(35)
+                        .birthDate(LocalDate.of(1980, 5, 10))
+                        .build();
 
-        ContentCreator actor2 = ContentCreator.builder()
-                .name("John")
-                .nameLatin("John")
-                .surname("Doe")
-                .surnameLatin("Doe")
-                .bornPlace("USA, Los Angeles, CA 90012")
-                .heightCm(175)
-                .userPic(META.userPic)
-                .personCategory(PersonCategory.ACTOR)
-                .age(38)
-                .birthDate(LocalDate.of(1982, 6, 15))
-                .build();
+        ContentCreator actor2 =
+                ContentCreator.builder()
+                        .name("John")
+                        .nameLatin("John")
+                        .surname("Doe")
+                        .surnameLatin("Doe")
+                        .bornPlace("USA, Los Angeles, CA 90012")
+                        .heightCm(175)
+                        .userPic(META.userPic)
+                        .personCategory(PersonCategory.ACTOR)
+                        .age(38)
+                        .birthDate(LocalDate.of(1982, 6, 15))
+                        .build();
 
         actors.add(actor1);
         actors.add(actor2);
 
         for (int i = 0; i < actors.size(); i++) {
-            mockMvc
-                    .perform(
+            mockMvc.perform(
                             post(serverUrl + "/api/v0/metadata/content-creators")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(actors.peek())))
@@ -248,8 +259,10 @@ class IntendedSequenceTest {
                     .andExpect(jsonPath("$.id", not(emptyString())))
                     .andDo(
                             result -> {
-                                ContentCreator savedActor = objectMapper.readValue(
-                                        result.getResponse().getContentAsString(), ContentCreator.class);
+                                ContentCreator savedActor =
+                                        objectMapper.readValue(
+                                                result.getResponse().getContentAsString(),
+                                                ContentCreator.class);
                                 actors.pop();
                                 actors.addLast(savedActor);
                             });
@@ -262,28 +275,35 @@ class IntendedSequenceTest {
     @Order(10)
     void saveContentMetadataForFilm() throws Exception {
 
-        var filmingGroupDTO = FilmingGroupDTO.builder()
-                .directorId(META.director.getId())
-                .actorsIds(META.actors.stream().map(ContentCreator::getId).toList())
-                .build();
+        var filmingGroupDTO =
+                FilmingGroupDTO.builder()
+                        .directorId(META.director.getId())
+                        .actorsIds(META.actors.stream().map(ContentCreator::getId).toList())
+                        .build();
 
-        var metadata = ContentMetadataDTO.builder()
-                .title("The Shawshank Redemption")
-                .releaseDate("20.06.1994")
-                .countryName("USA")
-                .mainGenreName("fiction")
-                .subGenresNames(List.of("comedy", "drama"))
-                .poster(new MediaFileInfo(IMAGE_FILE.getName(), "image/jpeg", IMAGE_FILE.length()))
-                .trailer(new MediaFileInfo(VIDEO_FILE.getName(), "video/mp4", VIDEO_FILE.length()))
-                .standaloneVideoShow(new MediaFileInfo(VIDEO_FILE.getName(), "video/mp4", VIDEO_FILE.length()))
-                .filmingGroupDTO(filmingGroupDTO)
-                .description("A prison movie about a banker and his fellow inmates.")
-                .age(18)
-                .rating(9.3)
-                .build();
+        var metadata =
+                ContentMetadataDTO.builder()
+                        .title("The Shawshank Redemption")
+                        .releaseDate("20.06.1994")
+                        .countryName("USA")
+                        .mainGenreName("fiction")
+                        .subGenresNames(List.of("comedy", "drama"))
+                        .poster(
+                                new MediaFileInfo(
+                                        IMAGE_FILE.getName(), "image/jpeg", IMAGE_FILE.length()))
+                        .trailer(
+                                new MediaFileInfo(
+                                        VIDEO_FILE.getName(), "video/mp4", VIDEO_FILE.length()))
+                        .standaloneVideoShow(
+                                new MediaFileInfo(
+                                        VIDEO_FILE.getName(), "video/mp4", VIDEO_FILE.length()))
+                        .filmingGroupDTO(filmingGroupDTO)
+                        .description("A prison movie about a banker and his fellow inmates.")
+                        .age(18)
+                        .rating(9.3)
+                        .build();
 
-        mockMvc
-                .perform(
+        mockMvc.perform(
                         post(serverUrl + "/api/v0/metadata")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(metadata)))
@@ -291,7 +311,10 @@ class IntendedSequenceTest {
                 .andExpect(jsonPath("$.id", is(notNullValue())))
                 .andExpect(jsonPath("$.id", is(not(emptyString()))))
                 .andExpect(jsonPath("$.releaseDate", is("20.06.1994")))
-                .andExpect(jsonPath("$.description", is("A prison movie about a banker and his fellow inmates.")))
+                .andExpect(
+                        jsonPath(
+                                "$.description",
+                                is("A prison movie about a banker and his fellow inmates.")))
                 .andExpect(jsonPath("$.age", is(18)))
                 .andExpect(jsonPath("$.rating", is(9.3)))
                 .andExpect(jsonPath("$.filmingGroup", notNullValue()))
@@ -312,8 +335,10 @@ class IntendedSequenceTest {
                         result -> {
                             System.out.println("RAW JSON");
                             System.out.println(result.getResponse().getContentAsString());
-                            var contentMetadata = objectMapper.readValue(
-                                    result.getResponse().getContentAsString(), ContentMetadata.class);
+                            var contentMetadata =
+                                    objectMapper.readValue(
+                                            result.getResponse().getContentAsString(),
+                                            ContentMetadata.class);
                             META.contentMetadata = contentMetadata;
                             META.poster = contentMetadata.getPoster();
                             META.trailer = contentMetadata.getTrailer();
@@ -322,17 +347,20 @@ class IntendedSequenceTest {
     }
 
     // ===== UPLOADS =====
-
+    //
     // ----- IMAGES -----
 
     @Test
     @Order(11)
     void uploadPoster() throws Exception {
         assertNotNull(META.director);
-        var multipartFile = new MockMultipartFile(
-                "image", IMAGE_FILE.getName(), "image/jpeg", Files.readAllBytes(IMAGE_FILE.toPath()));
-        mockMvc
-                .perform(
+        var multipartFile =
+                new MockMultipartFile(
+                        "image",
+                        IMAGE_FILE.getName(),
+                        "image/jpeg",
+                        Files.readAllBytes(IMAGE_FILE.toPath()));
+        mockMvc.perform(
                         multipart(serverUrl + "/api/v0/posters/upload")
                                 .file(multipartFile)
                                 .param("id", META.poster.getId()))
@@ -344,9 +372,10 @@ class IntendedSequenceTest {
                 .andExpect(jsonPath("$.contentType", notNullValue()))
                 .andDo(
                         result -> {
-                            META.poster = objectMapper.readValue(
-                                    result.getResponse().getContentAsString(), new TypeReference<>() {
-                                    });
+                            META.poster =
+                                    objectMapper.readValue(
+                                            result.getResponse().getContentAsString(),
+                                            new TypeReference<>() {});
                         });
     }
 
@@ -354,14 +383,14 @@ class IntendedSequenceTest {
     @Order(11)
     void getPoster_thenTryToParseItToImage() throws Exception {
         assertNotNull(META.poster);
-        mockMvc
-                .perform(get(serverUrl + "/api/v0/posters/{id}", META.poster.getId()))
+        mockMvc.perform(get(serverUrl + "/api/v0/posters/{id}", META.poster.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_OCTET_STREAM))
                 .andExpect(
                         result -> {
                             byte[] imageRawBytes = result.getResponse().getContentAsByteArray();
-                            assertDoesNotThrow(() -> ImageIO.read(new ByteArrayInputStream(imageRawBytes)));
+                            assertDoesNotThrow(
+                                    () -> ImageIO.read(new ByteArrayInputStream(imageRawBytes)));
                         });
     }
 
@@ -370,10 +399,13 @@ class IntendedSequenceTest {
     @Test
     @Order(20)
     void uploadTrailer() throws Exception {
-        var multipartFile = new MockMultipartFile(
-                "video", VIDEO_FILE.getName(), "video/mp4", Files.readAllBytes(VIDEO_FILE.toPath()));
-        mockMvc
-                .perform(
+        var multipartFile =
+                new MockMultipartFile(
+                        "video",
+                        VIDEO_FILE.getName(),
+                        "video/mp4",
+                        Files.readAllBytes(VIDEO_FILE.toPath()));
+        mockMvc.perform(
                         multipart(serverUrl + "/api/v0/videos/trailer")
                                 .file(multipartFile)
                                 .param("id", META.trailer.getId()))
@@ -385,19 +417,23 @@ class IntendedSequenceTest {
                 .andExpect(jsonPath("$.size", notNullValue()))
                 .andDo(
                         result -> {
-                            META.trailer = objectMapper.readValue(
-                                    result.getResponse().getContentAsString(), new TypeReference<>() {
-                                    });
+                            META.trailer =
+                                    objectMapper.readValue(
+                                            result.getResponse().getContentAsString(),
+                                            new TypeReference<>() {});
                         });
     }
 
     @Test
     @Order(21)
     void uploadStandaloneVideoShow() throws Exception {
-        var multipartFile = new MockMultipartFile(
-                "video", VIDEO_FILE.getName(), "video/mp4", Files.readAllBytes(VIDEO_FILE.toPath()));
-        mockMvc
-                .perform(
+        var multipartFile =
+                new MockMultipartFile(
+                        "video",
+                        VIDEO_FILE.getName(),
+                        "video/mp4",
+                        Files.readAllBytes(VIDEO_FILE.toPath()));
+        mockMvc.perform(
                         multipart(serverUrl + "/api/v0/videos/standalone")
                                 .file(multipartFile)
                                 .param("id", META.standaloneVideoShow.getId()))
@@ -409,9 +445,10 @@ class IntendedSequenceTest {
                 .andExpect(jsonPath("$.size", notNullValue()))
                 .andDo(
                         result -> {
-                            META.standaloneVideoShow = objectMapper.readValue(
-                                    result.getResponse().getContentAsString(), new TypeReference<>() {
-                                    });
+                            META.standaloneVideoShow =
+                                    objectMapper.readValue(
+                                            result.getResponse().getContentAsString(),
+                                            new TypeReference<>() {});
                         });
     }
 
@@ -420,8 +457,7 @@ class IntendedSequenceTest {
     void deleteWholeStandaloneShowRelatedContent() throws Exception {
         assertNotNull(META.contentMetadata);
         assertThat(META.contentMetadata.getId()).isNotBlank();
-        mockMvc
-                .perform(delete(serverUrl + "/api/v0/metadata/{id}", META.contentMetadata.getId()))
+        mockMvc.perform(delete(serverUrl + "/api/v0/metadata/{id}", META.contentMetadata.getId()))
                 .andExpect(status().isNoContent());
         META.contentMetadata = null;
     }
@@ -457,13 +493,16 @@ class IntendedSequenceTest {
     @Order(1000)
     void deleteContentCreator() throws Exception {
         assertNotNull(META.director);
-        mockMvc
-                .perform(
-                        delete(serverUrl + "/api/v0/metadata/content-creators/{id}", META.director.getId()))
+        mockMvc.perform(
+                        delete(
+                                serverUrl + "/api/v0/metadata/content-creators/{id}",
+                                META.director.getId()))
                 .andExpect(status().isNoContent());
 
-        mockMvc
-                .perform(get(serverUrl + "/api/v0/metadata/content-creators/{id}", META.director.getId()))
+        mockMvc.perform(
+                        get(
+                                serverUrl + "/api/v0/metadata/content-creators/{id}",
+                                META.director.getId()))
                 .andExpect(status().isNotFound());
     }
 
@@ -471,18 +510,18 @@ class IntendedSequenceTest {
     @Order(1001)
     void deleteContentCreatorUserPicture() throws Exception {
         assertNotNull(META.userPic);
-        mockMvc
-                .perform(
+        mockMvc.perform(
                         delete(
-                                serverUrl + "/api/v0/metadata/content-creators/user-pics/{personCategory}/{id}",
+                                serverUrl
+                                        + "/api/v0/metadata/content-creators/user-pics/{personCategory}/{id}",
                                 META.userPic.getPersonCategory(),
                                 META.userPic.getId()))
                 .andExpect(status().isNoContent());
 
-        mockMvc
-                .perform(
+        mockMvc.perform(
                         get(
-                                serverUrl + "/api/v0/metadata/content-creators/user-pics/{personCategory}/{id}",
+                                serverUrl
+                                        + "/api/v0/metadata/content-creators/user-pics/{personCategory}/{id}",
                                 META.userPic.getPersonCategory(),
                                 META.userPic.getId()))
                 .andExpect(status().isNotFound());
@@ -492,12 +531,10 @@ class IntendedSequenceTest {
     @Order(1002)
     void deletePoster() throws Exception {
         assertNotNull(META.poster);
-        mockMvc
-                .perform(delete(serverUrl + "/api/v0/posters/{id}", META.poster.getId()))
+        mockMvc.perform(delete(serverUrl + "/api/v0/posters/{id}", META.poster.getId()))
                 .andExpect(status().isNoContent());
 
-        mockMvc
-                .perform(get(serverUrl + "/api/v0/posters/{id}", META.poster.getId()))
+        mockMvc.perform(get(serverUrl + "/api/v0/posters/{id}", META.poster.getId()))
                 .andExpect(status().isNotFound());
     }
 }
