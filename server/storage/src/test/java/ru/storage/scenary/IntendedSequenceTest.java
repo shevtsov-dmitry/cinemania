@@ -1,21 +1,31 @@
 package ru.storage.scenary;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.imageio.ImageIO;
-import lombok.Data;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -27,17 +37,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.Data;
 import ru.storage.content_metadata.ContentMetadata;
 import ru.storage.content_metadata.ContentMetadataDTO;
 import ru.storage.content_metadata.common.MediaFileInfo;
-import ru.storage.content_metadata.country.Country;
-import ru.storage.content_metadata.genre.Genre;
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.video.standalone.StandaloneVideoShow;
 import ru.storage.content_metadata.video.trailer.Trailer;
 import ru.storage.person.PersonCategory;
 import ru.storage.person.content_creator.ContentCreator;
-import ru.storage.person.filming_group.FilmingGroup;
 import ru.storage.person.filming_group.FilmingGroupDTO;
 import ru.storage.person.userpic.UserPic;
 
@@ -276,10 +288,10 @@ class IntendedSequenceTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(metadata)))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(notNullValue())))
                 .andExpect(jsonPath("$.id", is(not(emptyString()))))
                 .andExpect(jsonPath("$.releaseDate", is("20.06.1994")))
-                .andExpect(
-                        jsonPath("$.description", is("A prison movie about a banker and his fellow inmates.")))
+                .andExpect(jsonPath("$.description", is("A prison movie about a banker and his fellow inmates.")))
                 .andExpect(jsonPath("$.age", is(18)))
                 .andExpect(jsonPath("$.rating", is(9.3)))
                 .andExpect(jsonPath("$.filmingGroup", notNullValue()))

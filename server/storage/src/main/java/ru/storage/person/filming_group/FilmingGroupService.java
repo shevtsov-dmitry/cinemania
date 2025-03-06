@@ -34,7 +34,7 @@ public class FilmingGroupService {
                         .orElseThrow(() -> new NoSuchElementException()))
                 .toList();
 
-        return new FilmingGroup(director, actors);
+        return filmingGroupRepo.save(new FilmingGroup(director, actors));
     }
 
     public void deleteById(String id) {

@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,7 +116,7 @@ public class ContentMetadataService {
         var trailer = new Trailer(trailerFile.filename(), trailerFile.contentType(), trailerFile.size());
         trailer = trailerService.saveMetadata(trailer);
 
-        return ContentMetadata.builder()
+        var contentMetadata = ContentMetadata.builder()
                 .title(dto.getTitle())
                 .releaseDate(LocalDate.parse(dto.getReleaseDate(),
                         DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.of("ru-RU"))))
@@ -132,6 +133,8 @@ public class ContentMetadataService {
                 // TODO extremely important to add episodes parser
                 .tvSeries(null)
                 .build();
+
+        return contentMetadataRepo.save(contentMetadata);
 
     };
 
