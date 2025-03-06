@@ -559,7 +559,10 @@ export default function FormAddFilm() {
               <input
                 ref={posterInputRef}
                 type="file"
-                onChange={() => setIsPosterFileSelected(true)}
+                onChange={(e) => {
+                  posterInputRef.current!.files = e.target.files;
+                  setIsPosterFileSelected(true);
+                }}
                 className={`block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:px-3 file:py-2 file:text-blue-700 hover:file:bg-blue-100 dark:text-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100 ${
                   isPosterFileSelected
                     ? "file:bg-green-500 file:text-white"
@@ -576,7 +579,10 @@ export default function FormAddFilm() {
               <input
                 ref={trailerInputRef}
                 type="file"
-                onChange={() => setIsTrailerFileSelected(true)}
+                onChange={(e) => {
+                  trailerInputRef.current!.files = e.target.files;
+                  setIsTrailerFileSelected(true);
+                }}
                 className={`block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:px-3 file:py-2 file:text-blue-700 hover:file:bg-blue-100 dark:text-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100 ${
                   isTrailerFileSelected
                     ? "file:bg-green-500 file:text-white"
@@ -593,7 +599,10 @@ export default function FormAddFilm() {
               <input
                 ref={standaloneVideoShowRef}
                 type="file"
-                onChange={() => setIsVideoShowFileSelected(true)}
+                onChange={(e) => {
+                  standaloneVideoShowRef.current!.files = e.target.files;
+                  setIsVideoShowFileSelected(true);
+                }}
                 className={`block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:px-3 file:py-2 file:text-blue-700 hover:file:bg-blue-100 dark:text-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100 ${
                   isVideoShowFileSelected
                     ? "file:bg-green-500 file:text-white"
