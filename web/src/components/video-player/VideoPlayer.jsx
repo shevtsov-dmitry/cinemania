@@ -13,12 +13,12 @@ export default function VideoPlayer() {
   const videoSrc = `${STREAMING_SERVER_URL}/stream/${videoname}`;
 
   return (
-    <div>
-      <video controls width="640" height="360" muted autoPlay>
-        <source src={videoSrc} type="video/mp4" />
+    <View>
+      <Video controls width="640" height="360" muted autoPlay>
+        {/* <source src={videoSrc} type="video/mp4" /> */}
         Your browser does not support the video tag. <br />
         Ваш браузер не может воспроизвести видео.
-      </video>
-    </div>
+      </Video>
+    </View>
   );
 }

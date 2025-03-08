@@ -8,14 +8,13 @@ import { useRouter } from "expo-router";
 import React, { ReactElement, useEffect, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import BackSign from "../common/BackSign";
+import ContentCreator from "@/src/types/ContentCreator";
 
 interface ContentPageProps {}
 
 const ContentPage = ({}: ContentPageProps): ReactElement => {
   const [posterUrl, setPosterUrl] = useState<string>("");
-
   const { contentPageMetadata } = useContentPageState();
-
   const router = useRouter();
 
   useEffect(() => {
@@ -54,40 +53,48 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
     );
   }
 
-  // TODO stream trailer and film
+  // Update the trailerUrl to point to the HLS playlist endpoint.
+  // For example: http://localhost:8443/api/v1/stream/<trailer-id>/playlist
+  // const trailerUrl = Constants.STREAMING_SERVER_URL + `/api/v1/stream/${contentPageMetadata.trailer?.id}/playlist`;
   const trailerUrl =
-    Constants.STREAMING_SERVER_URL +
-    `/api/v0/trailers/trailer/${contentPageMetadata.trailer?.id}`;
+    "http://localhost:8443/api/v1/stream/67c9e5ee04383653f03a4e6b/playlist";
+
+  // This filmUrl is for your full-length film (if needed)
   const filmUrl =
     Constants.STREAMING_SERVER_URL +
-    `/api/v0/videos/standalone/${contentPageMetadata.standaloneVideoShow?.id}`;
+    `/stream/${contentPageMetadata.standaloneVideoShow?.id}`;
+
+  useEffect(() => {
+    console.log("Trailer URL:", trailerUrl);
+  }, [trailerUrl]);
 
   return (
     <View className="relative h-screen w-screen flex-1 bg-cyan-800">
-      {/* Background Video with Poster */}
+      {/* Background Video with HLS Stream */}
       <View className="fixed left-3 top-3 z-10">
         <BackSign />
       </View>
       <Video
         source={{ uri: trailerUrl }}
-        posterSource={{ uri: posterUrl }}
+        // Uncomment the posterSource below if you want to display a poster image
+        // posterSource={{ uri: posterUrl }}
         rate={1.0}
         volume={1.0}
         isMuted={true}
         resizeMode={ResizeMode.COVER}
-        shouldPlay // Auto-play the trailer
-        isLooping // Loop the trailer
+        shouldPlay
+        isLooping
         className="absolute inset-0 h-full w-full"
       />
 
-      {/* Overlay with Blur Effect */}
+      {/* Overlay with Blur Effect and Metadata */}
       <BlurView
         intensity={50}
         tint="dark"
         className="absolute inset-0 flex h-full w-full items-center justify-center p-5"
       >
         <Image
-          className="mb-[2%] h-52 w-52 text-2xl text-white"
+          className="mb-[2%] h-52 w-52"
           alt="Ошибка загрузки постера"
           source={{ uri: posterUrl }}
         />
@@ -115,7 +122,10 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
           Actors:{" "}
           {contentPageMetadata.filmingGroup.actors
             .slice(0, 3)
-            .map((actor) => `${actor.name} ${actor.surname}`)
+            .map(
+              (actor: ContentCreator): string =>
+                `${actor.name} ${actor.surname}`,
+            )
             .join(", ")}
           {contentPageMetadata.filmingGroup.actors.length > 3 ? "..." : ""}
         </Text>
@@ -125,12 +135,11 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
           {contentPageMetadata.description}
         </Text>
 
-        {/* Play Button */}
+        {/* Play Button for full film (if needed) */}
         <Pressable
           className="flex-row items-center rounded-md bg-red-600 px-5 py-2"
           onPress={() => {
             // Navigate to full film player (adjust based on your navigation setup)
-            console.log("Navigate to film player with URL:", filmUrl);
             // Example with React Navigation:
             // navigation.navigate('VideoPlayer', { videoUrl: filmUrl });
           }}
