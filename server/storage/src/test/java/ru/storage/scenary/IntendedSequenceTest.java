@@ -59,8 +59,10 @@ import javax.imageio.ImageIO;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class IntendedSequenceTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private static final File IMAGE_FILE = new File("src/test/java/ru/storage/assets/image.jpg");
     private static final File VIDEO_FILE =
@@ -110,7 +112,8 @@ class IntendedSequenceTest {
                             META.userPic =
                                     objectMapper.readValue(
                                             result.getResponse().getContentAsString(),
-                                            new TypeReference<>() {});
+                                            new TypeReference<>() {
+                                            });
                         });
     }
 
@@ -179,7 +182,8 @@ class IntendedSequenceTest {
                             ContentCreator savedCreator =
                                     objectMapper.readValue(
                                             result.getResponse().getContentAsString(),
-                                            new TypeReference<>() {});
+                                            new TypeReference<>() {
+                                            });
                             assertEquals(META.userPic, savedCreator.getUserPic());
                         })
                 .andDo(
@@ -187,7 +191,8 @@ class IntendedSequenceTest {
                             String rawStringAnswer = result.getResponse().getContentAsString();
                             META.director =
                                     objectMapper.readValue(
-                                            rawStringAnswer, new TypeReference<>() {});
+                                            rawStringAnswer, new TypeReference<>() {
+                                            });
                         });
     }
 
@@ -333,8 +338,6 @@ class IntendedSequenceTest {
                 .andExpect(jsonPath("$.standaloneVideoShow.id", is(not(emptyString()))))
                 .andDo(
                         result -> {
-                            System.out.println("RAW JSON");
-                            System.out.println(result.getResponse().getContentAsString());
                             var contentMetadata =
                                     objectMapper.readValue(
                                             result.getResponse().getContentAsString(),
@@ -375,7 +378,8 @@ class IntendedSequenceTest {
                             META.poster =
                                     objectMapper.readValue(
                                             result.getResponse().getContentAsString(),
-                                            new TypeReference<>() {});
+                                            new TypeReference<>() {
+                                            });
                         });
     }
 
@@ -420,7 +424,8 @@ class IntendedSequenceTest {
                             META.trailer =
                                     objectMapper.readValue(
                                             result.getResponse().getContentAsString(),
-                                            new TypeReference<>() {});
+                                            new TypeReference<>() {
+                                            });
                         });
     }
 
@@ -448,7 +453,8 @@ class IntendedSequenceTest {
                             META.standaloneVideoShow =
                                     objectMapper.readValue(
                                             result.getResponse().getContentAsString(),
-                                            new TypeReference<>() {});
+                                            new TypeReference<>() {
+                                            });
                         });
     }
 
