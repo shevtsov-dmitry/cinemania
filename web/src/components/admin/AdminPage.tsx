@@ -15,9 +15,9 @@ const AdminPage = (): React.ReactElement => {
 
   return (
     <View>
-      {/* {isFormAddFilmVisible && <FormAddFilm />} */}
-      {/* {isFormAddCreatorVisible && <FormAddCreator />} */}
-      {/* <FormRelatedShowsChooser/> */}
+       {isFormAddFilmVisible && <FormAddFilm />}
+       {isFormAddCreatorVisible && <FormAddCreator />}
+       {/*<FormRelatedShowsChooser/>*/}
     </View>
   );
 };
