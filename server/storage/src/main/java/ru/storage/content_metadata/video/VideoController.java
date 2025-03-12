@@ -1,6 +1,8 @@
 package ru.storage.content_metadata.video;
 
 import java.io.IOException;
+import java.util.List;
+
 import org.apache.tomcat.util.json.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.storage.content_metadata.video.trailer.Trailer;
 import ru.storage.exceptions.ParseIdException;
 import ru.storage.utils.EncodedHttpHeaders;
+import ru.storage.utils.ProjectStandardUtils;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @RestController
@@ -136,7 +139,8 @@ public class VideoController {
   @DeleteMapping("standalone/{ids}")
   public ResponseEntity<Void> deleteStandaloneVideoShow(@PathVariable String ids) {
     try {
-      service.deleteStandaloneVideoShowByIds(ids);
+      List<String> parsedIds = ProjectStandardUtils.parseIdsFromString(ids);
+      service.deleteStandaloneVideoShowByIds(parsedIds);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     } catch (ParseIdException e) {
       return new ResponseEntity<>(
@@ -150,7 +154,8 @@ public class VideoController {
   @DeleteMapping("trailer/{ids}")
   public ResponseEntity<Void> deleteTrailer(@PathVariable String ids) {
     try {
-      service.deleteTrailerByIds(ids);
+      List<String> parsedIds = ProjectStandardUtils.parseIdsFromString(ids);
+      service.deleteTrailerByIds(parsedIds);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     } catch (ParseIdException e) {
       return new ResponseEntity<>(

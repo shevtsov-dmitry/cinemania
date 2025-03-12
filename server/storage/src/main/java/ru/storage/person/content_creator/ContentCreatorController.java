@@ -76,7 +76,7 @@ public class ContentCreatorController {
   @GetMapping("fullname/{prefix}")
   public ResponseEntity<List<ContentCreator>> findCreatorByFullnamePrefix(
       @PathVariable String prefix) {
-        prefix = URLDecoder.decode(prefix, StandardCharsets.UTF_8);
+    prefix = URLDecoder.decode(prefix, StandardCharsets.UTF_8);
     if (prefix.isBlank()) {
       return new ResponseEntity<>(
           null,
@@ -111,7 +111,7 @@ public class ContentCreatorController {
     }
     var userPic = contentCreatorOptional.get().getUserPic();
     if (userPic != null) {
-      userPicsService.delete(userPic.getPersonCategory(), userPic.getId());
+      userPicsService.deleteById(userPic.getPersonCategory(), List.of(userPic.getId()));
     }
     contentCreatorService.deleteCreator(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);

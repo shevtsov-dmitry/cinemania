@@ -1,5 +1,6 @@
 package ru.storage.person.userpic;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import ru.storage.exceptions.ParseEnumException;
 import ru.storage.exceptions.ParseIdException;
 import ru.storage.person.PersonCategory;
 import ru.storage.utils.EncodedHttpHeaders;
+import ru.storage.utils.ProjectStandardUtils;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @RestController
@@ -37,7 +39,8 @@ public class UserPicController {
    * @return Response:
    *     <ul>
    *       <li>201 created when user pic uploaded successfully with saved metadata.
-   *       <li>400 bad request - invalid request parameters, missing file or non image file trying to be uploaded.
+   *       <li>400 bad request - invalid request parameters, missing file or non image file trying
+   *           to be uploaded.
    *       <li>500 internal server error - unexpected errors during upload or update process.
    *     </ul>
    *     Headers:
@@ -79,7 +82,7 @@ public class UserPicController {
    *
    * @apiNote
    *     <p>This method supports both single and multiple content metadata IDs, separated by commas.
-   * @param PersonCategory personCategory the category of the pic (e.g., ACTOR, USER)
+   * @param personCategory the category of the pic (e.g., ACTOR, USER)
    * @param ids string of ids separated by comma
    * @return Response:
    *     <ul>
@@ -103,7 +106,8 @@ public class UserPicController {
     }
 
     try {
-      return new ResponseEntity<>(userPicService.getUserPics(category, ids), HttpStatus.OK);
+      List<String> parsedIds = ProjectStandardUtils.parseIdsFromString(ids);
+      return new ResponseEntity<>(userPicService.getUserPics(category, parsedIds), HttpStatus.OK);
     } catch (NoSuchElementException e) {
       return new ResponseEntity<>(
           null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.NOT_FOUND);
@@ -127,9 +131,9 @@ public class UserPicController {
    *       <li>400 (bad request) when invalid personCategory
    *     </ul>
    */
-  @DeleteMapping("{personCategory}/{ids}")
+  @DeleteMapping("{personCategory}/{id}")
   public ResponseEntity<Void> deleteUserPic(
-      @PathVariable String personCategory, @PathVariable String ids) {
+      @PathVariable String personCategory, @PathVariable String id) {
     PersonCategory category;
     try {
       category = PersonCategory.valueOf(personCategory.toUpperCase());
@@ -137,7 +141,13 @@ public class UserPicController {
       String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
       return new ResponseEntity<>(null, new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);
     }
-    userPicService.delete(category, ids);
+    List<String> parsedIds = ProjectStandardUtils.parseIdsFromString(id);
+    try {
+      userPicService.deleteById(category, parsedIds);
+    } catch (ParseIdException e) {
+      return new ResponseEntity<>(
+          null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

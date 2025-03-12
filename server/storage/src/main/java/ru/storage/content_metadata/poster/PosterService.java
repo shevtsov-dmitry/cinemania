@@ -1,6 +1,8 @@
 package ru.storage.content_metadata.poster;
 
 import jakarta.annotation.PostConstruct;
+
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -42,7 +44,7 @@ public class PosterService {
   /**
    * Upload image to S3 cloud storage.
    *
-   * @param id saved metatada id from db
+   * @param id saved metadata id from db
    * @param image multipart file
    * @throws IllegalArgumentException when multipart file is not an image
    * @throws S3Exception when image wasn't saved to S3 cloud storage
@@ -54,22 +56,22 @@ public class PosterService {
   /**
    * Get images from S3 cloud storage by IDs.
    *
+   * @param ids required ids
+   * @return maps list with id and corresponding base 64 image
+   * @throws S3Exception when an error occurs during the retrieval process
    * @apiNote This method supports both single and multiple content metadata IDs, separated by
    *     commas.
-   * @param unparsedIds string of ids separated by comma
-   * @return map with id and corresponding base 64 image
-   * @throws S3Exception when an error occurs during the retrieval process
    */
-  public Map<String, byte[]> getImagesMatchingMetadataIds(String unparsedIds) {
-    return S3GeneralOperations.getBinariesByIds(S3_FOLDER, unparsedIds);
+  public List<Map<String, Serializable>> getImagesMatchingMetadataIds(List<String> ids) {
+    return S3GeneralOperations.getMapsByIds(S3_FOLDER, ids);
   }
 
   /**
    * Get images from S3 cloud storage by IDs.
    *
+   * @param ids required ids
    * @apiNote
    *     <p>This method supports both single and multiple content metadata IDs, separated by commas.
-   * @param ids required ids
    */
   public Resource getImagesMatchingMetadataIds(Collection<String> ids) {
     return S3GeneralOperations.getBinariesByIds(S3_FOLDER, ids);
@@ -78,12 +80,11 @@ public class PosterService {
   /**
    * Delete related content instances from local metadata db and also from S3 storage.
    *
-   * @param unparsedIds a comma-separated string of content metadata IDs
+   * @param ids required ids
    * @throws ParseIdException when of invalid number format defined by api
    * @throws S3Exception when image wasn't deleted
    */
-  public void deleteByIds(String unparsedIds) {
-    List<String> ids = Arrays.asList(unparsedIds.split(",")).stream().map(String::trim).toList();
+  public void deleteByIds(List<String> ids) {
     if (ids.isEmpty()) {
       throw new ParseIdException();
     }
