@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -27,7 +26,7 @@ public class VideoStreamService {
         this.s3Client = s3Client;
     }
 
-    void getHlsPlaylist(String id, HttpServletResponse response) {
+    void getHlsPlaylist(HttpServletResponse response, String id) {
         String objectKey = S3_FOLDER + id + "/index.m3u8";
 
         try {

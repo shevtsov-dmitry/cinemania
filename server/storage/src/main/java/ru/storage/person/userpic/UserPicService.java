@@ -50,7 +50,7 @@ public class UserPicService {
      * @throws NoSuchElementException when no matches are found for the provided ids
      */
     public Resource getUserPics(PersonCategory personCategory, String ids) {
-        return S3GeneralOperations.getItemsByIds(
+        return S3GeneralOperations.getBinariesByIds(
                 PICTURES_STORAGE_FOLDER + "/" + personCategory.stringValue, ids);
     }
 

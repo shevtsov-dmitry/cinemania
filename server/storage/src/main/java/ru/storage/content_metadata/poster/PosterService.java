@@ -4,6 +4,8 @@ import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -55,11 +57,11 @@ public class PosterService {
    * @apiNote This method supports both single and multiple content metadata IDs, separated by
    *     commas.
    * @param unparsedIds string of ids separated by comma
-   * @return resouce containing single byte array with the delimiter in between the binary items.
+   * @return map with id and corresponding base 64 image
    * @throws S3Exception when an error occurs during the retrieval process
    */
-  public Resource getImagesMatchingMetadataIds(String unparsedIds) {
-    return S3GeneralOperations.getItemsByIds(S3_FOLDER, unparsedIds);
+  public Map<String, byte[]> getImagesMatchingMetadataIds(String unparsedIds) {
+    return S3GeneralOperations.getBinariesByIds(S3_FOLDER, unparsedIds);
   }
 
   /**
@@ -70,7 +72,7 @@ public class PosterService {
    * @param ids required ids
    */
   public Resource getImagesMatchingMetadataIds(Collection<String> ids) {
-    return S3GeneralOperations.getItemsByIds(S3_FOLDER, ids);
+    return S3GeneralOperations.getBinariesByIds(S3_FOLDER, ids);
   }
 
   /**

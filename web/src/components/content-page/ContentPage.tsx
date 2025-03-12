@@ -90,7 +90,7 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                 resizeMode={ResizeMode.CONTAIN}
                 shouldPlay
                 isLooping
-                style={{width: "100%", height: 300}} // Don't use className for styling
+                style={{width: "100%", height: 300, zIndex: 100}}
                 onError={(error) => console.log("Video Error:", error)}
             />;
             {/* Overlay with Blur Effect and Metadata */}

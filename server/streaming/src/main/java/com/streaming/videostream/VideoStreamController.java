@@ -15,7 +15,7 @@ public class VideoStreamController {
 
     @GetMapping("{id}/playlist")
     public void getPlaylist(@PathVariable String id, HttpServletResponse response) {
-        service.getHlsPlaylist(id, response);
+        service.getHlsPlaylist(response, id);
     }
 
     @GetMapping("{id}/chunk/{chunkName}")
