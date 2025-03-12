@@ -53,9 +53,9 @@ public class PosterController {
   }
 
   /**
-   * Get images from S3 cloud storage by IDs.
+   * Get map list with poster images and their corresponding ids from S3 cloud storage by IDs.
    *
-   * @param contentMetadataIds string of ids separated by comma
+   * @param ids string of ids separated by comma
    * @return Response:
    *     <ul>
    *       <li>200 (OK) maps list with id and corresponding base 64 image
@@ -68,14 +68,13 @@ public class PosterController {
    * @apiNote
    *     <p>This method supports both single and multiple content metadata IDs, separated by commas.
    */
-  @GetMapping(value = "{contentMetadataIds}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<Map<String, Serializable>>> getImagesByMetadataIds(
-      @PathVariable String contentMetadataIds) {
+      @PathVariable String ids) {
 
     try {
       return ResponseEntity.ok(
-          service.getImagesMatchingMetadataIds(
-              ProjectStandardUtils.parseIdsFromString(contentMetadataIds)));
+          service.getImagesMatchingMetadataIds(ProjectStandardUtils.parseIdsFromString(ids)));
     } catch (ParseIdException e) {
       return new ResponseEntity<>(
           null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);

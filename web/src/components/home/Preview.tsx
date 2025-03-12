@@ -1,10 +1,9 @@
-import { parseSplittedWithDefaultDelimiter } from "@/src/utils/BinaryContentUtils";
 import { ReactElement, useEffect, useState } from "react";
 import { View } from "react-native";
 import ContentMetadata from "@/src/types/ContentMetadata";
 import Compilation from "@/src/components/compilations/Compilation";
 import Constants from "@/src/constants/Constants";
-import { useRouter } from "expo-router";
+import Base64WithId from "@/src/types/Base64WithId";
 
 interface PreviewProps {}
 
@@ -16,7 +15,9 @@ const Preview = ({}: PreviewProps): ReactElement => {
   const [postersLoadingMessage, setPostersLoadingMessage] =
     useState<string>("");
   const [metadataList, setMetadataList] = useState<ContentMetadata[]>([]);
-  const [posterImagesUrls, setPosterImagesUrls] = useState<string[]>([]);
+  const [posterImagesWithIds, setPosterImagesWithIds] = useState<
+    Base64WithId[]
+  >([]);
 
   // const videoPlayerState = useSelector((state) => state.videoPlayer);
   // let isPlayerOpened = videoPlayerState.isPlayerOpened; // ?
@@ -61,7 +62,7 @@ const Preview = ({}: PreviewProps): ReactElement => {
       fetch(`${STORAGE_URL}/api/v0/posters/${joinedIds}`)
         .then((res) => {
           if (res.ok) {
-            return res.blob();
+            return res.json();
           } else {
             const errmes =
               decodeURI(res.headers.get("Message") as string).replaceAll(
@@ -72,37 +73,18 @@ const Preview = ({}: PreviewProps): ReactElement => {
             setPostersLoadingMessage(errmes);
           }
         })
-        .then((binaryOctetStream: Blob | undefined) => {
-          if (binaryOctetStream) {
-            attemptToSetPostersUrls(binaryOctetStream);
-          }
-        })
+        .then((json: Base64WithId[]) => setPosterImagesWithIds(json))
         .catch((err) => {
           console.error(err);
         });
     }
-
-    function attemptToSetPostersUrls(binaryOctetStream: Blob) {
-      parseSplittedWithDefaultDelimiter(binaryOctetStream)
-        .then((parsedPostersUrls) => setPosterImagesUrls(parsedPostersUrls))
-        .catch((err) => console.error(err));
-    }
   }, [metadataList]);
-
-  // TODO figure out if i should use it to parse russian text to display it in posters info on hover
-  function base64ToUtf8(ASCII_parsed_text: string) {
-    const bytes = new Uint8Array(ASCII_parsed_text.length);
-    for (let i = 0; i < ASCII_parsed_text.length; i++) {
-      bytes[i] = ASCII_parsed_text.charCodeAt(i);
-    }
-    return new TextDecoder("utf-8").decode(bytes);
-  }
 
   return (
     <View id="previews-sequence-block" className="flex flex-col justify-center">
       <View className="no-scrollbar overflow-x-scroll scroll-smooth p-2 relative">
         <Compilation
-          posterImageUrls={posterImagesUrls}
+          postersWithIds={posterImagesWithIds}
           metadataList={metadataList}
           errmes={postersLoadingMessage}
         />
