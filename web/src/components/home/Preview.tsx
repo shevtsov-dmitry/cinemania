@@ -4,6 +4,7 @@ import ContentMetadata from "@/src/types/ContentMetadata";
 import Compilation from "@/src/components/compilations/Compilation";
 import Constants from "@/src/constants/Constants";
 import Base64WithId from "@/src/types/Base64WithId";
+import CompilationKind from "@/src/components/compilations/CompilationKind";
 
 interface PreviewProps {}
 
@@ -84,6 +85,7 @@ const Preview = ({}: PreviewProps): ReactElement => {
     <View id="previews-sequence-block" className="flex flex-col justify-center">
       <View className="no-scrollbar overflow-x-scroll scroll-smooth p-2 relative">
         <Compilation
+          compilationKind={CompilationKind.PREVIEW}
           postersWithIds={posterImagesWithIds}
           metadataList={metadataList}
           errmes={postersLoadingMessage}

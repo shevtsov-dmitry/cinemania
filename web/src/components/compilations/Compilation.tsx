@@ -3,8 +3,8 @@ import {
   Animated,
   FlatList,
   InteractionManager,
-  Text,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -15,17 +15,20 @@ import { useRouter } from "expo-router";
 import useContentPageState from "@/src/state/contentPageState";
 import { BlurView } from "expo-blur";
 import Base64WithId from "@/src/types/Base64WithId";
+import compilationKind from "./CompilationKind";
 
 interface CompilationProps {
   postersWithIds: Base64WithId[];
   metadataList: ContentMetadata[];
   errmes?: string;
+  compilationKind?: CompilationKind;
 }
 
 const Compilation = ({
   postersWithIds,
   metadataList,
   errmes = "постеры загружаются...",
+  compilationKind = CompilationKind.DEFAULT,
 }: CompilationProps): ReactElement => {
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const [selectedIndex, setSelectedIndex] = useState<number>();
@@ -82,10 +85,14 @@ const Compilation = ({
         onFocus={() => handleFocus(index)}
         onBlur={handleBlur}
       >
-        <View className={`${isFocused || (isSelected && "scale-150")}`}>
+        <View
+          className={`${isFocused || (isSelected && "scale-150")}
+                    ${compilationKind === CompilationKind.PREVIEW && "min-h-96 min-w-60"} 
+                    ${compilationKind === CompilationKind.DEFAULT && "min-h-60 min-w-72"} 
+                    `}
+        >
           <Poster
             id={postersWithIds[index].id}
-            compilationKind={CompilationKind.PREVIEW}
             base64Image={postersWithIds[index].image}
           />
         </View>
@@ -123,6 +130,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   blurContainer: {
+    width: "100%",
+    height: "100%",
     flex: 1,
     padding: 15,
     borderRadius: 15,
