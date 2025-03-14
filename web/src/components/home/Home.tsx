@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import AdminPage from "../admin/AdminPage";
 import TopPanel from "../top-panel/TopPanel";
 import Preview from "./Preview";
+import { Image } from "expo-image";
 
 const Home = (): ReactElement => {
   return (

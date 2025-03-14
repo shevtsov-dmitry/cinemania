@@ -15,7 +15,6 @@ import { useRouter } from "expo-router";
 import useContentPageState from "@/src/state/contentPageState";
 import { BlurView } from "expo-blur";
 import Base64WithId from "@/src/types/Base64WithId";
-import compilationKind from "./CompilationKind";
 
 interface CompilationProps {
   postersWithIds: Base64WithId[];
@@ -102,13 +101,20 @@ const Compilation = ({
 
   return (
     <>
-      <BlurView intensity={30} tint="prominent" style={styles.blurContainer}>
+      <BlurView intensity={30} tint="prominent">
         {postersWithIds.length !== 0 ? (
           <FlatList
             horizontal
-            contentContainerStyle={styles.flatListContent}
+            contentContainerStyle={{
+              // flexDirection: "row",
+              // gap: 16,
+              // padding: 12,
+              // borderRadius: 10,
+            }}
             data={metadataList}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) =>
+              item.id?.toString() ?? index.toString()
+            }
             renderItem={({ item, index }) => (
               <SelectablePoster metadata={item} index={index} />
             )}
@@ -122,27 +128,5 @@ const Compilation = ({
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  blurContainer: {
-    width: "100%",
-    height: "100%",
-    flex: 1,
-    padding: 15,
-    borderRadius: 15,
-    justifyContent: "center",
-  },
-  flatListContent: {
-    flexDirection: "row",
-    gap: 16,
-    padding: 12,
-    borderRadius: 10,
-  },
-});
 
 export default Compilation;
