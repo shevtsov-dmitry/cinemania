@@ -3,7 +3,6 @@ import {
   Animated,
   FlatList,
   InteractionManager,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -86,8 +85,8 @@ const Compilation = ({
       >
         <View
           className={`${isFocused || (isSelected && "scale-150")}
-                    ${compilationKind === CompilationKind.PREVIEW && "min-h-96 min-w-60"} 
-                    ${compilationKind === CompilationKind.DEFAULT && "min-h-60 min-w-72"} 
+                    ${compilationKind === CompilationKind.PREVIEW && "min-h-56 min-w-32"} 
+                    ${compilationKind === CompilationKind.DEFAULT && "min-h-60 min-w-52"} 
                     `}
         >
           <Poster
