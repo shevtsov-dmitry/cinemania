@@ -104,12 +104,14 @@ const Compilation = ({
         {postersWithIds.length !== 0 ? (
           <FlatList
             horizontal
-            contentContainerStyle={{
-              // flexDirection: "row",
-              // gap: 16,
-              // padding: 12,
-              // borderRadius: 10,
-            }}
+            contentContainerStyle={
+              {
+                // flexDirection: "row",
+                // gap: 16,
+                // padding: 12,
+                // borderRadius: 10,
+              }
+            }
             data={metadataList}
             keyExtractor={(item, index) =>
               item.id?.toString() ?? index.toString()

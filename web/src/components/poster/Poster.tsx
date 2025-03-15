@@ -9,12 +9,12 @@ interface PosterProps {
 }
 
 const Poster = ({ id, base64Image }: PosterProps): ReactElement => (
-    <Image
-      id={id}
-      className="rounded-3xl w-full h-full absolute inset-0"
-      source={{ uri: `data:image/jpeg;base64,${base64Image}` }}
-      style={{ flex: 1 }}
-    />
+  <Image
+    id={id}
+    className="rounded-3xl w-full h-full absolute inset-0"
+    source={{ uri: `data:image/jpeg;base64,${base64Image}` }}
+    style={{ flex: 1 }}
+  />
 );
 
 export default Poster;

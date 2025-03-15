@@ -8,7 +8,7 @@ import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { StyleSheet, Image, Pressable, Text, View } from "react-native";
 import BackSign from "../common/BackSign";
 import ContentCreator from "@/src/types/ContentCreator";
-import { useVideoPlayer, VideoView } from "expo-video";
+import { useVideoPlayer, VideoPlayer, VideoView } from "expo-video";
 
 interface ContentPageProps {}
 
@@ -17,7 +17,7 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
   const { contentPageMetadata } = useContentPageState();
   const router = useRouter();
 
-  const videoRef = useRef<Video>(null);
+  const videoRef = useRef<VideoView>(null);
 
   useEffect(() => {
     fetchPoster();
@@ -65,7 +65,7 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
   // For example: http://localhost:8443/api/v1/stream/<trailer-id>/playlist
   // const trailerUrl = Constants.STREAMING_SERVER_URL + `/api/v1/stream/${contentPageMetadata.trailer?.id}/playlist`;
   const trailerUrl =
-    "http://localhost:8443/api/v1/stream/67d3d0c00072ab7d2d203c40/playlist";
+    "http://localhost:8443/api/v1/stream/67d47489eeda036a76103a6e/playlist";
 
   // This filmUrl is for your full-length film (if needed)
   const filmUrl =
@@ -87,7 +87,7 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
   });
 
   const FullscreenVideo = (): ReactElement => {
-    const player = useVideoPlayer(trailerUrl, (player) => {
+    const player = useVideoPlayer(trailerUrl, (player: VideoPlayer) => {
       player.loop = true;
       player.play();
     });
@@ -106,7 +106,6 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
 
   return (
     <View className="relative h-screen w-screen flex-1 bg-cyan-800">
-      {/* Background Video with HLS Stream */}
       <View className="fixed left-3 top-3 z-10 w-1/6 h-1/6">
         <BackSign />
       </View>

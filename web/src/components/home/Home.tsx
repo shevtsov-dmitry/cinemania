@@ -5,6 +5,15 @@ import AdminPage from "../admin/AdminPage";
 import TopPanel from "../top-panel/TopPanel";
 import Preview from "./Preview";
 import { Image } from "expo-image";
+import { VideoView, useVideoPlayer } from "expo-video";
+import MobileVideoPlayer from "../video-player/MobileVideoPlayer";
+import WebVideoPlayer from "../video-player/WebVideoPlayer";
+
+let trailerUrl =
+  "http://localhost:8443/api/v1/stream/67d47489eeda036a76103a6e/playlist";
+
+// trailerUrl =
+//   "http://localhost:8443/api/v1/stream/67d47489eeda036a76103a6e/chunk/index0.ts";
 
 const Home = (): ReactElement => {
   return (
@@ -14,14 +23,15 @@ const Home = (): ReactElement => {
         backgroundImage: Colors.TEAL_DARK_GRADIENT_BG_IMAGE,
       }}
     >
-      <TopPanel />
-      <AdminPage />
-      <Text className={"p-2 text-2xl font-bold text-white"}>Новинки</Text>
-      <Preview />
-      <Text className={"p-2 text-2xl font-bold text-white"}>
-        Вам может понравится
-      </Text>
-      <Preview />
+      <WebVideoPlayer url={trailerUrl} />
+      {/* <MobileVideoPlayer url={trailerUrl} /> */}
+      {/* <TopPanel /> */}
+      {/* <AdminPage /> */}
+      {/* <Text className={"p-2 text-2xl font-bold text-white"}>Новинки</Text> */}
+      {/* <Preview /> */}
+      {/* <Text className={"p-2 text-2xl font-bold text-white"}> */}
+      {/*   Вам может понравится */}
+      {/* </Text> */}
     </View>
   );
 };
