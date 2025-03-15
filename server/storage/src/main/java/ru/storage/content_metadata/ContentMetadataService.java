@@ -8,7 +8,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +18,7 @@ import ru.storage.content_metadata.genre.Genre;
 import ru.storage.content_metadata.genre.GenreRepo;
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.poster.PosterService;
-import ru.storage.content_metadata.video.VideoService;
+import ru.storage.content_metadata.video.VideoUploaderService;
 import ru.storage.content_metadata.video.standalone.StandaloneVideoShow;
 import ru.storage.content_metadata.video.standalone.StandaloneVideoShowService;
 import ru.storage.content_metadata.video.trailer.Trailer;
@@ -39,7 +38,7 @@ public class ContentMetadataService {
   private final TrailerService trailerService;
   private final StandaloneVideoShowService standaloneVideoShowService;
   private final TvSeriesService tvSeriesService;
-  private final VideoService videoService;
+  private final VideoUploaderService videoUploaderService;
   private final FilmingGroupService filmingGroupService;
   private final GenreRepo genreRepo;
   private final CountryRepo countryRepo;
@@ -50,7 +49,7 @@ public class ContentMetadataService {
       TrailerService trailerService,
       StandaloneVideoShowService standaloneVideoShowService,
       TvSeriesService tvSeriesService,
-      VideoService videoService,
+      VideoUploaderService videoUploaderService,
       FilmingGroupService filmingGroupService,
       GenreRepo genreRepo,
       CountryRepo countryRepo) {
@@ -59,7 +58,7 @@ public class ContentMetadataService {
     this.trailerService = trailerService;
     this.standaloneVideoShowService = standaloneVideoShowService;
     this.tvSeriesService = tvSeriesService;
-    this.videoService = videoService;
+    this.videoUploaderService = videoUploaderService;
     this.filmingGroupService = filmingGroupService;
     this.genreRepo = genreRepo;
     this.countryRepo = countryRepo;
@@ -190,13 +189,13 @@ public class ContentMetadataService {
       String id = metadata.getTrailer().getId();
       trailerService.deleteMetadata(id);
       parsedIds = ProjectStandardUtils.parseIdsFromString(id);
-      videoService.deleteTrailerByIds(parsedIds);
+      videoUploaderService.deleteTrailerByIds(parsedIds);
     }
     if (metadata.getStandaloneVideoShow() != null) {
       String id = metadata.getStandaloneVideoShow().getId();
       standaloneVideoShowService.deleteMetadata(id);
       parsedIds = ProjectStandardUtils.parseIdsFromString(id);
-      videoService.deleteStandaloneVideoShowByIds(parsedIds);
+      videoUploaderService.deleteStandaloneVideoShowByIds(parsedIds);
     }
     // if (metadata.getTvSeries() != null) { }
     contentMetadataRepo.delete(metadata);

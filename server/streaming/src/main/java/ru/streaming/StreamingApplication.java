@@ -1,4 +1,4 @@
-package com.streaming;
+package ru.streaming;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.ServletRequest;
 
 @SpringBootApplication
-public class CinemaniaApplication {
+public class StreamingApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CinemaniaApplication.class, args);
+        SpringApplication.run(StreamingApplication.class, args);
     }
 
     @GetMapping("/")

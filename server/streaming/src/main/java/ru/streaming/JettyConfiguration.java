@@ -1,4 +1,4 @@
-package com.streaming;
+package ru.streaming;
 
 // import org.eclipse.jetty.http3.server.HTTP3ServerConnectionFactory;
 // import org.eclipse.jetty.http3.server.HTTP3ServerConnector;

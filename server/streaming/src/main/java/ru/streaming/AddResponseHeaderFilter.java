@@ -1,4 +1,4 @@
-package com.streaming;
+package ru.streaming;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletResponse;

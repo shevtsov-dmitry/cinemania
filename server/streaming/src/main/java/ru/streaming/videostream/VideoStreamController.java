@@ -1,4 +1,4 @@
-package com.streaming.videostream;
+package ru.streaming.videostream;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;

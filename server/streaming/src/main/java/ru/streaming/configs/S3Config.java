@@ -1,4 +1,4 @@
-package com.streaming.configs;
+package ru.streaming.configs;
 
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
