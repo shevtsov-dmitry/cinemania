@@ -171,6 +171,12 @@ const FormAddCreator = () => {
         ))
     }
 
+    const styles = {
+        textInput:
+            'block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100',
+        label: 'mb-1 block text-sm font-medium',
+    }
+
     return (
         <div className="flex min-h-full w-full items-center justify-center bg-gray-100 py-2 dark:bg-gray-900">
             <form
@@ -195,22 +201,18 @@ const FormAddCreator = () => {
                 <ul className="space-y-4">
                     <li className="flex gap-3">
                         <div>
-                            <label className="mb-1 block text-sm font-medium">
-                                Имя
-                            </label>
+                            <label className={styles.label}>Имя</label>
                             <input
-                                className="w-full rounded-md border px-3 py-2 dark:bg-neutral-700"
+                                className={styles.textInput}
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder="Введите имя"
                             />
                         </div>
                         <div>
-                            <label className="mb-1 block text-sm font-medium">
-                                Фамилия
-                            </label>
+                            <label className={styles.label}>Фамилия</label>
                             <input
-                                className="w-full rounded-md border px-3 py-2 dark:bg-neutral-700"
+                                className={styles.textInput}
                                 value={surname!}
                                 onChange={(e) => setSurname(e.target.value)}
                                 placeholder="Введите фамилию"
@@ -220,22 +222,22 @@ const FormAddCreator = () => {
 
                     <li className="flex gap-3">
                         <div>
-                            <label className="mb-1 block text-sm font-medium">
+                            <label className={styles.label}>
                                 Имя (Латиницей)
                             </label>
                             <input
-                                className="w-full rounded-md border px-3 py-2 dark:bg-neutral-700"
+                                className={styles.textInput}
                                 value={nameLatin}
                                 onChange={(e) => setNameLatin(e.target.value)}
                                 placeholder="Введите имя латиницей"
                             />
                         </div>
                         <div>
-                            <label className="mb-1 block text-sm font-medium">
+                            <label className={styles.label}>
                                 Фамилия (Латиницей)
                             </label>
                             <input
-                                className="w-full rounded-md border px-3 py-2 dark:bg-neutral-700"
+                                className={styles.textInput}
                                 value={surnameLatin!}
                                 onChange={(e) =>
                                     setSurnameLatin(e.target.value)
@@ -246,24 +248,21 @@ const FormAddCreator = () => {
                     </li>
 
                     <li>
-                        <label className="mb-1 block text-sm font-medium">
-                            Место рождения
-                        </label>
+                        <label className={styles.label}>Место рождения</label>
                         <input
-                            className="w-full rounded-md border px-3 py-2 dark:bg-neutral-700"
+                            className={styles.textInput}
                             value={bornPlace!}
                             onChange={(e) => setBornPlace(e.target.value)}
-                            placeholder="Введите место рождения"
+                            placeholder="Введите страну и город; прим. Беларусь, Минск"
                         />
                     </li>
 
                     <li className="flex gap-2">
                         <div>
-                            <label className="mb-1 block text-sm font-medium">
-                                Должность
-                            </label>
+                            <label className={styles.label}>Должность</label>
                             <div className="flex gap-1">
                                 <select
+                                    className="mt-1.5 rounded p-1"
                                     value={personCategory}
                                     onChange={(e) =>
                                         setPersonCategory(
@@ -279,11 +278,9 @@ const FormAddCreator = () => {
                         </div>
 
                         <div>
-                            <label className="mb-1 block text-sm font-medium">
-                                Рост (м)
-                            </label>
+                            <label className={styles.label}>Рост (м)</label>
                             <input
-                                className="w-full rounded-md border px-3 py-2 dark:bg-neutral-700"
+                                className={styles.textInput}
                                 type="number"
                                 value={heightMeters!}
                                 onChange={(e) =>
@@ -296,11 +293,9 @@ const FormAddCreator = () => {
                         </div>
 
                         <div>
-                            <label className="mb-1 block text-sm font-medium">
-                                Возраст
-                            </label>
+                            <label className={styles.label}>Возраст</label>
                             <input
-                                className="w-full rounded-md border px-3 py-2 dark:bg-neutral-700"
+                                className={styles.textInput}
                                 type="number"
                                 value={age}
                                 onChange={(e) =>
@@ -312,9 +307,7 @@ const FormAddCreator = () => {
 
                     <li className="flex items-center gap-2">
                         <div className="mb-[-20px] flex gap-1">
-                            <label className="mb-1 block text-sm font-medium">
-                                {'Мёртв'}
-                            </label>
+                            <label className={styles.label}>{'Мёртв'}</label>
                             <input
                                 className="mt-[-2px]"
                                 type="checkbox"
@@ -324,11 +317,11 @@ const FormAddCreator = () => {
                         </div>
 
                         <div>
-                            <label className="mb-1 block text-sm font-medium">
+                            <label className={styles.label}>
                                 Дата рождения
                             </label>
                             <input
-                                className="w-full rounded-md border px-3 py-2 dark:bg-neutral-700"
+                                className={styles.textInput}
                                 type="date"
                                 value={birthDate}
                                 onChange={(e) => setBirthDate(e.target.value)}
@@ -337,11 +330,11 @@ const FormAddCreator = () => {
 
                         {isDead && (
                             <div>
-                                <label className="mb-1 block text-sm font-medium">
+                                <label className={styles.label}>
                                     Дата смерти
                                 </label>
                                 <input
-                                    className="w-full rounded-md border px-3 py-2"
+                                    className={styles.textInput}
                                     type="date"
                                     value={deathDate}
                                     onChange={(e) =>
@@ -354,21 +347,20 @@ const FormAddCreator = () => {
 
                     <li>
                         <button
-                            className="rounded bg-neutral-100 px-4 py-2 font-bold text-black shadow hover:bg-neutral-200"
-                            type="button"
+                            className={`mr-4 block w-full rounded-md border-0 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-neutral-700 dark:text-white`}
                         >
                             Выбрать связанные шоу
                         </button>
                     </li>
 
                     <li>
-                        <label className="mb-1 block text-sm font-medium">
-                            Фото
-                        </label>
+                        <label className={styles.label}>Фото</label>
                         <input
                             ref={fileInputRef}
                             type="file"
-                            className="block w-full text-sm"
+                            className={
+                                'block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-blue-700 hover:file:bg-blue-100 dark:text-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100'
+                            }
                             accept="image/*"
                         />
                     </li>
