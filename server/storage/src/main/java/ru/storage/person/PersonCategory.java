@@ -5,9 +5,10 @@ package ru.storage.person;
  */
 public enum PersonCategory {
 
-    DIRECTOR("DIRECTOR"), 
+    DIRECTOR("DIRECTOR"),
     ACTOR("ACTOR"),
-    USER("USER");
+    OPERATOR("OPERATOR"),
+    PRODUCER("PRODUCER");
 
     public final String stringValue;
 

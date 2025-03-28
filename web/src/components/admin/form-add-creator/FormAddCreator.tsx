@@ -1,9 +1,17 @@
 import Constants from '@/src/constants/Constants'
 import useFormAddCreatorStore from '@/src/state/formAddCreatorState'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import PersonCategory from '@/src/types/PersonCategory'
+import PersonCategory, {
+    PersonCategoryLocalized,
+} from '@/src/types/PersonCategory'
 import UserPic from '@/src/types/UserPic'
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
+import React, {
+    FormEvent,
+    ReactElement,
+    useEffect,
+    useRef,
+    useState,
+} from 'react'
 
 const FormAddCreator = () => {
     const [name, setName] = useState<string>('')
@@ -143,8 +151,28 @@ const FormAddCreator = () => {
         return () => clearTimeout(timer)
     }, [operationStatus])
 
+    interface LocalizedPersonCategoryList {
+        locale: Intl.Locale
+    }
+    const LocalizedPersonCategoryList = ({
+        locale,
+    }: LocalizedPersonCategoryList): ReactElement => {
+        const localizedNames: string[] = []
+        if (locale.baseName === 'ru') {
+            for (let category of Object.values(PersonCategory)) {
+                localizedNames.push(PersonCategoryLocalized.RU[category])
+            }
+        }
+
+        return localizedNames.map((category) => (
+            <option key={category} value={category}>
+                {category}
+            </option>
+        ))
+    }
+
     return (
-        <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 p-4 dark:bg-gray-900">
+        <div className="flex min-h-full w-full items-center justify-center bg-gray-100 py-2 dark:bg-gray-900">
             <form
                 ref={formRef}
                 className="full relative max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:text-blue-100"
@@ -229,28 +257,27 @@ const FormAddCreator = () => {
                         />
                     </li>
 
-                    <li>
-                        <label>Должность</label>
-                        <div className="flex gap-1">
-                            {Object.values(PersonCategory).map((category) => (
-                                <div key={category}>
-                                    <input
-                                        type="radio"
-                                        value={category}
-                                        checked={personCategory === category}
-                                        onChange={(e) =>
-                                            setPersonCategory(
-                                                e.target.value as PersonCategory
-                                            )
-                                        }
-                                    />
-                                    <label className="ml-2">{category}</label>
-                                </div>
-                            ))}
-                        </div>
-                    </li>
-
                     <li className="flex gap-2">
+                        <div>
+                            <label className="mb-1 block text-sm font-medium">
+                                Должность
+                            </label>
+                            <div className="flex gap-1">
+                                <select
+                                    value={personCategory}
+                                    onChange={(e) =>
+                                        setPersonCategory(
+                                            e.target.value as PersonCategory
+                                        )
+                                    }
+                                >
+                                    <LocalizedPersonCategoryList
+                                        locale={new Intl.Locale('RU')}
+                                    />
+                                </select>
+                            </div>
+                        </div>
+
                         <div>
                             <label className="mb-1 block text-sm font-medium">
                                 Рост (м)
