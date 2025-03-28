@@ -262,7 +262,7 @@ const FormAddCreator = () => {
                             <label className={styles.label}>Должность</label>
                             <div className="flex gap-1">
                                 <select
-                                    className="mt-1.5 rounded p-1"
+                                    className="mt-0.5 rounded p-1"
                                     value={personCategory}
                                     onChange={(e) =>
                                         setPersonCategory(
@@ -377,33 +377,40 @@ const FormAddCreator = () => {
                     {/*)}*/}
                 </ul>
 
-                <div className="mt-6 flex justify-center gap-4">
-                    <div className={'absolute left-5'}>
-                        {operationStatus && (
-                            <p
-                                className={
-                                    operationStatus.ok
-                                        ? 'text-4xl text-green-500'
-                                        : 'text-red-500'
-                                }
-                            >
-                                {operationStatus?.message}
-                            </p>
-                        )}
+                <div className="relative mt-6 flex items-center justify-center">
+                    {/* upload status indicator */}
+                    <div className="mt-6 flex justify-center gap-4">
+                        <div className={'absolute left-5'}>
+                            {operationStatus && (
+                                <p
+                                    className={
+                                        operationStatus.ok
+                                            ? 'text-4xl text-green-500'
+                                            : 'text-red-500'
+                                    }
+                                >
+                                    {operationStatus?.message}
+                                </p>
+                            )}
+                        </div>
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            onKeyDown={(event) =>
+                                event.keyCode === 13 && event.preventDefault()
+                            }
+                            className="rounded-lg bg-blue-600 px-4 py-2 font-bold text-white transition-transform hover:bg-blue-700 focus:outline-none dark:bg-green-600 dark:hover:bg-green-700"
+                            id="add-film-button"
+                        >
+                            Загрузить
+                        </button>
+                        {/* Clear Form */}
+                        <div className="absolute right-0">
+                            <button className="mt-3 p-0 text-xs text-gray-500 hover:text-gray-700 dark:text-blue-200 dark:hover:text-blue-300">
+                                <u>Очистить форму</u>
+                            </button>
+                        </div>
                     </div>
-                    <button
-                        type="submit"
-                        className="rounded-lg bg-blue-600 px-4 py-2 font-bold text-white shadow hover:bg-blue-700 focus:outline-none"
-                    >
-                        Сохранить
-                    </button>
-                    <button
-                        type="button"
-                        onClick={resetForm}
-                        className="rounded-lg bg-neutral-100 px-4 py-2 font-bold text-black shadow hover:bg-neutral-200"
-                    >
-                        Очистить
-                    </button>
                 </div>
             </form>
         </div>
