@@ -373,7 +373,7 @@ export default function FormAddFilm() {
     }
 
     return (
-        <div className="flex min-h-full w-full items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <div className="flex min-h-full w-full items-center justify-center bg-gray-100 py-20 dark:bg-gray-900">
             <form
                 ref={formRef}
                 className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:text-blue-100"

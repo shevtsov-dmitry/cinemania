@@ -75,7 +75,7 @@ const FormFilmCrewChooser = (): ReactElement => {
     }
 
     return (
-        <div className="related mx-auto max-w-2xl rounded bg-white p-5 text-gray-800 shadow">
+        <div className="related fixed left-[650px] top-[600px] mx-auto max-w-2xl rounded bg-white p-5 text-gray-800 shadow">
             <div
                 id="close-sign"
                 className="absolute right-2 top-1 hover:cursor-pointer"
@@ -204,18 +204,20 @@ const CreatorItem = ({
     }
 
     return (
-        <div className="flex items-center rounded border border-gray-300 bg-gray-100 p-4">
-            {imageUrl ? (
-                <img
-                    src={imageUrl}
-                    alt={`${creator.name} ${creator.surname}`}
-                    className="mr-5 h-24 w-24 rounded object-cover"
-                />
-            ) : (
-                <div className="mr-5 h-24 w-24 rounded bg-gray-300" />
-            )}
-            <div className="flex-1">
+        <div className="flex items-center gap-2 rounded border border-gray-300 bg-gray-100 p-4">
+            <div className="flex-1 items-start justify-start">
                 <h3 className="mb-2 text-xl font-bold text-blue-500">{`${creator.name} ${creator.surname}`}</h3>
+                {imageUrl ? (
+                    <img
+                        src={imageUrl}
+                        alt={`${creator.name} ${creator.surname}`}
+                        className="mr-5 h-24 w-24 rounded object-cover"
+                    />
+                ) : (
+                    <div className="mr-5 h-24 w-24 rounded bg-gray-300" />
+                )}
+            </div>
+            <div className="flex-2">
                 {/*<p className="text-base text-gray-800">*/}
                 {/*  <strong className="font-semibold text-gray-600">Category:</strong>{" "}*/}
                 {/*  {creator.personCategory}*/}
@@ -245,18 +247,6 @@ const CreatorItem = ({
                         Рождён(а):
                     </strong>{' '}
                     {creator.bornPlace}
-                </p>
-                <p className="text-base text-gray-800">
-                    <strong className="font-semibold text-gray-600">
-                        Имя:
-                    </strong>{' '}
-                    {`${creator.name} ${creator.surname}`}
-                </p>
-                <p className="text-base text-gray-800">
-                    <strong className="font-semibold text-gray-600">
-                        Жив(а):
-                    </strong>{' '}
-                    {creator.isDead ? 'Нет' : 'Да'}
                 </p>
                 {/* Add the Select button */}
                 <button
