@@ -1,6 +1,5 @@
 package ru.storage.person.content_creator;
 
-import java.io.ObjectInputFilter.Config;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
