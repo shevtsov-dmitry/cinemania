@@ -9,12 +9,12 @@ type ContentCreator = {
     surnameLatin: string
     bornPlace: string
     heightCm: number
-    personCategory: Position
-    personCategory: Position
+    position: Position
+    additionalPosition?: Position
     userPic: UserPic
     isDead: boolean
     birthDate: string
-    deathDate: string
+    deathDate?: string
 }
 
 export default ContentCreator

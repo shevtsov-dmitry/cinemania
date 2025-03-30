@@ -102,14 +102,13 @@ export default function FormAddFilm() {
         loadingRef.current!.style.display = 'none'
 
         async function uploadPoster(id: string) {
-            const posterFile = posterInputRef.current!.files?.[0] as File
-            if (posterFile == null) {
+            if (pickedFiles.poster == null) {
                 throw new Error('Необходимо выбрать постер для видео.')
             }
 
             const posterFormData = new FormData()
             posterFormData.append('id', id)
-            posterFormData.append('image', posterFile)
+            posterFormData.append('image', pickedFiles.poster)
 
             const res = await fetch(`${STORAGE_URL}/api/v0/posters/upload`, {
                 method: 'POST',
@@ -127,7 +126,7 @@ export default function FormAddFilm() {
         }
 
         async function uploadVideo(id: string, videoType: VideoType) {
-            if (!standaloneVideoShowRef.current) {
+            if (!pickedFiles.video) {
                 throw new Error(
                     `Необходимо выбрать видеофайл. Не выбран ${videoType}.`
                 )
@@ -139,20 +138,20 @@ export default function FormAddFilm() {
 
             if (videoType === VideoType.STANDALONE) {
                 url = baseUrl + `/standalone`
-                videoFile = standaloneVideoShowRef.current.files?.[0] as File
+                videoFile = pickedFiles.video
             } else if (videoType === VideoType.TRAILER) {
                 url = baseUrl + `/trailer`
-                videoFile = standaloneVideoShowRef.current.files?.[0] as File
+                videoFile = pickedFiles.trailer
             } else if (videoType === VideoType.EPISODE) {
                 url = baseUrl + `/episode`
-                videoFile = standaloneVideoShowRef.current.files?.[0] as File
+                videoFile = pickedFiles.episode
             } else {
                 throw new Error('Не удалось выбрать виодефайл.')
             }
 
             const videoFormData = new FormData()
             videoFormData.append('id', id)
-            videoFormData.append('video', videoFile)
+            videoFormData.append('video', videoFile!)
 
             const res = await fetch(url, {
                 method: 'POST',
@@ -170,10 +169,6 @@ export default function FormAddFilm() {
 
         async function saveMetadata(): Promise<ContentMetadata> {
             const form = new FormData(formRef.current!)
-            const posterFile = posterInputRef.current!.files?.[0] as File
-            const trailerFile = trailerInputRef.current!.files?.[0] as File
-            const standaloneVideoShowFile = trailerInputRef.current!
-                .files?.[0] as File
 
             const metadata: ContentMetadataDTO = {
                 title: form.get('title')?.toString().trim()!,
@@ -193,19 +188,19 @@ export default function FormAddFilm() {
                     actorsIds: actors.map((actor) => actor.id),
                 },
                 poster: {
-                    filename: posterFile.name,
-                    contentType: posterFile.type,
-                    size: posterFile.size,
+                    filename: pickedFiles.poster!.name,
+                    contentType: pickedFiles.poster!.type,
+                    size: pickedFiles.poster!.size,
                 },
                 trailer: {
-                    filename: trailerFile.name,
-                    contentType: trailerFile.type,
-                    size: trailerFile.size,
+                    filename: pickedFiles.trailer!.name,
+                    contentType: pickedFiles.trailer!.type,
+                    size: pickedFiles.trailer!.size,
                 },
                 standaloneVideoShow: {
-                    filename: standaloneVideoShowFile.name,
-                    contentType: standaloneVideoShowFile.type,
-                    size: standaloneVideoShowFile.size,
+                    filename: pickedFiles.video!.name,
+                    contentType: pickedFiles.video!.type,
+                    size: pickedFiles.video!.size,
                 },
                 episodes: [],
             }
@@ -306,11 +301,6 @@ export default function FormAddFilm() {
         </div>
     )
 
-    function handleSelect() {
-        setFormFilmCrewChoosingType(category)
-        showFilmCrewChooser()
-    }
-
     interface PersonPositionOptionProps {
         label: string
         category: Position
@@ -325,7 +315,8 @@ export default function FormAddFilm() {
             <button
                 className={`block w-10/12 rounded-md border-0 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-neutral-700 dark:text-white`}
                 onClick={(e) => {
-                    e.preventDefault()
+                    setFormFilmCrewChoosingType(category)
+                    showFilmCrewChooser()
                 }}
             >
                 Выбрать
@@ -519,7 +510,7 @@ export default function FormAddFilm() {
 
                     <li id="filmingGroup">
                         <label className={styles.label}>
-                            Вkберите съёмочную группу
+                            Выберите съёмочную группу
                         </label>
                         <div className="grid grid-cols-2 gap-1">
                             <PersonPositionOption

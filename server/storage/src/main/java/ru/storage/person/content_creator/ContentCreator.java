@@ -27,6 +27,7 @@ public class ContentCreator {
     private String bornPlace;
     private Integer heightCm;
     private Position position;
+    private Position additionalPosition;
     @DBRef
     private UserPic userPic;
     private Boolean isDead;

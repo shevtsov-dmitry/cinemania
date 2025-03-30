@@ -1,9 +1,8 @@
 import Constants from '@/src/constants/Constants'
 import useFormAddCreatorStore from '@/src/state/formAddCreatorState'
+import ContentCreator from '@/src/types/ContentCreator'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import Position, {
-    PositionKindLocalized,
-} from '@/src/types/Position'
+import Position, { PositionKindLocalized } from '@/src/types/Position'
 import UserPic from '@/src/types/UserPic'
 import React, {
     FormEvent,
@@ -12,6 +11,7 @@ import React, {
     useRef,
     useState,
 } from 'react'
+import { Header } from 'react-native/Libraries/NewAppScreen'
 
 const FormAddCreator = () => {
     const [name, setName] = useState<string>('')
@@ -19,11 +19,13 @@ const FormAddCreator = () => {
     const [surname, setSurname] = useState<string | null>('')
     const [surnameLatin, setSurnameLatin] = useState<string | null>('')
     const [bornPlace, setBornPlace] = useState<string | null>('')
-    const [heightMeters, setHeightMeters] = useState<number | null>(0)
-    const [age, setAge] = useState<number>(0)
+    const [heightCm, setHeightMeters] = useState<number | null>(0)
     const [birthDate, setBirthDate] = useState<string>('')
     const [deathDate, setDeathDate] = useState<string | null>('')
-    const [personCategory, setPersonCategory] = useState<Position>()
+    const [position, setPosition] = useState<string>()
+    const [additionalPosition, setAdditionalPosition] = useState<
+        string | null
+    >()
     const [filmsParticipated, setFilmsParticipated] = useState<
         ContentMetadata[]
     >([])
@@ -53,18 +55,18 @@ const FormAddCreator = () => {
 
         const userPicMetadata = await uploadImage()
 
-        const newCreator = {
+        const newCreator: ContentCreator = {
             name,
-            surname,
+            surname: surname!,
             nameLatin,
-            surnameLatin,
-            bornPlace,
-            heightMeters,
-            age,
-            personCategory,
+            surnameLatin: surnameLatin!,
+            bornPlace: bornPlace!,
+            heightCm: heightCm!,
+            position: PositionKindLocalized.EN_FROM_RU[position!],
+            additionalPosition: undefined,
             userPic: userPicMetadata as UserPic,
             birthDate: parseDateEngToRus(birthDate),
-            deathDate: isDead ? parseDateEngToRus(deathDate!) : null,
+            deathDate: isDead ? parseDateEngToRus(deathDate!) : undefined,
             isDead,
         }
 
@@ -105,27 +107,36 @@ const FormAddCreator = () => {
         if (selectedPersonAvatarImage) {
             const formData = new FormData()
             formData.append('image', selectedPersonAvatarImage)
-            formData.append('personCategory', personCategory as string)
-
-            const res = await fetch(
-                Constants.STORAGE_URL +
-                    '/api/v0/metadata/content-creators/user-pics/upload',
-                {
-                    method: 'POST',
-                    body: formData,
-                }
+            formData.append(
+                'position',
+                PositionKindLocalized.EN_FROM_RU[position!]
             )
 
-            if (!res.ok) {
-                const errmes: string = decodeURI(
-                    res.headers.get('Message') as string
-                ).replaceAll('+', ' ')
-                setOperationStatus({ ok: false, message: errmes })
-                console.error(errmes)
+            try {
+                const res = await fetch(
+                    Constants.STORAGE_URL +
+                        '/api/v0/metadata/content-creators/user-pics/upload',
+                    {
+                        method: 'POST',
+                        body: formData,
+                    }
+                )
+
+                if (!res.ok) {
+                    const errmes: string = decodeURI(
+                        res.headers.get('Message') as string
+                    ).replaceAll('+', ' ')
+                    setOperationStatus({ ok: false, message: errmes })
+                    console.error(errmes)
+                    return
+                }
+
+                return await res.json()
+            } catch (e: any) {
+                setOperationStatus({ ok: false, message: e.message })
+                console.error(e.message)
                 return
             }
-
-            return await res.json()
         }
     }
 
@@ -136,7 +147,6 @@ const FormAddCreator = () => {
         setSurnameLatin('')
         setBornPlace('')
         setHeightMeters(0)
-        setAge(0)
         setBirthDate('')
         setDeathDate('')
         setIsDead(false)
@@ -182,9 +192,21 @@ const FormAddCreator = () => {
 
     const styles = {
         textInput:
-            'block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100',
+            ' block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100 ',
         label: ' mb-1 block text-sm font-medium ',
     }
+
+    const CloseSign = (): ReactElement => (
+        <div id="close-sign" className="absolute right-4 top-4">
+            <button
+                type="button"
+                className="cursor-pointer select-none text-xl font-bold text-gray-500 hover:text-gray-700 dark:text-blue-200 dark:hover:text-blue-300"
+                onClick={hideFormAddCreator}
+            >
+                &#10006;
+            </button>
+        </div>
+    )
 
     return (
         <div className="flex min-h-full w-full items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -193,16 +215,7 @@ const FormAddCreator = () => {
                 className="full relative max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:text-blue-100"
                 onSubmit={handleSubmit}
             >
-                <div id="close-sign" className="absolute right-4 top-4">
-                    <button
-                        type="button"
-                        className="cursor-pointer select-none text-xl font-bold text-gray-500 hover:text-gray-700 dark:text-blue-200 dark:hover:text-blue-300"
-                        onClick={hideFormAddCreator}
-                    >
-                        &#10006;
-                    </button>
-                </div>
-
+                <CloseSign />
                 <h2 className="mb-6 text-center text-3xl font-bold text-gray-900 dark:text-blue-100">
                     Добавить члена съёмочной группы
                 </h2>
@@ -272,11 +285,9 @@ const FormAddCreator = () => {
                             <div className="flex gap-1">
                                 <select
                                     className="mt-0.5 rounded p-1"
-                                    value={personCategory}
+                                    value={position}
                                     onChange={(e) =>
-                                        setPersonCategory(
-                                            e.target.value as Position
-                                        )
+                                        setPosition(e.target.value as Position)
                                     }
                                 >
                                     <LocalizedPersonCategoryList
@@ -286,7 +297,7 @@ const FormAddCreator = () => {
                             </div>
                         </div>
 
-                        <div className="flex-2 mr-12">
+                        {/* <div className="flex-2 mr-12">
                             <label className={styles.label}>
                                 Доп. Должность
                             </label>
@@ -302,18 +313,18 @@ const FormAddCreator = () => {
                                 >
                                     <LocalizedPersonCategoryList
                                         locale={new Intl.Locale('RU')}
-                                        optionNo={true}
+                                        oФиptionNo={true}
                                     />
                                 </select>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="flex-1">
                             <label className={styles.label}>Рост (см)</label>
                             <input
                                 className={styles.textInput}
                                 type="number"
-                                value={heightMeters!}
+                                value={heightCm!}
                                 onChange={(e) =>
                                     setHeightMeters(
                                         parseFloat(e.target.value) || 0
@@ -382,6 +393,7 @@ const FormAddCreator = () => {
                                 />
                             </div>
                             <button
+                                onClick={(e) => e.preventDefault()}
                                 className={`mr-4 block w-11/12 rounded-md border-0 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-neutral-700 dark:text-white`}
                             >
                                 Выбрать связанные шоу
