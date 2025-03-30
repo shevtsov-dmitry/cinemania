@@ -3,7 +3,7 @@ package ru.storage.person;
 /**
  * Enum defining the user type folder where user pictures are stored in S3 bucket (e.g. "director", "actor").
  */
-public enum PersonCategory {
+public enum Position {
 
     DIRECTOR("DIRECTOR"),
     ACTOR("ACTOR"),
@@ -12,7 +12,7 @@ public enum PersonCategory {
 
     public final String stringValue;
 
-    PersonCategory(String stringValue)  {
+    Position(String stringValue)  {
         this.stringValue = stringValue;
     }
 

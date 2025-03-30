@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.storage.exceptions.ParseEnumException;
 import ru.storage.exceptions.ParseIdException;
-import ru.storage.person.PersonCategory;
+import ru.storage.person.Position;
 import ru.storage.utils.EncodedHttpHeaders;
 import ru.storage.utils.ProjectStandardUtils;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -51,11 +51,11 @@ public class UserPicController {
   @PostMapping("upload")
   public ResponseEntity<UserPic> uploadUserPic(
       @RequestParam String personCategory, @RequestParam MultipartFile image) {
-    PersonCategory category;
+    Position category;
     try {
-      category = PersonCategory.valueOf(personCategory.toUpperCase());
+      category = Position.valueOf(personCategory.toUpperCase());
     } catch (IllegalArgumentException e) {
-      String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
+      String errmes = (new ParseEnumException(Position.class)).getMessage();
       return new ResponseEntity<>(new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);
     }
 
@@ -65,7 +65,7 @@ public class UserPicController {
               .filename(image.getOriginalFilename())
               .contentType(image.getContentType())
               .size(image.getSize())
-              .personCategory(category)
+              .position(category)
               .build();
       UserPic savedUserPicMetadata = userPicService.uploadImage(userPicMetadata, image);
       return new ResponseEntity<>(savedUserPicMetadata, HttpStatus.CREATED);
@@ -97,11 +97,11 @@ public class UserPicController {
   @GetMapping(value = "{personCategory}/{ids}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
   public ResponseEntity<Resource> getUserPics(
       @PathVariable String personCategory, @PathVariable String ids) {
-    PersonCategory category;
+    Position category;
     try {
-      category = PersonCategory.valueOf(personCategory.toUpperCase());
+      category = Position.valueOf(personCategory.toUpperCase());
     } catch (IllegalArgumentException e) {
-      String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
+      String errmes = (new ParseEnumException(Position.class)).getMessage();
       return new ResponseEntity<>(null, new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);
     }
 
@@ -134,11 +134,11 @@ public class UserPicController {
   @DeleteMapping("{personCategory}/{id}")
   public ResponseEntity<Void> deleteUserPic(
       @PathVariable String personCategory, @PathVariable String id) {
-    PersonCategory category;
+    Position category;
     try {
-      category = PersonCategory.valueOf(personCategory.toUpperCase());
+      category = Position.valueOf(personCategory.toUpperCase());
     } catch (IllegalArgumentException e) {
-      String errmes = (new ParseEnumException(PersonCategory.class)).getMessage();
+      String errmes = (new ParseEnumException(Position.class)).getMessage();
       return new ResponseEntity<>(null, new EncodedHttpHeaders(errmes), HttpStatus.BAD_REQUEST);
     }
     List<String> parsedIds = ProjectStandardUtils.parseIdsFromString(id);

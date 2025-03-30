@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import ru.storage.person.PersonCategory;
+import ru.storage.person.Position;
 import ru.storage.person.userpic.UserPic;
 
 @Data
@@ -18,21 +18,22 @@ import ru.storage.person.userpic.UserPic;
 @Builder
 @Document
 public class ContentCreator {
-  @Id private String id;
-  private String name;
-  private String surname;
-  private String nameLatin;
-  private String surnameLatin;
-  private String bornPlace;
-  private Integer heightCm;
-  private Integer age;
-  private PersonCategory personCategory;
-  @DBRef private UserPic userPic;
-  private Boolean isDead;
+    @Id
+    private String id;
+    private String name;
+    private String surname;
+    private String nameLatin;
+    private String surnameLatin;
+    private String bornPlace;
+    private Integer heightCm;
+    private Position position;
+    @DBRef
+    private UserPic userPic;
+    private Boolean isDead;
 
-  @JsonFormat(pattern = "dd.MM.yyyy")
-  private LocalDate birthDate;
+    @JsonFormat(pattern = "dd.MM.yyyy")
+    private LocalDate birthDate;
 
-  @JsonFormat(pattern = "dd.MM.yyyy")
-  private LocalDate deathDate;
+    @JsonFormat(pattern = "dd.MM.yyyy")
+    private LocalDate deathDate;
 }

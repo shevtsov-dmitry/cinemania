@@ -23,10 +23,19 @@ public class FilmingGroup {
     private ContentCreator director;
     @DBRef
     private List<ContentCreator> actors;
+    private List<ContentCreator> operators;
+    private List<ContentCreator> directors;
 
     public FilmingGroup(ContentCreator director, List<ContentCreator> actors) {
         this.director = director;
         this.actors = actors;
+    }
+
+    public FilmingGroup(ContentCreator director, List<ContentCreator> actors, List<ContentCreator> operators, List<ContentCreator> directors) {
+        this.director = director;
+        this.actors = actors;
+        this.operators = operators;
+        this.directors = directors;
     }
 
 }

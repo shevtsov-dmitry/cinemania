@@ -3,7 +3,7 @@ import useFormAddFilmStore from '@/src/state/formAddFilmState'
 import useFilmCrewChooserStore from '@/src/state/formFilmCrewChooserState'
 import ContentCreator from '@/src/types/ContentCreator'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import PersonCategory from '@/src/types/PersonCategory'
+import Position from '@/src/types/Position'
 import React, {
     FormEvent,
     ReactElement,
@@ -313,7 +313,7 @@ export default function FormAddFilm() {
 
     interface PersonPositionOptionProps {
         label: string
-        category: PersonCategory
+        category: Position
     }
 
     const PersonPositionOption = ({
@@ -382,7 +382,7 @@ export default function FormAddFilm() {
     }
 
     return (
-        <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 p-4 dark:bg-gray-900">
+        <div className="flex min-h-full w-full items-center justify-center bg-gray-100 dark:bg-gray-900">
             <form
                 ref={formRef}
                 className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:text-blue-100"
@@ -524,19 +524,19 @@ export default function FormAddFilm() {
                         <div className="grid grid-cols-2 gap-1">
                             <PersonPositionOption
                                 label="Режиссёр"
-                                category={PersonCategory.DIRECTOR}
+                                category={Position.DIRECTOR}
                             />
                             <PersonPositionOption
                                 label="Продюсеры"
-                                category={PersonCategory.PRODUCER}
+                                category={Position.PRODUCER}
                             />
                             <PersonPositionOption
                                 label="Актёры"
-                                category={PersonCategory.ACTOR}
+                                category={Position.ACTOR}
                             />
                             <PersonPositionOption
                                 label="Операторы"
-                                category={PersonCategory.OPERATOR}
+                                category={Position.OPERATOR}
                             />
                         </div>
                     </li>

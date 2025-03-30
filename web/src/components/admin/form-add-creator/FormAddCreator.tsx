@@ -1,9 +1,9 @@
 import Constants from '@/src/constants/Constants'
 import useFormAddCreatorStore from '@/src/state/formAddCreatorState'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import PersonCategory, {
-    PersonCategoryLocalized,
-} from '@/src/types/PersonCategory'
+import Position, {
+    PositionKindLocalized,
+} from '@/src/types/Position'
 import UserPic from '@/src/types/UserPic'
 import React, {
     FormEvent,
@@ -23,7 +23,7 @@ const FormAddCreator = () => {
     const [age, setAge] = useState<number>(0)
     const [birthDate, setBirthDate] = useState<string>('')
     const [deathDate, setDeathDate] = useState<string | null>('')
-    const [personCategory, setPersonCategory] = useState<PersonCategory>()
+    const [personCategory, setPersonCategory] = useState<Position>()
     const [filmsParticipated, setFilmsParticipated] = useState<
         ContentMetadata[]
     >([])
@@ -38,8 +38,11 @@ const FormAddCreator = () => {
         OperationStatus | undefined
     >()
 
+    const [selectedPersonAvatarImage, setSelectedPersonAvatarImage] = useState<
+        File | undefined
+    >()
+
     const formRef = useRef<HTMLFormElement>(null)
-    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const hideFormAddCreator = useFormAddCreatorStore(
         (state) => state.hideFormAddCreator
@@ -99,10 +102,9 @@ const FormAddCreator = () => {
     }
 
     async function uploadImage(): Promise<UserPic | undefined> {
-        const file = fileInputRef.current?.files?.[0]
-        if (file) {
+        if (selectedPersonAvatarImage) {
             const formData = new FormData()
-            formData.append('image', file)
+            formData.append('image', selectedPersonAvatarImage)
             formData.append('personCategory', personCategory as string)
 
             const res = await fetch(
@@ -153,14 +155,21 @@ const FormAddCreator = () => {
 
     interface LocalizedPersonCategoryList {
         locale: Intl.Locale
+        optionNo?: boolean
     }
     const LocalizedPersonCategoryList = ({
         locale,
+        optionNo,
     }: LocalizedPersonCategoryList): ReactElement => {
         const localizedNames: string[] = []
+
+        if (optionNo) {
+            localizedNames.push('Нет')
+        }
+
         if (locale.baseName === 'ru') {
-            for (let category of Object.values(PersonCategory)) {
-                localizedNames.push(PersonCategoryLocalized.RU[category])
+            for (let category of Object.values(Position)) {
+                localizedNames.push(PositionKindLocalized.RU[category])
             }
         }
 
@@ -174,11 +183,11 @@ const FormAddCreator = () => {
     const styles = {
         textInput:
             'block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-blue-100',
-        label: 'mb-1 block text-sm font-medium',
+        label: ' mb-1 block text-sm font-medium ',
     }
 
     return (
-        <div className="flex min-h-full w-full items-center justify-center bg-gray-100 py-2 dark:bg-gray-900">
+        <div className="flex min-h-full w-full items-center justify-center bg-gray-100 dark:bg-gray-900">
             <form
                 ref={formRef}
                 className="full relative max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:text-blue-100"
@@ -257,8 +266,8 @@ const FormAddCreator = () => {
                         />
                     </li>
 
-                    <li className="flex gap-2">
-                        <div>
+                    <li className="flex gap-4">
+                        <div className="flex-2">
                             <label className={styles.label}>Должность</label>
                             <div className="flex gap-1">
                                 <select
@@ -266,7 +275,7 @@ const FormAddCreator = () => {
                                     value={personCategory}
                                     onChange={(e) =>
                                         setPersonCategory(
-                                            e.target.value as PersonCategory
+                                            e.target.value as Position
                                         )
                                     }
                                 >
@@ -277,8 +286,30 @@ const FormAddCreator = () => {
                             </div>
                         </div>
 
-                        <div>
-                            <label className={styles.label}>Рост (м)</label>
+                        <div className="flex-2 mr-12">
+                            <label className={styles.label}>
+                                Доп. Должность
+                            </label>
+                            <div className="flex gap-1">
+                                <select
+                                    className={'mt-0.5 rounded p-1'}
+                                    value={personCategory}
+                                    onChange={(e) =>
+                                        setPersonCategory(
+                                            e.target.value as Position
+                                        )
+                                    }
+                                >
+                                    <LocalizedPersonCategoryList
+                                        locale={new Intl.Locale('RU')}
+                                        optionNo={true}
+                                    />
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="flex-1">
+                            <label className={styles.label}>Рост (см)</label>
                             <input
                                 className={styles.textInput}
                                 type="number"
@@ -289,18 +320,6 @@ const FormAddCreator = () => {
                                     )
                                 }
                                 placeholder="1.82"
-                            />
-                        </div>
-
-                        <div>
-                            <label className={styles.label}>Возраст</label>
-                            <input
-                                className={styles.textInput}
-                                type="number"
-                                value={age}
-                                onChange={(e) =>
-                                    setAge(parseInt(e.target.value, 10) || 0)
-                                }
                             />
                         </div>
                     </li>
@@ -345,39 +364,44 @@ const FormAddCreator = () => {
                         )}
                     </li>
 
-                    <li>
-                        <button
-                            className={`mr-4 block w-full rounded-md border-0 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-neutral-700 dark:text-white`}
-                        >
-                            Выбрать связанные шоу
-                        </button>
+                    <li className="flex">
+                        <div className="space-y-4">
+                            <div>
+                                <label className={styles.label}>Фото</label>
+                                <input
+                                    type="file"
+                                    onChange={(e) => {
+                                        setSelectedPersonAvatarImage(
+                                            e.currentTarget.files?.[0]
+                                        )
+                                    }}
+                                    className={
+                                        'block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-blue-700 hover:file:bg-blue-100 dark:text-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100'
+                                    }
+                                    accept="image/*"
+                                />
+                            </div>
+                            <button
+                                className={`mr-4 block w-11/12 rounded-md border-0 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-neutral-700 dark:text-white`}
+                            >
+                                Выбрать связанные шоу
+                            </button>
+                        </div>
+                        <div>
+                            {selectedPersonAvatarImage && (
+                                <img
+                                    src={URL.createObjectURL(
+                                        selectedPersonAvatarImage
+                                    )}
+                                    alt="Загруженное изображение"
+                                    className="h-fit max-h-32 w-fit border bg-cover"
+                                />
+                            )}
+                        </div>
                     </li>
-
-                    <li>
-                        <label className={styles.label}>Фото</label>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            className={
-                                'block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-blue-700 hover:file:bg-blue-100 dark:text-blue-100 dark:file:bg-neutral-600 dark:file:text-blue-100'
-                            }
-                            accept="image/*"
-                        />
-                    </li>
-
-                    {/* TODO create image picker */}
-                    {/*{userPic && (*/}
-                    {/*    <li>*/}
-                    {/*        <img*/}
-                    {/*            src={userPic.filename}*/}
-                    {/*            alt="Загруженное изображение"*/}
-                    {/*            className="mt-2 h-32 w-32 border"*/}
-                    {/*        />*/}
-                    {/*    </li>*/}
-                    {/*)}*/}
                 </ul>
 
-                <div className="relative mt-6 flex items-center justify-center">
+                <div className="relative flex items-center justify-center">
                     {/* upload status indicator */}
                     <div className="mt-6 flex justify-center gap-4">
                         <div className={'absolute left-5'}>

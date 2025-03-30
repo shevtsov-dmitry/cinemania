@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import ru.storage.person.PersonCategory;
+import ru.storage.person.Position;
 
 @Data
 @Document
@@ -18,12 +18,12 @@ public class UserPic {
   private String contentType;
   private String filename;
   private Long size;
-  private PersonCategory personCategory;
+  private Position position;
 
-  public UserPic(String contentType, String filename, Long size, PersonCategory personCategory) {
+  public UserPic(String contentType, String filename, Long size, Position position) {
     this.contentType = contentType;
     this.filename = filename;
     this.size = size; 
-    this.personCategory = personCategory;
+    this.position = position;
   }
 }

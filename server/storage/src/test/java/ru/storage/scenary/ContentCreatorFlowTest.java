@@ -12,7 +12,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -27,9 +26,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.storage.content_metadata.ContentMetadata;
 import ru.storage.person.content_creator.ContentCreator;
-import ru.storage.person.PersonCategory;
+import ru.storage.person.Position;
 import ru.storage.person.userpic.UserPic;
 
 @SpringBootTest
@@ -61,13 +59,13 @@ class ContentCreatorFlowTest {
         .perform(
             multipart(serverUrl + "/api/v0/content-creators/user-pics/upload")
                 .file(multipartFile)
-                .param("personCategory", PersonCategory.ACTOR.stringValue))
+                .param("personCategory", Position.ACTOR.stringValue))
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id", is(not(emptyString()))))
         .andExpect(jsonPath("$.contentType", is(MediaType.IMAGE_JPEG_VALUE)))
         .andExpect(jsonPath("$.filename", is("image.jpg")))
-        .andExpect(jsonPath("$.personCategory", is(PersonCategory.ACTOR.stringValue)))
+        .andExpect(jsonPath("$.personCategory", is(Position.ACTOR.stringValue)))
         .andDo(
             result -> {
               savedUserPicMetadata =
@@ -134,7 +132,7 @@ class ContentCreatorFlowTest {
                 serverUrl
                     + "/api/v0/content-creators/user-pics/%s/%s"
                         .formatted(
-                            savedContentCreator.getUserPic().getPersonCategory(),
+                            savedContentCreator.getUserPic().getPosition(),
                             savedContentCreator.getUserPic().getId())))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))

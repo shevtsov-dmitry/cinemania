@@ -44,7 +44,7 @@ import ru.storage.content_metadata.common.MediaFileInfo;
 import ru.storage.content_metadata.poster.Poster;
 import ru.storage.content_metadata.video.standalone.StandaloneVideoShow;
 import ru.storage.content_metadata.video.trailer.Trailer;
-import ru.storage.person.PersonCategory;
+import ru.storage.person.Position;
 import ru.storage.person.content_creator.ContentCreator;
 import ru.storage.person.filming_group.FilmingGroupDTO;
 import ru.storage.person.userpic.UserPic;
@@ -90,7 +90,7 @@ class IntendedSequenceTest {
         .perform(
             multipart(serverUrl + "/api/v0/metadata/content-creators/user-pics/upload")
                 .file(multipartFile)
-                .param("personCategory", PersonCategory.ACTOR.stringValue))
+                .param("personCategory", Position.ACTOR.stringValue))
         .andExpect(status().isCreated())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(jsonPath("$.id", notNullValue()))
@@ -114,7 +114,7 @@ class IntendedSequenceTest {
         .perform(
             get(
                 serverUrl + "/api/v0/metadata/content-creators/user-pics/{personCategory}/{id}",
-                META.userPic.getPersonCategory().stringValue,
+                META.userPic.getPosition().stringValue,
                 META.userPic.getId()))
         .andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_OCTET_STREAM))
@@ -140,7 +140,7 @@ class IntendedSequenceTest {
             .bornPlace("USA, New York City, NY 10023")
             .heightCm(180)
             .age(35)
-            .personCategory(PersonCategory.ACTOR)
+            .personCategory(Position.ACTOR)
             .userPic(META.userPic)
             .isDead(false)
             .birthDate(LocalDate.of(1980, 5, 10))
@@ -213,7 +213,7 @@ class IntendedSequenceTest {
             .bornPlace("USA, New York City, NY 10023")
             .heightCm(180)
             .userPic(META.userPic)
-            .personCategory(PersonCategory.ACTOR)
+            .position(Position.ACTOR)
             .age(35)
             .birthDate(LocalDate.of(1980, 5, 10))
             .build();
@@ -227,7 +227,7 @@ class IntendedSequenceTest {
             .bornPlace("USA, Los Angeles, CA 90012")
             .heightCm(175)
             .userPic(META.userPic)
-            .personCategory(PersonCategory.ACTOR)
+            .position(Position.ACTOR)
             .age(38)
             .birthDate(LocalDate.of(1982, 6, 15))
             .build();
@@ -481,7 +481,7 @@ class IntendedSequenceTest {
         .perform(
             delete(
                 serverUrl + "/api/v0/metadata/content-creators/user-pics/{personCategory}/{id}",
-                META.userPic.getPersonCategory(),
+                META.userPic.getPosition(),
                 META.userPic.getId()))
         .andExpect(status().isNoContent());
 
@@ -489,7 +489,7 @@ class IntendedSequenceTest {
         .perform(
             get(
                 serverUrl + "/api/v0/metadata/content-creators/user-pics/{personCategory}/{id}",
-                META.userPic.getPersonCategory(),
+                META.userPic.getPosition(),
                 META.userPic.getId()))
         .andExpect(status().isNotFound());
   }

@@ -1,7 +1,7 @@
 import Constants from "@/src/constants/Constants";
 import useFilmCrewChooserStore from "@/src/state/formFilmCrewChooserState";
 import ContentCreator from "@/src/types/ContentCreator";
-import PersonCategory from "@/src/types/PersonCategory";
+import Position from "@/src/types/Position";
 import React, {Dispatch, FormEvent, ReactElement, SetStateAction, useEffect, useState,} from "react";
 
 const FormFilmCrewChooser = (): ReactElement => {
@@ -13,7 +13,7 @@ const FormFilmCrewChooser = (): ReactElement => {
 
   const hideFilmCrewChooser = useFilmCrewChooserStore((state) => state.hide);
 
-  const creatorType: PersonCategory = useFilmCrewChooserStore(
+  const creatorType: Position = useFilmCrewChooserStore(
     (state) => state.choosingType,
   );
   const selectedActorsList: ContentCreator[] = useFilmCrewChooserStore(
@@ -23,9 +23,9 @@ const FormFilmCrewChooser = (): ReactElement => {
   const selectedDirector = useFilmCrewChooserStore(state => state.selectedDirector) as ContentCreator
 
   useEffect(() => {
-    if (creatorType === PersonCategory.DIRECTOR) {
+    if (creatorType === Position.DIRECTOR) {
       setCreatorTypeHeaderLabel("Выбор режиссёра");
-    } else if (creatorType === PersonCategory.ACTOR) {
+    } else if (creatorType === Position.ACTOR) {
       setCreatorTypeHeaderLabel("Выбор актёров");
     }
   }, [creatorType]);
@@ -93,10 +93,10 @@ const FormFilmCrewChooser = (): ReactElement => {
         </button>
       </div>
       {errorMessage && <div className="text-red-500 mb-5">{errorMessage}</div>}
-      {selectedDirector && creatorType === PersonCategory.DIRECTOR && (
+      {selectedDirector && creatorType === Position.DIRECTOR && (
           <h1>Выбранный режиссёр: {selectedDirector.name} {selectedDirector.surname}</h1>
       )}
-      {creatorType === PersonCategory.ACTOR && selectedActorsList.length > 0 && (
+      {creatorType === Position.ACTOR && selectedActorsList.length > 0 && (
         <div className={"flex gap-2"}>
           <h1>Выбранные актёры:</h1>
           <div className={"flex"}>
@@ -174,9 +174,9 @@ const CreatorItem = ({
 
     function handleCreatorSelectClick(e: FormEvent) {
     e.preventDefault();
-    if (creator.personCategory === PersonCategory.DIRECTOR) {
+    if (creator.personCategory === Position.DIRECTOR) {
       setDirector(creator);
-    } else if (creator.personCategory === PersonCategory.ACTOR) {
+    } else if (creator.personCategory === Position.ACTOR) {
       actors.push(creator);
       setActors(actors);
     }

@@ -1,20 +1,20 @@
-import PersonCategory from "./PersonCategory";
-import UserPic from "./UserPic";
+import Position from './Position'
+import UserPic from './UserPic'
 
 type ContentCreator = {
-  id: string;
-  name: string;
-  surname: string;
-  nameLatin: string;
-  surnameLatin: string;
-  bornPlace: string;
-  heightCm: number;
-  age: number;
-  personCategory: PersonCategory;
-  userPic: UserPic;
-  isDead: boolean;
-  birthDate: string;
-  deathDate: string;
-};
+    id: string
+    name: string
+    surname: string
+    nameLatin: string
+    surnameLatin: string
+    bornPlace: string
+    heightCm: number
+    personCategory: Position
+    personCategory: Position
+    userPic: UserPic
+    isDead: boolean
+    birthDate: string
+    deathDate: string
+}
 
-export default ContentCreator;
+export default ContentCreator
