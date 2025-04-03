@@ -23,7 +23,6 @@ public class ParseEnumException extends IllegalArgumentException {
   public static String getSupportedValuesAsString(Class<? extends Enum<?>> enumClass) {
     var sj = new StringJoiner(", ", "[", "]");
     Arrays.stream(enumClass.getEnumConstants()).map(Enum::name).forEach(sj::add);
-    System.out.println(sj);
     return sj.toString();
   }
 

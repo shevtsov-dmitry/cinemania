@@ -1,8 +1,14 @@
 package ru.cinemania.privileges.auth;
 
 import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.Date;
 
-import org.apache.catalina.User;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.jsonwebtoken.io.IOException;
+import ru.cinemania.privileges.user.User;
 import ru.cinemania.privileges.user.UserRepo;
 
 @RestController
@@ -48,7 +55,6 @@ public class AuthController {
                 String email = payload.getEmail();
                 String name = (String) payload.get("name");
 
-                // Find or create user
                 User user = userRepo.findByGoogleId(googleId).orElseGet(() -> {
                     User newUser = new User();
                     newUser.setGoogleId(googleId);
@@ -57,7 +63,6 @@ public class AuthController {
                     return userRepo.save(newUser);
                 });
 
-                // Generate JWT token
                 String token = generateJwtToken(user);
                 return ResponseEntity.ok(token);
             } else {
@@ -65,6 +70,9 @@ public class AuthController {
             }
         } catch (GeneralSecurityException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error verifying token");
+        } catch (java.io.IOException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
