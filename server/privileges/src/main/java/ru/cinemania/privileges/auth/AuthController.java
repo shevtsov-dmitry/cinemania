@@ -7,11 +7,6 @@ import java.util.Map;
 
 import javax.security.auth.login.LoginException;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
-
 import org.apache.http.Header;
 import org.hibernate.annotations.processing.Find;
 import org.slf4j.Logger;
@@ -34,9 +29,6 @@ import ru.cinemania.privileges.user.UserRepo;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @Value("${google.clientId}")
-    private String clientId;
-
     @Value("${jwt.secret}")
     private String jwtSecret;
 
@@ -47,10 +39,13 @@ public class AuthController {
 
     private final UserRepo userRepo;
     private final EmailAuthService emailAuthService;
+    private final GoogleAuthService googleAuthService;
 
-    public AuthController(UserRepo userRepository, EmailAuthService emailAuthService) {
+    public AuthController(UserRepo userRepository, EmailAuthService emailAuthService,
+            GoogleAuthService googleAuthService) {
         this.userRepo = userRepository;
         this.emailAuthService = emailAuthService;
+        this.googleAuthService = googleAuthService;
     }
 
     @PostMapping("/login/email")
@@ -76,45 +71,12 @@ public class AuthController {
     @PostMapping("/login/google")
     public ResponseEntity<String> loginWithGoogle(@RequestBody String idTokenString) {
         try {
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
-                    GsonFactory.getDefaultInstance())
-                    .setAudience(Collections.singletonList(clientId))
-                    .build();
-
-            GoogleIdToken idToken = verifier.verify(idTokenString);
-            if (idToken != null) {
-                GoogleIdToken.Payload payload = idToken.getPayload();
-                String googleId = payload.getSubject();
-                String email = payload.getEmail();
-                String name = (String) payload.get("name");
-
-                User user = userRepo.findByGoogleId(googleId).orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setGoogleId(googleId);
-                    newUser.setEmail(email);
-                    newUser.setName(name);
-                    return userRepo.save(newUser);
-                });
-
-                String token = generateJwtToken(user);
+                String token = googleAuthService.loginWithGoogle(idTokenString);
                 return ResponseEntity.ok(token);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid ID token");
+            } catch (LoginException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Неудалось авторизироваться.");
             }
-        } catch (GeneralSecurityException | IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error verifying token");
-        } catch (java.io.IOException e) {
-            LOG.warn("Error verifying token {}", e);
-            throw new RuntimeException(e);
         }
-    }
+}
 
-    private String generateJwtToken(User user) {
-        return Jwts.builder()
-                .setSubject(user.getId().toString())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, jwtSecret.getBytes())
-                .compact();
-    }
 }

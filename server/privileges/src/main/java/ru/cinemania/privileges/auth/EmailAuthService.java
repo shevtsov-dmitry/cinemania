@@ -1,6 +1,5 @@
 package ru.cinemania.privileges.auth;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +15,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import ru.cinemania.privileges.user.User;
 import ru.cinemania.privileges.user.UserRepo;
+import ru.cinemania.privileges.util.AuthUtils;
 
 @Service
 public class EmailAuthService {
@@ -73,7 +73,7 @@ public class EmailAuthService {
         if (storedCode != null && storedCode.equals(code)) {
             User user = userRepo.findByEmail(email).orElseGet(() -> createUser(email));
             emailCodes.remove(email);
-            return generateJwtToken(user);
+            return AuthUtils.generateJwtTokenForUser(user);
         } else {
             throw new LoginException("Invalid verification code");
         }
@@ -83,15 +83,6 @@ public class EmailAuthService {
         User newUser = new User();
         newUser.setEmail(email);
         return userRepo.save(newUser);
-    }
-
-    private String generateJwtToken(User user) {
-        return Jwts.builder()
-                .setSubject(user.getId().toString())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes())
-                .compact();
     }
 
 }
