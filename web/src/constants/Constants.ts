@@ -4,4 +4,5 @@ const DOMAIN = 'localhost'
 export default {
     STORAGE_URL: `http://${DOMAIN}:8442`,
     STREAMING_SERVER_URL: `http://${DOMAIN}:8443`,
+    VERIFICATION_SERVICE_URL: `http://${DOMAIN}:8443`,
 }
