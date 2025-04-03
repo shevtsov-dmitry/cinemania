@@ -1,8 +1,8 @@
-// const DOMAIN = "192.168.1.38";
-const DOMAIN = 'localhost'
+// const DOMAIN = "http://192.168.1.38";
+const DOMAIN = 'http://localhost'
 
 export default {
-    STORAGE_URL: `http://${DOMAIN}:8442`,
-    STREAMING_SERVER_URL: `http://${DOMAIN}:8443`,
-    VERIFICATION_SERVICE_URL: `http://${DOMAIN}:8443`,
+    STORAGE_URL: `${DOMAIN}:8442`,
+    STREAMING_SERVER_URL: `${DOMAIN}:8443`,
+    VERIFICATION_SERVICE_URL: `${DOMAIN}:8444`,
 }

@@ -10,6 +10,7 @@ import MobileVideoPlayer from '../video-player/MobileVideoPlayer'
 import Constants from '@/src/constants/Constants'
 import WebVideoPlayer from '../video-player/WebVideoPlayer'
 import ContentMetadata from '@/src/types/ContentMetadata'
+import AuthScreen from '../auth-screen/AuthScreen'
 
 let trailerUrl = `${Constants.STREAMING_SERVER_URL}/api/v1/stream/67d47489eeda036a76103a6e/playlist`
 
@@ -33,6 +34,7 @@ const Home = (): ReactElement => {
             {/*</Text>*/}
             {/* <WebVideoPlayer url={trailerUrl} /> */}
             <TopPanel />
+            <AuthScreen />
             <AdminPage />
             {/* <Text className={"p-2 text-2xl font-bold text-white"}>Новинки</Text>*/}
             {/* <Preview />*/}

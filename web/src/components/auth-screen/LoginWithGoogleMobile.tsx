@@ -1,5 +1,6 @@
-import React from 'react'
-import { View, Button, Alert } from 'react-native'
+import React , { ReactElement } from 'react'
+import { View, Button, Alert, Pressable } from 'react-native'
+import { Image } from 'expo-image'
 import {
     GoogleSignin,
     statusCodes,
@@ -11,7 +12,7 @@ GoogleSignin.configure({
     offlineAccess: false,
 })
 
-const LoginScreen = () => {
+const LoginScreen = (): ReactElement => {
     const signIn = async () => {
         try {
             await GoogleSignin.hasPlayServices()
@@ -19,7 +20,7 @@ const LoginScreen = () => {
             const idToken = userInfo.idToken
 
             const response = await fetch(
-                `http://${Constants.VERIFICATION_SERVICE_URL}/api/v1/auth/login/google`,
+                `${Constants.VERIFICATION_SERVICE_URL}/api/v1/auth/login/google`,
                 {
                     method: 'POST',
                     headers: {
@@ -52,10 +53,13 @@ const LoginScreen = () => {
     }
 
     return (
-        <View
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-            <Button title="Войти с помощью Google" onPress={signIn} />
+        <View className="flex flex-1 items-center justify-center">
+            <Pressable onPress={signIn}>
+                <Image
+                    source={require('@/images/icons/google-icon.svg')}
+                    style={{ width: 16, height: 16 }}
+                />
+            </Pressable>
         </View>
     )
 }
