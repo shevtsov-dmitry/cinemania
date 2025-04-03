@@ -23,7 +23,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String googleId; // Google's unique user ID (sub)
+    private String googleId;
 
     @Column(nullable = false)
     private String email;
