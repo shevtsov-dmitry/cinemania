@@ -1,11 +1,15 @@
 package ru.storage.content_metadata;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import ru.storage.utils.EncodedHttpHeaders;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -29,6 +33,17 @@ public class ContentMetadataController {
             return new ResponseEntity<>(
                     null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("genre/{name}/{amount}")
+    public ResponseEntity<List<ContentMetadata>> getMetadataByGenre(@PathVariable String encodedName,
+            @Nullable Integer amount) {
+        if (amount == null || amount <= 0) {
+            amount = 10;
+        }
+        String name = URLDecoder.decode(encodedName, StandardCharsets.UTF_8);
+        return ResponseEntity.ok(service.getMetadataByGenre(name, amount));
+
     }
 
     /**

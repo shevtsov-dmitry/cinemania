@@ -6,12 +6,15 @@ import ContentMetadata from '@/src/types/ContentMetadata'
 import { ReactElement, useEffect, useState } from 'react'
 import { View } from 'react-native'
 
-interface PreviewProps {}
+interface CompilationByGenreProps {
+    name: string
+}
 
-const Preview = ({}: PreviewProps): ReactElement => {
+const CompilationByGenre = ({
+    name,
+}: CompilationByGenreProps): ReactElement => {
     const STORAGE_URL = Constants.STORAGE_URL
-    const NON_ASCII_PATTERN = /[^\u0000-\u007F]/
-    const POSTERS_AMOUNT = 20
+    const POSTERS_AMOUNT = 8
 
     const [postersLoadingMessage, setPostersLoadingMessage] =
         useState<string>('')
@@ -20,21 +23,20 @@ const Preview = ({}: PreviewProps): ReactElement => {
         Base64WithId[]
     >([])
 
-    // const videoPlayerState = useSelector((state) => state.videoPlayer);
-    // let isPlayerOpened = videoPlayerState.isPlayerOpened; // ?
-
     useEffect(() => {
-        fetchRecentlyAddedFilmsMetadata()
+        fetchGenreMetadata()
 
-        async function fetchRecentlyAddedFilmsMetadata() {
-            fetch(`${STORAGE_URL}/api/v0/metadata/recent/${POSTERS_AMOUNT}`)
+        async function fetchGenreMetadata() {
+            fetch(
+                `${STORAGE_URL}/api/v0/metadata/genre/${encodeURIComponent(name)}`
+            )
                 .then((res) => {
                     if (res.ok) {
                         return res.json()
                     } else {
                         let errmes =
                             res.headers.get('Message') ??
-                            'Ошибка получения метаданных фильмов для превью.'
+                            'Ошибка получения метаданных по жанру.'
                         errmes = decodeURI(errmes).replaceAll('+', ' ')
                         console.error(errmes)
                         setPostersLoadingMessage(errmes)
@@ -43,12 +45,12 @@ const Preview = ({}: PreviewProps): ReactElement => {
                 .then((fetchedMetadata) => setMetadataList(fetchedMetadata))
                 .catch((e) => {
                     setPostersLoadingMessage(
-                        'Ошибка установления соединения с сервером для получения постеров.'
+                        'Ошибка установления соединения с сервером для получения метаданных по жанру.'
                     )
                     console.error(e.message)
                 })
         }
-    }, [])
+    }, [name])
 
     useEffect(() => {
         fetchPosters()
@@ -83,7 +85,7 @@ const Preview = ({}: PreviewProps): ReactElement => {
 
     return (
         <View
-            id="previews-sequence-block"
+            id="genre-compilation-block"
             className="flex flex-col justify-center"
         >
             <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
@@ -98,4 +100,4 @@ const Preview = ({}: PreviewProps): ReactElement => {
     )
 }
 
-export default Preview
+export default CompilationByGenre

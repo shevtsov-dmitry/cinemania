@@ -3,16 +3,10 @@ import useFormAddFilmStore from '@/src/state/formAddFilmState'
 import useFilmCrewChooserStore from '@/src/state/formFilmCrewChooserState'
 import ContentCreator from '@/src/types/ContentCreator'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import Position from '@/src/types/Position'
-import React, {
-    FormEvent,
-    ReactElement,
-    useEffect,
-    useRef,
-    useState,
-} from 'react'
-import FormFilmCrewChooser from './FormFilmCrewChooser'
 import ContentMetadataDTO from '@/src/types/ContentMetadataDTO'
+import Position from '@/src/types/Position'
+import React, { FormEvent, useRef, useState } from 'react'
+import FormFilmCrewChooser from './FormFilmCrewChooser'
 
 export default function FormAddFilm() {
     const STORAGE_URL = Constants.STORAGE_URL
@@ -76,6 +70,8 @@ export default function FormAddFilm() {
     }
 
     async function saveFormData() {
+        console.log(pickedFiles)
+
         enum OPERATION_STATUS {
             SUCCESS = 'SUCCESS',
             ERROR = 'ERROR',
@@ -348,10 +344,22 @@ export default function FormAddFilm() {
                 setIsSelected(true)
             }
 
-            setPickedFiles((prev) => ({
-                ...prev,
-                [type]: file,
-            }))
+            if (type === FilePickerType.POSTER) {
+                setPickedFiles((prev) => ({
+                    ...prev,
+                    poster: file,
+                }))
+            } else if (type === FilePickerType.TRAILER) {
+                setPickedFiles((prev) => ({
+                    ...prev,
+                    trailer: file,
+                }))
+            } else if (type === FilePickerType.VIDEO) {
+                setPickedFiles((prev) => ({
+                    ...prev,
+                    video: file,
+                }))
+            }
         }
 
         return (

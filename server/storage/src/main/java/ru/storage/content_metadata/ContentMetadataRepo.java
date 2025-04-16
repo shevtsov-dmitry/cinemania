@@ -10,7 +10,10 @@ import java.util.List;
 public interface ContentMetadataRepo extends MongoRepository<ContentMetadata, String> {
 
     List<ContentMetadata> findByOrderByCreatedAtDesc(Pageable pageable);
+
+    List<ContentMetadata> findByMainGenreNameIgnoreCase(String genreName, Pageable pageable);
+
     // find by creator
-//    List<ContentMetadata> findByOrderByCreator(creator);
+    // List<ContentMetadata> findByOrderByCreator(creator);
 
 }
