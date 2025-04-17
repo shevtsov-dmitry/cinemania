@@ -55,8 +55,10 @@ public class VideoUploaderService {
      * @param id    saved video metadata id from mongodb
      * @param video video multipart file from the form
      * @throws IllegalArgumentException when multipart file is not a video
-     * @throws ParseException           when failed to parse video to HLS chunks with ffmpeg
-     * @throws IOException              when error allocating space to new video file
+     * @throws ParseException           when failed to parse video to HLS chunks
+     *                                  with ffmpeg
+     * @throws IOException              when error allocating space to new video
+     *                                  file
      * @throws S3Exception              when error uploading file to S3
      */
     public void uploadStandaloneVideoShow(String id, MultipartFile video)
@@ -70,15 +72,16 @@ public class VideoUploaderService {
         deleteTempFolder();
     }
 
-
     /**
      * Upload trailer to s3 storage.
      *
      * @param id    saved video metadata id from mongodb
      * @param video video multipart file from the form
      * @throws IllegalArgumentException when multipart file is not a trailer
-     * @throws ParseException           when failed to parse trailer to HLS chunks with ffmpeg
-     * @throws IOException              when error allocating space to new trailer file
+     * @throws ParseException           when failed to parse trailer to HLS chunks
+     *                                  with ffmpeg
+     * @throws IOException              when error allocating space to new trailer
+     *                                  file
      * @throws S3Exception              when error uploading file to S3
      */
     public void uploadTrailer(String id, MultipartFile video) throws ParseException, IOException {
@@ -99,8 +102,10 @@ public class VideoUploaderService {
      * @param season     number of the season
      * @param episode    number of the Episode
      * @throws IllegalArgumentException when multipart file is not a an episode
-     * @throws ParseException           when failed to parse an episode to HLS chunks with ffmpeg
-     * @throws IOException              when error allocating space to new episode file
+     * @throws ParseException           when failed to parse an episode to HLS
+     *                                  chunks with ffmpeg
+     * @throws IOException              when error allocating space to new episode
+     *                                  file
      * @throws S3Exception              when error uploading file to S3
      */
     public void uploadEpisode(
@@ -109,8 +114,7 @@ public class VideoUploaderService {
         BinaryContentUtils.assureVideoProcessing(video.getContentType());
         File[] hlsFiles = splitVideoToHlsChunks(id, video.getInputStream());
         for (File hlsFile : hlsFiles) {
-            String s3Key =
-                    S3_FOLDER + "/tv-series/%s/%d/%d/%s".formatted(tvSeriesId, season, episode, id);
+            String s3Key = S3_FOLDER + "/tv-series/%s/%d/%d/%s".formatted(tvSeriesId, season, episode, id);
             uploadToS3(s3Key, hlsFile);
         }
     }
@@ -124,11 +128,13 @@ public class VideoUploaderService {
      * @param inputStream input stream of video file from database
      * @return array of hls chunk files
      * @throws ParseException when error parsing video file
-     * @throws IOException    when error reading or writing to file system (possible reason is not enough
+     * @throws IOException    when error reading or writing to file system (possible
+     *                        reason is not enough
      *                        disk space)
      */
     private File[] splitVideoToHlsChunks(String id, InputStream inputStream)
             throws ParseException, IOException {
+
         String tempFolderPath = System.getProperty("java.io.tmpdir") + "/" + UUID.randomUUID();
         tempFolder = new File(tempFolderPath);
         tempFolder.mkdirs();
@@ -137,12 +143,24 @@ public class VideoUploaderService {
         Path tempFile = Files.createFile(Path.of(tempFolderPath + "/" + id));
         Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
-        String ffmpegCommand =
-                "ffmpeg -i %s -c:v libx264 -c:a aac -profile:v baseline -level 3.0 -start_number 0 -hls_time 10 -hls_list_size 0 -f hls %s/index.m3u8"
-                        .formatted(tempFile.toFile().getAbsolutePath(), tempFolder.getAbsolutePath());
-
-        ffmpegCommand = "ffmpeg -i %s -map 0:v:0 -map 0:a:0 -map 0:v:0 -map 0:a:0 -var_stream_map \"v:0,a:0 v:1,a:1\" -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 128k -hls_time 10 -hls_list_size 0 -b:v:0 2000k -hls_segment_filename \"v%v/output_%03d.ts\" v%v/output.m3u8"
+        String ffmpegCommand = "ffmpeg -i %s -c:v libx264 -c:a aac -profile:v baseline -level 3.0 -start_number 0 -hls_time 10 -hls_list_size 0 -f hls %s/index.m3u8"
                 .formatted(tempFile.toFile().getAbsolutePath(), tempFolder.getAbsolutePath());
+
+        // ffmpegCommand = """
+        // ffmpeg -i %s \
+        // -filter_complex "[0:v]split=2[v1][v2]; [v1]scale=w=1280:h=720[v1out];
+        // [v2]scale=w=640:h=360[v2out]" \
+        // -map "[v1out]" -map 0:a -c:v:0 libx264 -b:v:0 2000k -c:a:0 aac -b:a:0 128k \
+        // -map "[v2out]" -map 0:a -c:v:1 libx264 -b:v:1 800k -c:a:1 aac -b:a:1 96k \
+        // -var_stream_map "v:0,a:0 v:1,a:1" \
+        // -preset medium -crf 23 \
+        // -hls_time 10 -hls_list_size 0 \
+        // -hls_segment_filename "%s/v%%v/output_%%03d.ts" \
+        // %s/v%%v/output.m3u8
+        // """.formatted(
+        // tempFile.toFile().getAbsolutePath(),
+        // tempFolder.getAbsolutePath(),
+        // tempFolder.getAbsolutePath());
 
         Process process = Runtime.getRuntime().exec(ffmpegCommand);
         try (var stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
@@ -183,12 +201,11 @@ public class VideoUploaderService {
             } else {
                 contentType = Files.probeContentType(file.toPath()); // Fallback for other files
             }
-            var putObjectRequest =
-                    PutObjectRequest.builder()
-                            .bucket(bucketName)
-                            .key(s3Key)
-                            .contentType(contentType)
-                            .build();
+            var putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(s3Key)
+                    .contentType(contentType)
+                    .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.length()));
         } catch (IOException e) {
             String errmes = "Возникла ошибка при загрузке видео в облачное хранилище S3";
