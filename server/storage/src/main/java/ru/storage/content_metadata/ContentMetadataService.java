@@ -190,7 +190,7 @@ public class ContentMetadataService {
             parsedIds = ProjectStandardUtils.parseIdsFromString(id);
             videoUploaderService.deleteStandaloneVideoShowByIds(parsedIds);
         }
-        // if (metadata.getTvSeries() != null) { }
+
         contentMetadataRepo.delete(metadata);
     }
 
@@ -199,6 +199,7 @@ public class ContentMetadataService {
     }
 
     public List<ContentMetadata> getMetadataByGenre(String name, Integer amount) {
-        return contentMetadataRepo.findByMainGenreNameIgnoreCase(name, Pageable.ofSize(amount));
+        Genre genre = genreRepo.findByName(name).orElseGet(() -> new Genre("Жанр не указан"));
+        return contentMetadataRepo.findByMainGenre(genre, Pageable.ofSize(amount));
     }
 }

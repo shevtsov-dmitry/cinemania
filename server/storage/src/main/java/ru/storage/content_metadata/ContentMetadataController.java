@@ -35,9 +35,9 @@ public class ContentMetadataController {
         }
     }
 
-    @GetMapping("genre/{name}/{amount}")
+    @GetMapping("genre/{encodedName}/{amount}")
     public ResponseEntity<List<ContentMetadata>> getMetadataByGenre(@PathVariable String encodedName,
-            @Nullable Integer amount) {
+            @Nullable @PathVariable Integer amount) {
         if (amount == null || amount <= 0) {
             amount = 10;
         }
@@ -100,4 +100,5 @@ public class ContentMetadataController {
                     null, new EncodedHttpHeaders(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }
