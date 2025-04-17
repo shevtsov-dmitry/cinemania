@@ -28,7 +28,7 @@ const CompilationByGenre = ({
 
         async function fetchGenreMetadata() {
             fetch(
-                `${STORAGE_URL}/api/v0/metadata/genre/${encodeURIComponent(name)}`
+                `${STORAGE_URL}/api/v0/metadata/genre/${encodeURIComponent(name)}/${POSTERS_AMOUNT}`
             )
                 .then((res) => {
                     if (res.ok) {
@@ -56,7 +56,7 @@ const CompilationByGenre = ({
         fetchPosters()
 
         async function fetchPosters() {
-            if (metadataList.length === 0) return
+            if (!metadataList || metadataList.length === 0) return
 
             const joinedIds = metadataList
                 .map((item: ContentMetadata) => item.poster?.id)
