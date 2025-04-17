@@ -33,8 +33,6 @@ const TopPanel = (): ReactElement => {
         (state) => state.toggleFormAddCreator
     )
 
-    const topics = ['Фильмы', 'Сериалы', 'Мультфильмы', 'Аниме']
-
     // TODO make burger work in the future
     const BurgerPanel = (): ReactElement => (
         <>
@@ -90,60 +88,50 @@ const TopPanel = (): ReactElement => {
                         alt="company logo"
                     />
                 </TouchableOpacity>
-                <FlatList
-                    ref={generalTopicsRef}
-                    className="gap-1.25 flex-row"
-                    horizontal
-                    data={topics}
-                    renderItem={({ item, index }) => (
-                        <GeneralTopic key={index} topicName={item} />
-                    )}
-                />
-                <View
-                    ref={newShowsAndCollectionsRef}
-                    className="gap-1.25 flex-row"
-                >
-                    <View>
-                        <Text>Новинки</Text>
-                        <Text>Подборки</Text>
+                <View className="flex-row items-center">
+                    <View
+                        ref={newShowsAndCollectionsRef}
+                        className="gap-1.25 flex-row"
+                    />
+                    <TempoAdminPanel />
+                    <View className="gap-1.25 flex-row"></View>
+                    <View className="gap-0.25 flex-row items-center">
+                        <Image
+                            ref={searchImageRef}
+                            className="w-5.75 h-5.75"
+                            source={require('@/images/icons/search.svg')}
+                            alt=""
+                        />
+                        <Text className="text-white underline opacity-70">
+                            Искать...
+                        </Text>
                     </View>
+                    <View className="flex-row items-center gap-0.5">
+                        <Image
+                            ref={loginImageRef}
+                            className="w-5.75 h-5.75"
+                            source={require('@/images/icons/login.svg')}
+                            alt="login"
+                        />
+                        <Text className="text-white">Войти</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => setIsBurgerActive(true)}>
+                        <Image
+                            ref={burgerImageRef}
+                            className="w-5.75 h-5.75"
+                            source={require('@/images/icons/burger.svg')}
+                            alt=""
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setIsBurgerActive(false)}>
+                        <Image
+                            ref={closeImageRef}
+                            className="w-5.75 h-5.75"
+                            source={require('@/images/icons/close-sign.svg')}
+                            alt=""
+                        />
+                    </TouchableOpacity>
                 </View>
-                <TempoAdminPanel />
-                <View className="gap-1.25 flex-row"></View>
-                <View className="gap-0.25 flex-row items-center">
-                    <Image
-                        ref={searchImageRef}
-                        className="w-5.75 h-5.75"
-                        source={require('@/images/icons/search.svg')}
-                        alt=""
-                    />
-                    <Text className="opacity-70">Искать...</Text>
-                </View>
-                <View className="flex-row items-center gap-0.5">
-                    <Image
-                        ref={loginImageRef}
-                        className="w-5.75 h-5.75"
-                        source={require('@/images/icons/login.svg')}
-                        alt="login"
-                    />
-                    <Text className="text-white">Войти</Text>
-                </View>
-                <TouchableOpacity onPress={() => setIsBurgerActive(true)}>
-                    <Image
-                        ref={burgerImageRef}
-                        className="w-5.75 h-5.75"
-                        source={require('@/images/icons/burger.svg')}
-                        alt=""
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setIsBurgerActive(false)}>
-                    <Image
-                        ref={closeImageRef}
-                        className="w-5.75 h-5.75"
-                        source={require('@/images/icons/close-sign.svg')}
-                        alt=""
-                    />
-                </TouchableOpacity>
             </View>
             {isBurgerActive && <BurgerPanel />}
         </View>

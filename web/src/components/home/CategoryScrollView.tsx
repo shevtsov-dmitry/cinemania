@@ -43,6 +43,11 @@ const categories = [
 ]
 
 const CategoryScrollView = () => {
+    const handlePress = (name: string) => {
+        console.log(`Category pressed: ${name}`)
+        // TODO navigate, filter, etc.
+    }
+
     return (
         <ScrollView
             horizontal
@@ -53,6 +58,7 @@ const CategoryScrollView = () => {
                 <TouchableOpacity
                     key={index}
                     className="mr-2 flex-row items-center rounded-xl bg-neutral-900 px-4 py-2"
+                    onPress={() => handlePress(category.name)}
                 >
                     <View className="mr-2">{category.icon}</View>
                     <Text className="text-sm text-white">{category.name}</Text>
