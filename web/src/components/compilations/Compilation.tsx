@@ -88,7 +88,11 @@ const Compilation = ({
                 onBlur={handleBlur}
             >
                 <View
-                    className={`${isFocused || (isSelected && 'scale-150')} ${compilationKind === CompilationKind.PREVIEW && 'min-h-56 min-w-32'} ${compilationKind === CompilationKind.DEFAULT && 'min-h-60 min-w-52'} `}
+                    className={
+                        `${isFocused || (isSelected && 'scale-150')} ` +
+                        ` ${compilationKind === CompilationKind.PREVIEW && 'aspect-[2/3] w-[30vw] max-w-[160px]'} ` +
+                        ` ${compilationKind === CompilationKind.DEFAULT && 'aspect-[2/3] w-[35vw] max-w-[220px]'} `
+                    }
                 >
                     <Poster
                         id={postersWithIds[index].id}
