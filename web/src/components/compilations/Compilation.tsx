@@ -106,6 +106,7 @@ const Compilation = ({
                     <FlatList
                         horizontal={!isGrid}
                         numColumns={isGrid ? gridCols : 1}
+                        showsHorizontalScrollIndicator={false}
                         contentContainerStyle={{
                             flexDirection: isGrid ? '' : 'row',
                             gap: 16,

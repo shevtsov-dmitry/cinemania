@@ -196,7 +196,6 @@ export default function FormAddFilm() {
                 standaloneVideoShow: {
                     filename: pickedFiles.video!.name,
                     contentType: pickedFiles.video!.type,
-                    size: pickedFiles.video!.size,
                 },
                 episodes: [],
             }
