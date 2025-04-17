@@ -90,7 +90,7 @@ const CompilationByGenre = ({
         >
             <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
                 <Compilation
-                    compilationKind={CompilationKind.PREVIEW}
+                    compilationKind={CompilationKind.DEFAULT}
                     postersWithIds={posterImagesWithIds}
                     metadataList={metadataList}
                     errmes={postersLoadingMessage}

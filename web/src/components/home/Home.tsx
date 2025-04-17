@@ -4,8 +4,9 @@ import React, { ReactElement, useState } from 'react'
 import { ScrollView, Text } from 'react-native'
 import AdminPage from '../admin/AdminPage'
 import CompilationByGenre from '../compilations/CompilationByGenre'
+import RecentlyAddedShows from '../compilations/RecentlyAddedShows'
 import TopPanel from '../top-panel/TopPanel'
-import Preview from './Preview'
+import CategoryScrollView from './CategoryScrollView'
 
 let trailerUrl = `${Constants.STREAMING_SERVER_URL}/api/v1/stream/67d47489eeda036a76103a6e/playlist`
 
@@ -38,6 +39,7 @@ const Home = (): ReactElement => {
             {/* <Text className={"p-2 text-2xl font-bold text-white"}>Новинки</Text>*/}
             <Text className={styles.collectionTitle}>Драмы</Text>
             <CompilationByGenre name="Драмы" />
+            <CategoryScrollView />
             <Text className={styles.collectionTitle}>Мультфильмы</Text>
             <CompilationByGenre name="Мультфильмы" />
             <Text className={styles.collectionTitle}>Триллеры</Text>
@@ -47,7 +49,7 @@ const Home = (): ReactElement => {
             <Text className={styles.collectionTitle}>Отечественные</Text>
             <CompilationByGenre name="Отечественные" />
             <Text className={styles.collectionTitle}>Недавно добавленные</Text>
-            <Preview />
+            <RecentlyAddedShows />
         </ScrollView>
     )
 }

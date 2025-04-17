@@ -6,9 +6,9 @@ import ContentMetadata from '@/src/types/ContentMetadata'
 import { ReactElement, useEffect, useState } from 'react'
 import { View } from 'react-native'
 
-interface PreviewProps {}
+interface RecentlyAddedShowsProps {}
 
-const Preview = ({}: PreviewProps): ReactElement => {
+const RecentlyAddedShows = ({}: RecentlyAddedShowsProps): ReactElement => {
     const STORAGE_URL = Constants.STORAGE_URL
     const NON_ASCII_PATTERN = /[^\u0000-\u007F]/
     const POSTERS_AMOUNT = 20
@@ -88,7 +88,7 @@ const Preview = ({}: PreviewProps): ReactElement => {
         >
             <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
                 <Compilation
-                    compilationKind={CompilationKind.PREVIEW}
+                    compilationKind={CompilationKind.DEFAULT}
                     postersWithIds={posterImagesWithIds}
                     metadataList={metadataList}
                     errmes={postersLoadingMessage}
@@ -98,4 +98,4 @@ const Preview = ({}: PreviewProps): ReactElement => {
     )
 }
 
-export default Preview
+export default RecentlyAddedShows

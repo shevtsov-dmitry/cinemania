@@ -90,7 +90,7 @@ const Compilation = ({
                 <View
                     className={
                         `${isFocused || (isSelected && 'scale-150')} ` +
-                        ` ${compilationKind === CompilationKind.PREVIEW && 'aspect-[2/3] w-[30vw] max-w-[160px]'} ` +
+                        ` ${compilationKind === CompilationKind.PREVIEW && 'aspect-[2/3] w-[50vw] max-w-[240px] sm:w-[60vw] md:w-[45vw] lg:w-[35vw]'} ` +
                         ` ${compilationKind === CompilationKind.DEFAULT && 'aspect-[2/3] w-[35vw] max-w-[220px]'} `
                     }
                 >
