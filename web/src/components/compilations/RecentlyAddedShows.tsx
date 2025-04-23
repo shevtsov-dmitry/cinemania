@@ -88,7 +88,12 @@ const RecentlyAddedShows = ({}: RecentlyAddedShowsProps): ReactElement => {
             id="previews-sequence-block"
             className="flex flex-col justify-center"
         >
-            <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
+            <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
+                  style={{
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none',
+                  }}
+            >
                 <Compilation
                     compilationKind={CompilationKind.GRID}
                     gridCols={7}

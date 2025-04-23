@@ -10,7 +10,8 @@ import BackSign from "../common/BackSign";
 import ContentCreator from "@/src/types/ContentCreator";
 import { useVideoPlayer, VideoPlayer, VideoView } from "expo-video";
 
-interface ContentPageProps {}
+interface ContentPageProps {
+}
 
 const ContentPage = ({}: ContentPageProps): ReactElement => {
   const [posterUrl, setPosterUrl] = useState<string>("");
@@ -43,7 +44,7 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
       <View
         className="flex h-screen w-screen items-center justify-center gap-5"
         style={{
-          backgroundImage: Colors.TEAL_DARK_GRADIENT_BG_IMAGE,
+          backgroundImage: Colors.TEAL_DARK_GRADIENT_BG_IMAGE
         }}
       >
         <Text className="text-5xl font-bold text-white">
@@ -75,15 +76,15 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "black",
+      backgroundColor: "black"
     },
     video: {
       position: "absolute",
       top: 0,
       left: 0,
       right: 0,
-      bottom: 0,
-    },
+      bottom: 0
+    }
   });
 
   const FullscreenVideo = (): ReactElement => {
@@ -145,7 +146,7 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
             .slice(0, 3)
             .map(
               (actor: ContentCreator): string =>
-                `${actor.name} ${actor.surname}`,
+                `${actor.name} ${actor.surname}`
             )
             .join(", ")}
           {contentPageMetadata.filmingGroup.actors.length > 3 ? "..." : ""}

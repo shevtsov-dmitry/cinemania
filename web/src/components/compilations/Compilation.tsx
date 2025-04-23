@@ -23,6 +23,7 @@ const Compilation = ({
                          compilationKind = CompilationKind.DEFAULT,
                          gridCols = 3,
                      }: CompilationProps): ReactElement => {
+
     const [focusedIndex, setFocusedIndex] = useState<number>(0)
     const [selectedIndex, setSelectedIndex] = useState<number>()
 
@@ -85,8 +86,8 @@ const Compilation = ({
                         `${isFocused || (isSelected && 'scale-150')} ` +
                         ` ${compilationKind === CompilationKind.PREVIEW && 'aspect-[2/3] w-[50vw] max-w-[240px] sm:w-[60vw] md:w-[45vw] lg:w-[35vw]'} ` +
                         ` ${compilationKind === CompilationKind.DEFAULT && 'aspect-[2/3] w-[35vw] max-w-[220px]'} ` +
-                        ` ${isGrid && 'aspect-[2/3] w-[30vw] max-w-[180px] mr-5'} `
-
+                        ` ${isGrid && 'aspect-[2/3] w-[30vw] max-w-[180px] mr-5'} ` +
+                        ` ${compilationKind === CompilationKind.HORIZONTAL && 'aspect-[2/3] w-[40vw] max-w-[280px]'} `
                     }
                 >
                     <Poster
