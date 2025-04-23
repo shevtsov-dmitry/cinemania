@@ -2,17 +2,10 @@ import Poster from '@/src/components/poster/Poster'
 import useContentPageState from '@/src/state/contentPageState'
 import Base64WithId from '@/src/types/Base64WithId'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import { BlurView } from 'expo-blur'
-import { useRouter } from 'expo-router'
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
-import {
-    Animated,
-    FlatList,
-    InteractionManager,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native'
+import {BlurView} from 'expo-blur'
+import {useRouter} from 'expo-router'
+import React, {ReactElement, useEffect, useRef, useState} from 'react'
+import {Animated, FlatList, InteractionManager, ScrollView, Text, TouchableOpacity, View,} from 'react-native'
 import CompilationKind from './CompilationKind'
 
 interface CompilationProps {
@@ -20,18 +13,16 @@ interface CompilationProps {
     metadataList: ContentMetadata[]
     errmes?: string
     compilationKind?: CompilationKind
-    isGrid?: boolean
     gridCols?: number
 }
 
 const Compilation = ({
-    postersWithIds,
-    metadataList,
-    errmes = 'постеры загружаются...',
-    compilationKind = CompilationKind.DEFAULT,
-    isGrid,
-    gridCols = 3,
-}: CompilationProps): ReactElement => {
+                         postersWithIds,
+                         metadataList,
+                         errmes = 'постеры загружаются...',
+                         compilationKind = CompilationKind.DEFAULT,
+                         gridCols = 3,
+                     }: CompilationProps): ReactElement => {
     const [focusedIndex, setFocusedIndex] = useState<number>(0)
     const [selectedIndex, setSelectedIndex] = useState<number>()
 
@@ -39,7 +30,9 @@ const Compilation = ({
 
     const scaleAnim = useRef(new Animated.Value(1)).current
 
-    const { setContentPageMetadata } = useContentPageState()
+    const {setContentPageMetadata} = useContentPageState()
+
+    const isGrid = compilationKind === CompilationKind.GRID;
 
     const handleFocus = (index: number) => {
         Animated.timing(scaleAnim, {
@@ -70,9 +63,9 @@ const Compilation = ({
     }
 
     const SelectablePoster = ({
-        metadata,
-        index,
-    }: SelectablePosterProps): ReactElement => {
+                                  metadata,
+                                  index,
+                              }: SelectablePosterProps): ReactElement => {
         const isFocused = index === focusedIndex
         const isSelected = index === selectedIndex
 
@@ -91,7 +84,9 @@ const Compilation = ({
                     className={
                         `${isFocused || (isSelected && 'scale-150')} ` +
                         ` ${compilationKind === CompilationKind.PREVIEW && 'aspect-[2/3] w-[50vw] max-w-[240px] sm:w-[60vw] md:w-[45vw] lg:w-[35vw]'} ` +
-                        ` ${compilationKind === CompilationKind.DEFAULT && 'aspect-[2/3] w-[35vw] max-w-[220px]'} `
+                        ` ${compilationKind === CompilationKind.DEFAULT && 'aspect-[2/3] w-[35vw] max-w-[220px]'} ` +
+                        ` ${isGrid && 'aspect-[2/3] w-[30vw] max-w-[180px] mr-5'} `
+
                     }
                 >
                     <Poster
@@ -106,25 +101,50 @@ const Compilation = ({
     return (
         <>
             <BlurView intensity={30} tint="prominent">
-                {postersWithIds.length !== 0 ? (
-                    <FlatList
-                        horizontal={!isGrid}
-                        numColumns={isGrid ? gridCols : 1}
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{
-                            flexDirection: isGrid ? '' : 'row',
-                            gap: 16,
-                            padding: 12,
-                            borderRadius: 10,
-                        }}
-                        data={metadataList}
-                        keyExtractor={(item, index) =>
-                            item.id?.toString() ?? index.toString()
-                        }
-                        renderItem={({ item, index }) => (
-                            <SelectablePoster metadata={item} index={index} />
-                        )}
-                    />
+                {postersWithIds && postersWithIds.length !== 0 ? (
+
+                    isGrid ? (
+                        <ScrollView className={"w-full flex justify-center items-center"}>
+                            <FlatList
+                                horizontal={false}
+                                numColumns={gridCols}
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{
+                                    gap: 16,
+                                    padding: 12,
+                                    borderRadius: 10,
+                                }}
+                                data={metadataList}
+                                keyExtractor={(item, index) =>
+                                    item.id?.toString() ?? index.toString()
+                                }
+                                renderItem={({item, index}) => (
+                                    <SelectablePoster metadata={item} index={index}/>
+                                )}
+                            />
+                        </ScrollView>
+                    ) : (
+
+                        <FlatList
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{
+                                flexDirection: 'row',
+                                gap: 16,
+                                padding: 12,
+                                borderRadius: 10,
+                            }}
+                            data={metadataList}
+                            keyExtractor={(item, index) =>
+                                item.id?.toString() ?? index.toString()
+                            }
+                            renderItem={({item, index}) => (
+                                <SelectablePoster metadata={item} index={index}/>
+                            )}
+                        />
+
+                    )
+
                 ) : (
                     <Text
                         className={'text-1xl font-bold text-white opacity-20'}

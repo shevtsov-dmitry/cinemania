@@ -3,10 +3,12 @@ import CompilationKind from '@/src/components/compilations/CompilationKind'
 import Constants from '@/src/constants/Constants'
 import Base64WithId from '@/src/types/Base64WithId'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import { ReactElement, useEffect, useState } from 'react'
-import { View } from 'react-native'
+import React, {ReactElement, useEffect, useState} from 'react'
+import {View} from 'react-native'
+import LoadMoreBigButton from "@/src/components/common/LoadMoreBigButton";
 
-interface RecentlyAddedShowsProps {}
+interface RecentlyAddedShowsProps {
+}
 
 const RecentlyAddedShows = ({}: RecentlyAddedShowsProps): ReactElement => {
     const STORAGE_URL = Constants.STORAGE_URL
@@ -88,12 +90,15 @@ const RecentlyAddedShows = ({}: RecentlyAddedShowsProps): ReactElement => {
         >
             <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
                 <Compilation
-                    compilationKind={CompilationKind.DEFAULT}
+                    compilationKind={CompilationKind.GRID}
+                    gridCols={7}
                     postersWithIds={posterImagesWithIds}
                     metadataList={metadataList}
                     errmes={postersLoadingMessage}
                 />
+                <LoadMoreBigButton/>
             </View>
+
         </View>
     )
 }
