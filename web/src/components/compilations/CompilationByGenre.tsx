@@ -3,16 +3,16 @@ import CompilationKind from '@/src/components/compilations/CompilationKind'
 import Constants from '@/src/constants/Constants'
 import Base64WithId from '@/src/types/Base64WithId'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import { ReactElement, useEffect, useState } from 'react'
-import { View } from 'react-native'
+import {ReactElement, useEffect, useState} from 'react'
+import {ScrollView, View} from 'react-native'
 
 interface CompilationByGenreProps {
     name: string
 }
 
 const CompilationByGenre = ({
-    name,
-}: CompilationByGenreProps): ReactElement => {
+                                name,
+                            }: CompilationByGenreProps): ReactElement => {
     const STORAGE_URL = Constants.STORAGE_URL
     const POSTERS_AMOUNT = 8
 
@@ -88,14 +88,19 @@ const CompilationByGenre = ({
             id="genre-compilation-block"
             className="flex flex-col justify-center"
         >
-            <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2">
+            <ScrollView className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
+                        style={{
+                            scrollbarWidth: 'none',
+                            msOverflowStyle: 'none',
+                        }}
+            >
                 <Compilation
                     compilationKind={CompilationKind.DEFAULT}
                     postersWithIds={posterImagesWithIds}
                     metadataList={metadataList}
                     errmes={postersLoadingMessage}
                 />
-            </View>
+            </ScrollView>
         </View>
     )
 }
