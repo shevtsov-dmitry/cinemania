@@ -1,19 +1,18 @@
+import LoadMoreBigButton from '@/src/components/common/LoadMoreBigButton'
 import Compilation from '@/src/components/compilations/Compilation'
 import CompilationKind from '@/src/components/compilations/CompilationKind'
 import Constants from '@/src/constants/Constants'
 import Base64WithId from '@/src/types/Base64WithId'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import React, {ReactElement, useEffect, useState} from 'react'
-import {View} from 'react-native'
-import LoadMoreBigButton from "@/src/components/common/LoadMoreBigButton";
+import React, { ReactElement, useEffect, useState } from 'react'
+import { View } from 'react-native'
 
-interface RecentlyAddedShowsProps {
-}
+interface RecentlyAddedShowsProps {}
 
 const RecentlyAddedShows = ({}: RecentlyAddedShowsProps): ReactElement => {
     const STORAGE_URL = Constants.STORAGE_URL
     const NON_ASCII_PATTERN = /[^\u0000-\u007F]/
-    const POSTERS_AMOUNT = 20
+    const POSTERS_AMOUNT = 21
 
     const [postersLoadingMessage, setPostersLoadingMessage] =
         useState<string>('')
@@ -88,11 +87,12 @@ const RecentlyAddedShows = ({}: RecentlyAddedShowsProps): ReactElement => {
             id="previews-sequence-block"
             className="flex flex-col justify-center"
         >
-            <View className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
-                  style={{
-                      scrollbarWidth: 'none',
-                      msOverflowStyle: 'none',
-                  }}
+            <View
+                className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
+                style={{
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                }}
             >
                 <Compilation
                     compilationKind={CompilationKind.GRID}
@@ -101,9 +101,8 @@ const RecentlyAddedShows = ({}: RecentlyAddedShowsProps): ReactElement => {
                     metadataList={metadataList}
                     errmes={postersLoadingMessage}
                 />
-                <LoadMoreBigButton/>
+                <LoadMoreBigButton />
             </View>
-
         </View>
     )
 }

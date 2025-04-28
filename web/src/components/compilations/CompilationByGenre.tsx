@@ -1,20 +1,22 @@
 import Compilation from '@/src/components/compilations/Compilation'
-import CompilationKind from '@/src/components/compilations/CompilationKind'
 import Constants from '@/src/constants/Constants'
 import Base64WithId from '@/src/types/Base64WithId'
 import ContentMetadata from '@/src/types/ContentMetadata'
-import {ReactElement, useEffect, useState} from 'react'
-import {ScrollView, View} from 'react-native'
+import { ReactElement, useEffect, useState } from 'react'
+import { ScrollView, View } from 'react-native'
+import CompilationKind from './CompilationKind'
 
 interface CompilationByGenreProps {
     name: string
+    compilationKind?: CompilationKind
 }
 
 const CompilationByGenre = ({
-                                name,
-                            }: CompilationByGenreProps): ReactElement => {
+    name,
+    compilationKind = CompilationKind.DEFAULT,
+}: CompilationByGenreProps): ReactElement => {
     const STORAGE_URL = Constants.STORAGE_URL
-    const POSTERS_AMOUNT = 8
+    const POSTERS_AMOUNT = 16
 
     const [postersLoadingMessage, setPostersLoadingMessage] =
         useState<string>('')
@@ -36,7 +38,7 @@ const CompilationByGenre = ({
                     } else {
                         let errmes =
                             res.headers.get('Message') ??
-                            'Ошибка получения метаданных по жанру.'
+                            `Ошибка загрузки постеров "${name}".`
                         errmes = decodeURI(errmes).replaceAll('+', ' ')
                         console.error(errmes)
                         setPostersLoadingMessage(errmes)
@@ -45,7 +47,7 @@ const CompilationByGenre = ({
                 .then((fetchedMetadata) => setMetadataList(fetchedMetadata))
                 .catch((e) => {
                     setPostersLoadingMessage(
-                        'Ошибка установления соединения с сервером для получения метаданных по жанру.'
+                        'Ошибка установления соединения с сервером.'
                     )
                     console.error(e.message)
                 })
@@ -88,14 +90,15 @@ const CompilationByGenre = ({
             id="genre-compilation-block"
             className="flex flex-col justify-center"
         >
-            <ScrollView className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
-                        style={{
-                            scrollbarWidth: 'none',
-                            msOverflowStyle: 'none',
-                        }}
+            <ScrollView
+                className="no-scrollbar relative overflow-x-scroll scroll-smooth p-2"
+                style={{
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                }}
             >
                 <Compilation
-                    compilationKind={CompilationKind.DEFAULT}
+                    compilationKind={compilationKind}
                     postersWithIds={posterImagesWithIds}
                     metadataList={metadataList}
                     errmes={postersLoadingMessage}

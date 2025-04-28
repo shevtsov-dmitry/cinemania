@@ -24,10 +24,6 @@ const categories = [
         icon: <Ionicons name="document-text" size={22} color="white" />,
     },
     {
-        name: 'Каналы',
-        icon: <Ionicons name="albums" size={22} color="white" />,
-    },
-    {
         name: 'Фитнес',
         icon: <MaterialIcons name="fitness-center" size={22} color="white" />,
     },
