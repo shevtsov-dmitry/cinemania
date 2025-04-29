@@ -1,6 +1,5 @@
 import Footer from '@/src/components/footer/Footer'
 import Colors from '@/src/constants/Colors'
-import Constants from '@/src/constants/Constants'
 import React, { ReactElement } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import AdminPage from '../admin/AdminPage'
@@ -8,13 +7,6 @@ import CompilationByGenre from '../compilations/CompilationByGenre'
 import CompilationKind from '../compilations/CompilationKind'
 import RecentlyAddedShows from '../compilations/RecentlyAddedShows'
 import TopPanel from '../top-panel/TopPanel'
-
-let trailerUrl = `${Constants.STREAMING_SERVER_URL}/api/v1/stream/67d47489eeda036a76103a6e/playlist`
-
-trailerUrl = `${Constants.STREAMING_SERVER_URL}/api/v1/stream/123/playlist`
-
-trailerUrl =
-    'https://cdn.flowplayer.com/a30bd6bc-f98b-47bc-abf5-97633d4faea0/hls/de3f6ca7-2db3-4689-8160-0f574a5996ad/playlist.m3u8'
 
 const styles = {
     collectionTitle: 'p-2 text-2xl font-bold text-white',
