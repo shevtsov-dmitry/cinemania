@@ -128,7 +128,7 @@ const TopPanel = (): ReactElement => {
                     />
 
                     {/* Temporary admin options */}
-                    {/* <TempoAdminPanel /> */}
+                    <TempoAdminPanel />
 
                     {/* Subscribe Button */}
                     <Pressable

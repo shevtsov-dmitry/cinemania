@@ -143,24 +143,24 @@ public class VideoUploaderService {
         Path tempFile = Files.createFile(Path.of(tempFolderPath + "/" + id));
         Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
-        String ffmpegCommand = "ffmpeg -i %s -c:v libx264 -c:a aac -profile:v baseline -level 3.0 -start_number 0 -hls_time 10 -hls_list_size 0 -f hls %s/index.m3u8"
-                .formatted(tempFile.toFile().getAbsolutePath(), tempFolder.getAbsolutePath());
-
-        // ffmpegCommand = """
-        // ffmpeg -i %s \
-        // -filter_complex "[0:v]split=2[v1][v2]; [v1]scale=w=1280:h=720[v1out];
-        // [v2]scale=w=640:h=360[v2out]" \
-        // -map "[v1out]" -map 0:a -c:v:0 libx264 -b:v:0 2000k -c:a:0 aac -b:a:0 128k \
-        // -map "[v2out]" -map 0:a -c:v:1 libx264 -b:v:1 800k -c:a:1 aac -b:a:1 96k \
-        // -var_stream_map "v:0,a:0 v:1,a:1" \
-        // -preset medium -crf 23 \
-        // -hls_time 10 -hls_list_size 0 \
-        // -hls_segment_filename "%s/v%%v/output_%%03d.ts" \
-        // %s/v%%v/output.m3u8
-        // """.formatted(
-        // tempFile.toFile().getAbsolutePath(),
-        // tempFolder.getAbsolutePath(),
+        // String ffmpegCommand = "ffmpeg -i %s -c:v libx264 -c:a aac -profile:v
+        // baseline -level 3.0 -start_number 0 -hls_time 10 -hls_list_size 0 -f hls
+        // %s/index.m3u8"
+        // .formatted(tempFile.toFile().getAbsolutePath(),
         // tempFolder.getAbsolutePath());
+
+        String ffmpegCommand = """
+                ffmpeg -y -hide_banner -loglevel error -i %s \
+                -map 0:v:0 -map 0:a:0 \
+                -c:v libx264 -preset veryfast -crf 23 \
+                -c:a aac -b:a 128k -ac 2 \
+                -f hls -hls_time 10 -hls_list_size 0 \
+                -hls_segment_filename %s/output_%%03d.ts \
+                %s/index.m3u8
+                """.formatted(
+                tempFile.toFile().getAbsolutePath(),
+                tempFolder.getAbsolutePath(),
+                tempFolder.getAbsolutePath());
 
         Process process = Runtime.getRuntime().exec(ffmpegCommand);
         try (var stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
