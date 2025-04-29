@@ -84,9 +84,9 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
             <BlurView
                 intensity={50}
                 tint="dark"
-                className="absolute inset-0 flex h-screen w-full items-start py-10 pl-12"
+                className="absolute inset-0 bottom-0 ml-[2%] mt-[14%] flex h-[50%] w-[37%] items-start rounded-[10px] px-2 py-2"
             >
-                <ScrollView className="flex w-full max-w-2xl justify-center">
+                <ScrollView className="flex w-full max-w-2xl">
                     <View className="flex-row items-center justify-center space-x-6">
                         <View className={'min-h-52 w-40 min-w-36 shadow-md'}>
                             <Poster
@@ -136,10 +136,11 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                                             `${actor.name} ${actor.surname}`
                                     )
                                     .join(', ')}
-                                {contentPageMetadata.filmingGroup.actors
+                                {/* {contentPageMetadata.filmingGroup.actors
                                     .length > 3
                                     ? '...'
-                                    : ''}
+                                    : ''} */}
+                                , ...
                             </Text>
                         </View>
                     </View>
