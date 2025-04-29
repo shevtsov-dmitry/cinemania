@@ -6,7 +6,7 @@ import { BlurView } from 'expo-blur'
 import { useRouter } from 'expo-router'
 import { VideoView } from 'expo-video'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, Text, View } from 'react-native'
 import BackSign from '../common/BackSign'
 import Poster from '../poster/Poster'
 import WebVideoPlayer from '../video-player/WebVideoPlayer'
@@ -24,8 +24,9 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
         fetchPoster()
 
         if (videoRef.current) {
+            // VIDEO LOGS
             videoRef.current.setOnPlaybackStatusUpdate((status) => {
-                console.log('Video status:', status)
+                // console.log('Video status:', status)
             })
         }
     }, [])
@@ -70,21 +71,7 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
 
     const filmUrl =
         Constants.STREAMING_SERVER_URL +
-        `/stream/standalone/${contentPageMetadata.standaloneVideoShow?.id}/playlist`
-
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            backgroundColor: 'black',
-        },
-        video: {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-        },
-    })
+        `/api/v1/stream/standalone/${contentPageMetadata.standaloneVideoShow?.id}/playlist`
 
     return (
         <View className="relative h-screen w-screen bg-black">
@@ -92,17 +79,14 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                 <BackSign />
             </View>
 
-            <WebVideoPlayer url={trailerUrl} />
+            <WebVideoPlayer variant="trailer" url={trailerUrl} />
 
             <BlurView
                 intensity={50}
                 tint="dark"
                 className="absolute inset-0 flex h-screen w-full items-start py-10 pl-12"
             >
-                <ScrollView
-                    className="flex w-full max-w-2xl justify-center"
-                    contentContainerStyle={{ paddingBottom: 80 }}
-                >
+                <ScrollView className="flex w-full max-w-2xl justify-center">
                     <View className="flex-row items-center justify-center space-x-6">
                         <View className={'min-h-52 w-40 min-w-36 shadow-md'}>
                             <Poster
@@ -174,7 +158,10 @@ const ContentPage = ({}: ContentPageProps): ReactElement => {
                                         'linear-gradient(90deg, #FF512F 0%, #DD2476 100%)',
                                 }}
                                 onPress={() => {
-                                    // navigation.navigate('VideoPlayer', { videoUrl: filmUrl });
+                                    router.push({
+                                        pathname: '/fullscreen-video',
+                                        params: { url: filmUrl },
+                                    })
                                 }}
                             >
                                 <Ionicons

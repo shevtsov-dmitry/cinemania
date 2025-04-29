@@ -3,9 +3,15 @@ import React, { ReactElement, useEffect, useRef } from 'react'
 
 interface WebVideoPlayerProps {
     url: string
+    variant?: 'trailer' | 'main'
+    className?: string
 }
 
-const WebVideoPlayer = ({ url }: WebVideoPlayerProps): ReactElement => {
+const WebVideoPlayer = ({
+    url,
+    variant = 'main',
+    className = '',
+}: WebVideoPlayerProps): ReactElement => {
     const videoRef = useRef<HTMLVideoElement>(null)
 
     useEffect(() => {
@@ -19,22 +25,22 @@ const WebVideoPlayer = ({ url }: WebVideoPlayerProps): ReactElement => {
                     video.play()
                 })
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Fallback for Safari
                 video.src = url
-
                 video.addEventListener('loadedmetadata', () => {
                     video.play()
                 })
             }
         }
-    }, [])
+    }, [url])
 
-    return (
+    return variant === 'main' ? (
         <video
             ref={videoRef}
             controls
-            style={{ width: '100%', height: 'auto' }}
+            className={`fixed inset-0 z-50 h-screen w-screen bg-black object-contain ${className} `}
         />
+    ) : (
+        <video ref={videoRef} className="h-auto w-full" />
     )
 }
 
