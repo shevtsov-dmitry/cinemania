@@ -93,7 +93,7 @@ const Compilation = ({
                         `${isFocused || (isSelected && 'scale-150')} ` +
                         ` ${compilationKind === CompilationKind.DEFAULT && 'aspect-[2/3] w-[35vw] max-w-[220px]'} ` +
                         ` ${isGrid && 'mr-5 aspect-[2/3] w-[30vw] max-w-[180px]'} ` +
-                        ` ${compilationKind === CompilationKind.HORIZONTAL && 'aspect-[16/9] w-[50vw] max-w-[500px]'} `
+                        ` ${compilationKind === CompilationKind.HORIZONTAL && 'aspect-[16/9] min-w-[27vw]'} `
                     }
                 >
                     <Poster

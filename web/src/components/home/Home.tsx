@@ -1,7 +1,7 @@
 import Footer from '@/src/components/footer/Footer'
 import Colors from '@/src/constants/Colors'
 import Constants from '@/src/constants/Constants'
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import AdminPage from '../admin/AdminPage'
 import CompilationByGenre from '../compilations/CompilationByGenre'
@@ -21,8 +21,6 @@ const styles = {
 }
 
 const Home = (): ReactElement => {
-    const [logMessage, setLogMessage] = useState<string>('empty')
-
     return (
         <ScrollView
             className="min-h-screen w-screen"
@@ -32,9 +30,11 @@ const Home = (): ReactElement => {
         >
             {/*<MobileVideoPlayer url={trailerUrl} setLogMessage={setLogMessage}/>*/}
             {/* <WebVideoPlayer url={trailerUrl} /> */}
+            <View className="my-2" />
             <TopPanel />
             {/* <AuthScreen /> */}
             <AdminPage />
+            <View className="my-2" />
             <Text className={styles.collectionTitle}>В тренде</Text>
             <CompilationByGenre
                 name="Популярное"
