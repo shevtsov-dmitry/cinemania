@@ -127,7 +127,7 @@ const TopPanel = (): ReactElement => {
                         className="gap-1.25 flex-row"
                     />
 
-                    {/* <TempoAdminPanel /> */}
+                    {/* Temporary admin options */}
                     {/* <TempoAdminPanel /> */}
 
                     {/* Subscribe Button */}

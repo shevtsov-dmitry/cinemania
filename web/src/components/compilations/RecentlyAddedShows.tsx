@@ -55,7 +55,12 @@ const RecentlyAddedShows = ({}: RecentlyAddedShowsProps): ReactElement => {
         fetchPosters()
 
         async function fetchPosters() {
-            if (metadataList.length === 0) return
+            if (!metadataList || metadataList.length === 0) {
+                setPostersLoadingMessage(
+                    'Ошибка получения постеров из сервера.'
+                )
+                return
+            }
 
             const joinedIds = metadataList
                 .map((item: ContentMetadata) => item.poster?.id)

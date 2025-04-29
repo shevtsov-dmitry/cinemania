@@ -38,7 +38,8 @@ const Compilation = ({
 
     const scaleAnim = useRef(new Animated.Value(1)).current
 
-    const { setContentPageMetadata } = useContentPageState()
+    const { setContentPageMetadata, setPosterBase64Object } =
+        useContentPageState()
 
     const isGrid = compilationKind === CompilationKind.GRID
 
@@ -83,6 +84,7 @@ const Compilation = ({
                 onPress={() => {
                     setSelectedIndex(index)
                     setContentPageMetadata(metadata)
+                    setPosterBase64Object(postersWithIds[index])
                     router.push('/content')
                 }}
                 onFocus={() => handleFocus(index)}
