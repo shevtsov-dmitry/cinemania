@@ -29,21 +29,21 @@
     - Jetty HTTP/3 (web server)
     - HLS (HTTP Live Streaming)
     - Nginx
+      
 2. Микросервис аутентификации и управления пользователями
     - OAuth 2.0
     - Spring Web
     - Spring Security
     - Maven: Библиотеки криптографии
     - PostgreSQL
+      
 3. Микросервис менеджмента метаданных изображений и сведений о фильмах
-
     - Yandex Cloud Storage
     - MongoDB
     - Redis
     - Maven
     - Spring Web
     - Spring Data MongoDB
-    - React.js
     - Thumbnailator (бибилотека java для создания заставок)
 
 4. Система уведомлений
@@ -54,20 +54,25 @@
 
 5. Клиентские приложения (веб, Smart TV и Android)
     - React.js
-    - React Native
+    - React Native Expo
+    - сторонние библиотеки React, React Native Expo
     - Tailwind CSS
     - REST API
     - Zustand
     - Nginx
-    - Spring Boot Admin
-      CI/CD
-    - Jenkins, GitHub Actions
-      Тестирование
+   
+6. Тестирование
     - JUnit, Mockito, Spring Mock Mvc
     - Postman, Curl, Bash
       Деплой
     - Docker
     - Kubernetes
+
+7. Базы данных
+    - PostgreSQL
+    - MongoDB
+    - Yandex Cloud Object Storage (S3)
+    - minio (только для тестирования)
 
 ---
 
